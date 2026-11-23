@@ -1,0 +1,5 @@
+http://www.w3.org/2001/
+http://legacy-rates.partner.example/api
+http://example.org
+http://localhost:8080
+http://localhost:8081/actuator/health
