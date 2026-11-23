@@ -20,7 +20,7 @@ exposes: []
 | Folders and files | `.github/bible/bible_queue.py`; workflow adapters in `.github/workflows/bible-plan.yml`, `.github/workflows/bible-queue.yml`, and `.github/workflows/bible-delta.yml`; independent `.github/workflows/poc-assign-copilot.yml` |
 | Technology | Python 3 standard library; GitHub Actions YAML |
 | Starts by | Manual `bible-plan` workflow starts a run; `bible-queue` reconciles on a 15-minute schedule or manual dispatch; `bible-delta` handles default-branch pushes outside the ignored paths. (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10`) |
-| Size | 1 Python source file, 1130 lines, 70 functions/methods, 2 classes, 0 routes. (`.github/bible/bible_queue.py:1-1130`) |
+| Size | 1 Python source file, 1130 lines, 69 functions/methods, 2 classes, 0 routes. (`.github/bible/bible_queue.py:1-1130`; component coverage: `ledger/components/bible-mode-b/coverage-report.md`) |
 | Depth | Deep |
 
 ## Responsibility

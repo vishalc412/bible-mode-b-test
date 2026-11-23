@@ -16,6 +16,14 @@ Applied from verification-report.md, fingerprint 26ea3631571ae969.
 | V-004 | `README.md`, `ledger/coverage-ledger.md` | Updated source-file totals and current deep-gate figures: 111 symbols, 274 branch lines, 1,884 citations, and a 1,130-line queue file. |
 | V-005 | `bible_queue.md` | Corrected callers for `GitHub.me`, `Queue.continue_if_unfinished`, and `Queue.revise_all_step` to current call lines. |
 
+### Remaining review corrections
+
+| Item | Location | What was changed |
+| --- | --- | --- |
+| V-006 | `lld/bible-mode-b/README.md` | Changed the component size to 69 functions/methods, matching `coverage.py --component bible-mode-b`; the whole gate now resolves 1,886 citations. |
+| V-007 | `lld/bible-mode-b/bible_queue.md` | Added settings-validation refusal to `main` pseudo-code and made the component-name validation branch explicit. |
+| V-008 | `lld/bible-mode-b/bible_queue.md` | Replaced the placeholder callers for `settings_of` with `Queue.reconcile:555` and `main:1113`. |
+
 ## 2026-11-23
 
 Applied from verification-report.md, fingerprint dee0a05d04621400, of 2026-11-23, verdict PASS AFTER CORRECTIONS.

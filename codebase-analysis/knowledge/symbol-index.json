@@ -1564,6 +1564,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#main",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#settings_oftracker",
     "lld/bible-mode-b/bible_queue.md#summary",
     "lld/data-dictionary.md#tracker-issue-settings",
     "progress.md#components"
@@ -1942,12 +1943,12 @@
     "lld/bible-mode-b/bible_queue.md#queue-part1",
     "lld/bible-mode-b/bible_queue.md#queue-part12",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#settings_oftracker",
     "lld/bible-mode-b/bible_queue.md#summary",
     "lld/catalog/README.md#tests",
     "lld/catalog/test_catalog.md#module-level-code",
     "lld/catalog/test_catalog.md#summary",
-    "lld/data-dictionary.md#component-analysis-plan-json",
-    "lld/data-dictionary.md#files-read-and-written"
+    "lld/data-dictionary.md#component-analysis-plan-json"
    ]
   },
   "symbol:components/catalog/catalog.py#get_product": {
@@ -2979,12 +2980,12 @@
     "lld/bible-mode-b/bible_queue.md#queue-part1",
     "lld/bible-mode-b/bible_queue.md#queue-part12",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#settings_oftracker",
     "lld/bible-mode-b/bible_queue.md#summary",
     "lld/catalog/README.md#tests",
     "lld/catalog/test_catalog.md#module-level-code",
     "lld/catalog/test_catalog.md#summary",
-    "lld/data-dictionary.md#component-analysis-plan-json",
-    "lld/data-dictionary.md#files-read-and-written"
+    "lld/data-dictionary.md#component-analysis-plan-json"
    ]
   },
   "symbol:tools/plan.py#scan": {
@@ -3047,12 +3048,12 @@
     "lld/bible-mode-b/bible_queue.md#queue-part1",
     "lld/bible-mode-b/bible_queue.md#queue-part12",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#settings_oftracker",
     "lld/bible-mode-b/bible_queue.md#summary",
     "lld/catalog/README.md#tests",
     "lld/catalog/test_catalog.md#module-level-code",
     "lld/catalog/test_catalog.md#summary",
-    "lld/data-dictionary.md#component-analysis-plan-json",
-    "lld/data-dictionary.md#files-read-and-written"
+    "lld/data-dictionary.md#component-analysis-plan-json"
    ]
   }
  },

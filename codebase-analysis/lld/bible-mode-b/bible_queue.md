@@ -2379,6 +2379,8 @@ try:
         require distinct nonempty verify model
         parse and validate component selection
         ensure labels; exit if a tracker is already open
+        if settings_of(generated settings marker) is None:
+            exit because analysis, depth, or model settings are unsafe or unsupported
         create tracker with settings; print issue number
     elif reconcile: queue.reconcile()
     else:
@@ -2396,7 +2398,7 @@ on RuntimeError: exit with its text
 | `.github/bible/bible_queue.py:1102` | if | Command is `start` | Validates and starts a run. |
 | `.github/bible/bible_queue.py:1103` | if | Verification model is empty or equals normal model | Exits with the model requirement. |
 | `.github/bible/bible_queue.py:1104` | raise | Model validation fails | Raises `SystemExit`. |
-| `.github/bible/bible_queue.py:1106` | if | Component selection is invalid | Exits with selection guidance. |
+| `.github/bible/bible_queue.py:1106` | if | No component names are supplied, or a name other than `all` fails `NAME` | Exits with component-selection guidance. |
 | `.github/bible/bible_queue.py:1107` | raise | Selection validation fails | Raises `SystemExit`. |
 | `.github/bible/bible_queue.py:1109` | if | Tracker already exists | Exits without starting another run. |
 | `.github/bible/bible_queue.py:1110` | raise | Open tracker exists | Raises `SystemExit`. |
@@ -2467,7 +2469,7 @@ Source: `.github/bible/bible_queue.py:353-373` <!-- code: 828d76009663 -->
 | | |
 | --- | --- |
 | Kind | module function |
-| Called by | Queue functions in later source packets. |
+| Called by | `Queue.reconcile` (`.github/bible/bible_queue.py:555`), `main` (`.github/bible/bible_queue.py:1113`) |
 | Calls | `SETTINGS.search`, `tracker.get`, `json.loads`, `match.group`, `isinstance`, `str`, `data.get`, `SAFE_PATH.match`, `analysis.split`, `SAFE_MODEL.match` |
 | Purpose | Parses and validates the JSON settings marker from a tracker, returning `None` when absent, malformed, or unsafe. |
 

@@ -14,7 +14,7 @@ Status: DRAFT, not yet verified.
 | Depth | Deep for all four components |
 | Version given by the user | Not provided |
 | Snapshot | 24 in-scope files, 1,606 current source lines, 2026-11-23 |
-| Coverage | PASS at deep: 111/111 symbols, 274/274 branch lines, 1,884/1,884 citations |
+| Coverage | PASS at deep: 111/111 symbols, 274/274 branch lines, 1,886/1,886 citations |
 | Produced with | Copilot coding agent; model not recorded |
 | Diagrams | Checked by reading only; no Mermaid renderer was available |
 
