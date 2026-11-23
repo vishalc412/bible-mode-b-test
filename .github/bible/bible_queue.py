@@ -912,6 +912,10 @@ class Queue:
                 ("bible-assemble", settings.get("model"), "Codebase analysis - assemble the whole bible", "assemble.md"),
                 ("bible-verify-all", settings.get("verify_model"), "Codebase analysis - verify the whole analysis", None)):
             closed_done = [i for i in self.run_issues([kind], state="closed") if i.get("state_reason") == "completed"]
+            if kind == "bible-verify-all":
+                held_whole = self.whole_hold()
+                if held_whole:  # consulted before any check of the whole analysis (review: a hold was never read here)
+                    return held_whole
             if kind == "bible-verify-all" and closed_done:
                 # GitHub closes the issue itself when the pull request that says "Fixes #N" is merged: a closed
                 # verification is done only when the report on the default branch is a clean PASS (seen in review).
@@ -933,8 +937,9 @@ class Queue:
                         return "verify-all: waiting for the next check (not enough of this run's time left)"
                     pages_now = self.whole_fingerprint(analysis)
                     if pages_now is None:  # could not compute it now: no verification round is used; counted, then a person
-                        return self.could_not_check("nofp", "The fingerprint of the whole analysis", ["bible-whole"],
-                                                    "Codebase analysis - the whole analysis needs a person") or \
+                        held = self.could_not_check("nofp", "The fingerprint of the whole analysis", ["bible-whole"],
+                                                    "Codebase analysis - the whole analysis needs a person")
+                        return ("verify-all: " + held) if held else \
                             "verify-all: the pages' fingerprint could not be computed now: checked again at the next check"
                     self.state.pop("nofp", None)
                     if facts[2] == pages_now:
@@ -1009,7 +1014,11 @@ class Queue:
         gh.close(tracker["number"])
         late = sorted(set(self.deferred_updates(tracker)) - set(deferred))
         if late:
-            self.delta(late, analysis, record=False)
+            try:
+                self.delta(late, analysis, record=False)
+            except Exception as err:  # the tracker is closed: say so where a person reads it, never lose them silently
+                gh.comment(tracker["number"], "Code that changed at the end of this run could not get its update issues (%s: %s). "
+                           "Run the update for these files by hand: %s" % (type(err).__name__, str(err)[:160], shown_files(late)))
         return "done"
 
     def deferred_updates(self, tracker):
@@ -1025,6 +1034,14 @@ class Queue:
                 except ValueError:
                     continue
         return sorted(set(paths))
+
+    def whole_hold(self):
+        """The row while a hold on the whole analysis waits for a person; a released one (label removed) is closed."""
+        for h in self.run_issues(["bible-hold", "bible-whole"]):
+            if "bible-needs-human" in labels_of(h):
+                return "verify-all: needs a person: see #%d" % h["number"]
+            self.gh.close(h["number"])  # the person removed the label: new rounds from here
+        return None
 
     def revise_all_step(self, tracker, analysis):
         """After a whole verification that asked for corrections: one revision session of the whole analysis, then a
