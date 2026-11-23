@@ -79,6 +79,8 @@ LABELS = {
     "bible-verify": "Copilot session: verify one component",
     "bible-assemble": "Copilot session: whole-system pages",
     "bible-verify-all": "Copilot session: verify the whole analysis",
+    "bible-revise-all": "Copilot session: apply the whole verification's corrections",
+    "bible-needs-revision": "A whole verification that asked for corrections: a revision follows",
     "bible-delta": "Copilot session: update after a code change",
     "bible-waiting-answer": "Copilot asked questions: answer on the pull request with @copilot",
     "bible-needs-human": "Failed twice: a person must look, then remove this label to retry",
@@ -768,6 +770,10 @@ class Queue:
                 ("bible-verify-all", settings.get("verify_model"), "Codebase analysis - verify the whole analysis", None)):
             if any(i.get("state_reason") == "completed" for i in self.run_issues([kind], state="closed")):
                 continue
+            if kind == "bible-verify-all":
+                step = self.revise_all_step(tracker, analysis)
+                if step:
+                    return step
             open_ = self.run_issues([kind])
             if open_:
                 issue = open_[0]
@@ -777,8 +783,13 @@ class Queue:
                     if kind == "bible-verify-all":
                         facts = report_facts(gh.file("%s/verification-report.md" % analysis, self.default))
                         if not facts or facts[0] != "PASS" or facts[1]:
-                            return ("verify-all: needs a person: the whole verification's verdict is %s; apply its corrections "
-                                    "(revision mode) and have them re-checked, then close this tracker" % (facts[0] if facts else "missing"))
+                            # a record of corrections asked: not the end of the run; a revision of the whole analysis
+                            # follows, then a new verification (revise_all_step)
+                            gh.label(issue["number"], "bible-needs-revision")
+                            gh.comment(issue["number"], "Verdict %s: a revision of the whole analysis follows, then a new "
+                                       "verification." % (facts[0] if facts else "missing"))
+                            gh.close(issue["number"], "not_planned")
+                            return "verify-all: corrections asked (verdict %s): revision next" % (facts[0] if facts else "missing")
                     gh.close(issue["number"])
                     continue
                 if self.held(issue):
@@ -809,6 +820,76 @@ class Queue:
         gh.close(tracker["number"])
         return "done"
 
+    def revise_all_step(self, tracker, analysis):
+        """After a whole verification that asked for corrections: one revision session of the whole analysis, then a
+        new verification (the loop below opens it). Bounded like the components: after MAX_VERIFY_ROUNDS such
+        verifications since a person last released the run, a person decides. None when nothing is to be done here."""
+        gh = self.gh
+        holds = self.run_issues(["bible-hold", "bible-whole"], state="all")
+        open_hold = [h for h in holds if h["state"] == "open"]
+        if open_hold:
+            if "bible-needs-human" in labels_of(open_hold[0]):
+                return "verify-all: needs a person: see #%d" % open_hold[0]["number"]
+            gh.close(open_hold[0]["number"])  # the person removed the label: new rounds from here
+            holds = self.run_issues(["bible-hold", "bible-whole"], state="all")
+        after = max([h.get("closed_at") or "" for h in holds] + [""])
+        # What to do next comes from the newest verdict that asked for corrections; the rounds count only those since a
+        # person last released the run (a release gives new rounds, starting with a revision of that verdict).
+        asked_all = sorted(self.run_issues(["bible-verify-all", "bible-needs-revision"], state="closed"),
+                           key=lambda i: i.get("closed_at") or "")
+        if not asked_all:
+            return None
+        asked = [i for i in asked_all if (i.get("created_at") or "") >= after]
+        revisions = self.run_issues(["bible-revise-all"], state="all")
+        open_rev = [i for i in revisions if i["state"] == "open"]
+        if open_rev:
+            issue = open_rev[0]
+            merged = [p for p in gh.linked_prs(issue["number"]) if p.get("merged_at") and p["base"]["ref"] == self.default
+                      and ((p.get("head") or {}).get("repo") or {}).get("full_name") == gh.repo and gh.is_agent_pr(p)]
+            if merged:
+                gh.close(issue["number"])
+                return None  # revised: the loop opens the next whole verification
+            if self.held(issue):
+                return "revise-all: needs a person: see #%d" % issue["number"]
+            state, pr = self.session(issue, self.default, analysis)
+            if state == "start-error":
+                self.hold_start_error(issue)
+                return "revise-all: needs a person: see #%d" % issue["number"]
+            if state == "no-start":
+                self.fail_or_retry(issue, None, "no pull request after assignment")
+                return "revise-all: session starting"
+            if pr and state == "running":
+                return "revise-all: running (pull request #%d)" % pr["number"]
+            if pr and state == "finished":
+                unfinished = self.continue_if_unfinished(issue, pr, "bible-revise-all", analysis)
+                if unfinished:
+                    return unfinished
+                bad = [f for f in gh.pr_files(pr["number"]) if os.path.basename(f).startswith("verification-")]
+                if bad:
+                    return "revise-all: needs a person: the revision changed the verification's own files (%s) on #%d" % (
+                        ", ".join(bad[:5]), pr["number"])
+            return "revise-all: %s" % ("review and merge pull request #%d" % pr["number"] if pr else state)
+        last_asked = asked_all[-1].get("closed_at") or ""
+        if any((i.get("closed_at") or "") > last_asked and i.get("state_reason") == "completed" for i in revisions):
+            return None  # this verdict's corrections are applied: the loop opens the next whole verification
+        if len(asked) >= MAX_VERIFY_ROUNDS:
+            hold = gh.create_issue("Codebase analysis - the whole analysis needs a person",
+                                   "Tracker: #%d\n\n%d whole verifications without a clean PASS. Read %s/verification-report.md "
+                                   "on %s, then remove the label `bible-needs-human` from this issue for new rounds."
+                                   % (tracker["number"], len(asked), analysis, self.default),
+                                   ["bible-hold", "bible-needs-human", "bible-whole", self.run_label])
+            return "verify-all: needs a person: see #%d" % hold["number"]
+        body = ("Tracker: #%d\nBase branch: %s\nAttempt: 1\n\nUse the analyzing-a-codebase skill (in %s) in revision mode "
+                "(references/revision.md) on the whole analysis in %s/: apply every correction in %s/verification-report.md. "
+                "Start with\n  python3 -I %s/analyzing-a-codebase/scripts/next.py --repo . --analysis %s --depth %s --new-session\n"
+                "and do exactly what it prints (when the code changed since the baseline it prints NEXT DELTA first), until it "
+                "prints DONE, then finish with status.py --write. Do not edit the verification report."
+                % (tracker["number"], self.default, self.skills, analysis, analysis, self.skills, analysis,
+                   self.settings.get("depth", "deep")))
+        gh.create_issue("Codebase analysis - revise the whole analysis", body, ["bible-revise-all", self.run_label],
+                        assignment(gh, self.default, self.settings.get("model")))
+        return "revise-all session assigned"
+
     def continue_if_unfinished(self, issue, pr, kind, analysis):
         """A session that ended before its work was done (seen on github.com, 24 Nov 2026: the assembly stopped at
         Copilot's session limit after 52 minutes). Done means this pull request wrote the end marker: the assembly's
@@ -817,7 +898,7 @@ class Queue:
         session, then a person. Only the queue's own marked comments count (anyone can post the marker text); a request
         Copilot has not picked up after NO_PR_AFTER counts as used. None when the work is done."""
         gh = self.gh
-        marker = "%s/status.json" % analysis if kind == "bible-assemble" else "%s/verification-report.md" % analysis
+        marker = "%s/verification-report.md" % analysis if kind == "bible-verify-all" else "%s/status.json" % analysis
         if marker in gh.pr_files(pr["number"]):
             return None
         me = gh.me()
