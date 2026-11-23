@@ -68,6 +68,18 @@ Source file: `.github/bible/bible_queue.py`
 | `GitHub.merge` | method | 293-296 | [card](#githubmergepr-title) |
 | `GitHub.close_pr` | method | 298-299 | [card](#githubclose_prnumber) |
 | `GitHub.create_pr` | method | 301-302 | [card](#githubcreate_prhead-base-title-body) |
+| `now` | function | 307-309 | [card](#now) |
+| `age` | function | 312-313 | [card](#age) |
+| `settings_of` | function | 316-321 | [card](#settings_of) |
+| `labels_of` | function | 324-325 | [card](#labels_of) |
+| `comp_label` | function | 328-329 | [card](#comp_label) |
+| `issue_text` | function | 332-338 | [card](#issue_textgh-path-ref-fallback_title) |
+| `assignment` | function | 341-345 | [card](#assignmentgh-base-model) |
+| `json_file` | function | 348-353 | [card](#json_filegh-path-ref) |
+| `section` | function | 356-362 | [card](#sectiontext-title) |
+| `report_facts` | function | 365-378 | [card](#report_factstext) |
+| `as_int` | function | 381-385 | [card](#as_intvalue) |
+| `status_of` | function | 388-391 | [card](#status_ofgh-path-ref) |
 
 ## Call graph
 
@@ -90,6 +102,14 @@ flowchart LR
   label["GitHub.label"]
   ready["GitHub.ready"]
   merge["GitHub.merge"]
+  now["now"]
+  age["age"]
+  settings_of["settings_of"]
+  issue_text["issue_text"]
+  json_file["json_file"]
+  section["section"]
+  report_facts["report_facts"]
+  status_of["status_of"]
   paged -->|"call"| call
   call -->|"request"| request
   ensure_all -->|"ensure_label"| ensure
@@ -105,6 +125,11 @@ flowchart LR
   ready -->|"request"| request
   merge -->|"ready"| ready
   merge -->|"call"| call
+  age -->|"now"| now
+  issue_text -->|"file"| call
+  json_file -->|"file"| call
+  report_facts -->|"section"| section
+  status_of -->|"json_file"| json_file
 ```
 
 ## Classes
@@ -1074,7 +1099,365 @@ return POST /pulls with head, base, title, and body
 
 ## Functions and methods
 
-Covered by the class method cards above.
+### `now()`
+
+Source: `.github/bible/bible_queue.py:307-309` <!-- code: 9fb56903ebfa -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | `age` (`.github/bible/bible_queue.py:313`) |
+| Calls | `os.environ.get`, `datetime.datetime.fromisoformat`, `datetime.datetime.now`, `replace` |
+| Purpose | Returns the configured test time or the current UTC time. |
+
+**Steps**
+
+1. Reads `BIBLE_NOW`. (`.github/bible/bible_queue.py:308`)
+2. If set, replaces `Z` with `+00:00` and parses the ISO timestamp; otherwise returns the current timezone-aware UTC datetime. (`.github/bible/bible_queue.py:309`)
+
+**Pseudo-code**
+
+```text
+stamp = BIBLE_NOW
+if stamp: parse ISO stamp after replacing Z with +00:00
+else: return current UTC time
+```
+
+**Branches and errors**
+
+| Line | Branch | When | What happens |
+| --- | --- | --- | --- |
+| `.github/bible/bible_queue.py:309` | conditional expression | `stamp` is truthy | Parses the configured time; otherwise obtains current UTC time. |
+
+### `age(stamp)`
+
+Source: `.github/bible/bible_queue.py:312-313` <!-- code: f2f8bb65e56f -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | Queue functions in later source packets. |
+| Calls | `now`, `datetime.datetime.fromisoformat`, `replace`, `total_seconds` |
+| Purpose | Returns elapsed seconds between `stamp` and `now()`. |
+
+**Steps**
+
+1. Replaces `Z` in `stamp` with `+00:00`, parses it as an ISO datetime, subtracts it from `now()`, and returns `total_seconds()`. (`.github/bible/bible_queue.py:313`)
+
+**Pseudo-code**
+
+```text
+return (now() - parse ISO stamp after replacing Z with +00:00).total_seconds()
+```
+
+### `settings_of(tracker)`
+
+Source: `.github/bible/bible_queue.py:316-321` <!-- code: a2abeca733b5 -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | Queue functions in later source packets. |
+| Calls | `SETTINGS.search`, `tracker.get`, `json.loads`, `match.group` |
+| Purpose | Parses the JSON settings marker from a tracker's body, returning `None` when absent or invalid. |
+
+**Steps**
+
+1. Searches the tracker body, defaulting a missing or falsey body to an empty string. (`.github/bible/bible_queue.py:317`)
+2. Returns parsed JSON from capture group 1 when a marker matched, or `None` when no match was found. (`.github/bible/bible_queue.py:318-319`)
+3. Returns `None` if JSON parsing raises `ValueError`. (`.github/bible/bible_queue.py:320-321`)
+
+**Pseudo-code**
+
+```text
+match = SETTINGS search in tracker.body or ""
+try:
+    return parse match group 1 if matched, otherwise None
+on ValueError: return None
+```
+
+**Branches and errors**
+
+| Line | Branch | When | What happens |
+| --- | --- | --- | --- |
+| `.github/bible/bible_queue.py:319` | conditional expression | A settings marker matched | Parses its first group; otherwise returns `None`. |
+| `.github/bible/bible_queue.py:320` | except | JSON parsing raises `ValueError` | Returns `None`. |
+
+### `labels_of(item)`
+
+Source: `.github/bible/bible_queue.py:324-325` <!-- code: 7a809f2b23af -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | Queue functions in later source packets. |
+| Calls | `item.get`, `isinstance` |
+| Purpose | Returns a set of label names from strings or label objects. |
+
+**Steps**
+
+1. Reads `labels`, defaulting to an empty list; for each element, uses its `name` when it is a dictionary and otherwise keeps the element itself. (`.github/bible/bible_queue.py:325`)
+
+**Pseudo-code**
+
+```text
+return {label["name"] if label is a dict else label
+        for label in item.labels or []}
+```
+
+**Branches and errors**
+
+| Line | Branch | When | What happens |
+| --- | --- | --- | --- |
+| `.github/bible/bible_queue.py:325` | conditional expression | A label item is a dict | Uses `item["name"]`; otherwise preserves the item value. |
+
+### `comp_label(name)`
+
+Source: `.github/bible/bible_queue.py:328-329` <!-- code: 5ead08c5004d -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | Queue functions in later source packets. |
+| Calls | None |
+| Purpose | Prefixes a component name with `bible/`. |
+
+**Steps**
+
+1. Returns the string `bible/` followed by `name`. (`.github/bible/bible_queue.py:329`)
+
+**Pseudo-code**
+
+```text
+return "bible/" + name
+```
+
+### `issue_text(gh, path, ref, fallback_title)`
+
+Source: `.github/bible/bible_queue.py:332-338` <!-- code: 0533b3261be5 -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | Queue functions in later source packets. |
+| Calls | `gh.file`, `splitlines`, `startswith`, `strip`, `join`, `len` |
+| Purpose | Reads a title/body pair from a ledger issue file, with a fallback title when no header exists. |
+
+**Steps**
+
+1. Reads the file through `gh.file`, converting a falsey result to `""`, then splits it into lines. (`.github/bible/bible_queue.py:334-335`)
+2. If the first line starts with `Title:`, returns its stripped suffix as the title and the stripped remaining lines joined by newlines as the body. (`.github/bible/bible_queue.py:336-337`)
+3. Otherwise returns `fallback_title` and the stripped full text. (`.github/bible/bible_queue.py:338`)
+
+**Pseudo-code**
+
+```text
+text = gh.file(path, ref) or ""
+lines = split text into lines
+if first line starts with "Title:":
+    return stripped header suffix, stripped remaining lines joined by newline
+return fallback_title, stripped text
+```
+
+**Branches and errors**
+
+| Line | Branch | When | What happens |
+| --- | --- | --- | --- |
+| `.github/bible/bible_queue.py:336` | if | `lines` is nonempty and the first line starts with `Title:` | Returns header title and remaining body; otherwise returns fallback title and full text. |
+
+### `assignment(gh, base, model)`
+
+Source: `.github/bible/bible_queue.py:341-345` <!-- code: da5ca422ae7f -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | Queue functions in later source packets. |
+| Calls | None |
+| Purpose | Builds the target repository and base-branch assignment, optionally including a model. |
+
+**Steps**
+
+1. Initializes the result with `target_repo: gh.repo` and `base_branch: base`. (`.github/bible/bible_queue.py:342`)
+2. Adds `model` only when truthy, then returns the result. (`.github/bible/bible_queue.py:343-345`)
+
+**Pseudo-code**
+
+```text
+out = {target_repo: gh.repo, base_branch: base}
+if model: out.model = model
+return out
+```
+
+**Branches and errors**
+
+| Line | Branch | When | What happens |
+| --- | --- | --- | --- |
+| `.github/bible/bible_queue.py:343` | if | `model` is truthy | Adds `model` to the assignment. |
+
+### `json_file(gh, path, ref)`
+
+Source: `.github/bible/bible_queue.py:348-353` <!-- code: 37acfbecddfa -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | `status_of` (`.github/bible/bible_queue.py:390`), queue functions in later source packets. |
+| Calls | `gh.file`, `json.loads` |
+| Purpose | Reads a file and parses JSON, returning `None` for missing or invalid content. |
+
+**Steps**
+
+1. Reads the file using `gh.file`. (`.github/bible/bible_queue.py:349`)
+2. Returns parsed JSON for truthy text, or `None` when the text is falsey. (`.github/bible/bible_queue.py:350-351`)
+3. Returns `None` if parsing raises `ValueError`. (`.github/bible/bible_queue.py:352-353`)
+
+**Pseudo-code**
+
+```text
+text = gh.file(path, ref)
+try:
+    return parse JSON if text, otherwise None
+on ValueError: return None
+```
+
+**Branches and errors**
+
+| Line | Branch | When | What happens |
+| --- | --- | --- | --- |
+| `.github/bible/bible_queue.py:351` | conditional expression | `text` is truthy | Parses JSON; otherwise returns `None`. |
+| `.github/bible/bible_queue.py:352` | except | JSON parsing raises `ValueError` | Returns `None`. |
+
+### `section(text, title)`
+
+Source: `.github/bible/bible_queue.py:356-362` <!-- code: 55167fd6e3c2 -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | `report_facts` (`.github/bible/bible_queue.py:375`), queue functions in later source packets. |
+| Calls | `re.search`, `re.escape`, `match.end`, `nxt.start` |
+| Purpose | Returns a Markdown level-two section's text, or an empty string if its heading is absent. |
+
+**Steps**
+
+1. Searches for a line matching exactly a level-two heading with the escaped `title`. (`.github/bible/bible_queue.py:357`)
+2. Returns `""` if no heading matches. (`.github/bible/bible_queue.py:358-359`)
+3. Slices text after the matched heading through the next level-two heading, or through end of text when there is no next heading. (`.github/bible/bible_queue.py:360-362`)
+
+**Pseudo-code**
+
+```text
+match = search exact "## title" heading
+if no match: return ""
+rest = text after heading
+find next level-two heading
+return before next heading if found, otherwise all rest
+```
+
+**Branches and errors**
+
+| Line | Branch | When | What happens |
+| --- | --- | --- | --- |
+| `.github/bible/bible_queue.py:358` | if | No heading matched | Returns an empty string. |
+| `.github/bible/bible_queue.py:362` | conditional expression | A next level-two heading matched | Returns the section before it; otherwise returns the remaining text. |
+
+### `report_facts(text)`
+
+Source: `.github/bible/bible_queue.py:365-378` <!-- code: a367c151c5b0 -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | Queue functions in later source packets. |
+| Calls | `re.sub`, `re.findall`, `len`, `sum`, `splitlines`, `startswith`, `re.search`, `section`, `lstrip`, `upper`, `printed.group` |
+| Purpose | Extracts a verification verdict, major-correction count, and optional analysis fingerprint. |
+
+**Steps**
+
+1. Returns `None` for falsey `text`. (`.github/bible/bible_queue.py:368-369`)
+2. Removes HTML comments and fenced code blocks, then finds visible `Verdict` values and rows. (`.github/bible/bible_queue.py:370-372`)
+3. Returns `("UNREADABLE", 0, None)` unless exactly one accepted verdict and exactly one verdict row were found. (`.github/bible/bible_queue.py:373-374`)
+4. Counts lines in the `Corrections` section that begin with `|` and contain a `major` cell. (`.github/bible/bible_queue.py:375-376`)
+5. Searches for a 16-character lowercase hexadecimal fingerprint and returns the uppercased verdict, count, and captured fingerprint or `None`. (`.github/bible/bible_queue.py:377-378`)
+
+**Pseudo-code**
+
+```text
+if text is falsey: return None
+visible = remove comments and fenced code blocks
+find accepted verdict values and verdict rows
+if either count is not exactly one: return ("UNREADABLE", 0, None)
+majors = count major rows in Corrections section
+fingerprint = optional 16-hex Analysis fingerprint
+return verdict.upper(), majors, fingerprint or None
+```
+
+**Branches and errors**
+
+| Line | Branch | When | What happens |
+| --- | --- | --- | --- |
+| `.github/bible/bible_queue.py:368` | if | `text` is falsey | Returns `None`. |
+| `.github/bible/bible_queue.py:373` | if | Verdict or verdict-row count is not exactly one | Returns `("UNREADABLE", 0, None)`. |
+| `.github/bible/bible_queue.py:378` | conditional expression | Fingerprint regex matched | Returns its group 1; otherwise returns `None` in that tuple position. |
+
+### `as_int(value)`
+
+Source: `.github/bible/bible_queue.py:381-385` <!-- code: 8081107d37e4 -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | Queue functions in later source packets. |
+| Calls | `int` |
+| Purpose | Converts a value to an integer, returning zero for `TypeError` or `ValueError`. |
+
+**Steps**
+
+1. Returns `int(value)` when conversion succeeds. (`.github/bible/bible_queue.py:382-383`)
+2. Returns `0` when conversion raises `TypeError` or `ValueError`. (`.github/bible/bible_queue.py:384-385`)
+
+**Pseudo-code**
+
+```text
+try: return int(value)
+on TypeError or ValueError: return 0
+```
+
+**Branches and errors**
+
+| Line | Branch | When | What happens |
+| --- | --- | --- | --- |
+| `.github/bible/bible_queue.py:384` | except | `int(value)` raises `TypeError` or `ValueError` | Returns zero. |
+
+### `status_of(gh, path, ref)`
+
+Source: `.github/bible/bible_queue.py:388-391` <!-- code: ad9adb38e0f7 -->
+
+| | |
+| --- | --- |
+| Kind | module function |
+| Called by | Queue functions in later source packets. |
+| Calls | `json_file`, `isinstance` |
+| Purpose | Returns parsed component status only when the loaded JSON is a dictionary. |
+
+**Steps**
+
+1. Loads `path` at `ref` with `json_file`. (`.github/bible/bible_queue.py:390`)
+2. Returns the loaded data if it is a dictionary; otherwise returns `{}`. (`.github/bible/bible_queue.py:391`)
+
+**Pseudo-code**
+
+```text
+data = json_file(gh, path, ref)
+return data if data is a dict, otherwise {}
+```
+
+**Branches and errors**
+
+| Line | Branch | When | What happens |
+| --- | --- | --- | --- |
+| `.github/bible/bible_queue.py:391` | conditional expression | `data` is a dictionary | Returns `data`; otherwise returns `{}`. |
 
 ## Module-level code
 
