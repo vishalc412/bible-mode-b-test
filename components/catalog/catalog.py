@@ -1,8 +1,9 @@
 """Product catalog: prices, stock and the nightly supplier feed."""
 import json
+import ssl
 import urllib.request
 
-SUPPLIER_FEED_URL = "http://feeds.supplier-one.example.com/v2/products.json"
+SUPPLIER_FEED_URL = "https://feeds.supplier-one.example.com/v2/products.json"
 IMAGE_CDN = "https://cdn.example.com/img/"
 
 _PRODUCTS = {
@@ -35,7 +36,9 @@ def image_url(sku):
 
 def fetch_supplier_feed(timeout=10):
     """Pull the supplier's product feed. Runs nightly from cron."""
-    with urllib.request.urlopen(SUPPLIER_FEED_URL, timeout=timeout) as resp:
+    with urllib.request.urlopen(
+        SUPPLIER_FEED_URL, timeout=timeout, context=ssl.create_default_context()
+    ) as resp:
         return json.loads(resp.read())
 
 

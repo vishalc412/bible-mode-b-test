@@ -1,7 +1,7 @@
 # HTTPS Migration Inventory
 
 Inventory date: 2026-11-23  
-Status: Phase 1 only; awaiting confirmation before Phase 2.
+Status: Phase 2 implementation underway; inventory confirmed by the repository owner in PR comment 7115356760.
 
 ## Scope and inputs
 
@@ -9,7 +9,7 @@ Status: Phase 1 only; awaiting confirmation before Phase 2.
 - Build and test command: `python3 -m unittest discover -s . -p "test_*.py" -t .`
 - Public hostnames owned by this application: none.
 - Known external callers of this application's HTTP URLs: none.
-- The legacy payment partner has said TLS is coming soon, without a date; settlement must not break. Keep this endpoint on HTTP for now and list a human action.
+- The repository owner confirmed HTTPS for the supplier feed on the same host and path. The legacy payment partner has said TLS is coming soon, without a date; settlement must not break. Keep this endpoint on HTTP for now and list a human action.
 - No remote hosts were contacted. HTTPS support for external systems was not probed.
 
 The required analysis check was run with `python3 -I .github/skills/analyzing-a-codebase/scripts/status.py --repo . --analysis codebase-analysis --check`; it returned exit 20 (`UNVERIFIED (COMPONENTS_VERIFIED)`), reporting no whole-analysis verification report. The whole analysis was not relied on as fact; the relevant source was checked directly. `/home/runner/work/bible-mode-b-test/bible-mode-b-test/codebase-analysis/knowledge/graph.json` is absent, so no change-impact assessment was run.
@@ -24,7 +24,7 @@ There is no public or browser-facing listener in the application. The catalog co
 
 | URL or location | Classification | Use and disposition |
 | --- | --- | --- |
-| `http://feeds.supplier-one.example.com/v2/products.json` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/catalog/catalog.py:5,38`) | Third party | Supplier feed fetched with `urllib.request.urlopen`, timeout 10 seconds. HTTPS support is unconfirmed; do not contact it without authorization. Human action: supplier owner to confirm its HTTPS endpoint and coordinate a safe switch. |
+| `https://feeds.supplier-one.example.com/v2/products.json` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/catalog/catalog.py:6,39-41`) | Third party | Supplier confirmed HTTPS on the same host and path in PR comment 7115356760. Switched to HTTPS using `ssl.create_default_context()` with certificate and hostname verification enabled. No remote connection was made. |
 | `http://partner-legacy.internal/settle` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/orders/orders.py:9,47-50`) | Third party | Production settlement URL, sent with `urllib.request.urlopen`. Partner has no TLS date; keep on HTTP so settlement is not broken. Human action: partner team to provide an HTTPS endpoint/date and plan a tested cutover. |
 | `http://localhost:8099/settle` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/orders/orders.py:12,47`) | Local developer fake | Selected only when `dev=True`; never deployed. Not a public endpoint and not a migration target. |
 | `http://127.0.0.1:8001` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/orders/catalog_client.py:11`) and `http://127.0.0.1:%d` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/orders/test_catalog_client.py:17`) | Internal service / test | The configurable catalog client calls the in-repository catalog API; its known callers are tests. The test server binds an ephemeral loopback port. Both remain unchanged for the separate mutual-TLS migration. |
@@ -40,7 +40,7 @@ Of the 73 remaining scanner lines, 6 are in application source/tests: the suppli
 
 | Call site | Client | Current scheme / verification | Classification |
 | --- | --- | --- | --- |
-| `/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/catalog/catalog.py:38` | `urllib.request.urlopen` | HTTP supplier feed; TLS verification does not apply until HTTPS is confirmed. | Third party; human action required. |
+| `/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/catalog/catalog.py:39-41` | `urllib.request.urlopen` | HTTPS supplier feed with `ssl.create_default_context()`; certificate verification is required and hostname checking is enabled. | Third party; scheme switched based on supplier confirmation. Live endpoint certificate/hostname were not probed. |
 | `/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/orders/orders.py:50` | `urllib.request.urlopen` | HTTP partner or local fake, depending on `dev`. | Partner stays HTTP for now; fake is local development only. |
 | `/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/orders/catalog_client.py:22` | `urllib.request.urlopen` | HTTP to `CATALOG_URL`; in-repository service link. | Out of scope for this migration; reserve for mutual TLS. |
 | `/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/orders/test_catalog_client.py:32` | `urllib.request.urlopen` | HTTP loopback test request. | Test-only local service call. |
@@ -78,14 +78,13 @@ The tests include local HTTP catalog-client requests, but no redirect, cookie, H
 
 - Raw first-pass plain-HTTP lines: **79**.
 - Lines remaining after this run's allowlist: **73** (6 dropped).
-- Locations needing an external HTTPS-support decision/action: **2** — the supplier feed and legacy payment partner. The partner is explicitly to remain on HTTP until its team supplies a confirmed HTTPS endpoint and a safe cutover plan.
+- Locations needing an external HTTPS-support decision/action: **1** — the legacy payment partner. The supplier endpoint was confirmed by the repository owner and switched to HTTPS; its live certificate was not probed.
 - Every remaining scanner hit is accounted for as an application endpoint, test/local endpoint, internal service endpoint (out of scope), a generic migration-tool probe, or non-network documentation/example/template.
 
 ## Human actions and Phase 1 hand-off
 
-1. Confirm with the supplier owner whether `feeds.supplier-one.example.com` supports HTTPS and identify the correct endpoint. Do not probe a non-local host without explicit authorization. If a probe is later authorized, the exact target is `feeds.supplier-one.example.com:443`.
-2. Ask the partner team for a dated HTTPS settlement endpoint and a settlement-safe cutover plan. Do not probe `partner-legacy.internal:443` without explicit authorization; keep settlement on HTTP in the meantime.
-3. Keep the catalog service and its caller unchanged in this task; handle that internal service link separately with `migrating-service-calls-to-tls`.
-4. No public certificate, DNS, redirect, or HSTS action is identified for this repository because it has no public-facing listener or owned public hostname.
+1. Ask the partner team for a dated HTTPS settlement endpoint and a settlement-safe cutover plan. Do not probe `partner-legacy.internal:443`; keep settlement on HTTP in the meantime.
+2. Keep the catalog service and its caller unchanged in this task; handle that internal service link separately with `migrating-service-calls-to-tls` (issue #77).
+3. No public certificate, DNS, redirect, or HSTS action is identified for this repository because it has no public-facing listener or owned public hostname.
 
-**Phase 1 is complete only after the remaining second-scan lines are classified and this inventory is confirmed. No Phase 2 source changes have been made.**
+**Phase 1 inventory was confirmed by the repository owner. No remote hosts were contacted.**
