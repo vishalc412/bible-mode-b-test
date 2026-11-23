@@ -679,6 +679,11 @@ class Queue:
             if status.get("state") == "STOP" or not progressed:
                 retried = self.fail_or_retry(issue, pr, "no progress (state %s, packets %s -> %s)" % (status.get("state"), before, status.get("packets_done")))
                 return "session starting" if retried else "needs a person: see #%d" % issue["number"]
+            pages = ("%s/lld/%s/" % (analysis, name), "%s/lld/api/%s/" % (analysis, name), base + "revision-log.md")
+            if revision and not any(f.startswith(pages) for f in gh.pr_files(pr["number"])):
+                # seen on github.com (24 Nov 2026): a revision that ran next.py, saw the gate pass and changed nothing
+                retried = self.fail_or_retry(issue, pr, "the revision changed no page and recorded no correction")
+                return "session starting" if retried else "needs a person: see #%d" % issue["number"]
             if revision and status.get("state") != "COMPONENT_DONE":
                 retried = self.fail_or_retry(issue, pr, "the revision did not end at COMPONENT DONE")
                 return "session starting" if retried else "needs a person: see #%d" % issue["number"]

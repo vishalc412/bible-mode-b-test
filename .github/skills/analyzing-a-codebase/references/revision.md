@@ -10,6 +10,8 @@ When the report is a component's (`ledger/components/<name>/verification-report.
 - Do not re-run `inventory.py`, `knowledge.py` or `status.py --write`: they rewrite shared files. `coverage.py --component <name>` (run by `next.py --component <name>`) is the check; it has its own drift check.
 - Findings about shared files (`progress.md`, `ledger/coverage-ledger.md`, reference pages) go in the README's `## For the whole-system pages` section for the assemble run.
 - Number the report's corrections as it does (`V-001`), and your own items `N-01`, `N-02`, in the same log.
+- Start with `next.py --component <name>`: while the corrections are not applied it prints `NEXT REVISION <name>`, never `COMPONENT DONE`. A passing gate is not a revision: the report's corrections are.
+- Record every correction (`V-001`, ...) in the log, with what you changed or, when no page needs to change, why. `next.py` moves on once a page has changed since the verification, or once the log names every correction.
 - Done when `next.py --component <name>` prints `COMPONENT DONE <name>` again. Only `major` corrections need a new verification.
 
 ## Work through every item
