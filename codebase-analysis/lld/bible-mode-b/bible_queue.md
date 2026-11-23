@@ -19,14 +19,14 @@ Source file: `.github/bible/bible_queue.py`
 | | |
 | --- | --- |
 | Component | `bible-mode-b` (its design page is `README.md` in this folder) |
-| Lines | 844 |
+| Lines | 848 |
 | Role | Runs the Mode B analysis queue and its GitHub API client. |
 | Imports that matter | Python standard-library JSON, URL, base64, temporary-file, archive, subprocess, and filesystem modules used by the API client, queue, and CLI. (`.github/bible/bible_queue.py:42-55`) |
 | Module-level state | `COPILOT`, `AGENT_LOGINS`, `AGENT_APP`, `START_ERROR`, `FINAL_STATES`, `NO_PR_AFTER`, `IDLE_AFTER`, `MAX_VERIFY_ROUNDS`, `SETTINGS`, `ATTEMPT`, `NAME`, and `LABELS` are initialized at import; environment-backed values include `BIBLE_AGENT_LOGINS` and `BIBLE_AGENT_APP`. (`.github/bible/bible_queue.py:59-83`) |
 
 ## Summary
 
-`main` exposes the `start`, `reconcile`, and `delta` CLI commands. It constructs `Queue` and `GitHub`; `Queue` coordinates tracker/session state and delegates repository operations to `GitHub`, whose methods build REST requests and a GraphQL ready-for-review mutation. `Queue.delta` also imports component-membership helpers from the analysis toolkit. (`.github/bible/bible_queue.py:797-840`, `.github/bible/bible_queue.py:396-794`, `.github/bible/bible_queue.py:88-302`, `.github/bible/bible_queue.py:775-781`)
+`main` exposes the `start`, `reconcile`, and `delta` CLI commands. It constructs `Queue` and `GitHub`; `Queue` coordinates tracker/session state and delegates repository operations to `GitHub`, whose methods build REST requests and a GraphQL ready-for-review mutation. `Queue.delta` also imports component-membership helpers from the analysis toolkit. (`.github/bible/bible_queue.py:801-844`, `.github/bible/bible_queue.py:396-798`, `.github/bible/bible_queue.py:88-302`, `.github/bible/bible_queue.py:779-783`)
 
 ## Index
 
@@ -80,7 +80,7 @@ Source file: `.github/bible/bible_queue.py`
 | `report_facts` | function | 365-378 | [card](#report_factstext) |
 | `as_int` | function | 381-385 | [card](#as_intvalue) |
 | `status_of` | function | 388-391 | [card](#status_ofgh-path-ref) |
-| `Queue` | class | 396-794 | [class](#queue) |
+| `Queue` | class | 396-798 | [class](#queue) |
 | `Queue.__init__` | method | 397-399 | [card](#queue__init__gh-log-print) |
 | `Queue.run_issues` | method | 401-402 | [card](#queue_run_issueslabels-state-open) |
 | `Queue.agent_pr` | method | 404-410 | [card](#queue_agent_prissue-base) |
@@ -93,13 +93,13 @@ Source file: `.github/bible/bible_queue.py`
 | `Queue.run` | method | 489-525 | [card](#queue_runtracker-settings) |
 | `Queue.plan_phase` | method | 527-549 | [card](#queue_plan_phasetracker-settings-analysis) |
 | `Queue.start_chunk` | method | 551-563 | [card](#queue_start_chunkanalysis-name-fresh-false-note) |
-| `Queue.component` | method | 565-643 | [card](#queue_componentanalysis-name) |
-| `Queue.follow` | method | 645-692 | [card](#queue_followanalysis-name-issue) |
-| `Queue.check` | method | 694-711 | [card](#queue_checkanalysis-name-branch) |
-| `Queue.assemble_phase` | method | 713-753 | [card](#queue_assemble_phasetracker-settings-analysis) |
-| `Queue.render` | method | 755-765 | [card](#queue_rendertracker-settings-rows) |
-| `Queue.delta` | method | 768-794 | [card](#queue_deltachanged-settings_analysiscodebase-analysis) |
-| `main` | function | 797-840 | [card](#main) |
+| `Queue.component` | method | 565-642 | [card](#queue_componentanalysis-name) |
+| `Queue.follow` | method | 644-696 | [card](#queue_followanalysis-name-issue) |
+| `Queue.check` | method | 698-715 | [card](#queue_checkanalysis-name-branch) |
+| `Queue.assemble_phase` | method | 717-757 | [card](#queue_assemble_phasetracker-settings-analysis) |
+| `Queue.render` | method | 759-769 | [card](#queue_rendertracker-settings-rows) |
+| `Queue.delta` | method | 772-798 | [card](#queue_deltachanged-settings_analysiscodebase-analysis) |
+| `main` | function | 801-844 | [card](#main) |
 
 ## Call graph
 
@@ -1366,7 +1366,7 @@ return POST /pulls with head, base, title, and body
 
 ### `Queue`
 
-Source: `.github/bible/bible_queue.py:396-794` <!-- code: 0f494b4769c4 -->
+Source: `.github/bible/bible_queue.py:396-798` <!-- code: c7b3115b36f1 -->
 
 `Queue` coordinates tracker issues, component sessions, verification/revision cycles, assembly, and delta updates. Its constructor sets the GitHub client, logger, and skill directory; methods also populate run-specific fields such as `default`, `settings`, `tracker`, `run_label`, and `estimate`. (`.github/bible/bible_queue.py:397-399`, `.github/bible/bible_queue.py:478`, `.github/bible/bible_queue.py:491-492`, `.github/bible/bible_queue.py:507`)
 
@@ -1377,7 +1377,7 @@ Source: `.github/bible/bible_queue.py:397-399` <!-- code: 11924208c0e9 -->
 | | |
 | --- | --- |
 | Kind | instance initializer |
-| Called by | `main` (`.github/bible/bible_queue.py:817`) |
+| Called by | `main` (`.github/bible/bible_queue.py:821`) |
 | Calls | `os.environ.get` |
 | Purpose | Stores the GitHub client and logger, and selects the skills directory. |
 
@@ -1455,7 +1455,7 @@ Source: `.github/bible/bible_queue.py:413-429` <!-- code: 6fe9d410226f -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:542`), `Queue.follow` (`.github/bible/bible_queue.py:648`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:735`) |
+| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:542`), `Queue.follow` (`.github/bible/bible_queue.py:647`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:739`) |
 | Calls | `self.agent_pr`, `self.gh.start_error`, `age`, `self.gh.assigned_at`, `self.gh.agent_events`, `sorted`, `self.gh.commit_time`, `bool`, `status_of`, `labels_of`, `get` |
 | Purpose | Classifies an issue's session as waiting, running, finished, no-start, or start-error and returns its PR if present. |
 
@@ -1572,7 +1572,7 @@ Source: `.github/bible/bible_queue.py:447-453` <!-- code: 510c0f07df06 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:544`), `Queue.follow` (`.github/bible/bible_queue.py:652`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:737`) |
+| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:544`), `Queue.follow` (`.github/bible/bible_queue.py:651`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:741`) |
 | Calls | `self.gh.start_error`, `self.gh.label`, `self.gh.unassign`, `self.gh.comment` |
 | Purpose | Holds a session with an agent start error for human intervention. |
 
@@ -1597,7 +1597,7 @@ Source: `.github/bible/bible_queue.py:455-474` <!-- code: c86515a02433 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:547`), `Queue.follow` (`.github/bible/bible_queue.py:655`, `.github/bible/bible_queue.py:668`, `.github/bible/bible_queue.py:681`, `.github/bible/bible_queue.py:684`, `.github/bible/bible_queue.py:687`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:740`) |
+| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:547`), `Queue.follow` (`.github/bible/bible_queue.py:654`, `.github/bible/bible_queue.py:667`, `.github/bible/bible_queue.py:680`, `.github/bible/bible_queue.py:685`, `.github/bible/bible_queue.py:688`, `.github/bible/bible_queue.py:691`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:744`) |
 | Calls | `ATTEMPT.search`, `int`, `self.gh.comment`, `self.gh.close_pr`, `self.gh.label`, `self.gh.unassign`, `self.gh.close`, `ATTEMPT.sub`, `re.search`, `self.gh.create_issue`, `sorted`, `assignment`, `self.model_for`, `labels_of`, `startswith` |
 | Purpose | Closes a failed attempt and opens its retry, or holds the issue after a second failure. |
 
@@ -1670,38 +1670,39 @@ for tracker in open bible-tracker issues:
 
 #### `Queue.run(tracker, settings)`
 
-Source: `.github/bible/bible_queue.py:489-525` <!-- code: 810b772ee155 -->
+Source: `.github/bible/bible_queue.py:489-525` <!-- code: 3557926dc2ac -->
 
 | | |
 | --- | --- |
 | Kind | instance method |
 | Called by | `Queue.reconcile` (`.github/bible/bible_queue.py:485`) |
-| Calls | `settings.get`, `json_file`, `self.plan_phase`, `isinstance`, `self.render`, `self.run_issues`, `self.component`, `as_int`, `self.start_chunk`, `self.assemble_phase`, `str`, `endswith`, `startswith`, `all` |
-| Purpose | Dispatches a tracker to planning or runs selected components within a concurrency limit, then renders their state. |
+| Calls | `settings.get`, `json_file`, `catalog.get`, `self.plan_phase`, `isinstance`, `c.get`, `().strip`, `n.strip`, `asked.split`, `self.render`, `join`, `self.run_issues`, `gh.close`, `self.component`, `endswith`, `startswith`, `type`, `str`, `as_int`, `self.start_chunk`, `all`, `self.assemble_phase`, `rows.values` |
+| Purpose | Sends an incomplete catalog to planning; otherwise validates selected components, advances their queue states within the configured concurrency cap, and renders tracker status. |
 
 **Steps**
 
-1. Selects `analysis` from settings or `codebase-analysis`, stores settings/tracker/run label, and loads `components.json` from the default branch. (`.github/bible/bible_queue.py:490-493`)
-2. If the catalog is missing/not a dict, proposed, or lacks a components list, delegates to `plan_phase` and returns. (`.github/bible/bible_queue.py:494-495`)
-3. Extracts named component entries, reads the requested component selection, expands `all`/empty to every catalog name or splits and strips the comma-separated selection, and finds unknown names. (`.github/bible/bible_queue.py:496-499`)
-4. If there are unknown names or no selected names, renders a stopped settings message and returns. (`.github/bible/bible_queue.py:500-504`)
-5. Closes open plan issues, records estimated sessions, calls `component` per selected name, catches errors per component into a bounded status string, and counts active/waiting states. (`.github/bible/bible_queue.py:505-514`)
-6. Parses concurrency; starts `not started` components while capacity remains, recording runtime errors as bounded statuses. (`.github/bible/bible_queue.py:515-522`)
-7. If every component state is `merged`, adds whole-analysis assembly status; renders the resulting rows. (`.github/bible/bible_queue.py:523-525`)
+1. Selects `analysis` from settings or `codebase-analysis`, stores settings/tracker/run label, and reads `components.json` from the default branch. (`.github/bible/bible_queue.py:490-493`)
+2. If the catalog is not a dict, is marked proposed, or has no components list, returns the result of `plan_phase`. (`.github/bible/bible_queue.py:494-495`)
+3. Extracts names from dict entries with a truthy `name`; reads and strips the requested selection, expands `all` or empty selection to all names, otherwise splits and strips comma-separated names, then finds names absent from the catalog. (`.github/bible/bible_queue.py:496-499`)
+4. If the selection contains unknown names or is empty, renders a stopped-settings message listing the unknown names or explaining that none was selected, together with the catalog names. (`.github/bible/bible_queue.py:500-504`)
+5. Closes each open plan issue, records per-component session estimates, evaluates each selected component, converts an exception into a bounded per-component error string, and counts results ending in `running`, `starting`, or `merged`, or beginning with `waiting`. (`.github/bible/bible_queue.py:505-514`)
+6. Converts configured concurrency with `as_int`; for each `not started` component, starts a fresh chunk if the cap is zero or the active count is below it, incrementing the count or recording a bounded `RuntimeError` status. (`.github/bible/bible_queue.py:515-522`)
+7. Adds whole-analysis assembly status when all selected rows equal `merged`, then renders the rows. (`.github/bible/bible_queue.py:523-525`)
 
 **Pseudo-code**
 
 ```text
 analysis = settings.analysis or "codebase-analysis"
 store run fields; catalog = json_file(components.json)
-if catalog is invalid/proposed: return plan_phase(...)
+if catalog is invalid, proposed, or has no components list: return plan_phase(...)
 names = catalog component names
-wanted = all names or parsed requested names
-if unknown names or no wanted names: render stopped status; return
+selection = stripped settings.components or "all"
+wanted = all names if selection is "all" or empty, else parsed names
+if unknown names or wanted is empty: render stopped settings; return
 close open plan issues
-for wanted name: component(name), record per-component error, count active
-cap = concurrency as integer
-for wanted name: if not started and capacity available, start chunk
+for wanted name: evaluate component state; record errors; count active states
+cap = concurrency converted to integer
+for wanted name: if not started and (cap is zero or active < cap), start fresh chunk
 if every row is merged: add assembly status
 render rows
 ```
@@ -1710,20 +1711,20 @@ render rows
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py:494` | if | Catalog is invalid, proposed, or components is not a list | Returns the planning-phase result. |
-| `.github/bible/bible_queue.py:498` | conditional expression | Requested selection is `all` or empty | Uses all names; otherwise parses comma-separated names. |
+| `.github/bible/bible_queue.py:494` | if | Catalog is not a dict, is proposed, or lacks a components list | Returns the planning-phase result. |
+| `.github/bible/bible_queue.py:498` | conditional expression | Selection is `all` or empty | Uses all catalog names; otherwise parses comma-separated names. |
 | `.github/bible/bible_queue.py:500` | if | Selection contains unknown names or is empty | Renders stopped settings and returns. |
-| `.github/bible/bible_queue.py:503` | conditional expression | At least one unknown component exists | Reports unknown names; otherwise reports no component selected. |
-| `.github/bible/bible_queue.py:505` | for | For each open plan issue | Closes the issue. |
-| `.github/bible/bible_queue.py:509` | for | For each requested component | Evaluates component state. |
-| `.github/bible/bible_queue.py:510` | try | Component evaluation is invoked | Records the result or catches component failure. |
-| `.github/bible/bible_queue.py:512` | except | Component evaluation raises `Exception` | Stores a per-component error status. |
-| `.github/bible/bible_queue.py:514` | augmented assignment | For each component result | Increments active count when state ends in running/starting or begins waiting. |
-| `.github/bible/bible_queue.py:516` | for | For each requested component | Considers starting a waiting component. |
-| `.github/bible/bible_queue.py:517` | if | Component is not started and cap is zero or active is below cap | Attempts to start the next chunk. |
-| `.github/bible/bible_queue.py:518` | try | Start conditions hold | Starts the component and increments active. |
-| `.github/bible/bible_queue.py:521` | except | Starting the chunk raises `RuntimeError` | Records a bounded error status. |
-| `.github/bible/bible_queue.py:523` | if | Every component row equals `merged` | Adds whole-analysis phase state. |
+| `.github/bible/bible_queue.py:503` | conditional expression | Unknown names exist | Reports unknown names; otherwise reports no selected component. |
+| `.github/bible/bible_queue.py:505` | for | For each open plan issue | Closes that issue. |
+| `.github/bible/bible_queue.py:509` | for | For each selected component | Evaluates the component state. |
+| `.github/bible/bible_queue.py:510` | try | Evaluating a component | Stores its result or catches an exception. |
+| `.github/bible/bible_queue.py:512` | except | Component evaluation raises `Exception` | Stores a per-component error status with the exception type and at most 160 characters of its text. |
+| `.github/bible/bible_queue.py:514` | augmented assignment | For each result | Increments active count when its suffix is `running`, `starting`, or `merged`, or its prefix is `waiting`. |
+| `.github/bible/bible_queue.py:516` | for | For each selected component | Considers whether to start a waiting component. |
+| `.github/bible/bible_queue.py:517` | if | Status is `not started` and cap is zero or active is below cap | Attempts to start a fresh chunk. |
+| `.github/bible/bible_queue.py:518` | try | Start conditions hold | Starts the chunk and increments active count. |
+| `.github/bible/bible_queue.py:521` | except | Starting the chunk raises `RuntimeError` | Stores a bounded error status. |
+| `.github/bible/bible_queue.py:523` | if | Every selected row is `merged` | Adds whole-analysis assembly status. |
 
 #### `Queue.plan_phase(tracker, settings, analysis)`
 
@@ -1810,27 +1811,27 @@ create assigned chunk issue with component/base/attempt header and optional note
 
 #### `Queue.component(analysis, name)`
 
-Source: `.github/bible/bible_queue.py:565-643` <!-- code: 3a16b7371216 -->
+Source: `.github/bible/bible_queue.py:565-642` <!-- code: 9d544dd09fb5 -->
 
 | | |
 | --- | --- |
 | Kind | instance method |
 | Called by | `Queue.run` (`.github/bible/bible_queue.py:511`) |
-| Calls | `self.gh.branch_prs`, `get`, `self.run_issues`, `comp_label`, `self.held`, `self.follow`, `endswith`, `status_of`, `self.check`, `len`, `self.start_chunk`, `self.estimate.get`, `self.gh.close`, `labels_of`, `max`, `report_facts`, `self.gh.create_pr`, `self.gh.create_issue` |
-| Purpose | Advances a component's queue from branch/chunk work through coverage, component verification/revision, and a final PR. |
+| Calls | `gh.branch_prs`, `pr.get`, `get`, `self.run_issues`, `comp_label`, `self.held`, `self.follow`, `result.endswith`, `status_of`, `status.get`, `self.check`, `len`, `self.start_chunk`, `self.estimate.get`, `gh.close`, `labels_of`, `max`, `h.get`, `i.get`, `report_facts`, `gh.file`, `gh.create_pr`, `gh.create_issue`, `assignment`, `self.settings.get` |
+| Purpose | Advances a component through its tracker-specific pull requests and sessions, coverage gate, verification and revision rounds, and final review PR or human hold. |
 
 **Steps**
 
-1. Scans branch PRs into the default branch. Ignores a different repository, a PR predating the tracker, or a PR lacking this tracker reference; returns merged, review, or human-needed status for the first matching PR. (`.github/bible/bible_queue.py:566-576`)
-2. Combines open chunk and verification issues. For the first open session, returns human-needed if held; otherwise follows it and returns unless it merged. (`.github/bible/bible_queue.py:577-585`)
-3. If this run has no component issue in any state, returns `not started`; otherwise loads component status and runs the component gate only for `COMPONENT_DONE`. (`.github/bible/bible_queue.py:586-591`)
-4. If the gate fails, counts closed chunk issues, starts the next chunk with a session estimate, and returns `session starting`. (`.github/bible/bible_queue.py:592-595`)
-5. Loads hold issues; an open human-held issue returns human-needed, while an open hold whose label was removed is closed and the hold list refreshed. (`.github/bible/bible_queue.py:596-602`)
-6. Gets the newest hold close time and selects completed verification and revision issues from after that point; also finds all completed verifications. `closed_revise` is collected but is not read later in this method. (`.github/bible/bible_queue.py:603-608`)
-7. Reads verification facts only when at least one completed verification exists. A `PASS` with no major corrections and matching nonempty page fingerprint creates the component-to-default PR and returns its review status. (`.github/bible/bible_queue.py:609-614`)
-8. After `MAX_VERIFY_ROUNDS` completed verification issues, if the last facts are not a clean matching PASS, creates a human hold and returns its issue number. (`.github/bible/bible_queue.py:615-623`)
-9. Finds all completed verifications/revisions, compares their latest close times, and starts a revision chunk when the verification verdict is not PASS or has major corrections and the last revision is older than the verification. (`.github/bible/bible_queue.py:624-633`)
-10. Otherwise creates a verification issue on the component branch and returns `verify running`. (`.github/bible/bible_queue.py:634-643`)
+1. Scans PRs from the component branch into the default branch. Skips PRs from another repository, created before the tracker, or without its tracker reference; for the first remaining PR, returns `merged`, review status, or a human-needed status if it was closed without merging. (`.github/bible/bible_queue.py:566-576`)
+2. Combines open chunk and verification issues. For the first issue, returns human-needed if it is held; otherwise follows the session. (`.github/bible/bible_queue.py:577-585`)
+3. If the follow result does not end in `merged`, returns it. If there is no component issue in any state, returns `not started`; otherwise reads component status and runs the coverage check only when its state is `COMPONENT_DONE`. (`.github/bible/bible_queue.py:583-591`)
+4. If the gate did not pass, counts closed chunk issues, starts another chunk with a session estimate, and returns `session starting`. (`.github/bible/bible_queue.py:592-595`)
+5. Loads all hold issues. If one is open and still labeled `bible-needs-human`, returns a human-needed status; if the label was removed, closes that hold and reloads the hold list. (`.github/bible/bible_queue.py:596-602`)
+6. Finds the latest hold close time and completed verification issues created at or after it; separately finds all completed verification issues and reads/parses the report only when at least one exists. (`.github/bible/bible_queue.py:603-607`)
+7. A parsed `PASS` with no major corrections and a nonempty fingerprint matching the gate's page fingerprint creates a component-to-default PR and returns its review status. (`.github/bible/bible_queue.py:608-612`)
+8. Finds all completed verifications and completed revision chunk issues, compares their latest close times, and creates a human hold when a newer verification exists, the post-hold verification count reaches `MAX_VERIFY_ROUNDS`, and the report is not a clean matching PASS. (`.github/bible/bible_queue.py:613-627`)
+9. If report facts indicate a verdict other than `PASS` or any major correction, starts a revision chunk when the latest revision is older than the latest verification, then returns `session starting`. (`.github/bible/bible_queue.py:628-632`)
+10. Otherwise creates and assigns a verification issue on the component branch and returns `verify running`. (`.github/bible/bible_queue.py:633-642`)
 
 **Pseudo-code**
 
@@ -1845,11 +1846,12 @@ if no component issue ever existed: return not started
 status = component status
 if COMPONENT_DONE: run coverage gate
 if gate fails: start next chunk; return session starting
-handle open hold (stop for human label, otherwise close removed-label hold)
-facts = verification report when a completed verification exists
+handle open hold (stop for human label; otherwise close it and reload holds)
+closed_verify = completed verifications created since latest hold close
+facts = report facts if any completed verification exists
 if clean PASS and pages fingerprint matches: create final PR; return review state
-if max verification rounds reached without clean PASS: create human hold; return
-if corrections are unapplied: start revision chunk; return session starting
+if a newer verification than revision reaches the round limit without clean PASS: create human hold; return
+if verdict is not PASS or major corrections exist, and revision is older: start revision chunk; return
 create verification issue
 return verify running
 ```
@@ -1858,58 +1860,59 @@ return verify running
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py:568` | for | For each PR from the component branch into default | Checks whether it belongs to this tracker and repository. |
-| `.github/bible/bible_queue.py:570` | if | PR is from another repo, predates tracker, or body lacks tracker reference | Skips that PR. |
+| `.github/bible/bible_queue.py:568` | for | For each branch PR into the default branch | Checks whether it belongs to this repository and tracker. |
+| `.github/bible/bible_queue.py:570` | if | PR is from another repository, predates the tracker, or lacks its reference | Skips the PR. |
 | `.github/bible/bible_queue.py:572` | if | Matching PR has `merged_at` | Returns `merged`. |
-| `.github/bible/bible_queue.py:574` | if | Matching PR state is `open` | Returns its review status. |
-| `.github/bible/bible_queue.py:578` | if | An open chunk or verification issue exists | Selects its first issue for processing. |
-| `.github/bible/bible_queue.py:580` | if | Selected issue is held | Returns human-needed state. |
-| `.github/bible/bible_queue.py:583` | if | Following the session did not return a state ending `merged` | Returns that session result. |
-| `.github/bible/bible_queue.py:586` | if | No component issue exists in any state | Returns `not started`. |
-| `.github/bible/bible_queue.py:590` | if | Status state is `COMPONENT_DONE` | Runs the coverage check. |
-| `.github/bible/bible_queue.py:592` | if | Gate did not pass | Starts the next component chunk. |
-| `.github/bible/bible_queue.py:598` | if | At least one hold issue is open | Checks whether it still needs human attention. |
-| `.github/bible/bible_queue.py:599` | if | Open hold has `bible-needs-human` | Returns human-needed state. |
-| `.github/bible/bible_queue.py:609` | conditional expression | Any completed verification exists | Parses the report; otherwise facts are `None`. |
-| `.github/bible/bible_queue.py:610` | if | Facts are PASS, have no major corrections, and nonempty fingerprint matches pages | Creates final component PR. |
-| `.github/bible/bible_queue.py:615` | if | Verification count reached maximum and facts are not a clean matching PASS | Creates a human hold issue. |
-| `.github/bible/bible_queue.py:629` | if | Facts indicate a non-PASS verdict or major corrections | Considers whether revision is needed. |
-| `.github/bible/bible_queue.py:630` | if | Last revision close time is older than last verification close time | Starts a revision chunk. |
+| `.github/bible/bible_queue.py:574` | if | Matching PR is open | Returns its review status. |
+| `.github/bible/bible_queue.py:578` | if | An open chunk or verification issue exists | Selects the first session issue. |
+| `.github/bible/bible_queue.py:580` | if | The selected issue is held | Returns human-needed status. |
+| `.github/bible/bible_queue.py:583` | if | Following the issue did not return a state ending in `merged` | Returns that result. |
+| `.github/bible/bible_queue.py:586` | if | No issue for this component exists in any state | Returns `not started`. |
+| `.github/bible/bible_queue.py:590` | if | Component status is `COMPONENT_DONE` | Runs the coverage check. |
+| `.github/bible/bible_queue.py:592` | if | Coverage gate did not pass | Starts another chunk and returns `session starting`. |
+| `.github/bible/bible_queue.py:598` | if | At least one hold issue is open | Checks whether it still requires a person. |
+| `.github/bible/bible_queue.py:599` | if | The first open hold has `bible-needs-human` | Returns human-needed status; otherwise closes that hold and refreshes the issue list. |
+| `.github/bible/bible_queue.py:607` | conditional expression | At least one completed verification exists | Parses its report; otherwise `facts` is `None`. |
+| `.github/bible/bible_queue.py:608` | if | Facts are `PASS`, have no major corrections, and contain a nonempty matching page fingerprint | Creates the final component PR. |
+| `.github/bible/bible_queue.py:619` | if | A newer verification exists than revision, the post-hold round count reached its maximum, and facts are not a clean matching PASS | Creates a human hold. |
+| `.github/bible/bible_queue.py:628` | if | Facts are truthy and verdict is not `PASS`, or facts have major corrections | Checks whether to start a revision. |
+| `.github/bible/bible_queue.py:629` | if | Latest revision close time precedes latest verification close time | Starts a revision chunk and returns `session starting`. |
 
 #### `Queue.follow(analysis, name, issue)`
 
-Source: `.github/bible/bible_queue.py:645-692` <!-- code: b53cde36011d -->
+Source: `.github/bible/bible_queue.py:644-696` <!-- code: baf0608fa459 -->
 
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.component` (`.github/bible/bible_queue.py:582`) |
-| Calls | `labels_of`, `self.session`, `self.hold_start_error`, `self.fail_or_retry`, `self.gh.pr_files`, `startswith`, `os.path.basename`, `join`, `status_of`, `as_int`, `self.gh.file`, `self.gh.label`, `self.gh.merge`, `self.gh.unlabel`, `self.gh.close` |
-| Purpose | Validates and completes an agent session PR, or holds/retries it when the session is incomplete or out of scope. |
+| Called by | `Queue.component` (`.github/bible/bible_queue.py:585`) |
+| Calls | `labels_of`, `self.session`, `self.hold_start_error`, `self.fail_or_retry`, `gh.pr_files`, `().startswith`, `f.startswith`, `os.path.basename`, `join`, `status_of`, `as_int`, `status.get`, `().get`, `gh.file`, `gh.label`, `issue.get`, `gh.merge`, `gh.unlabel`, `gh.close` |
+| Purpose | Checks an assigned chunk or verification session and its PR, then retries, holds, waits, or validates and merges it. |
 
 **Steps**
 
-1. Sets branch and session kind from labels, then classifies the session. Waiting returns `session starting`; start-error is held; no-start retries or returns needs-person; running returns the kind's running state. (`.github/bible/bible_queue.py:646-658`)
-2. Builds component output path. For chunk PRs allows component LLD, component API LLD, and component ledger paths, excluding `verification-*` basenames; for verification PRs allows only verification files and `citations.tsv` under the component ledger. (`.github/bible/bible_queue.py:659-666`)
-3. If any PR file is disallowed, retries or returns needs-person. Otherwise reads status at the PR head SHA. (`.github/bible/bible_queue.py:667-670`)
-4. For chunks, `WAITING_ANSWER` adds waiting labels to issue and PR only when the issue lacks the label, then returns waiting-for-answers. Otherwise compares packet count to the branch baseline and checks whether the issue is a revision. (`.github/bible/bible_queue.py:671-679`)
-5. A chunk in `STOP` or with no progress is retried/held; a revision not ending at `COMPONENT_DONE` is also retried/held. (`.github/bible/bible_queue.py:680-685`)
-6. For verification, a missing report is retried/held. If validation passes, merges the PR, removes the waiting label, closes the issue, and returns `<kind> merged`. (`.github/bible/bible_queue.py:686-692`)
+1. Sets the branch to `bible/<name>`, derives `verify` versus `chunk` from issue labels, and classifies the issue session. Waiting returns `session starting`; start-error is held; no-start retries; running returns `<kind> running`. (`.github/bible/bible_queue.py:644-658`)
+2. Builds the component ledger path. Chunk PRs may write component LLD, API LLD, and ledger files except basenames beginning `verification-`; verification PRs may write only verification-prefixed files and `citations.tsv` within that ledger. (`.github/bible/bible_queue.py:659-665`)
+3. If any file is outside the selected session's allowlist, retries or returns needs-person; otherwise reads component status at the PR head SHA. (`.github/bible/bible_queue.py:666-669`)
+4. For chunks, `WAITING_ANSWER` adds waiting labels to both issue and PR when the issue does not already have the label, then returns the answer-wait state. Otherwise compares the PR's packet count with the branch count, identifies revisions from the issue body, and treats `COMPONENT_DONE` as progress. (`.github/bible/bible_queue.py:670-678`)
+5. A `STOP` status or lack of packet progress is retried/held. A revision must have changed a page or `revision-log.md` and must finish at `COMPONENT_DONE`; otherwise it is retried/held. (`.github/bible/bible_queue.py:679-689`)
+6. For verification, a missing report at the PR head SHA is retried/held. If checks pass, merges the PR, removes the waiting label, closes the issue, and returns `<kind> merged`. (`.github/bible/bible_queue.py:690-696`)
 
 **Pseudo-code**
 
 ```text
 kind = verify if verification label else chunk
 state, pr = session(...)
-if waiting/start-error/no-start/running: return corresponding status
-find PR files outside this session kind's allowed paths
+if waiting/start-error/no-start/running: handle it and return
+find PR files outside this kind's allowed paths
 if bad files: fail_or_retry; return starting or needs-person
 status = component status at PR head
 if chunk:
     if WAITING_ANSWER: label issue and PR if needed; return waiting for answers
     before = branch packet count
     if STOP or no packet progress: fail_or_retry; return
-    if revision and not COMPONENT_DONE: fail_or_retry; return
+    if revision changed no page/log: fail_or_retry; return
+    if revision did not reach COMPONENT_DONE: fail_or_retry; return
 elif verification report missing: fail_or_retry; return
 merge PR; remove waiting label; close issue
 return kind + " merged"
@@ -1919,43 +1922,44 @@ return kind + " merged"
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py:647` | conditional expression | Issue has `bible-verify` | Sets kind to verify; otherwise chunk. |
-| `.github/bible/bible_queue.py:649` | if | Session state is `waiting` | Returns `session starting`. |
-| `.github/bible/bible_queue.py:651` | if | Session state is `start-error` | Holds the issue and returns needs-person. |
-| `.github/bible/bible_queue.py:654` | if | Session state is `no-start` | Retries and returns starting or needs-person. |
-| `.github/bible/bible_queue.py:656` | conditional expression | Retry succeeded | Returns `session starting`; otherwise returns needs-person. |
-| `.github/bible/bible_queue.py:657` | if | Session state is `running` | Returns `<kind> running`. |
-| `.github/bible/bible_queue.py:660` | if | Kind is `chunk` | Applies chunk-specific file allowlist; otherwise verification allowlist. |
-| `.github/bible/bible_queue.py:662` | list comprehension | For each changed PR file | Collects paths that violate the chunk allowlist. |
-| `.github/bible/bible_queue.py:667` | if | At least one changed file is disallowed | Retries or returns needs-person. |
-| `.github/bible/bible_queue.py:669` | conditional expression | Retry succeeded | Returns starting; otherwise needs-person. |
-| `.github/bible/bible_queue.py:671` | if | Kind is `chunk` | Validates component packet state; otherwise checks verification report. |
-| `.github/bible/bible_queue.py:672` | if | Chunk status is `WAITING_ANSWER` | Adds waiting labels when necessary and returns waiting-for-answers. |
-| `.github/bible/bible_queue.py:673` | if | Issue lacks `bible-waiting-answer` | Adds the label to issue and PR. |
-| `.github/bible/bible_queue.py:680` | if | Status is `STOP` or packet progress is false | Retries or returns needs-person. |
-| `.github/bible/bible_queue.py:682` | conditional expression | Retry succeeded | Returns starting; otherwise needs-person. |
-| `.github/bible/bible_queue.py:683` | if | Issue is a revision and state is not `COMPONENT_DONE` | Retries or returns needs-person. |
-| `.github/bible/bible_queue.py:685` | conditional expression | Retry succeeded | Returns starting; otherwise needs-person. |
-| `.github/bible/bible_queue.py:686` | elif | Verification-kind PR has no report at its head SHA | Retries or returns needs-person. |
-| `.github/bible/bible_queue.py:688` | conditional expression | Retry succeeded | Returns starting; otherwise needs-person. |
+| `.github/bible/bible_queue.py:646` | conditional expression | Issue has `bible-verify` | Sets kind to verify; otherwise chunk. |
+| `.github/bible/bible_queue.py:648` | if | Session state is `waiting` | Returns `session starting`. |
+| `.github/bible/bible_queue.py:650` | if | Session state is `start-error` | Holds the issue and returns needs-person. |
+| `.github/bible/bible_queue.py:653` | if | Session state is `no-start` | Retries and returns starting or needs-person. |
+| `.github/bible/bible_queue.py:655` | conditional expression | Retry succeeded | Returns `session starting`; otherwise returns needs-person. |
+| `.github/bible/bible_queue.py:656` | if | Session state is `running` | Returns `<kind> running`. |
+| `.github/bible/bible_queue.py:659` | if | Kind is `chunk` | Applies the chunk allowlist; otherwise applies the verification allowlist. |
+| `.github/bible/bible_queue.py:666` | if | At least one changed PR file is disallowed | Retries or returns needs-person. |
+| `.github/bible/bible_queue.py:668` | conditional expression | Retry succeeded | Returns starting; otherwise needs-person. |
+| `.github/bible/bible_queue.py:670` | if | Kind is `chunk` | Validates component packet state; otherwise checks for the verification report. |
+| `.github/bible/bible_queue.py:671` | if | Chunk status is `WAITING_ANSWER` | Adds waiting labels when necessary and returns waiting-for-answers. |
+| `.github/bible/bible_queue.py:672` | if | Issue lacks `bible-waiting-answer` | Adds the label to issue and PR. |
+| `.github/bible/bible_queue.py:679` | if | Status is `STOP` or packet progress is false | Retries or returns needs-person. |
+| `.github/bible/bible_queue.py:681` | conditional expression | Retry succeeded | Returns starting; otherwise needs-person. |
+| `.github/bible/bible_queue.py:683` | if | Revision changed no page and no revision-log entry | Retries or returns needs-person. |
+| `.github/bible/bible_queue.py:686` | conditional expression | Retry succeeded | Returns starting; otherwise needs-person. |
+| `.github/bible/bible_queue.py:687` | if | Issue is a revision and state is not `COMPONENT_DONE` | Retries or returns needs-person. |
+| `.github/bible/bible_queue.py:689` | conditional expression | Retry succeeded | Returns starting; otherwise needs-person. |
+| `.github/bible/bible_queue.py:690` | elif | Verification PR has no report at its head SHA | Retries or returns needs-person. |
+| `.github/bible/bible_queue.py:692` | conditional expression | Retry succeeded | Returns starting; otherwise needs-person. |
 
 #### `Queue.check(analysis, name, branch)`
 
-Source: `.github/bible/bible_queue.py:694-711` <!-- code: 4357020a3cd5 -->
+Source: `.github/bible/bible_queue.py:698-715` <!-- code: 4357020a3cd5 -->
 
 | | |
 | --- | --- |
 | Kind | instance method |
 | Called by | `Queue.component` (`.github/bible/bible_queue.py:591`) |
-| Calls | `os.path.join`, `os.path.isfile`, `self.log`, `tempfile.mkdtemp`, `self.gh.tarball`, `subprocess.run`, `shutil.rmtree`, `os.path.abspath`, `self.settings.get`, `strip`, `splitlines` |
+| Calls | `os.path.join`, `os.path.isfile`, `self.log`, `tempfile.mkdtemp`, `self.gh.tarball`, `subprocess.run`, `shutil.rmtree`, `os.path.abspath`, `self.settings.get`, `printed.stdout.strip`, `().splitlines`, `run.stdout.strip` |
 | Purpose | Runs the component coverage gate against an unpacked branch tarball and obtains its pages fingerprint. |
 
 **Steps**
 
-1. Locates the analysis skill scripts. If `coverage.py` is absent, logs that the check is skipped/failing and returns `(False, None)`. (`.github/bible/bible_queue.py:696-699`)
-2. Creates a temporary work directory, unpacks the branch tarball, and runs isolated `coverage.py` with repository, analysis, depth, component, and report arguments. (`.github/bible/bible_queue.py:700-705`)
-3. Logs the final coverage output line or `no output`, runs isolated `status.py --fingerprint --component`, and returns coverage exit success plus stripped fingerprint output or `None`. (`.github/bible/bible_queue.py:706-709`)
-4. Removes the temporary directory in `finally`, ignoring errors. (`.github/bible/bible_queue.py:710-711`)
+1. Builds the analysis script path. If `coverage.py` is absent, logs that the gate is skipped and treated as failing, then returns `(False, None)`. (`.github/bible/bible_queue.py:700-703`)
+2. Creates a temporary directory, downloads and extracts the branch tarball there, and runs isolated `coverage.py` with repository, analysis, depth, component, and report arguments. (`.github/bible/bible_queue.py:704-709`)
+3. Logs the last stripped coverage output line or `no output`, runs isolated `status.py --fingerprint --component`, then returns whether coverage exited successfully and the stripped fingerprint output or `None`. (`.github/bible/bible_queue.py:710-713`)
+4. Removes the temporary directory in `finally`, ignoring removal errors. (`.github/bible/bible_queue.py:714-715`)
 
 **Pseudo-code**
 
@@ -1975,27 +1979,27 @@ finally: remove work directory
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py:697` | if | `coverage.py` is not a file | Logs the missing checker and returns failure with no fingerprint. |
+| `.github/bible/bible_queue.py:701` | if | `coverage.py` is not a file | Logs the missing checker and returns failure with no fingerprint. |
 
 
 #### `Queue.assemble_phase(tracker, settings, analysis)`
 
-Source: `.github/bible/bible_queue.py:713-753` <!-- code: 73a196189485 -->
+Source: `.github/bible/bible_queue.py:717-757` <!-- code: 73a196189485 -->
 
 | | |
 | --- | --- |
 | Kind | instance method |
 | Called by | `Queue.run` (`.github/bible/bible_queue.py:524`) |
-| Calls | `any`, `self.run_issues`, `self.gh.create_issue`, `settings.get`, `self.held`, `self.session`, `issue_text`, `assignment`, `self.gh.close`, `self.hold_start_error`, `self.fail_or_retry`, `get`, `self.gh.linked_prs`, `report_facts`, `self.gh.file`, `self.gh.is_agent_pr`, `self.gh.comment` |
+| Calls | `any`, `self.run_issues`, `gh.create_issue`, `settings.get`, `self.held`, `self.session`, `issue_text`, `assignment`, `gh.close`, `self.hold_start_error`, `self.fail_or_retry`, `i.get`, `gh.linked_prs`, `report_facts`, `p.get`, `gh.is_agent_pr`, `gh.file`, `get`, `gh.comment` |
 | Purpose | Runs assembly and whole-analysis verification sessions after all selected components merge, then closes the tracker when both finish. |
 
 **Steps**
 
-1. Iterates assembly then verify-all phases, selecting their model, title, and optional issue-text filename. Skips a phase with any completed closed issue. (`.github/bible/bible_queue.py:715-719`)
-2. For an open phase issue, finds linked PRs that are merged into the default branch, from this repo, and agent-authored. If found, verify-all reads the report and returns human-needed when absent, non-PASS, or major corrections exist; otherwise closes the issue and advances. (`.github/bible/bible_queue.py:720-732`)
-3. If no qualifying merged PR, returns human-needed for a held issue; otherwise classifies the session. Start-error is held; no-start invokes retry; then returns review status when a PR exists or session state. (`.github/bible/bible_queue.py:733-741`)
-4. With no open issue, uses `assemble.md` for the assemble phase or builds whole-analysis verification instructions; creates the assigned issue and returns the phase's assigned status. (`.github/bible/bible_queue.py:742-750`)
-5. After both phases are skipped/completed, comments on the tracker, closes it, and returns `done`. (`.github/bible/bible_queue.py:751-753`)
+1. Processes `bible-assemble` and then `bible-verify-all`, selecting each phase's model, title, and optional issue-text filename. Skips a phase with any completed closed issue. (`.github/bible/bible_queue.py:719-723`)
+2. For an open phase issue, finds linked PRs merged into the default branch, from this repository, and agent-authored. For a merged verify-all PR, reads the whole-analysis report and returns a human-needed message if it is missing, not PASS, or has major corrections; otherwise closes the issue and advances. (`.github/bible/bible_queue.py:724-736`)
+3. If there is no qualifying merged PR, returns human-needed for a held issue; otherwise classifies the session. Holds start-error, retries no-start, and returns PR-review status when a PR exists or the current session state. (`.github/bible/bible_queue.py:737-745`)
+4. With no open issue, reads `assemble.md` for the assemble phase or builds whole-analysis verification instructions; creates an assigned issue and returns the phase's assigned status. (`.github/bible/bible_queue.py:746-754`)
+5. After both phases are complete, comments that the run is done, closes the tracker, and returns `done`. (`.github/bible/bible_queue.py:755-757`)
 
 **Pseudo-code**
 
@@ -2020,36 +2024,36 @@ comment tracker done; close tracker; return done
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py:715` | for | For assemble and verify-all | Processes each phase in order. |
-| `.github/bible/bible_queue.py:718` | if | A completed closed issue exists for this phase | Skips to the next phase. |
-| `.github/bible/bible_queue.py:721` | if | At least one open issue exists for the phase | Processes its first open issue. |
-| `.github/bible/bible_queue.py:725` | if | A qualifying merged agent PR exists | Closes/advances, or validates verify-all results. |
-| `.github/bible/bible_queue.py:726` | if | Current phase is `bible-verify-all` | Checks the whole-analysis verification report. |
-| `.github/bible/bible_queue.py:728` | if | Report is missing, verdict is not PASS, or major corrections exist | Returns a human-needed verification message. |
-| `.github/bible/bible_queue.py:730` | conditional expression | Report facts exist | Includes the verdict; otherwise reports `missing`. |
-| `.github/bible/bible_queue.py:733` | if | Open issue is held | Returns the human-needed issue number. |
-| `.github/bible/bible_queue.py:736` | if | Session state is `start-error` | Holds the issue and returns human-needed. |
-| `.github/bible/bible_queue.py:739` | if | Session state is `no-start` | Invokes retry logic. |
-| `.github/bible/bible_queue.py:741` | conditional expression | PR exists | Returns PR review instruction; otherwise returns session state. |
-| `.github/bible/bible_queue.py:742` | if | Phase has a `text` filename | Loads issue title/body from that ledger file; otherwise uses verify-all instructions. |
+| `.github/bible/bible_queue.py:719` | for | For the assemble and verify-all phases | Processes the phases in order. |
+| `.github/bible/bible_queue.py:722` | if | A completed closed issue exists for this phase | Skips to the next phase. |
+| `.github/bible/bible_queue.py:725` | if | At least one open issue exists for the phase | Processes its first open issue. |
+| `.github/bible/bible_queue.py:729` | if | A qualifying merged agent PR exists | Closes/advances, or validates verify-all results. |
+| `.github/bible/bible_queue.py:730` | if | Current phase is `bible-verify-all` | Checks the whole-analysis verification report. |
+| `.github/bible/bible_queue.py:732` | if | Report is missing, verdict is not PASS, or major corrections exist | Returns a human-needed verification message. |
+| `.github/bible/bible_queue.py:734` | conditional expression | Report facts exist | Includes the verdict; otherwise reports `missing`. |
+| `.github/bible/bible_queue.py:737` | if | Open issue is held | Returns the human-needed issue number. |
+| `.github/bible/bible_queue.py:740` | if | Session state is `start-error` | Holds the issue and returns human-needed. |
+| `.github/bible/bible_queue.py:743` | if | Session state is `no-start` | Invokes retry logic. |
+| `.github/bible/bible_queue.py:745` | conditional expression | PR exists | Returns PR review instruction; otherwise returns session state. |
+| `.github/bible/bible_queue.py:746` | if | Phase has a `text` filename | Loads issue title/body from that ledger file; otherwise uses verify-all instructions. |
 
 #### `Queue.render(tracker, settings, rows)`
 
-Source: `.github/bible/bible_queue.py:755-765` <!-- code: 651906b39ffd -->
+Source: `.github/bible/bible_queue.py:759-769` <!-- code: 651906b39ffd -->
 
 | | |
 | --- | --- |
 | Kind | instance method |
 | Called by | `Queue.run` (`.github/bible/bible_queue.py:501`, `.github/bible/bible_queue.py:525`), `Queue.plan_phase` (`.github/bible/bible_queue.py:538`, `.github/bible/bible_queue.py:541`, `.github/bible/bible_queue.py:545`) |
-| Calls | `items`, `now`, `isoformat`, `json.dumps`, `join`, `self.gh.set_body`, `split`, `self.log` |
+| Calls | `rows.items`, `().isoformat`, `json.dumps`, `now`, `join`, `self.gh.set_body`, `body.split`, `split`, `tracker.get`, `self.log` |
 | Purpose | Renders tracker status rows and settings, updates the issue body when its non-time content differs, and logs each row. |
 
 **Steps**
 
-1. Builds introductory text, table headings, and one row per component/state pair. (`.github/bible/bible_queue.py:756-758`)
-2. Adds a minute-resolution UTC timestamp and hidden JSON settings block, then joins lines into the body. (`.github/bible/bible_queue.py:759-761`)
-3. Updates the tracker body only when the text preceding `Updated` differs from its current body prefix. (`.github/bible/bible_queue.py:762-763`)
-4. Logs every row as a padded key and state. (`.github/bible/bible_queue.py:764-765`)
+1. Builds the introductory text and table headings, then appends one formatted row for each component/state pair. (`.github/bible/bible_queue.py:760-762`)
+2. Adds a minute-resolution timestamp from `now()` and the hidden JSON settings marker, then joins the lines into the issue body. (`.github/bible/bible_queue.py:763-765`)
+3. Updates the tracker body only when the body prefix before `Updated` differs from the current tracker body prefix. (`.github/bible/bible_queue.py:766-767`)
+4. Logs each row with a padded key and its state. (`.github/bible/bible_queue.py:768-769`)
 
 **Pseudo-code**
 
@@ -2066,38 +2070,38 @@ for each row: log padded key and state
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py:762` | if | Text before `Updated` differs | Replaces the tracker body. |
-| `.github/bible/bible_queue.py:764` | for | For each `(key, value)` row | Logs that row. |
+| `.github/bible/bible_queue.py:766` | if | Text before `Updated` differs | Replaces the tracker body. |
+| `.github/bible/bible_queue.py:768` | for | For each `(key, value)` row | Logs that row. |
 
 #### `Queue.delta(changed, settings_analysis="codebase-analysis")`
 
-Source: `.github/bible/bible_queue.py:768-794` <!-- code: 173a0090e878 -->
+Source: `.github/bible/bible_queue.py:772-798` <!-- code: 173a0090e878 -->
 
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `main` (`.github/bible/bible_queue.py:838`) |
-| Calls | `self.gh.default_branch`, `json_file`, `self.log`, `self.gh.file`, `sys.path.insert`, `os.path.abspath`, `os.path.join`, `components.rows_of`, `components.component_map`, `sorted`, `startswith`, `components.assign`, `self.gh.issues`, `self.gh.create_issue`, `assignment`, `comp_label`, `len` |
+| Called by | `main` (`.github/bible/bible_queue.py:842`) |
+| Calls | `gh.default_branch`, `json_file`, `self.log`, `gh.file`, `sys.path.insert`, `os.path.abspath`, `os.path.join`, `components.rows_of`, `sorted`, `().values`, `components.component_map`, `p.startswith`, `gh.issues`, `gh.create_issue`, `assignment`, `comp_label`, `join`, `len`, `components.assign` |
 | Purpose | Creates one update issue for each analysis component affected by changed files when an assembled baseline exists. |
 
 **Steps**
 
-1. Reads/stores the default branch, loads `components.json`, and checks that `ledger/baseline.json` exists. If either analysis catalog or baseline is falsey, logs and returns. (`.github/bible/bible_queue.py:769-774`)
-2. Adds toolkit scripts to `sys.path`, imports `components`, builds component rows, and maps changed paths excluding analysis-folder and `.github/` paths to sorted touched component names. (`.github/bible/bible_queue.py:775-779`)
-3. For each touched component, selects changed files assigned to it. If a matching open delta issue already exists, logs and skips creating another. (`.github/bible/bible_queue.py:780-784`)
-4. Otherwise creates a labeled delta issue with component/base/attempt context, changed file names (up to 20), update instructions, and an assignment; then logs the component and number of changed files. (`.github/bible/bible_queue.py:785-794`)
+1. Reads/stores the default branch, loads `components.json`, and checks for `ledger/baseline.json`. If the catalog is falsey or the baseline is missing/falsey, logs and returns. (`.github/bible/bible_queue.py:773-778`)
+2. Adds toolkit scripts to `sys.path`, imports `components`, builds component rows, and maps changed paths outside the analysis folder and `.github/` to sorted touched component names. (`.github/bible/bible_queue.py:779-783`)
+3. For each touched component, selects its assigned changed files. If a matching open delta issue exists, logs and skips creating a duplicate. (`.github/bible/bible_queue.py:784-788`)
+4. Otherwise creates a labeled delta issue with component/base/attempt context, up to 20 changed file names, update instructions, and assignment; then logs the component and number of changed files. (`.github/bible/bible_queue.py:789-798`)
 
 **Pseudo-code**
 
 ```text
 default = gh.default_branch()
 catalog = json_file(components.json)
-if catalog or baseline is missing: log; return
+if catalog is falsey or baseline is missing/falsey: log; return
 load components toolkit
-touched = sorted mapped components for changed paths outside analysis and .github
+touched = sorted unique mapped components for changed paths outside analysis and .github
 for each touched component:
     files = changed paths assigned to it
-    if matching delta issue is open: log; continue
+    if any matching delta issue is open: log; continue
     create assigned delta issue with changed files and update instructions
     log file count
 ```
@@ -2106,31 +2110,31 @@ for each touched component:
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py:772` | if | Catalog is falsey or baseline file is missing/falsey | Logs that no assembled analysis exists and returns. |
-| `.github/bible/bible_queue.py:780` | for | For each touched component | Selects its changed files and update issue state. |
-| `.github/bible/bible_queue.py:782` | if | A matching delta issue is already open | Logs and skips creating a duplicate issue. |
+| `.github/bible/bible_queue.py:776` | if | Catalog is falsey or baseline file is missing/falsey | Logs that no assembled analysis exists and returns. |
+| `.github/bible/bible_queue.py:784` | for | For each touched component | Selects its changed files and checks issue state. |
+| `.github/bible/bible_queue.py:786` | if | A matching delta issue is already open | Logs and skips creating a duplicate issue. |
 
 ## Functions and methods
 
 ### `main()`
 
-Source: `.github/bible/bible_queue.py:797-840` <!-- code: f407f91f47e7 -->
+Source: `.github/bible/bible_queue.py:801-844` <!-- code: f407f91f47e7 -->
 
 | | |
 | --- | --- |
 | Kind | module entry point |
-| Called by | Module guard (`.github/bible/bible_queue.py:843-844`) |
-| Calls | `argparse.ArgumentParser`, `add_subparsers`, `add_parser`, `add_argument`, `parse_args`, `os.environ.get`, `SystemExit`, `GitHub`, `Queue`, `ensure_labels`, `issues`, `create_issue`, `print`, `strip`, `split`, `any`, `Queue.reconcile`, `open`, `Queue.delta`, `str` |
+| Called by | Module guard (`.github/bible/bible_queue.py:847-848`) |
+| Calls | `argparse.ArgumentParser`, `__doc__.splitlines`, `parser.add_subparsers`, `sub.add_parser`, `start.add_argument`, `d.add_argument`, `parser.parse_args`, `os.environ.get`, `SystemExit`, `GitHub`, `Queue`, `gh.ensure_labels`, `gh.issues`, `gh.create_issue`, `print`, `n.strip`, `any`, `queue.reconcile`, `queue.delta`, `str`, `args.verify_model.strip`, `args.components.split`, `json.dumps`, `issue.get`, `open`, `l.strip`, `NAME.match` |
 | Purpose | Parses `start`, `reconcile`, and `delta` commands and dispatches to the queue workflow. |
 
 **Steps**
 
-1. Builds the command parser from the module docstring's first line; defines `start` options (`--components`, `--model`, required `--verify-model`, concurrency, analysis, depth), `reconcile`, and `delta` (`--changed-file` required, analysis), then parses arguments. (`.github/bible/bible_queue.py:798-811`)
-2. Reads `GITHUB_REPOSITORY` and `GH_TOKEN`; raises `SystemExit` if either is missing. Creates `GitHub` and `Queue` clients. (`.github/bible/bible_queue.py:813-817`)
-3. For `start`, requires a nonempty verification model different from the normal model; parses component names and requires either `all` or names matching `NAME`. (`.github/bible/bible_queue.py:819-824`)
-4. Ensures labels and exits if a tracker issue is already open. Builds settings from arguments, creates a labeled tracker issue containing the hidden settings JSON, and prints its number and queue start guidance. (`.github/bible/bible_queue.py:825-832`)
-5. For `reconcile`, calls `queue.reconcile`. Otherwise reads nonempty, stripped changed-file lines from the specified file and calls `queue.delta(changed, args.analysis)`. (`.github/bible/bible_queue.py:833-838`)
-6. Converts `RuntimeError` from command handling to `SystemExit(str(err))`. (`.github/bible/bible_queue.py:839-840`)
+1. Builds a required-subcommand parser from the module docstring's first line; defines `start` options, `reconcile`, and `delta` options, then parses arguments. (`.github/bible/bible_queue.py:802-815`)
+2. Reads `GITHUB_REPOSITORY` and `GH_TOKEN`; raises `SystemExit` if either is falsey, then constructs `GitHub` and `Queue`. (`.github/bible/bible_queue.py:817-821`)
+3. For `start`, requires a nonempty verification model different from the normal model, parses component names, and requires at least one selection with each name either `all` or matching `NAME`. (`.github/bible/bible_queue.py:823-828`)
+4. Ensures labels and exits if a tracker is already open. Builds settings, creates a tracker issue with hidden settings JSON, and prints its issue number and queue-start guidance. (`.github/bible/bible_queue.py:829-836`)
+5. For `reconcile`, invokes `queue.reconcile`; otherwise reads nonempty stripped lines from the changed-file input and calls `queue.delta`. (`.github/bible/bible_queue.py:837-842`)
+6. Converts `RuntimeError` from command handling to `SystemExit` with the error text. (`.github/bible/bible_queue.py:843-844`)
 
 **Pseudo-code**
 
@@ -2156,18 +2160,18 @@ on RuntimeError: exit with its text
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py:814` | if | Repository or token environment value is missing | Exits with a required-environment message. |
-| `.github/bible/bible_queue.py:815` | raise | Either required environment value is missing | Raises `SystemExit`. |
-| `.github/bible/bible_queue.py:819` | if | Command is `start` | Validates and starts an analysis run. |
-| `.github/bible/bible_queue.py:820` | if | Verification model is empty or equals normal model | Exits with the distinct-model requirement. |
-| `.github/bible/bible_queue.py:821` | raise | Verification model validation fails | Raises `SystemExit`. |
-| `.github/bible/bible_queue.py:823` | if | No names or any name other than `all` fails `NAME` | Exits with component-selection guidance. |
-| `.github/bible/bible_queue.py:824` | raise | Component selection fails validation | Raises `SystemExit`. |
-| `.github/bible/bible_queue.py:826` | if | An open tracker issue exists | Exits rather than opening another run. |
-| `.github/bible/bible_queue.py:827` | raise | An open tracker exists | Raises `SystemExit`. |
-| `.github/bible/bible_queue.py:833` | elif | Command is `reconcile` | Calls `queue.reconcile`; other command is handled by the `else`. |
-| `.github/bible/bible_queue.py:839` | except | Command handling raises `RuntimeError` | Enters error conversion. |
-| `.github/bible/bible_queue.py:840` | raise | A `RuntimeError` was caught | Raises `SystemExit` with the error text. |
+| `.github/bible/bible_queue.py:818` | if | Repository or token environment value is missing | Exits with a required-environment message. |
+| `.github/bible/bible_queue.py:819` | raise | Either required environment value is missing | Raises `SystemExit`. |
+| `.github/bible/bible_queue.py:823` | if | Command is `start` | Validates and starts an analysis run. |
+| `.github/bible/bible_queue.py:824` | if | Verification model is empty or equals normal model | Exits with the distinct-model requirement. |
+| `.github/bible/bible_queue.py:825` | raise | Verification model validation fails | Raises `SystemExit`. |
+| `.github/bible/bible_queue.py:827` | if | No names or any name other than `all` fails `NAME` | Exits with component-selection guidance. |
+| `.github/bible/bible_queue.py:828` | raise | Component selection fails validation. | Raises `SystemExit`. |
+| `.github/bible/bible_queue.py:830` | if | An open tracker issue exists | Exits rather than opening another run. |
+| `.github/bible/bible_queue.py:831` | raise | An open tracker exists | Raises `SystemExit`. |
+| `.github/bible/bible_queue.py:837` | elif | Command is `reconcile` | Calls `queue.reconcile`; other command is handled by `else`. |
+| `.github/bible/bible_queue.py:843` | except | Command handling raises `RuntimeError` | Enters error conversion. |
+| `.github/bible/bible_queue.py:844` | raise | A `RuntimeError` was caught | Raises `SystemExit` with the error text. |
 
 ### `now()`
 
@@ -2533,7 +2537,7 @@ return data if data is a dict, otherwise {}
 
 The module imports Python standard-library utilities and initializes queue labels, environment-derived agent settings, regexes, and timing/verification constants. (`.github/bible/bible_queue.py:42-83`)
 
-It declares the `GitHub` API client, helper functions, and `Queue` coordinator; the CLI `main` parses arguments, and the module guard calls it when executed as a script. (`.github/bible/bible_queue.py:88-302`, `.github/bible/bible_queue.py:307-391`, `.github/bible/bible_queue.py:396-794`, `.github/bible/bible_queue.py:797-844`)
+It declares the `GitHub` API client, helper functions, and `Queue` coordinator; the CLI `main` parses arguments, and the module guard calls it when executed as a script. (`.github/bible/bible_queue.py:88-302`, `.github/bible/bible_queue.py:307-391`, `.github/bible/bible_queue.py:396-798`, `.github/bible/bible_queue.py:801-848`)
 
 ## Surprises
 
