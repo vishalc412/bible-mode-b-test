@@ -111,3 +111,11 @@ sequenceDiagram
 | 2 | The handler extracts and URL-decodes the SKU, then calls `catalog.price_of`. | `components/catalog/service.py:24-31` |
 | 3 | For a known SKU, the handler sends status 200 with the decoded SKU and price. | `components/catalog/service.py:30-31` |
 | 4 | For an unknown SKU, `price_of` raises `KeyError` and the handler sends status 404 with an error body. | `components/catalog/catalog.py:20-24`; `components/catalog/service.py:32-33` |
+
+<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+
+<!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
+
+<!-- cites components/orders/catalog_client.py@469f9d282aab983cdd85f364e46bcd02ef6d3635 -->
+
+<!-- cites components/orders/test_catalog_client.py@1d32463e1cdc21bd3eee3bc1b6f31feb8ef40a2d -->

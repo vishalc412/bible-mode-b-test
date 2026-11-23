@@ -4,10 +4,10 @@ kind: component
 component: catalog
 source: [components/catalog/catalog.py, components/catalog/service.py, components/catalog/test_catalog.py]
 summary: Provides product data and price and stock lookups to orders and over HTTP
-reads: [store:_PRODUCTS, external:supplier-feed]
+reads: [store:_PRODUCTS, external:Supplier One]
 writes: [store:_PRODUCTS]
-calls: [external:supplier-feed]
-uses: [symbol:catalog.price_of, symbol:catalog.in_stock]
+calls: [external:Supplier One]
+uses: [symbol:price_of, symbol:in_stock]
 config: [CATALOG_HOST, CATALOG_PORT]
 exposes: [route:GET /health, route:GET /price/{sku}]
 ---
@@ -111,6 +111,8 @@ The GET routes do not check authentication or authorization, and the server is c
 | C-01 | A missing SKU has no price and causes `price_of` to raise `KeyError` with the SKU in its message. | `price_of` | Price lookup | `components/catalog/catalog.py:20-24` |
 | C-02 | Stock is sufficient only when a product exists and its stock is at least the requested quantity. | `in_stock` | Stock lookup | `components/catalog/catalog.py:27-29` |
 | C-03 | Supplier-feed entries update only SKUs already present in `_PRODUCTS`; absent product lists produce no updates. | `apply_feed` | Feed application | `components/catalog/catalog.py:44-47` |
+| C-04 | `GET /health` returns the health response with status 200. | `CatalogHandler.do_GET` | `/health` path | `components/catalog/service.py:24-27` |
+| C-05 | An unrecognized catalog GET path returns status 404. | `CatalogHandler.do_GET` | Any unmatched path | `components/catalog/service.py:33-34` |
 
 ## Data
 
@@ -157,3 +159,15 @@ The component and class diagrams were checked by reading their syntax; no Mermai
 - **Surprise:** The supplier-fetch docstring claims a nightly cron run, but no invocation is shown by the repository search for `fetch_supplier_feed` (4 hits, with the only source-code hit at `components/catalog/catalog.py:36`) or by the function body (`components/catalog/catalog.py:36-39`).
 - **Open questions:** No question requiring a person to answer was identified from the catalog component files.
 - **Glossary:** `SKU` is the key used to identify each product in `_PRODUCTS` (`components/catalog/catalog.py:8-12`); the supplier feed's `products` collection contains the entries consumed by `apply_feed` (`components/catalog/catalog.py:42-47`).
+
+<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+
+<!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
+
+<!-- cites components/catalog/test_catalog.py@9be40d147e425d178067c8b34f19b28b9b374d1f -->
+
+<!-- cites components/orders/catalog_client.py@469f9d282aab983cdd85f364e46bcd02ef6d3635 -->
+
+<!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->
+
+<!-- cites components/orders/test_catalog_client.py@1d32463e1cdc21bd3eee3bc1b6f31feb8ef40a2d -->

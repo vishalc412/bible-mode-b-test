@@ -6,7 +6,7 @@ source: components/catalog/catalog.py
 summary: Holds product data and provides price, stock, image, and supplier-feed functions
 reads: [store:_PRODUCTS]
 writes: [store:_PRODUCTS]
-calls: [external:supplier feed]
+calls: [external:Supplier One]
 uses: [symbol:get_product]
 config: []
 exposes: []
@@ -267,3 +267,9 @@ The module defines the supplier feed URL, image CDN prefix, and three initial pr
 ## Surprises
 
 `fetch_supplier_feed` reads from the hard-coded URL, while `apply_feed` only updates SKUs already present in `_PRODUCTS` (`components/catalog/catalog.py:5,42-47`). The source docstring says the fetch runs nightly from cron, but this file defines no schedule (inferred: the function only opens and parses the feed at `components/catalog/catalog.py:36-39`).
+
+<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+
+<!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
+
+<!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->

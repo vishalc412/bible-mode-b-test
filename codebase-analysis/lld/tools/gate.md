@@ -7,7 +7,7 @@ summary: Validates component analysis artifacts and reports gate errors
 reads: [file:codebase-analysis/plan.json, file:codebase-analysis/components/*/status.json, file:codebase-analysis/components/*/inventory.md, file:codebase-analysis/components/*/risks.md, file:codebase-analysis/components/*/tests-report.md, file:components/*/test_*.py]
 writes: []
 calls: []
-uses: [symbol:argparse, symbol:ast, symbol:json, symbol:pathlib, symbol:subprocess, symbol:sys]
+uses: [symbol:count_tests]
 config: []
 exposes: []
 publishes: []
@@ -329,3 +329,5 @@ The module imports six standard-library modules, sets `ROOT` to the parent of th
 ## Surprises
 
 None identified in this file.
+
+<!-- cites tools/gate.py@65eb0af527e554cfb2dadb9d0c8cd1ee6e975c99 -->

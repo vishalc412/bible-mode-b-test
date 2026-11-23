@@ -7,7 +7,7 @@ summary: Checks that price lookup returns the known SKU-1 price
 reads: []
 writes: []
 calls: []
-uses: [symbol:catalog.price_of]
+uses: [symbol:price_of]
 config: []
 exposes: []
 ---
@@ -49,3 +49,5 @@ When run as the main module, the `__main__` guard calls `unittest.main()` (`comp
 ## Surprises
 
 The file contains only a known-SKU price assertion; it has no tests here for unknown SKUs, stock, image URLs, feed parsing, or HTTP behavior (`components/catalog/test_catalog.py:6-8`).
+
+<!-- cites components/catalog/test_catalog.py@9be40d147e425d178067c8b34f19b28b9b374d1f -->

@@ -1,10 +1,10 @@
 {
- "generated": "2026-11-23T18:35:33",
+ "generated": "2026-11-23T22:45:09",
  "tool": "analyzing-a-codebase/scripts/inventory.py 1.8.0",
  "totals": {
   "files": 20,
   "source_files": 14,
-  "source_lines": 1320,
+  "source_lines": 1343,
   "symbols": 108,
   "routes": 0,
   "by_kind": {
@@ -76,7 +76,7 @@
    "kind": "source",
    "lang": "python",
    "binary": false,
-   "lines": 844,
+   "lines": 867,
    "symbols": [
     {
      "name": "GitHub",
@@ -1571,8 +1571,8 @@
      "qualname": "Queue",
      "kind": "class",
      "start": 396,
-     "end": 794,
-     "size": 399,
+     "end": 817,
+     "size": 422,
      "decorators": []
     },
     {
@@ -1756,66 +1756,87 @@
      "qualname": "Queue.held",
      "kind": "method",
      "start": 431,
-     "end": 441,
-     "size": 11,
+     "end": 450,
+     "size": 20,
      "decorators": [],
      "branches": [
-      {
-       "kind": "if",
-       "line": 433,
-       "detail": ""
-      },
       {
        "kind": "if",
        "line": 435,
        "detail": ""
       },
       {
-       "kind": "ternary",
+       "kind": "if",
        "line": 439,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 440,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 448,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "labels_of",
-       "line": 433
-      },
-      {
-       "name": "issue.get",
        "line": 435
       },
       {
+       "name": "any",
+       "line": 439
+      },
+      {
        "name": "ATTEMPT.sub",
-       "line": 436
+       "line": 445
       },
       {
        "name": "self.gh.set_body",
-       "line": 437
+       "line": 446
       },
       {
        "name": "re.search",
-       "line": 438
+       "line": 447
       },
       {
        "name": "self.gh.assign",
-       "line": 439
+       "line": 448
       },
       {
        "name": "self.gh.comment",
-       "line": 440
+       "line": 449
+      },
+      {
+       "name": "self.gh.close",
+       "line": 443
       },
       {
        "name": "assignment",
-       "line": 439
+       "line": 448
+      },
+      {
+       "name": "l.startswith",
+       "line": 440
+      },
+      {
+       "name": "issue.get",
+       "line": 445
       },
       {
        "name": "self.model_for",
+       "line": 448
+      },
+      {
+       "name": "get",
        "line": 439
       },
       {
        "name": "base.group",
-       "line": 439
+       "line": 448
       }
      ]
     },
@@ -1823,25 +1844,25 @@
      "name": "model_for",
      "qualname": "Queue.model_for",
      "kind": "method",
-     "start": 443,
-     "end": 445,
+     "start": 452,
+     "end": 454,
      "size": 3,
      "decorators": [],
      "branches": [
       {
        "kind": "ternary",
-       "line": 445,
+       "line": 454,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "labels_of",
-       "line": 444
+       "line": 453
       },
       {
        "name": "self.settings.get",
-       "line": 445
+       "line": 454
       }
      ]
     },
@@ -1849,27 +1870,27 @@
      "name": "hold_start_error",
      "qualname": "Queue.hold_start_error",
      "kind": "method",
-     "start": 447,
-     "end": 453,
+     "start": 456,
+     "end": 462,
      "size": 7,
      "decorators": [],
      "branches": [],
      "calls": [
       {
        "name": "self.gh.start_error",
-       "line": 449
+       "line": 458
       },
       {
        "name": "self.gh.label",
-       "line": 450
+       "line": 459
       },
       {
        "name": "self.gh.unassign",
-       "line": 451
+       "line": 460
       },
       {
        "name": "self.gh.comment",
-       "line": 452
+       "line": 461
       }
      ]
     },
@@ -1877,100 +1898,100 @@
      "name": "fail_or_retry",
      "qualname": "Queue.fail_or_retry",
      "kind": "method",
-     "start": 455,
-     "end": 474,
+     "start": 464,
+     "end": 483,
      "size": 20,
      "decorators": [],
      "branches": [
       {
        "kind": "if",
-       "line": 458,
+       "line": 467,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 461,
+       "line": 470,
        "detail": ""
       },
       {
        "kind": "ternary",
-       "line": 469,
+       "line": 478,
        "detail": ""
       },
       {
        "kind": "ternary",
-       "line": 473,
+       "line": 482,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "int",
-       "line": 457
+       "line": 466
       },
       {
        "name": "ATTEMPT.search",
-       "line": 457
+       "line": 466
       },
       {
        "name": "issue.get",
-       "line": 457
+       "line": 466
       },
       {
        "name": "self.gh.comment",
-       "line": 459
-      },
-      {
-       "name": "self.gh.close_pr",
-       "line": 460
-      },
-      {
-       "name": "self.gh.label",
-       "line": 462
-      },
-      {
-       "name": "self.gh.unassign",
-       "line": 463
-      },
-      {
-       "name": "self.gh.close",
        "line": 468
       },
       {
-       "name": "ATTEMPT.sub",
+       "name": "self.gh.close_pr",
        "line": 469
       },
       {
-       "name": "re.search",
+       "name": "self.gh.label",
        "line": 471
       },
       {
-       "name": "self.gh.create_issue",
+       "name": "self.gh.unassign",
        "line": 472
+      },
+      {
+       "name": "self.gh.close",
+       "line": 477
+      },
+      {
+       "name": "ATTEMPT.sub",
+       "line": 478
+      },
+      {
+       "name": "re.search",
+       "line": 480
+      },
+      {
+       "name": "self.gh.create_issue",
+       "line": 481
       },
       {
        "name": "sorted",
-       "line": 472
+       "line": 481
       },
       {
        "name": "assignment",
-       "line": 473
+       "line": 482
       },
       {
        "name": "self.model_for",
-       "line": 473
+       "line": 482
       },
       {
        "name": "base.group",
-       "line": 473
+       "line": 482
       },
       {
        "name": "labels_of",
-       "line": 472
+       "line": 481
       },
       {
        "name": "l.startswith",
-       "line": 472
+       "line": 481
       }
      ]
     },
@@ -1978,51 +1999,51 @@
      "name": "reconcile",
      "qualname": "Queue.reconcile",
      "kind": "method",
-     "start": 477,
-     "end": 487,
+     "start": 486,
+     "end": 496,
      "size": 11,
      "decorators": [],
      "branches": [
       {
        "kind": "loop",
-       "line": 479,
+       "line": 488,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 481,
+       "line": 490,
        "detail": ""
       },
       {
        "kind": "except",
-       "line": 486,
+       "line": 495,
        "detail": "Exception"
       }
      ],
      "calls": [
       {
        "name": "self.gh.default_branch",
-       "line": 478
+       "line": 487
       },
       {
        "name": "self.gh.issues",
-       "line": 479
+       "line": 488
       },
       {
        "name": "settings_of",
-       "line": 480
+       "line": 489
       },
       {
        "name": "self.log",
-       "line": 482
+       "line": 491
       },
       {
        "name": "self.run",
-       "line": 485
+       "line": 494
       },
       {
        "name": "type",
-       "line": 487
+       "line": 496
       }
      ]
     },
@@ -2030,159 +2051,159 @@
      "name": "run",
      "qualname": "Queue.run",
      "kind": "method",
-     "start": 489,
-     "end": 525,
+     "start": 498,
+     "end": 534,
      "size": 37,
      "decorators": [],
      "branches": [
       {
        "kind": "if",
-       "line": 494,
-       "detail": ""
-      },
-      {
-       "kind": "ternary",
-       "line": 498,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 500,
-       "detail": ""
-      },
-      {
-       "kind": "ternary",
        "line": 503,
        "detail": ""
       },
       {
-       "kind": "loop",
-       "line": 505,
-       "detail": ""
-      },
-      {
-       "kind": "loop",
-       "line": 509,
-       "detail": ""
-      },
-      {
-       "kind": "except",
-       "line": 512,
-       "detail": "Exception"
-      },
-      {
-       "kind": "loop",
-       "line": 516,
+       "kind": "ternary",
+       "line": 507,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 517,
+       "line": 509,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 512,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 514,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 518,
        "detail": ""
       },
       {
        "kind": "except",
        "line": 521,
+       "detail": "Exception"
+      },
+      {
+       "kind": "loop",
+       "line": 525,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 526,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 530,
        "detail": "RuntimeError"
       },
       {
        "kind": "if",
-       "line": 523,
+       "line": 532,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "settings.get",
-       "line": 490
+       "line": 499
       },
       {
        "name": "json_file",
-       "line": 493
+       "line": 502
       },
       {
        "name": "catalog.get",
-       "line": 494
+       "line": 503
       },
       {
        "name": "self.plan_phase",
-       "line": 495
-      },
-      {
-       "name": "isinstance",
-       "line": 494
-      },
-      {
-       "name": "c.get",
-       "line": 496
-      },
-      {
-       "name": "().strip",
-       "line": 497
-      },
-      {
-       "name": "n.strip",
-       "line": 498
-      },
-      {
-       "name": "asked.split",
-       "line": 498
-      },
-      {
-       "name": "self.render",
-       "line": 501
-      },
-      {
-       "name": "join",
        "line": 504
       },
       {
-       "name": "self.run_issues",
+       "name": "isinstance",
+       "line": 503
+      },
+      {
+       "name": "c.get",
        "line": 505
       },
       {
-       "name": "gh.close",
+       "name": "().strip",
        "line": 506
       },
       {
-       "name": "self.component",
-       "line": 511
+       "name": "n.strip",
+       "line": 507
       },
       {
-       "name": "endswith",
-       "line": 514
+       "name": "asked.split",
+       "line": 507
       },
       {
-       "name": "startswith",
-       "line": 514
+       "name": "self.render",
+       "line": 510
       },
       {
-       "name": "type",
+       "name": "join",
        "line": 513
       },
       {
-       "name": "str",
-       "line": 513
+       "name": "self.run_issues",
+       "line": 514
       },
       {
-       "name": "as_int",
+       "name": "gh.close",
        "line": 515
       },
       {
-       "name": "self.start_chunk",
-       "line": 519
+       "name": "self.component",
+       "line": 520
       },
       {
-       "name": "all",
+       "name": "endswith",
        "line": 523
       },
       {
-       "name": "self.assemble_phase",
+       "name": "startswith",
+       "line": 523
+      },
+      {
+       "name": "type",
+       "line": 522
+      },
+      {
+       "name": "str",
+       "line": 522
+      },
+      {
+       "name": "as_int",
        "line": 524
       },
       {
+       "name": "self.start_chunk",
+       "line": 528
+      },
+      {
+       "name": "all",
+       "line": 532
+      },
+      {
+       "name": "self.assemble_phase",
+       "line": 533
+      },
+      {
        "name": "rows.values",
-       "line": 523
+       "line": 532
       }
      ]
     },
@@ -2190,82 +2211,82 @@
      "name": "plan_phase",
      "qualname": "Queue.plan_phase",
      "kind": "method",
-     "start": 527,
-     "end": 549,
+     "start": 536,
+     "end": 558,
      "size": 23,
      "decorators": [],
      "branches": [
       {
        "kind": "if",
-       "line": 530,
+       "line": 539,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 532,
+       "line": 541,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 540,
+       "line": 549,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 543,
+       "line": 552,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 546,
+       "line": 555,
        "detail": ""
       },
       {
        "kind": "ternary",
-       "line": 548,
+       "line": 557,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "self.run_issues",
-       "line": 529
-      },
-      {
-       "name": "issue_text",
-       "line": 531
-      },
-      {
-       "name": "gh.create_issue",
-       "line": 536
-      },
-      {
-       "name": "self.render",
        "line": 538
       },
       {
-       "name": "assignment",
-       "line": 537
-      },
-      {
-       "name": "settings.get",
-       "line": 537
-      },
-      {
-       "name": "self.held",
+       "name": "issue_text",
        "line": 540
       },
       {
+       "name": "gh.create_issue",
+       "line": 545
+      },
+      {
+       "name": "self.render",
+       "line": 547
+      },
+      {
+       "name": "assignment",
+       "line": 546
+      },
+      {
+       "name": "settings.get",
+       "line": 546
+      },
+      {
+       "name": "self.held",
+       "line": 549
+      },
+      {
        "name": "self.session",
-       "line": 542
+       "line": 551
       },
       {
        "name": "self.hold_start_error",
-       "line": 544
+       "line": 553
       },
       {
        "name": "self.fail_or_retry",
-       "line": 547
+       "line": 556
       }
      ]
     },
@@ -2273,63 +2294,63 @@
      "name": "start_chunk",
      "qualname": "Queue.start_chunk",
      "kind": "method",
-     "start": 551,
-     "end": 563,
+     "start": 560,
+     "end": 572,
      "size": 13,
      "decorators": [],
      "branches": [
       {
        "kind": "if",
-       "line": 555,
+       "line": 564,
        "detail": ""
       },
       {
        "kind": "elif",
-       "line": 557,
+       "line": 566,
        "detail": ""
       },
       {
        "kind": "ternary",
-       "line": 562,
+       "line": 571,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "gh.branch_sha",
-       "line": 554
+       "line": 563
       },
       {
        "name": "gh.create_branch",
-       "line": 556
+       "line": 565
       },
       {
        "name": "gh.reset_branch",
-       "line": 558
+       "line": 567
       },
       {
        "name": "self.run_issues",
-       "line": 557
+       "line": 566
       },
       {
        "name": "comp_label",
-       "line": 557
+       "line": 566
       },
       {
        "name": "issue_text",
-       "line": 559
+       "line": 568
       },
       {
        "name": "gh.create_issue",
-       "line": 562
+       "line": 571
       },
       {
        "name": "assignment",
-       "line": 563
+       "line": 572
       },
       {
        "name": "self.settings.get",
-       "line": 563
+       "line": 572
       }
      ]
     },
@@ -2337,39 +2358,24 @@
      "name": "component",
      "qualname": "Queue.component",
      "kind": "method",
-     "start": 565,
-     "end": 643,
-     "size": 79,
+     "start": 574,
+     "end": 661,
+     "size": 88,
      "decorators": [],
      "branches": [
       {
        "kind": "loop",
-       "line": 568,
+       "line": 577,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 570,
+       "line": 579,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 572,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 574,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 578,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 580,
+       "line": 581,
        "detail": ""
       },
       {
@@ -2379,7 +2385,7 @@
       },
       {
        "kind": "if",
-       "line": 586,
+       "line": 587,
        "detail": ""
       },
       {
@@ -2399,12 +2405,12 @@
       },
       {
        "kind": "if",
-       "line": 599,
+       "line": 602,
        "detail": ""
       },
       {
-       "kind": "ternary",
-       "line": 609,
+       "kind": "if",
+       "line": 604,
        "detail": ""
       },
       {
@@ -2414,120 +2420,134 @@
       },
       {
        "kind": "if",
-       "line": 615,
+       "line": 611,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 619,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 629,
+       "line": 620,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 630,
+       "line": 639,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 648,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "gh.branch_prs",
-       "line": 568
+       "line": 577
       },
       {
        "name": "pr.get",
-       "line": 572
+       "line": 581
       },
       {
        "name": "get",
-       "line": 569
+       "line": 578
       },
       {
        "name": "self.run_issues",
-       "line": 577
+       "line": 586
       },
       {
        "name": "comp_label",
-       "line": 577
+       "line": 586
       },
       {
        "name": "self.held",
-       "line": 580
+       "line": 589
       },
       {
        "name": "self.follow",
-       "line": 582
-      },
-      {
-       "name": "result.endswith",
-       "line": 583
+       "line": 597
       },
       {
        "name": "status_of",
-       "line": 588
+       "line": 600
       },
       {
        "name": "status.get",
-       "line": 590
+       "line": 602
       },
       {
        "name": "self.check",
-       "line": 591
+       "line": 603
       },
       {
        "name": "len",
-       "line": 593
-      },
-      {
-       "name": "self.start_chunk",
-       "line": 594
-      },
-      {
-       "name": "self.estimate.get",
-       "line": 594
-      },
-      {
-       "name": "gh.close",
-       "line": 601
-      },
-      {
-       "name": "labels_of",
-       "line": 599
-      },
-      {
-       "name": "max",
-       "line": 603
-      },
-      {
-       "name": "h.get",
-       "line": 603
-      },
-      {
-       "name": "i.get",
        "line": 605
       },
       {
-       "name": "report_facts",
-       "line": 609
+       "name": "self.start_chunk",
+       "line": 606
       },
       {
-       "name": "gh.file",
-       "line": 609
+       "name": "self.estimate.get",
+       "line": 606
       },
       {
-       "name": "gh.create_pr",
+       "name": "gh.close",
+       "line": 613
+      },
+      {
+       "name": "labels_of",
        "line": 611
       },
       {
+       "name": "max",
+       "line": 615
+      },
+      {
+       "name": "h.get",
+       "line": 615
+      },
+      {
+       "name": "i.get",
+       "line": 617
+      },
+      {
+       "name": "report_facts",
+       "line": 619
+      },
+      {
+       "name": "gh.file",
+       "line": 619
+      },
+      {
+       "name": "gh.create_pr",
+       "line": 621
+      },
+      {
+       "name": "bool",
+       "line": 629
+      },
+      {
+       "name": "any",
+       "line": 634
+      },
+      {
        "name": "gh.create_issue",
-       "line": 616
+       "line": 640
       },
       {
        "name": "assignment",
-       "line": 642
+       "line": 660
       },
       {
        "name": "self.settings.get",
-       "line": 642
+       "line": 660
       }
      ]
     },
@@ -2535,44 +2555,14 @@
      "name": "follow",
      "qualname": "Queue.follow",
      "kind": "method",
-     "start": 645,
-     "end": 692,
-     "size": 48,
+     "start": 663,
+     "end": 715,
+     "size": 53,
      "decorators": [],
      "branches": [
       {
        "kind": "ternary",
-       "line": 647,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 649,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 651,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 654,
-       "detail": ""
-      },
-      {
-       "kind": "ternary",
-       "line": 656,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 657,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 660,
+       "line": 665,
        "detail": ""
       },
       {
@@ -2581,13 +2571,8 @@
        "detail": ""
       },
       {
-       "kind": "ternary",
-       "line": 669,
-       "detail": ""
-      },
-      {
        "kind": "if",
-       "line": 671,
+       "line": 669,
        "detail": ""
       },
       {
@@ -2596,117 +2581,166 @@
        "detail": ""
       },
       {
-       "kind": "if",
-       "line": 673,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 680,
-       "detail": ""
-      },
-      {
        "kind": "ternary",
-       "line": 682,
+       "line": 674,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 683,
+       "line": 675,
        "detail": ""
       },
       {
-       "kind": "ternary",
+       "kind": "if",
+       "line": 678,
+       "detail": ""
+      },
+      {
+       "kind": "if",
        "line": 685,
        "detail": ""
       },
       {
-       "kind": "elif",
-       "line": 686,
+       "kind": "ternary",
+       "line": 687,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 689,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 690,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 691,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 698,
        "detail": ""
       },
       {
        "kind": "ternary",
-       "line": 688,
+       "line": 700,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 702,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 705,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 706,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 708,
+       "detail": ""
+      },
+      {
+       "kind": "elif",
+       "line": 709,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 711,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "labels_of",
-       "line": 647
+       "line": 665
       },
       {
        "name": "self.session",
-       "line": 648
+       "line": 666
       },
       {
        "name": "self.hold_start_error",
-       "line": 652
-      },
-      {
-       "name": "self.fail_or_retry",
-       "line": 655
-      },
-      {
-       "name": "gh.pr_files",
-       "line": 662
-      },
-      {
-       "name": "().startswith",
-       "line": 663
-      },
-      {
-       "name": "f.startswith",
-       "line": 663
-      },
-      {
-       "name": "os.path.basename",
-       "line": 663
-      },
-      {
-       "name": "join",
-       "line": 668
-      },
-      {
-       "name": "status_of",
        "line": 670
       },
       {
-       "name": "as_int",
-       "line": 677
+       "name": "self.fail_or_retry",
+       "line": 673
       },
       {
-       "name": "status.get",
-       "line": 672
+       "name": "gh.pr_files",
+       "line": 680
       },
       {
-       "name": "().get",
-       "line": 677
+       "name": "().startswith",
+       "line": 681
       },
       {
-       "name": "gh.file",
+       "name": "f.startswith",
+       "line": 681
+      },
+      {
+       "name": "os.path.basename",
+       "line": 681
+      },
+      {
+       "name": "join",
        "line": 686
       },
       {
-       "name": "gh.label",
-       "line": 674
+       "name": "status_of",
+       "line": 688
       },
       {
-       "name": "issue.get",
-       "line": 678
+       "name": "as_int",
+       "line": 695
       },
       {
-       "name": "gh.merge",
-       "line": 689
-      },
-      {
-       "name": "gh.unlabel",
+       "name": "status.get",
        "line": 690
       },
       {
+       "name": "().get",
+       "line": 695
+      },
+      {
+       "name": "gh.file",
+       "line": 709
+      },
+      {
+       "name": "gh.label",
+       "line": 692
+      },
+      {
+       "name": "issue.get",
+       "line": 696
+      },
+      {
+       "name": "any",
+       "line": 702
+      },
+      {
+       "name": "gh.merge",
+       "line": 712
+      },
+      {
+       "name": "gh.unlabel",
+       "line": 713
+      },
+      {
        "name": "gh.close",
-       "line": 691
+       "line": 714
       }
      ]
     },
@@ -2714,65 +2748,65 @@
      "name": "check",
      "qualname": "Queue.check",
      "kind": "method",
-     "start": 694,
-     "end": 711,
+     "start": 717,
+     "end": 734,
      "size": 18,
      "decorators": [],
      "branches": [
       {
        "kind": "if",
-       "line": 697,
+       "line": 720,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "os.path.join",
-       "line": 696
+       "line": 719
       },
       {
        "name": "os.path.isfile",
-       "line": 697
+       "line": 720
       },
       {
        "name": "self.log",
-       "line": 698
+       "line": 721
       },
       {
        "name": "tempfile.mkdtemp",
-       "line": 700
+       "line": 723
       },
       {
        "name": "self.gh.tarball",
-       "line": 702
+       "line": 725
       },
       {
        "name": "subprocess.run",
-       "line": 703
+       "line": 726
       },
       {
        "name": "shutil.rmtree",
-       "line": 711
+       "line": 734
       },
       {
        "name": "os.path.abspath",
-       "line": 703
+       "line": 726
       },
       {
        "name": "self.settings.get",
-       "line": 704
+       "line": 727
       },
       {
        "name": "printed.stdout.strip",
-       "line": 709
+       "line": 732
       },
       {
        "name": "().splitlines",
-       "line": 706
+       "line": 729
       },
       {
        "name": "run.stdout.strip",
-       "line": 706
+       "line": 729
       }
      ]
     },
@@ -2780,148 +2814,148 @@
      "name": "assemble_phase",
      "qualname": "Queue.assemble_phase",
      "kind": "method",
-     "start": 713,
-     "end": 753,
+     "start": 736,
+     "end": 776,
      "size": 41,
      "decorators": [],
      "branches": [
       {
        "kind": "loop",
-       "line": 715,
+       "line": 738,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 718,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 721,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 725,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 726,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 728,
-       "detail": ""
-      },
-      {
-       "kind": "ternary",
-       "line": 730,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 733,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 736,
-       "detail": ""
-      },
-      {
-       "kind": "if",
-       "line": 739,
-       "detail": ""
-      },
-      {
-       "kind": "ternary",
        "line": 741,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 742,
+       "line": 744,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 748,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 749,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 751,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 753,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 756,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 759,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 762,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 764,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 765,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "any",
-       "line": 718
+       "line": 741
       },
       {
        "name": "self.run_issues",
-       "line": 720
-      },
-      {
-       "name": "gh.create_issue",
-       "line": 748
-      },
-      {
-       "name": "settings.get",
-       "line": 716
-      },
-      {
-       "name": "self.held",
-       "line": 733
-      },
-      {
-       "name": "self.session",
-       "line": 735
-      },
-      {
-       "name": "issue_text",
        "line": 743
       },
       {
+       "name": "gh.create_issue",
+       "line": 771
+      },
+      {
+       "name": "settings.get",
+       "line": 739
+      },
+      {
+       "name": "self.held",
+       "line": 756
+      },
+      {
+       "name": "self.session",
+       "line": 758
+      },
+      {
+       "name": "issue_text",
+       "line": 766
+      },
+      {
        "name": "assignment",
-       "line": 749
+       "line": 772
       },
       {
        "name": "gh.close",
-       "line": 731
+       "line": 754
       },
       {
        "name": "self.hold_start_error",
-       "line": 737
+       "line": 760
       },
       {
        "name": "self.fail_or_retry",
-       "line": 740
+       "line": 763
       },
       {
        "name": "i.get",
-       "line": 718
+       "line": 741
       },
       {
        "name": "gh.linked_prs",
-       "line": 723
+       "line": 746
       },
       {
        "name": "report_facts",
-       "line": 727
+       "line": 750
       },
       {
        "name": "p.get",
-       "line": 723
+       "line": 746
       },
       {
        "name": "gh.is_agent_pr",
-       "line": 724
+       "line": 747
       },
       {
        "name": "gh.file",
-       "line": 727
+       "line": 750
       },
       {
        "name": "get",
-       "line": 724
+       "line": 747
       },
       {
        "name": "gh.comment",
-       "line": 751
+       "line": 774
       }
      ]
     },
@@ -2929,62 +2963,62 @@
      "name": "render",
      "qualname": "Queue.render",
      "kind": "method",
-     "start": 755,
-     "end": 765,
+     "start": 778,
+     "end": 788,
      "size": 11,
      "decorators": [],
      "branches": [
       {
        "kind": "if",
-       "line": 762,
+       "line": 785,
        "detail": ""
       },
       {
        "kind": "loop",
-       "line": 764,
+       "line": 787,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "rows.items",
-       "line": 758
+       "line": 781
       },
       {
        "name": "().isoformat",
-       "line": 759
+       "line": 782
       },
       {
        "name": "json.dumps",
-       "line": 760
+       "line": 783
       },
       {
        "name": "now",
-       "line": 759
+       "line": 782
       },
       {
        "name": "join",
-       "line": 761
+       "line": 784
       },
       {
        "name": "self.gh.set_body",
-       "line": 763
+       "line": 786
       },
       {
        "name": "body.split",
-       "line": 762
+       "line": 785
       },
       {
        "name": "split",
-       "line": 762
+       "line": 785
       },
       {
        "name": "tracker.get",
-       "line": 762
+       "line": 785
       },
       {
        "name": "self.log",
-       "line": 765
+       "line": 788
       }
      ]
     },
@@ -2992,103 +3026,103 @@
      "name": "delta",
      "qualname": "Queue.delta",
      "kind": "method",
-     "start": 768,
-     "end": 794,
+     "start": 791,
+     "end": 817,
      "size": 27,
      "decorators": [],
      "branches": [
       {
        "kind": "if",
-       "line": 772,
+       "line": 795,
        "detail": ""
       },
       {
        "kind": "loop",
-       "line": 780,
+       "line": 803,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 782,
+       "line": 805,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "gh.default_branch",
-       "line": 770
-      },
-      {
-       "name": "json_file",
-       "line": 771
-      },
-      {
-       "name": "self.log",
-       "line": 773
-      },
-      {
-       "name": "gh.file",
-       "line": 772
-      },
-      {
-       "name": "sys.path.insert",
-       "line": 775
-      },
-      {
-       "name": "os.path.abspath",
-       "line": 775
-      },
-      {
-       "name": "os.path.join",
-       "line": 775
-      },
-      {
-       "name": "components.rows_of",
-       "line": 777
-      },
-      {
-       "name": "sorted",
-       "line": 778
-      },
-      {
-       "name": "().values",
-       "line": 778
-      },
-      {
-       "name": "components.component_map",
-       "line": 778
-      },
-      {
-       "name": "p.startswith",
-       "line": 779
-      },
-      {
-       "name": "gh.issues",
-       "line": 782
-      },
-      {
-       "name": "gh.create_issue",
-       "line": 785
-      },
-      {
-       "name": "assignment",
        "line": 793
       },
       {
-       "name": "comp_label",
-       "line": 782
-      },
-      {
-       "name": "join",
-       "line": 791
-      },
-      {
-       "name": "len",
+       "name": "json_file",
        "line": 794
       },
       {
+       "name": "self.log",
+       "line": 796
+      },
+      {
+       "name": "gh.file",
+       "line": 795
+      },
+      {
+       "name": "sys.path.insert",
+       "line": 798
+      },
+      {
+       "name": "os.path.abspath",
+       "line": 798
+      },
+      {
+       "name": "os.path.join",
+       "line": 798
+      },
+      {
+       "name": "components.rows_of",
+       "line": 800
+      },
+      {
+       "name": "sorted",
+       "line": 801
+      },
+      {
+       "name": "().values",
+       "line": 801
+      },
+      {
+       "name": "components.component_map",
+       "line": 801
+      },
+      {
+       "name": "p.startswith",
+       "line": 802
+      },
+      {
+       "name": "gh.issues",
+       "line": 805
+      },
+      {
+       "name": "gh.create_issue",
+       "line": 808
+      },
+      {
+       "name": "assignment",
+       "line": 816
+      },
+      {
+       "name": "comp_label",
+       "line": 805
+      },
+      {
+       "name": "join",
+       "line": 814
+      },
+      {
+       "name": "len",
+       "line": 817
+      },
+      {
        "name": "components.assign",
-       "line": 781
+       "line": 804
       }
      ]
     },
@@ -3096,180 +3130,180 @@
      "name": "main",
      "qualname": "main",
      "kind": "function",
-     "start": 797,
-     "end": 840,
+     "start": 820,
+     "end": 863,
      "size": 44,
      "decorators": [],
      "branches": [
       {
        "kind": "if",
-       "line": 814,
+       "line": 837,
        "detail": ""
       },
       {
        "kind": "raise",
-       "line": 815,
+       "line": 838,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 819,
+       "line": 842,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 820,
+       "line": 843,
        "detail": ""
       },
       {
        "kind": "raise",
-       "line": 821,
+       "line": 844,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 823,
+       "line": 846,
        "detail": ""
       },
       {
        "kind": "raise",
-       "line": 824,
+       "line": 847,
        "detail": ""
       },
       {
        "kind": "if",
-       "line": 826,
+       "line": 849,
        "detail": ""
       },
       {
        "kind": "raise",
-       "line": 827,
+       "line": 850,
        "detail": ""
       },
       {
        "kind": "elif",
-       "line": 833,
+       "line": 856,
        "detail": ""
       },
       {
        "kind": "except",
-       "line": 839,
+       "line": 862,
        "detail": "RuntimeError"
       },
       {
        "kind": "raise",
-       "line": 840,
+       "line": 863,
        "detail": ""
       }
      ],
      "calls": [
       {
        "name": "argparse.ArgumentParser",
-       "line": 798
+       "line": 821
       },
       {
        "name": "__doc__.splitlines",
-       "line": 798
+       "line": 821
       },
       {
        "name": "parser.add_subparsers",
-       "line": 799
+       "line": 822
       },
       {
        "name": "sub.add_parser",
-       "line": 800
+       "line": 823
       },
       {
        "name": "start.add_argument",
-       "line": 801
+       "line": 824
       },
       {
        "name": "d.add_argument",
-       "line": 809
-      },
-      {
-       "name": "parser.parse_args",
-       "line": 811
-      },
-      {
-       "name": "os.environ.get",
-       "line": 813
-      },
-      {
-       "name": "SystemExit",
-       "line": 815
-      },
-      {
-       "name": "GitHub",
-       "line": 816
-      },
-      {
-       "name": "Queue",
-       "line": 817
-      },
-      {
-       "name": "gh.ensure_labels",
-       "line": 825
-      },
-      {
-       "name": "gh.issues",
-       "line": 826
-      },
-      {
-       "name": "gh.create_issue",
-       "line": 830
-      },
-      {
-       "name": "print",
-       "line": 831
-      },
-      {
-       "name": "n.strip",
-       "line": 822
-      },
-      {
-       "name": "any",
-       "line": 823
-      },
-      {
-       "name": "queue.reconcile",
-       "line": 834
-      },
-      {
-       "name": "queue.delta",
-       "line": 838
-      },
-      {
-       "name": "str",
-       "line": 840
-      },
-      {
-       "name": "args.verify_model.strip",
-       "line": 820
-      },
-      {
-       "name": "args.components.split",
-       "line": 822
-      },
-      {
-       "name": "json.dumps",
-       "line": 830
-      },
-      {
-       "name": "issue.get",
        "line": 832
       },
       {
-       "name": "open",
+       "name": "parser.parse_args",
+       "line": 834
+      },
+      {
+       "name": "os.environ.get",
        "line": 836
       },
       {
+       "name": "SystemExit",
+       "line": 838
+      },
+      {
+       "name": "GitHub",
+       "line": 839
+      },
+      {
+       "name": "Queue",
+       "line": 840
+      },
+      {
+       "name": "gh.ensure_labels",
+       "line": 848
+      },
+      {
+       "name": "gh.issues",
+       "line": 849
+      },
+      {
+       "name": "gh.create_issue",
+       "line": 853
+      },
+      {
+       "name": "print",
+       "line": 854
+      },
+      {
+       "name": "n.strip",
+       "line": 845
+      },
+      {
+       "name": "any",
+       "line": 846
+      },
+      {
+       "name": "queue.reconcile",
+       "line": 857
+      },
+      {
+       "name": "queue.delta",
+       "line": 861
+      },
+      {
+       "name": "str",
+       "line": 863
+      },
+      {
+       "name": "args.verify_model.strip",
+       "line": 843
+      },
+      {
+       "name": "args.components.split",
+       "line": 845
+      },
+      {
+       "name": "json.dumps",
+       "line": 853
+      },
+      {
+       "name": "issue.get",
+       "line": 855
+      },
+      {
+       "name": "open",
+       "line": 859
+      },
+      {
        "name": "l.strip",
-       "line": 837
+       "line": 860
       },
       {
        "name": "NAME.match",
-       "line": 823
+       "line": 846
       }
      ]
     },
@@ -3376,7 +3410,7 @@
        "module": "components",
        "name": null,
        "as": "components",
-       "line": 776
+       "line": 799
       }
      ]
     }
