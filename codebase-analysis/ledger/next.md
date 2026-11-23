@@ -1,8 +1,9 @@
 ```text
-DONE
-coverage.py: result PASS at depth deep (pass 11, the gate, is done). Now, in this order:
-  1. the checks in references/quality-gate.md;
-  2. record the code this analysis describes, so later changes are a delta (it adds a cites line to each page): python3 -I .github/skills/analyzing-a-codebase/scripts/delta.py --repo . --analysis codebase-analysis --init --label NAME
-  3. knowledge.py, on the final pages: python3 -I .github/skills/analyzing-a-codebase/scripts/knowledge.py --repo . --analysis codebase-analysis
-  4. status.py --write, then finish as SKILL.md says (the bible stays unverified until verifying-a-codebase-analysis passes).
+NEXT DELTA recheck codebase-analysis/lld/bible-mode-b/bible_queue.md (2 citations waiting in 1 pages)
+
+Each line below cites code that changed. Open the code, correct the citation and the sentence it supports, then delete the marker:
+  - line 1369: Source: `.github/bible/bible_queue.py:396-798` <!-- recheck: was .github/bible/bible_queue.py:396-798, the card's code changed --> <!-- code: c7b3115b36f1 -->
+  - line 1371: `Queue` coordinates tracker issues, component sessions, verification/revision cycles, assembly, and delta updates. Its constructor sets the GitHub client, logger, and skill directory; methods also pop
+
+Then run next.py again.
 ```
