@@ -137,7 +137,7 @@ The state IDs `no_start` and `start_error` represent the returned strings `no-st
 
 | Module page | Source file | Lines | Role | Main functions |
 | --- | --- | --- | --- | --- |
-| [bible_queue](bible_queue.md) | `.github/bible/bible_queue.py` | 1-848 | CLI entry point, queue coordinator, and GitHub API client | `main`, `Queue.reconcile`, `Queue.run`, `Queue.component`, `Queue.follow`, `Queue.check`, `Queue.delta`, `GitHub.call` |
+| [bible_queue](bible_queue.md) | `.github/bible/bible_queue.py` | 1-867 | CLI entry point, queue coordinator, and GitHub API client | `main`, `Queue.reconcile`, `Queue.run`, `Queue.component`, `Queue.follow`, `Queue.check`, `Queue.delta`, `GitHub.call` |
 
 The workflow files listed above are adapters that invoke the module, not additional Python source modules. (`.github/workflows/bible-plan.yml:50-54`, `.github/workflows/bible-queue.yml:34-37`, `.github/workflows/bible-delta.yml:29-36`)
 

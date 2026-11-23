@@ -18,7 +18,11 @@ Version: not provided
 | --- | --- | --- |
 | 1 | Inventory and coverage ledger | done |
 | 2 | Components and packet plan; run discovery | done |
-| 3–11 | Component pages and whole-system analysis | in progress |
+| 3–5 | Component LLD pages and design pages | done |
+| 6 | Search sweep | done |
+| 7 | Whole-system data dictionary | done |
+| 8 | HLD pages | in progress |
+| 9–11 | Mind map/front page/reference, knowledge base, quality gate | pending |
 
 ## Components
 
