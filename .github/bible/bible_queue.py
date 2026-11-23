@@ -67,6 +67,8 @@ FINAL_STATES = ("NEW_CHAT", "COMPONENT_DONE", "WAITING_ANSWER", "STOP")
 NO_PR_AFTER = 30 * 60      # seconds after assignment with no pull request: the session did not start
 IDLE_AFTER = 20 * 60       # seconds without a push: the session has ended
 MAX_VERIFY_ROUNDS = 2
+MAX_CONTINUE = 3           # continuation comments for one assembly or whole verification before a person decides
+CONTINUE_MARK = "<!-- bible-continue -->"
 SETTINGS = re.compile(r"<!--\s*bible-settings\s*(\{.*?\})\s*-->", re.S)
 ATTEMPT = re.compile(r"^Attempt:\s*(\d+)", re.M)
 NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$")
@@ -149,6 +151,12 @@ class GitHub:
             payload["assignees"] = [COPILOT]
             payload["agent_assignment"] = assign
         return self.call("POST", "/issues", payload)
+
+    def me(self):
+        """The login of the token's owner: the identity of everything the queue writes (cached)."""
+        if not getattr(self, "_me", None):
+            self._me = (self.call("GET", self.api + "/user") or {}).get("login", "")
+        return self._me
 
     def default_branch(self):
         return self.call("GET", "")["default_branch"]
@@ -313,12 +321,32 @@ def age(stamp):
     return (now() - datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00"))).total_seconds()
 
 
+SAFE_PATH = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)*$")
+SAFE_MODEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$")
+DEPTH_VALUES = ("deep", "standard", "survey")  # coverage.DEPTHS
+
+
 def settings_of(tracker):
+    """The run's settings from the tracker, or None when they are missing or unsafe. Anyone with write access can edit
+    the tracker, and the settings reach file paths, script arguments and the text of comments that start Copilot, so
+    each value must have the form the workflow form allows."""
     match = SETTINGS.search(tracker.get("body") or "")
     try:
-        return json.loads(match.group(1)) if match else None
+        data = json.loads(match.group(1)) if match else None
     except ValueError:
         return None
+    if not isinstance(data, dict):
+        return None
+    analysis = str(data.get("analysis", "codebase-analysis"))
+    if not SAFE_PATH.match(analysis) or ".." in analysis.split("/"):
+        return None
+    if str(data.get("depth", "deep")) not in DEPTH_VALUES:
+        return None
+    for key in ("model", "verify_model"):
+        value = str(data.get(key) or "")
+        if value and not SAFE_MODEL.match(value):
+            return None
+    return data
 
 
 def labels_of(item):
@@ -763,6 +791,10 @@ class Queue:
                     self.fail_or_retry(issue, None, "no pull request after assignment")
                 if pr and state == "running":  # Copilot is still working on it: not ready for review yet
                     return "%s: running (pull request #%d)" % (kind[6:], pr["number"])
+                if pr and state == "finished":
+                    unfinished = self.continue_if_unfinished(issue, pr, kind, analysis)
+                    if unfinished:
+                        return unfinished
                 return "%s: %s" % (kind[6:], "review and merge pull request #%d" % pr["number"] if pr else state)
             if text:
                 title, body = issue_text(gh, "%s/ledger/issues/%s" % (analysis, text), self.default, title)
@@ -776,6 +808,43 @@ class Queue:
         gh.comment(tracker["number"], "Every component, the assembly and the whole verification are merged. Done.")
         gh.close(tracker["number"])
         return "done"
+
+    def continue_if_unfinished(self, issue, pr, kind, analysis):
+        """A session that ended before its work was done (seen on github.com, 24 Nov 2026: the assembly stopped at
+        Copilot's session limit after 52 minutes). Done means this pull request wrote the end marker: the assembly's
+        status.json (status.py --write, the last step of the Finish order), the whole verification's report. Otherwise
+        ask Copilot to continue on the same pull request, at most MAX_CONTINUE times since a person last released the
+        session, then a person. Only the queue's own marked comments count (anyone can post the marker text); a request
+        Copilot has not picked up after NO_PR_AFTER counts as used. None when the work is done."""
+        gh = self.gh
+        marker = "%s/status.json" % analysis if kind == "bible-assemble" else "%s/verification-report.md" % analysis
+        if marker in gh.pr_files(pr["number"]):
+            return None
+        me = gh.me()
+        released = max([e.get("created_at") or "" for e in gh.timeline(issue["number"]) if e.get("event") == "unlabeled"
+                        and (e.get("label") or {}).get("name") == "bible-needs-human"] + [""])
+        events = gh.timeline(pr["number"])
+        finished = max([e.get("created_at") or "" for e in events if e.get("event") == "copilot_work_finished"
+                        and (e.get("performed_via_github_app") or {}).get("slug") == AGENT_APP] + [""])
+        asked = sorted(e.get("created_at") or "" for e in events if e.get("event") == "commented"
+                       and ((e.get("actor") or e.get("user")) or {}).get("login") == me and CONTINUE_MARK in (e.get("body") or "")
+                       and (e.get("created_at") or "") > released)
+        if asked and asked[-1] > finished and age(asked[-1]) <= NO_PR_AFTER:
+            return "%s: continuing (pull request #%d)" % (kind[6:], pr["number"])  # asked; Copilot has not started yet
+        if len(asked) >= MAX_CONTINUE:
+            if "bible-needs-human" not in labels_of(issue):
+                gh.label(issue["number"], "bible-needs-human")
+                gh.comment(issue["number"], "%d continuations and %s is still not written by #%d. A person must look: read the "
+                           "pull request's last summary, then remove the label `bible-needs-human` to give %d more sessions."
+                           % (len(asked), marker, pr["number"], MAX_CONTINUE))
+            return "%s: needs a person: see #%d" % (kind[6:], issue["number"])
+        gh.comment(pr["number"], "@copilot continue: run `python3 -I %s/analyzing-a-codebase/scripts/next.py --repo . --analysis %s "
+                   "--depth %s --new-session` and do exactly what it prints until it prints DONE%s. Then summarise in a "
+                   "comment what you finished and the last line next.py printed.\n%s"
+                   % (self.skills, analysis, self.settings.get("depth", "deep"),
+                      ", and finish its Finish order (the last step is status.py --write)" if kind == "bible-assemble"
+                      else ", or for the whole verification until verification-report.md is written", CONTINUE_MARK))
+        return "%s: continuing, session %d (pull request #%d)" % (kind[6:], len(asked) + 2, pr["number"])
 
     def render(self, tracker, settings, rows):
         lines = ["Codebase analysis run, kept up to date by the Bible - queue workflow every 15 minutes. Close this issue to stop "
@@ -854,6 +923,9 @@ def main():
                 raise SystemExit("an analysis run is already open (label bible-tracker): close it first")
             settings = {"components": args.components, "model": args.model, "verify_model": args.verify_model,
                         "concurrency": args.concurrency, "analysis": args.analysis, "depth": args.depth}
+            if settings_of({"body": "<!-- bible-settings %s -->" % json.dumps(settings)}) is None:
+                raise SystemExit("settings refused: --analysis must be a folder name inside the repository, --depth one of %s, "
+                                 "--model and --verify-model letters, digits, '.', '_', ':' or '-' only" % ", ".join(DEPTH_VALUES))
             issue = gh.create_issue("Codebase analysis run", "<!-- bible-settings %s -->" % json.dumps(settings), ["bible-tracker"])
             print("Opened the tracker issue #%d. The queue workflow (Bible - queue) assigns the planning session at its next run "
                   "(every 15 minutes); run it by hand to start now." % issue.get("number", 0))
