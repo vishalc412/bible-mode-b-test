@@ -1,6 +1,7 @@
 ```text
-NEXT PASS 5: component design for catalog
-All 3 packets of catalog are done.
-Write lld/catalog/README.md (references/passes.md, Pass 5). Its outbound calls table names every call into another component; its inbound part names the components that call it (components.md lists both).
-Then run next.py again.
+COMPONENT DONE catalog
+coverage.py --component catalog: result PASS at depth deep (3 packets). Stop now and tell the user:
+  component catalog is analysed and its check passes (report: codebase-analysis/ledger/components/catalog/coverage-report.md)
+  next: verify it in a new session on a different model (verifying-a-codebase-analysis, scope: component catalog)
+Where the other components stand: python3 -I /home/runner/work/bible-mode-b-test/bible-mode-b-test/.github/skills/analyzing-a-codebase/scripts/next.py --repo . --analysis codebase-analysis --board
 ```

@@ -43,16 +43,16 @@ The module initializes three product records, then defines lookup, price, stock,
 
 ```mermaid
 flowchart LR
-  get_product["get_product"]
-  price_of["price_of"]
-  in_stock["in_stock"]
+  getproduct["get_product"]
+  priceof["price_of"]
+  instock["in_stock"]
   fetch["fetch_supplier_feed"]
   apply["apply_feed"]
   store["_PRODUCTS"]
   feed["supplier feed"]
-  price_of -->|"looks up product"| get_product
-  in_stock -->|"looks up product"| get_product
-  get_product -->|"reads"| store
+  priceof -->|"looks up product"| getproduct
+  instock -->|"looks up product"| getproduct
+  getproduct -->|"reads"| store
   apply -->|"updates matching records"| store
   fetch -->|"opens and parses"| feed
 ```

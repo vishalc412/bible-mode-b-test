@@ -44,10 +44,10 @@ Source file: `components/catalog/service.py`
 flowchart LR
   make_server["make_server"]
   handler["CatalogHandler"]
-  do_get["CatalogHandler.do_GET"]
+  doget["CatalogHandler.do_GET"]
   send["CatalogHandler._send"]
   make_server -->|"passes handler class"| handler
-  do_get -->|"sends each response"| send
+  doget -->|"sends each response"| send
 ```
 
 ## Classes
