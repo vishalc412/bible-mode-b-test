@@ -19,19 +19,19 @@ exposes: []
 | Kind | CLI and GitHub Actions workflow component |
 | Folders and files | `.github/bible/bible_queue.py`; workflow adapters in `.github/workflows/bible-plan.yml`, `.github/workflows/bible-queue.yml`, and `.github/workflows/bible-delta.yml`; independent `.github/workflows/poc-assign-copilot.yml` |
 | Technology | Python 3 standard library; GitHub Actions YAML |
-| Starts by | Manual `bible-plan` workflow starts a run; `bible-queue` reconciles on a 15-minute schedule or manual dispatch; `bible-delta` handles default-branch pushes outside the ignored paths. (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10` <!-- recheck: was .github/workflows/bible-delta.yml:6-10 -->) |
-| Size | 1 Python source file, 867 lines, 66 functions/methods, 2 classes, 0 routes. (`.github/bible/bible_queue.py:1-867` <!-- recheck: was .github/bible/bible_queue.py:1-867 -->) |
+| Starts by | Manual `bible-plan` workflow starts a run; `bible-queue` reconciles on a 15-minute schedule or manual dispatch; `bible-delta` handles default-branch pushes outside the ignored paths. (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10`) |
+| Size | 1 Python source file, 1,130 lines, 69 functions/methods, 2 classes, 0 routes. (`.github/bible/bible_queue.py:1-1130`) |
 | Depth | Deep |
 
 ## Responsibility
 
-This component coordinates the Mode B analysis workflow through a `start`, `reconcile`, or `delta` CLI command. `Queue` reads tracker and session state from GitHub, assigns work, handles retries and human holds, checks component completion, and opens review pull requests; `GitHub` wraps the REST and GraphQL operations. (`.github/bible/bible_queue.py:9-11`, `.github/bible/bible_queue.py:396-817` <!-- recheck: was .github/bible/bible_queue.py:396-817 -->)
+This component coordinates the Mode B analysis workflow through a `start`, `reconcile`, or `delta` CLI command. `Queue` reads tracker and session state from GitHub, assigns work, handles retries and human holds, checks component completion, and opens review pull requests; `GitHub` wraps the REST and GraphQL operations. (`.github/bible/bible_queue.py:9-11`, `.github/bible/bible_queue.py:448-1078`)
 
-The `bible-plan.yml` workflow starts a run from a manual dispatch, `bible-queue.yml` invokes reconciliation on demand or every 15 minutes, and `bible-delta.yml` writes changed paths to a file and starts delta processing after a default-branch push. (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-plan.yml:50-54`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-queue.yml:34-37`, `.github/workflows/bible-delta.yml:6-10` <!-- recheck: was .github/workflows/bible-delta.yml:6-10 -->, `.github/workflows/bible-delta.yml:31-38`)
+The `bible-plan.yml` workflow starts a run from a manual dispatch, `bible-queue.yml` invokes reconciliation on demand or every 15 minutes, and `bible-delta.yml` writes changed paths to a file and starts delta processing after a default-branch push. (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-plan.yml:50-54`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-queue.yml:34-37`, `.github/workflows/bible-delta.yml:6-10`, `.github/workflows/bible-delta.yml:31-38`)
 
 `poc-assign-copilot.yml` independently creates an issue and assigns Copilot through its inline `gh api` command; it does not invoke the queue or check out repository code. Its required `task` input defaults to an instruction to create `docs/poc-hello.md` with one line, and the input becomes the issue body passed to Copilot. (`.github/workflows/poc-assign-copilot.yml:18-21,31-37,55-69`)
 
-No other analysis component calls into this component or is called by it (inferred: repository search for `bible_queue|\.github/bible/` in `*.py` and `*.yml` returned six references, all in this source file and its three workflow adapters). The queue's `delta` method does call the analysis toolkit's `components` helpers, which are outside the component catalog. (`.github/bible/bible_queue.py:798-802` <!-- recheck: was .github/bible/bible_queue.py:798-802 -->)
+No other analysis component calls into this component or is called by it (inferred: repository search for `bible_queue|\.github/bible/` in `*.py` and `*.yml` returned six references, all in this source file and its three workflow adapters). The queue's `delta` method does call the analysis toolkit's `components` helpers, which are outside the component catalog. (`.github/bible/bible_queue.py:1034-1077`)
 
 ## Structure
 
@@ -67,7 +67,7 @@ flowchart TB
 | `bible-delta.yml` -> `main` and changed-path file | `.github/workflows/bible-delta.yml:31-38` |
 | `main` -> `Queue`, `GitHub` | `.github/bible/bible_queue.py:1080-1081` |
 | `Queue` -> `GitHub` | `.github/bible/bible_queue.py:449-454` |
-| `Queue.check` -> toolkit scripts | `.github/bible/bible_queue.py:723-732` <!-- recheck: was .github/bible/bible_queue.py:723-732 --> |
+| `Queue.check` -> toolkit scripts | `.github/bible/bible_queue.py:812-837` |
 | `GitHub` -> GitHub API | `.github/bible/bible_queue.py:98-110`, `.github/bible/bible_queue.py:315-318` |
 
 ## Reconcile sequence
@@ -137,7 +137,7 @@ The state IDs `no_start` and `start_error` represent the returned strings `no-st
 
 | Module page | Source file | Lines | Role | Main functions |
 | --- | --- | --- | --- | --- |
-| [bible_queue](bible_queue.md) | `.github/bible/bible_queue.py` | 1-867 | CLI entry point, queue coordinator, and GitHub API client | `main`, `Queue.reconcile`, `Queue.run`, `Queue.component`, `Queue.follow`, `Queue.check`, `Queue.delta`, `GitHub.call` |
+| [bible_queue](bible_queue.md) | `.github/bible/bible_queue.py` | 1-1130 | CLI entry point, queue coordinator, and GitHub API client | `main`, `Queue.reconcile`, `Queue.run`, `Queue.component`, `Queue.follow`, `Queue.check`, `Queue.assemble_phase`, `Queue.revise_all_step`, `Queue.continue_if_unfinished`, `Queue.delta`, `GitHub.call` |
 
 The workflow files listed above are adapters that invoke the module, not additional Python source modules. (`.github/workflows/bible-plan.yml:50-54`, `.github/workflows/bible-queue.yml:34-37`, `.github/workflows/bible-delta.yml:31-38`)
 
@@ -174,8 +174,8 @@ classDiagram
 
 | Element | Evidence |
 | --- | --- |
-| `GitHub` fields and methods | `.github/bible/bible_queue.py:96-110`, `.github/bible/bible_queue.py:140-145`, `.github/bible/bible_queue.py:179-183`, `.github/bible/bible_queue.py:234-259` <!-- recheck: was .github/bible/bible_queue.py:234-259 -->, `.github/bible/bible_queue.py:293-296` <!-- recheck: was .github/bible/bible_queue.py:293-296 --> |
-| `Queue` fields and methods | `.github/bible/bible_queue.py:449-451`, `.github/bible/bible_queue.py:489-525` <!-- recheck: was .github/bible/bible_queue.py:489-525 -->, `.github/bible/bible_queue.py:565-642` <!-- recheck: was .github/bible/bible_queue.py:565-642 -->, `.github/bible/bible_queue.py:644-715` <!-- recheck: was .github/bible/bible_queue.py:644-715 -->, `.github/bible/bible_queue.py:772-798` <!-- recheck: was .github/bible/bible_queue.py:772-798 --> |
+| `GitHub` fields and methods | `.github/bible/bible_queue.py:96-110`, `.github/bible/bible_queue.py:140-145`, `.github/bible/bible_queue.py:179-183`, `.github/bible/bible_queue.py:237-288`, `.github/bible/bible_queue.py:297-332` |
+| `Queue` fields and methods | `.github/bible/bible_queue.py:449-451`, `.github/bible/bible_queue.py:483-549`, `.github/bible/bible_queue.py:564-646`, `.github/bible/bible_queue.py:648-751`, `.github/bible/bible_queue.py:753-810` |
 | `Queue` -> `GitHub` | `.github/bible/bible_queue.py:449-454`, `.github/bible/bible_queue.py:555-559` |
 
 The field types shown in the diagram are inferred from constructor assignments and use; the source does not declare annotations. (`.github/bible/bible_queue.py:96-99`, `.github/bible/bible_queue.py:449-451`)
@@ -184,9 +184,9 @@ The field types shown in the diagram are inferred from constructor assignments a
 
 | Interface | Kind | Card or page | Evidence |
 | --- | --- | --- | --- |
-| `start --components ... --verify-model ... [--model ...] [--concurrency ...] [--analysis ...] [--depth ...]` | CLI command | [main](bible_queue.md#main) | `.github/bible/bible_queue.py:802-810` <!-- recheck: was .github/bible/bible_queue.py:802-810 -->, `.github/bible/bible_queue.py:1083-1096` |
+| `start --components ... --verify-model ... [--model ...] [--concurrency ...] [--analysis ...] [--depth ...]` | CLI command | [main](bible_queue.md#main) | `.github/bible/bible_queue.py:1080-1096` |
 | `reconcile` | CLI command | [main](bible_queue.md#main) | `.github/bible/bible_queue.py:1070`, `.github/bible/bible_queue.py:1097-1098` |
-| `delta --changed-file FILE [--analysis ...]` | CLI command | [main](bible_queue.md#main) | `.github/bible/bible_queue.py:812-814` <!-- recheck: was .github/bible/bible_queue.py:812-814 -->, `.github/bible/bible_queue.py:1099-1102` |
+| `delta --changed-file FILE [--analysis ...]` | CLI command | [main](bible_queue.md#main) | `.github/bible/bible_queue.py:1088-1092`, `.github/bible/bible_queue.py:1110-1125` |
 | Other analysis components | Cross-component call | None found | (inferred: repository search described under Responsibility) |
 
 `start` requires a verification model different from the normal model and validates component names; it stops rather than opening a second run when a tracker is already open. (`.github/bible/bible_queue.py:1084-1091`)
@@ -201,23 +201,23 @@ The field types shown in the diagram are inferred from constructor assignments a
 | R-04 | A failed session is retried once; a second failure is labeled `bible-needs-human` and unassigned. | `Queue.fail_or_retry` | Failed agent session | `.github/bible/bible_queue.py:521-540` |
 | R-05 | Chunk and verification sessions may write only their respective component paths; a disallowed file fails/retries the session. | `Queue.follow` | Agent PR file validation | `.github/bible/bible_queue.py:749-758` |
 | R-06 | A component PR is created only for a PASS with no major corrections and a nonempty fingerprint matching the checked pages. | `Queue.component` | Successful component gate and verification | `.github/bible/bible_queue.py:674-678` |
-| R-07 | After the maximum verification rounds without a clean matching PASS, a human hold is created. | `Queue.component` | Verification remains unsuccessful | `.github/bible/bible_queue.py:615-623` <!-- recheck: was .github/bible/bible_queue.py:615-623 --> |
+| R-07 | After the maximum verification rounds without a clean matching PASS, a human hold is created. | `Queue.component` | Verification remains unsuccessful | `.github/bible/bible_queue.py:706-750` |
 
 ## Data
 
 | Store or file | Reads | Writes | Data dictionary entry |
 | --- | --- | --- | --- |
-| GitHub issues and labels | Tracker settings, issue state, labels, assignments, comments, and timelines | Tracker, plan/chunk/verify/hold/delta issues, labels, comments, and assignment changes | Not applicable; GitHub-managed objects (`.github/bible/bible_queue.py:136-158`, `.github/bible/bible_queue.py:176-220` <!-- recheck: was .github/bible/bible_queue.py:176-220 -->, `.github/bible/bible_queue.py:290-310`) |
-| GitHub branches and pull requests | Branch refs, PR metadata/files, commit time, linked PRs | Component branch refs and PR lifecycle changes | Not applicable; GitHub-managed objects (`.github/bible/bible_queue.py:166-187`, `.github/bible/bible_queue.py:179-232` <!-- recheck: was .github/bible/bible_queue.py:179-232 -->, `.github/bible/bible_queue.py:293-302` <!-- recheck: was .github/bible/bible_queue.py:293-302 -->) |
-| GitHub contents and archive | JSON/status/report files and branch tarball | Tarball extraction under the temporary gate directory | Not applicable (`.github/bible/bible_queue.py:179-183`, `.github/bible/bible_queue.py:234-259` <!-- recheck: was .github/bible/bible_queue.py:234-259 -->, `.github/bible/bible_queue.py:797-804`) |
+| GitHub issues and labels | Tracker settings, issue state, labels, assignments, comments, and timelines | Tracker, plan/chunk/verify/hold/delta issues, labels, comments, and assignment changes | Not applicable; GitHub-managed objects (`.github/bible/bible_queue.py:136-158`, `.github/bible/bible_queue.py:189-235`, `.github/bible/bible_queue.py:290-310`) |
+| GitHub branches and pull requests | Branch refs, PR metadata/files, commit time, linked PRs | Component branch refs and PR lifecycle changes | Not applicable; GitHub-managed objects (`.github/bible/bible_queue.py:166-187`, `.github/bible/bible_queue.py:189-250`, `.github/bible/bible_queue.py:322-332`) |
+| GitHub contents and archive | JSON/status/report files and branch tarball | Tarball extraction under the temporary gate directory | Not applicable (`.github/bible/bible_queue.py:179-183`, `.github/bible/bible_queue.py:255-288`, `.github/bible/bible_queue.py:812-837`) |
 | `--changed-file` input | One changed path per line; blank lines are discarded | None | Input contract documented by the delta workflow (`.github/workflows/bible-delta.yml:37-38`, `.github/bible/bible_queue.py:1099-1101`) |
 
 ## Outbound calls
 
 | Target | Purpose | Protocol and scheme | Address from | Timeout, retry, fallback | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| GitHub API | Issues, labels, branches, contents, pull requests, timelines, commits, archives, and ready-for-review mutation | REST and GraphQL; configured API URL defaults to HTTPS | `GITHUB_API_URL`, default `https://api.github.com` | Request timeout defaults to 60 seconds; tarball request uses 300 seconds. HTTP and URL/timeout/OS errors become `RuntimeError`, except `ready` wraps only HTTP errors; API helper supports optional 404 fallback. | `.github/bible/bible_queue.py:98-110`, `.github/bible/bible_queue.py:112-124`, `.github/bible/bible_queue.py:237-243` <!-- recheck: was .github/bible/bible_queue.py:237-243 -->, `.github/bible/bible_queue.py:312-320` |
-| Analysis toolkit `components` helpers | Maps changed paths to component rows during delta processing | In-process Python import | `BIBLE_SKILLS` path, default `.github/skills` | No fallback is defined for import or helper errors in `Queue.delta`. | `.github/bible/bible_queue.py:449-451`, `.github/bible/bible_queue.py:775-781` <!-- recheck: was .github/bible/bible_queue.py:775-781 --> |
+| GitHub API | Issues, labels, branches, contents, pull requests, timelines, commits, archives, and ready-for-review mutation | REST and GraphQL; configured API URL defaults to HTTPS | `GITHUB_API_URL`, default `https://api.github.com` | Request timeout defaults to 60 seconds; tarball request uses 300 seconds. HTTP and URL/timeout/OS errors become `RuntimeError`, except `ready` wraps only HTTP errors; API helper supports optional 404 fallback. | `.github/bible/bible_queue.py:98-110`, `.github/bible/bible_queue.py:112-124`, `.github/bible/bible_queue.py:237-250`, `.github/bible/bible_queue.py:312-320` |
+| Analysis toolkit `components` helpers | Maps changed paths to component rows during delta processing | In-process Python import | `BIBLE_SKILLS` path, default `.github/skills` | No fallback is defined for import or helper errors in `Queue.delta`. | `.github/bible/bible_queue.py:449-451`, `.github/bible/bible_queue.py:1034-1077` |
 | Analysis toolkit `coverage.py` and `status.py` | Check component coverage and obtain page fingerprint | Local subprocess, `python -I` | `BIBLE_SKILLS` path, default `.github/skills` | No timeout is passed to either subprocess. | `.github/bible/bible_queue.py:449-451`, `.github/bible/bible_queue.py:793-806` |
 
 The API client does not log the token value; it adds a bearer authorization header only when a token is present. (`.github/bible/bible_queue.py:106-107`)
@@ -237,18 +237,18 @@ The API client does not log the token value; it adds a bearer authorization head
 | `--model` | Analysis session model | Empty string | CLI/workflow input | `.github/bible/bible_queue.py:1065`, `.github/workflows/bible-plan.yml:14-17` |
 | `--verify-model` | Separate verification model | Required | CLI/workflow input | `.github/bible/bible_queue.py:1066`, `.github/workflows/bible-plan.yml:18-20` |
 | `--concurrency` | Maximum active components; zero means no cap | `0` | CLI/workflow input | `.github/bible/bible_queue.py:1067`, `.github/workflows/bible-plan.yml:21-24`, `.github/bible/bible_queue.py:589-596` |
-| `--analysis` | Analysis output folder | `codebase-analysis` | CLI input | `.github/bible/bible_queue.py:1068`, `.github/bible/bible_queue.py:814` <!-- recheck: was .github/bible/bible_queue.py:814 --> |
+| `--analysis` | Analysis output folder | `codebase-analysis` | CLI input | `.github/bible/bible_queue.py:1086`, `.github/bible/bible_queue.py:1092` |
 | `--depth` | Coverage depth | `deep` | CLI input | `.github/bible/bible_queue.py:1069`, `.github/bible/bible_queue.py:802-803` |
 
 ## Errors and resilience
 
 `GitHub.call` returns `None` for an allowed 404, turns other HTTP errors and URL/timeout/OS errors into `RuntimeError`, and decodes empty responses as `{}`. `main` converts `RuntimeError` to `SystemExit`; `Queue.reconcile` catches exceptions per tracker, while `Queue.run` catches component errors individually and continues other selected components. (`.github/bible/bible_queue.py:112-124`, `.github/bible/bible_queue.py:1103-1104`, `.github/bible/bible_queue.py:543-553`, `.github/bible/bible_queue.py:583-588`)
 
-Session failures retry once and then create a human hold; successful sessions are gated by allowed-file paths and state/fingerprint checks before their PR is merged or exposed for review. (`.github/bible/bible_queue.py:521-540`, `.github/bible/bible_queue.py:659-696` <!-- recheck: was .github/bible/bible_queue.py:659-696 -->, `.github/bible/bible_queue.py:608-627` <!-- recheck: was .github/bible/bible_queue.py:608-627 -->)
+Session failures retry once and then create a human hold; successful sessions are gated by allowed-file paths and state/fingerprint checks before their PR is merged or exposed for review. (`.github/bible/bible_queue.py:530-549`, `.github/bible/bible_queue.py:753-810`, `.github/bible/bible_queue.py:648-751`)
 
 ## Logging and monitoring
 
-The queue logs missing/invalid tracker settings, per-tracker exceptions, component gate output, tracker state rows, and delta issue creation or duplicate detection. (`.github/bible/bible_queue.py:547-553`, `.github/bible/bible_queue.py:793-804`, `.github/bible/bible_queue.py:899-900`, `.github/bible/bible_queue.py:772-798` <!-- recheck: was .github/bible/bible_queue.py:772-798 -->)
+The queue logs missing/invalid tracker settings, per-tracker exceptions, component gate output, tracker state rows, and delta issue creation or duplicate detection. (`.github/bible/bible_queue.py:552-562`, `.github/bible/bible_queue.py:812-837`, `.github/bible/bible_queue.py:839-907`, `.github/bible/bible_queue.py:1034-1077`)
 
 ## Tests
 

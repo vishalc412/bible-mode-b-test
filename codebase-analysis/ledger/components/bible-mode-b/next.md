@@ -1,20 +1,9 @@
 ```text
-NEXT PACKET 3 of 4 (2 done, 50%; 2 in this chat, budget 6)
-Component: bible-mode-b
-Read:      .github/bible/bible_queue.py lines 648-1033 (of 1130), in full
-Write:     codebase-analysis/README.md (extend)
-Templates: references/output-templates.md - Front matter, lld/<component>/<module>.md, Function card
+COMPONENT DONE bible-mode-b
+coverage.py --component bible-mode-b: result PASS at depth deep (4 packets). Stop now and tell the user:
+  component bible-mode-b is analysed and its check passes (report: codebase-analysis/ledger/components/bible-mode-b/coverage-report.md)
+  next: verify it in a new session on a different model (verifying-a-codebase-analysis, scope: component bible-mode-b)
+Where the other components stand: python3 -I .github/skills/analyzing-a-codebase/scripts/next.py --repo . --analysis codebase-analysis --board
 
-To do in this packet (6):
-  - card `Queue.component` (method, lines 648-751) - branch lines to cite: 651, 653, 655, 657, 661, 664, 666, 672, 676, 677, 684, 686, 693, 709, 710, 729, 738; calls: `gh.branch_prs`, `pr.get`, `get`, `self.run_issues`, `comp_label`, `self.held`, `self.follow`, `gh.close`, `labels_of`, `max`, `h.get`, `status_of`, `status.get`, `self.check`, `len`, `self.start_chunk`, `as_int`, `gh.create_issue`, `self.estimate.get`, `p.get` and 8 more (ledger/symbol-checklist.md); stamp `<!-- code: cf4c5894d38a -->`: the code changed since the card was written: rewrite it and replace its stamp
-  - card `Queue.follow` (method, lines 753-810) - branch lines to cite: 755, 757, 759, 762, 764, 765, 770, 772, 773, 780, 782, 784, 785, 786, 793, 795, 797, 800, 801, 803, 804, 806; calls: `labels_of`, `self.session`, `self.hold_start_error`, `self.fail_or_retry`, `gh.pr_files`, `str`, `().startswith`, `f.startswith`, `os.path.basename`, `join`, `status_of`, `as_int`, `status.get`, `().get`, `gh.file`, `gh.label`, `issue.get`, `any`, `gh.merge`, `gh.unlabel` and 1 more (ledger/symbol-checklist.md); stamp `<!-- code: d30979e2d28a -->`: the code changed since the card was written: rewrite it and replace its stamp
-  - card `Queue.check` (method, lines 812-837) - branch lines to cite: 815, 822, 833; calls: `os.path.join`, `os.path.isfile`, `self.log`, `tempfile.mkdtemp`, `subprocess.run`, `shutil.rmtree`, `self.gh.tarball`, `os.path.abspath`, `self.settings.get`, `printed.stdout.strip`, `().splitlines`, `run.stdout.strip`; stamp `<!-- code: 181278d76a48 -->`: the code changed since the card was written: rewrite it and replace its stamp
-  - card `Queue.assemble_phase` (method, lines 839-907) - branch lines to cite: 841, 845, 850, 852, 855, 856, 857, 859, 861, 864, 868, 869, 871, 876, 878, 881, 884, 887, 889, 891, 893, 895, 896; calls: `self.run_issues`, `gh.create_issue`, `settings.get`, `report_facts`, `max`, `self.revise_all_step`, `self.held`, `self.session`, `issue_text`, `assignment`, `gh.file`, `gh.label`, `gh.comment`, `gh.close`, `self.hold_start_error`, `self.fail_or_retry`, `self.continue_if_unfinished`, `i.get`, `labels_of`, `gh.linked_prs` and 3 more (ledger/symbol-checklist.md); stamp `<!-- code: 9aa48c7b485e -->`: the code changed since the card was written: rewrite it and replace its stamp
-  - card `Queue.revise_all_step` (method, lines 909-979) - branch lines to cite: 916, 917, 926, 931, 935, 938, 941, 944, 947, 949, 951, 955, 958, 959, 961, 963; calls: `self.run_issues`, `gh.close`, `labels_of`, `max`, `h.get`, `sorted`, `i.get`, `self.held`, `self.session`, `self.hold_start_error`, `self.fail_or_retry`, `self.continue_if_unfinished`, `gh.linked_prs`, `p.get`, `gh.is_agent_pr`, `gh.pr_files`, `get`, `().startswith`, `f.startswith`, `join` and 6 more (ledger/symbol-checklist.md); stamp `<!-- code: ecf0e4db8193 -->`: no card (heading naming it, Steps, a `bible_queue.py:<lines>` citation)
-  - card `Queue.continue_if_unfinished` (method, lines 981-1019) - branch lines to cite: 989, 990, 1001, 1003, 1004; calls: `gh.pr_files`, `gh.me`, `max`, `e.get`, `gh.timeline`, `get`, `sorted`, `age`, `len`, `labels_of`, `gh.label`, `gh.comment`, `self.settings.get`; stamp `<!-- code: 607ef9d1096b -->`: not named on the page
-
-When every item is written, write one line to the user, and run next.py again.
-Write only under lld/bible-mode-b/, lld/api/bible-mode-b/ and ledger/components/bible-mode-b/: other components run in parallel.
-Keep going: run next.py after every packet until it prints NEW CHAT or COMPONENT DONE. Do not end your turn in between.
-Command: python3 -I .github/skills/analyzing-a-codebase/scripts/next.py --repo . --analysis codebase-analysis --depth deep --component bible-mode-b
+Note: --new-session ran before the last chat reached NEW CHAT or DONE, so its count carries over (1 other jobs so far). In the same chat this keeps the loop bounded; in a new chat after a failure it only means NEW CHAT comes sooner. A person can delete ledger/session.json for a full budget.
 ```

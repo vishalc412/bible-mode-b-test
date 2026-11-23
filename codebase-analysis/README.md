@@ -26,6 +26,10 @@ The queue identifies the token owner, rejects incomplete pull-request file lists
 
 Before a run, tracker settings are validated for safe analysis paths, supported depths, and model-name syntax. A human hold is released only after its label was removed after the latest hold; a released component issue is closed for fresh-state handling, while a non-component issue is assigned again (`.github/bible/bible_queue.py:353-373,483-516`).
 
+Component advancement is bounded: the queue rechecks branch state after merges, caps repeated work when its gate or verification loop does not pass, and opens the final component pull request only for a clean PASS whose fingerprint matches the gated pages (`.github/bible/bible_queue.py:648-751`).
+
+Push-triggered updates exclude the analysis and toolkit trees, stop automatic fan-out above ten components for human review, and avoid putting unusual changed paths into issue text (`.github/bible/bible_queue.py:348,1034-1077`).
+
 ## At a glance
 
 The context diagram shows the application's direct calls and the workflow system's GitHub-mediated work; the CDN is a URL target only.
