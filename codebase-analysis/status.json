@@ -3,19 +3,29 @@
  "status": "DRAFT",
  "gate": "NOT RUN",
  "verification": {
-  "verdict": "none",
-  "date": "",
-  "major_corrections": 0,
-  "report": ""
+  "verdict": "PASS AFTER CORRECTIONS",
+  "date": "2026-11-23",
+  "major_corrections": 5,
+  "report": "verification-report.md"
  },
  "baseline": {
   "recorded": "2026-11-23T22:46:19",
   "files": 20
  },
  "drift": {
-  "changed_files": 0,
-  "files": [],
-  "components": []
+  "changed_files": 6,
+  "files": [
+   ".github/bible/bible_queue.py",
+   ".github/workflows/bible-delta.yml",
+   "tls-migration/01-inventory.md",
+   "tls-migration/02-certificate-plan.md",
+   "tls-migration/evidence/inventory.json",
+   "tls-migration/tls-services.yaml"
+  ],
+  "components": [
+   "bible-mode-b"
+  ],
+  "open_delta_work": 20
  },
  "components": {
   "catalog": {
@@ -40,9 +50,9 @@
   }
  },
  "reasons": [
-  "no verification report",
+  "verdict PASS AFTER CORRECTIONS with 5 major corrections not re-checked: verify the corrected parts again",
   "0 of 4 components verified"
  ],
  "notes": [],
- "checked": "2026-11-23T22:52:31"
+ "checked": "2026-11-23T23:04:14"
 }
