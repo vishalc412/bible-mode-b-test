@@ -1,0 +1,62 @@
+---
+id: hld/01-system-context
+kind: hld
+source:
+  - README.md
+  - components/catalog/catalog.py
+  - components/catalog/service.py
+  - components/orders/orders.py
+  - .github/bible/bible_queue.py
+  - .github/workflows/bible-plan.yml
+  - .github/workflows/bible-queue.yml
+summary: Sample shop modules and Mode B workflows interact with operators, GitHub, Copilot, a supplier, and a payment partner
+calls:
+  - external:GitHub
+  - external:Copilot coding agent
+  - external:Supplier One
+  - external:Payment partner
+---
+# System context
+
+The repository contains a small catalog/orders sample and a separate GitHub Actions workflow system that assigns agents to create and verify codebase analyses (`README.md:1-9`). The application modules and the analysis automation share a repository but are not one deployed service.
+
+The diagram shows the repository's modules and the external systems they contact. The Image CDN is listed below because code creates its URL, but it does not fetch images.
+
+```mermaid
+flowchart LR
+  operator(["Repository operator<br/>starts runs, reviews PRs, answers questions"])
+  reviewer(["Repository reviewer"])
+  subgraph sample["bible-mode-b-test repository"]
+    catalog["catalog<br/>Python module and optional HTTP service"]
+    orders["orders<br/>Python library and HTTP client"]
+    queue["bible-mode-b<br/>GitHub Actions workflow and Python queue"]
+    tools["tools<br/>planning, gate, and fanout"]
+  end
+  github{{"GitHub<br/>Actions, issues, repository and PRs"}}
+  copilot{{"Copilot coding agent<br/>assigned to workflow issues"}}
+  supplier{{"Supplier One<br/>product JSON feed"}}
+  partner{{"Payment partner<br/>settlement endpoint"}}
+  cdn{{"Image CDN<br/>URL target only; not fetched"}}
+  operator -->|"manual workflow dispatch"| github
+  reviewer -->|"reviews PRs and answers issues"| github
+  github -->|"runs workflows from the repository"| queue
+  queue -->|"REST and GraphQL; issue and repository state"| github
+  github -->|"issue assignment"| copilot
+  copilot -->|"session PRs and commits"| github
+  orders -->|"in-process catalog calls"| catalog
+  catalog -->|"product JSON, HTTP"| supplier
+  orders -->|"settlement JSON, HTTP"| partner
+  catalog -.->|"returns constructed image URL; no request"| cdn
+```
+
+| Person or outside system | What the system uses it for | Protocol, scheme, port | Address from | Authentication | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| Repository operator | Starts an analysis with `bible-plan`; can run the queue manually | GitHub Actions UI; transport not specified by repository code | Workflow dispatch | GitHub repository/workflow access; workflow-level identity rules are not stated | `.github/workflows/bible-plan.yml:7-8`; `.github/workflows/bible-queue.yml:7-10` |
+| Repository reviewer or answerer | Reviews component PRs and supplies answers on waiting issues | GitHub UI; transport not specified by repository code | GitHub issues and PRs | GitHub access controls; no application authentication layer is defined | `.github/bible/bible_queue.py:608-627,688-713,774` |
+| GitHub and GitHub Actions | Stores issues, labels, branches, PRs and repository files; runs the plan, queue, delta and POC workflows | GitHub API REST and GraphQL; default API base is HTTPS, port 443 | `GITHUB_API_URL`, default `https://api.github.com`; hosted workflow events | GitHub token in `GH_TOKEN`; workflows supply the `BIBLE_ASSIGN_TOKEN` secret | `.github/bible/bible_queue.py:91-103,129-151,261-302`; `.github/workflows/bible-plan.yml:44-49`; `.github/workflows/bible-queue.yml:31-36` |
+| Copilot coding agent | Works on issues created and assigned by the queue or POC workflow, then returns PRs | Assignment and work events are mediated by GitHub; no direct network call from repository code | Issue `agent_assignment` | GitHub assignment; the POC documents that a user token is required | `.github/bible/bible_queue.py:144-151,195-220,341-345`; `.github/workflows/poc-assign-copilot.yml:4-6,55-69` |
+| Supplier One | Supplies product JSON when `fetch_supplier_feed` is invoked | HTTP, port 80 implicit in the URL | Hard-coded `SUPPLIER_FEED_URL` | None shown | `components/catalog/catalog.py:5,36-39` |
+| Payment partner | Receives order settlement JSON | HTTP, port 80 implicit in the URL | Hard-coded `PARTNER_SETTLE_URL` | None shown | `components/orders/orders.py:7-9,45-51` |
+| Image CDN | Destination encoded into a returned image URL; catalog code does not make an HTTP request | HTTPS URL, port 443 implicit | Hard-coded `IMAGE_CDN` | Not applicable; no call is made | `components/catalog/catalog.py:6,32-33` |
+
+No separate shopper, customer interface, or production hosting environment is identified in the repository. The catalog HTTP API exists in code, but its only in-repository HTTP caller is the orders test; the separate-service use is documented as an intended deployment mode, not a deployed one (`components/catalog/service.py:40-49`; `components/orders/catalog_client.py:1-4,14-23`; `components/orders/test_catalog_client.py:37-62`).
