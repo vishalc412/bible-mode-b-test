@@ -1,0 +1,1 @@
+- [ ] Q1. `tools/fanout.sh:13-15` points generated issue recipients to `.github/skills/component-analysis/SKILL.md`, but the repository has no such skill and its available analysis skill is `.github/skills/analyzing-a-codebase/SKILL.md`. Is `component-analysis` intentionally an external target, or should the generated issue prompt name `analyzing-a-codebase`?

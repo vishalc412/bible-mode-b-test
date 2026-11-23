@@ -1,8 +1,8 @@
 {
  "component": "tools",
- "packets_done": 2,
+ "packets_done": 3,
  "packets_total": 3,
- "state": "NEXT",
+ "state": "WAITING_ANSWER",
  "last_job_digest": "63e4580798f8e8c4",
- "updated": "2026-11-23T18:46:16"
+ "updated": "2026-11-23T18:47:25"
 }
