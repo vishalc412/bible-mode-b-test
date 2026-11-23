@@ -87,4 +87,4 @@ for each component:
 
 ## Surprises
 
-The generated issue body directs the recipient to `.github/skills/component-analysis/SKILL.md` (`tools/fanout.sh:13-15`), but the repository skill inventory has no `component-analysis/SKILL.md` (inferred: listing `.github/skills/**/SKILL.md` returned only the seven named skills and none under `component-analysis/`). The available analysis skill is `.github/skills/analyzing-a-codebase/SKILL.md` (`.github/skills/analyzing-a-codebase/SKILL.md:1-3`). It is unclear whether the prompt names an intentionally external skill or an outdated path; see Q1 in `ledger/components/tools/questions.md`.
+The generated issue body directs the recipient to `.github/skills/component-analysis/SKILL.md` (`tools/fanout.sh:13-15`), a stale reference left over from an earlier experiment; that skill does not exist in this repository and no external skill is intended (answer to Q1 in `ledger/components/tools/questions.md`). `tools/fanout.sh` is documented as written; its reference is not changed.

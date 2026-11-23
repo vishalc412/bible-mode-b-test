@@ -2,7 +2,7 @@
  "component": "tools",
  "packets_done": 3,
  "packets_total": 3,
- "state": "WAITING_ANSWER",
- "last_job_digest": "63e4580798f8e8c4",
- "updated": "2026-11-23T18:47:25"
+ "state": "COMPONENT_DONE",
+ "last_job_digest": "e98ea52ff7bd99cb",
+ "updated": "2026-11-23T18:53:05"
 }

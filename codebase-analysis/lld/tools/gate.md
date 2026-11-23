@@ -4,7 +4,7 @@ kind: module
 component: tools
 source: tools/gate.py
 summary: Validates component analysis artifacts and reports gate errors
-reads: [file:codebase-analysis/plan.json, file:codebase-analysis/components/<component>/status.json, file:codebase-analysis/components/<component>/inventory.md, file:codebase-analysis/components/<component>/risks.md, file:codebase-analysis/components/<component>/tests-report.md, file:components/<component>/test_*.py]
+reads: [file:codebase-analysis/plan.json, file:codebase-analysis/components/*/status.json, file:codebase-analysis/components/*/inventory.md, file:codebase-analysis/components/*/risks.md, file:codebase-analysis/components/*/tests-report.md, file:components/*/test_*.py]
 writes: []
 calls: []
 uses: [symbol:argparse, symbol:ast, symbol:json, symbol:pathlib, symbol:subprocess, symbol:sys]
@@ -46,11 +46,11 @@ Source file: `tools/gate.py`
 flowchart LR
   fail["fail"]
   read["read"]
-  count_tests["count_tests"]
+  ct[count_tests]
   check["check"]
   main["main"]
   check -->|"read artifacts"| read
-  check -->|"count test functions"| count_tests
+  check -->|"count test functions"| ct
   main -->|"report errors"| fail
   main -->|"read status"| read
   main -->|"validate passes"| check

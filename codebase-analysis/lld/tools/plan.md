@@ -4,7 +4,7 @@ kind: module
 component: tools
 source: tools/plan.py
 summary: Scans component Python files and writes the analysis plan
-reads: [file:components/<component>/*.py]
+reads: [file:components/*/*.py]
 writes: [file:codebase-analysis/plan.json]
 calls: []
 uses: [symbol:ast, symbol:json, symbol:pathlib, symbol:re, symbol:sys, symbol:gate.count_tests]
