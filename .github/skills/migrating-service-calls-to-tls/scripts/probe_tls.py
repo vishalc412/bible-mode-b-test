@@ -311,11 +311,16 @@ def _address(host: str):
 
 
 def is_loopback(host: Any) -> bool:
-    """True for a name or address of this machine: localhost, 127.x, ::1,
-    0.0.0.0, host.docker.internal, *.localhost (brackets and case ignored)."""
-    text = str(host).lower().strip("[]").rstrip(".")
-    return text in ("localhost", "::1", "0.0.0.0", "host.docker.internal") or text.startswith("127.") \
-        or text.endswith(".localhost")
+    """True for a name or address of this machine: a loopback address (127.0.0.0/8, ::1),
+    the unspecified address (0.0.0.0, ::), or exactly the names localhost and
+    host.docker.internal (brackets, case and a trailing dot ignored). A DNS name that
+    only looks local (127.example.com, x.localhost) is not this machine: it can resolve
+    anywhere, so it needs the user's yes like any other host."""
+    text = str(host).lower().strip().strip("[]").rstrip(".")
+    if text in ("localhost", "host.docker.internal"):
+        return True
+    address = _address(text)
+    return address is not None and (address.is_loopback or address.is_unspecified)
 
 
 def host_problem(host: Any, manifest: dict[str, Any] | None, environment: Any) -> str | None:
