@@ -40,7 +40,7 @@ import components  # noqa: E402
 import next as work_loop  # noqa: E402  (next.py: packets_for, component_of)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TOOL = "analyzing-a-codebase/scripts/discover.py 1.10.0"
+TOOL = "analyzing-a-codebase/scripts/discover.py 1.11.0"
 
 
 def script_path(repo: str, name: str) -> str:

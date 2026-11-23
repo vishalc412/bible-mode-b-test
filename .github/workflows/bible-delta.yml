@@ -5,9 +5,11 @@ name: "Bible - update after code changes"
 
 on:
   push:
+    # Only the analysis itself and the skills are left out: code under .github/ (workflows, scripts) can belong to a
+    # component, and its changes must reach the analysis like any other (found in the live test, 24 Nov 2026).
     paths-ignore:
       - "codebase-analysis/**"
-      - ".github/**"
+      - ".github/skills/**"
 
 permissions:
   contents: read

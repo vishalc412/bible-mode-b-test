@@ -761,6 +761,8 @@ class Queue:
                     return "%s: needs a person: see #%d" % (kind[6:], issue["number"])
                 if state == "no-start":
                     self.fail_or_retry(issue, None, "no pull request after assignment")
+                if pr and state == "running":  # Copilot is still working on it: not ready for review yet
+                    return "%s: running (pull request #%d)" % (kind[6:], pr["number"])
                 return "%s: %s" % (kind[6:], "review and merge pull request #%d" % pr["number"] if pr else state)
             if text:
                 title, body = issue_text(gh, "%s/ledger/issues/%s" % (analysis, text), self.default, title)
