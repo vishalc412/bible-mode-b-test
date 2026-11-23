@@ -33,7 +33,7 @@ the run. Every issue of a run carries the label bible-run-<tracker number>.
 
 Environment: GITHUB_REPOSITORY (owner/name), GH_TOKEN (a user token allowed to assign Copilot),
 GITHUB_API_URL (default https://api.github.com), BIBLE_SKILLS (default .github/skills),
-BIBLE_AGENT_LOGINS (comma list; default Copilot,copilot-swe-agent[bot]), BIBLE_NOW (tests only).
+BIBLE_AGENT_LOGINS (comma list; default Copilot,copilot-swe-agent[bot],copilot-swe-agent), BIBLE_AGENT_APP (default copilot-swe-agent), BIBLE_NOW (tests only).
 Standard library only.
 """
 
@@ -429,10 +429,19 @@ class Queue:
         return ("finished" if asked or pushed > IDLE_AFTER else "running"), pr
 
     def held(self, issue):
-        """A session a person must look at; or, once they removed the label, one to retry now."""
+        """True: a session a person must look at. "released": a component session a person released, closed so the
+        next check decides the component's next step from fresh state. False: go on (a released plan or assembly
+        session is assigned to Copilot again)."""
         if "bible-needs-human" in labels_of(issue):
             return True
-        if not issue.get("assignees"):  # unassigned by a second failure, label removed by a person: retry
+        # Copilot itself must be on the issue: with a user token GitHub also lists the token owner, so "no assignees"
+        # never happens after a hold (seen on github.com, 24 Nov 2026: a released session stayed unassigned).
+        if not any((a or {}).get("login") in AGENT_LOGINS for a in issue.get("assignees") or []):
+            if any(l.startswith("bible/") for l in labels_of(issue)):
+                self.gh.comment(issue["number"], "The label `bible-needs-human` was removed: this session is closed and the "
+                                "next check decides the component's next step from its current state.")
+                self.gh.close(issue["number"], "not_planned")
+                return "released"
             body = ATTEMPT.sub("Attempt: 1", issue.get("body") or "")
             self.gh.set_body(issue["number"], body)
             base = re.search(r"^Base branch:\s*(\S+)", body, re.M)
@@ -577,7 +586,10 @@ class Queue:
         open_sessions = self.run_issues(["bible-chunk", comp_label(name)]) + self.run_issues(["bible-verify", comp_label(name)])
         if open_sessions:
             issue = open_sessions[0]
-            if self.held(issue):
+            hold = self.held(issue)
+            if hold == "released":
+                return "released: next step at the next check"
+            if hold:
                 return "needs a person: see #%d" % issue["number"]
             # A merge is the end of this run's work for the component. Right after a merge GitHub can still return the
             # branch's files from before it (seen on github.com, 24 Nov 2026), so the next step is decided at the next
