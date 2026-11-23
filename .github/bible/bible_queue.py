@@ -612,8 +612,8 @@ class Queue:
             return "review the pull request #%d" % pr["number"]
         # Revise or verify is decided by the fingerprint, as next.py decides it: a verdict whose fingerprint equals the
         # pages now is about these pages (its corrections are not applied yet); any other verdict is about pages that
-        # have changed since, so they are verified again. Issue titles and times are not used: on github.com a session
-        # started for another reason also applied changes (24 Nov 2026).
+        # have changed since, so they are verified again. Issue titles are not used: on github.com a session started
+        # for another reason also changed the pages (24 Nov 2026).
         about_these_pages = bool(facts and facts[2] and facts[2] == pages)
         needs_revision = bool(facts and (facts[0] != "PASS" or facts[1]))
         # After any chunk session merged since the last verification (a revision, or a session started for drift or
