@@ -31,4 +31,4 @@ Version: not provided
 
 Discovery succeeded and wrote `components.json`, `components.md`, and issue texts under `ledger/issues/`. The component analyses were completed in separate pull requests. The whole-system pass is now being assembled.
 
-At this session's start, `next.py` reported 11 of 13 packets done. Packet 2 of 13's `bible-mode-b` cards are updated to the current source.
+At this session's start, `next.py` reported 11 of 13 packets done. Packet 2 refreshed the `bible-mode-b` cards for lines 307–662; packet 3 refreshed the cards for lines 663–867.
