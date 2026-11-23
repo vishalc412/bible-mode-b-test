@@ -58,6 +58,11 @@ sys.dont_write_bytecode = True
 
 COPILOT = "copilot-swe-agent[bot]"
 AGENT_LOGINS = {l.strip() for l in os.environ.get("BIBLE_AGENT_LOGINS", "Copilot,copilot-swe-agent[bot],copilot-swe-agent").split(",") if l.strip()}
+# With a user token, GitHub records Copilot's pull requests and commits under the token owner's login. What only GitHub
+# can set is the app on the pull request's timeline events: copilot_work_started / copilot_work_finished performed via
+# this app. That marks a pull request as Copilot's, and the last of the two says whether the session is still working.
+AGENT_APP = os.environ.get("BIBLE_AGENT_APP", "copilot-swe-agent")
+START_ERROR = re.compile(r"unable to start working", re.I)
 FINAL_STATES = ("NEW_CHAT", "COMPONENT_DONE", "WAITING_ANSWER", "STOP")
 NO_PR_AFTER = 30 * 60      # seconds after assignment with no pull request: the session did not start
 IDLE_AFTER = 20 * 60       # seconds without a push: the session has ended
@@ -186,6 +191,28 @@ class GitHub:
         """Pull requests from this repository's own branch into base (a fork's branch of the same name is not one)."""
         owner = self.repo.split("/")[0]
         return self.paged("/pulls?state=all&head=%s&base=%s" % (urllib.parse.quote(owner + ":" + branch), urllib.parse.quote(base)))
+
+    def agent_events(self, number):
+        """[(event, time)] of Copilot's work on a pull request: events GitHub records as performed via the agent's app."""
+        return [(e.get("event"), e.get("created_at") or "") for e in self.timeline(number)
+                if (e.get("performed_via_github_app") or {}).get("slug") == AGENT_APP
+                and e.get("event") in ("copilot_work_started", "copilot_work_finished")]
+
+    def is_agent_pr(self, pr):
+        """Copilot's pull request: by an agent login, or with Copilot's work recorded on its timeline by GitHub."""
+        if (pr.get("user") or {}).get("login", "") in AGENT_LOGINS:
+            return True
+        return any(ev == "copilot_work_started" for ev, _ in self.agent_events(pr["number"]))
+
+    def start_error(self, issue):
+        """Copilot's comment saying it could not start (a model not allowed, a policy) since the last assignment, or None."""
+        since = self.assigned_at(issue)
+        for e in self.timeline(issue["number"]):
+            who = ((e.get("actor") or e.get("user")) or {}).get("login", "")
+            if e.get("event") == "commented" and who in AGENT_LOGINS and (e.get("created_at") or "") >= since \
+                    and START_ERROR.search(e.get("body") or ""):
+                return (e.get("body") or "").strip().splitlines()[0][:300]
+        return None
 
     def assigned_at(self, issue):
         """When Copilot was last assigned to the issue (the issue's creation when the timeline says nothing)."""
@@ -377,9 +404,8 @@ class Queue:
     def agent_pr(self, issue, base):
         """The open pull request Copilot opened for this issue: by the agent, from this repository, into base."""
         for pr in reversed(self.gh.linked_prs(issue["number"])):
-            author = (pr.get("user") or {}).get("login", "")
             head_repo = ((pr.get("head") or {}).get("repo") or {}).get("full_name")
-            if pr["state"] == "open" and author in AGENT_LOGINS and head_repo == self.gh.repo and pr["base"]["ref"] == base:
+            if pr["state"] == "open" and head_repo == self.gh.repo and pr["base"]["ref"] == base and self.gh.is_agent_pr(pr):
                 return pr
         return None
 
@@ -388,7 +414,12 @@ class Queue:
         """('waiting'|'running'|'finished'|'no-start', pr) for an open session issue."""
         pr = self.agent_pr(issue, base)
         if pr is None:
+            if self.gh.start_error(issue):
+                return "start-error", None
             return ("no-start" if age(self.gh.assigned_at(issue)) > NO_PR_AFTER else "waiting"), None
+        work = self.gh.agent_events(pr["number"])
+        if work:  # GitHub says exactly whether Copilot is still working
+            return ("finished" if sorted(work, key=lambda w: w[1])[-1][0] == "copilot_work_finished" else "running"), pr
         pushed = age(self.gh.commit_time(pr["head"]["sha"]))
         asked = bool(pr.get("requested_reviewers")) or not pr.get("draft", False)
         if comp and "bible-chunk" in labels_of(issue):
@@ -412,6 +443,14 @@ class Queue:
     def model_for(self, issue):
         kinds = labels_of(issue)
         return self.settings.get("verify_model") if kinds & {"bible-verify", "bible-verify-all"} else self.settings.get("model")
+
+    def hold_start_error(self, issue):
+        """Copilot refused to start (a retry would fail the same way): hold the session for a person at once."""
+        why = self.gh.start_error(issue) or "Copilot could not start"
+        self.gh.label(issue["number"], "bible-needs-human")
+        self.gh.unassign(issue["number"])
+        self.gh.comment(issue["number"], "Copilot could not start: %s\n\nFix the cause (often the model name in the tracker's "
+                        "settings: leave it empty for Copilot's default), then remove the label `bible-needs-human`." % why)
 
     def fail_or_retry(self, issue, pr, why):
         """Close a failed session and open attempt 2, or hold the second failure for a person. True when retried."""
@@ -501,6 +540,9 @@ class Queue:
         if self.held(issue):
             return self.render(tracker, settings, {"(plan)": "needs a person: see #%d" % issue["number"]})
         state, pr = self.session(issue, self.default, analysis)
+        if state == "start-error":
+            self.hold_start_error(issue)
+            return self.render(tracker, settings, {"(plan)": "needs a person: see #%d" % issue["number"]})
         if state == "no-start":
             self.fail_or_retry(issue, None, "no pull request %d minutes after assignment" % (NO_PR_AFTER // 60))
         self.render(tracker, settings, {"(plan)": "review and merge the plan pull request #%d" % pr["number"]
@@ -606,6 +648,9 @@ class Queue:
         state, pr = self.session(issue, branch, analysis, name)
         if state == "waiting":
             return "session starting"
+        if state == "start-error":
+            self.hold_start_error(issue)
+            return "needs a person: see #%d" % issue["number"]
         if state == "no-start":
             retried = self.fail_or_retry(issue, None, "no pull request from Copilot into %s %d minutes after assignment" % (branch, NO_PR_AFTER // 60))
             return "session starting" if retried else "needs a person: see #%d" % issue["number"]
@@ -676,8 +721,7 @@ class Queue:
             if open_:
                 issue = open_[0]
                 merged = [p for p in gh.linked_prs(issue["number"]) if p.get("merged_at") and p["base"]["ref"] == self.default
-                          and (p.get("user") or {}).get("login", "") in AGENT_LOGINS
-                          and ((p.get("head") or {}).get("repo") or {}).get("full_name") == gh.repo]
+                          and ((p.get("head") or {}).get("repo") or {}).get("full_name") == gh.repo and gh.is_agent_pr(p)]
                 if merged:
                     if kind == "bible-verify-all":
                         facts = report_facts(gh.file("%s/verification-report.md" % analysis, self.default))
@@ -689,6 +733,9 @@ class Queue:
                 if self.held(issue):
                     return "%s: needs a person: see #%d" % (kind[6:], issue["number"])
                 state, pr = self.session(issue, self.default, analysis)
+                if state == "start-error":
+                    self.hold_start_error(issue)
+                    return "%s: needs a person: see #%d" % (kind[6:], issue["number"])
                 if state == "no-start":
                     self.fail_or_retry(issue, None, "no pull request after assignment")
                 return "%s: %s" % (kind[6:], "review and merge pull request #%d" % pr["number"] if pr else state)
