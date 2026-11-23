@@ -1,8 +1,8 @@
 {
  "component": "catalog",
- "packets_done": 1,
+ "packets_done": 2,
  "packets_total": 3,
  "state": "NEXT",
- "last_job_digest": "9254f6892c75fbac",
- "updated": "2026-11-23T18:44:53"
+ "last_job_digest": "9ec7ee0b33dd7cd1",
+ "updated": "2026-11-23T18:45:51"
 }
