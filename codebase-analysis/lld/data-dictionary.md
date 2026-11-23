@@ -87,21 +87,21 @@ The `start` command serializes these fields as JSON inside a `<!-- bible-setting
 
 ### Component catalog JSON
 
-The whole-system queue reads `components.json` from the default branch and requires a non-proposed catalog with a `components` array (`.github/bible/bible_queue.py:502-510,794-796`). The generated artifact has the following top-level and per-component fields (`codebase-analysis/components.json:1-78`).
+The whole-system queue reads `components.json` from the default branch and requires a non-proposed catalog with a `components` array (`.github/bible/bible_queue.py:502-510,794-796`). The planning tool emits the following top-level and per-component fields (`tools/plan.py:41-58`).
 
 | Field | Type | Meaning | Evidence |
 | --- | --- | --- | --- |
-| `schema` | integer | Catalog schema version | `codebase-analysis/components.json:2` |
-| `tool` | string | Generator identity and version | `codebase-analysis/components.json:3` |
-| `generated` | timestamp string | Generation time | `codebase-analysis/components.json:4` |
-| `proposed` | boolean | Whether the catalog still needs confirmation; the queue routes proposed catalogs to planning | `codebase-analysis/components.json:5`; `.github/bible/bible_queue.py:502-505` <!-- recheck: was .github/bible/bible_queue.py:502-505 --> |
-| `analysis` | string | Analysis directory | `codebase-analysis/components.json:6` |
-| `budget`, `depth` | integer, string | Discovery budget and coverage depth | `codebase-analysis/components.json:7-8` |
-| `components` | array of objects | Component inventory | `codebase-analysis/components.json:9-75` |
-| `components[].name`, `paths` | string, array of strings | Component key and owned source paths | `codebase-analysis/components.json:10-17,26-33,47-54,62-69` |
-| `components[].files`, `lines`, `packets`, `est_sessions`, `routes` | integers | Inventory counts and work estimates | `codebase-analysis/components.json:16-20,32-36,53-57,68-72` |
-| `components[].calls_into`, `calls_detail`, `called_by` | arrays/object | Component dependency names and called symbols | `codebase-analysis/components.json:20-24,36-45,58-60,72-75` |
-| `cross_calls` | integer | Number of discovered cross-component calls | `codebase-analysis/components.json:77` |
+| `schema` | integer | Catalog schema version | `tools/plan.py:41-46` |
+| `tool` | string | Generator identity and version | `tools/plan.py:41-46` |
+| `generated` | timestamp string | Generation time | `tools/plan.py:41-46` |
+| `proposed` | boolean | Whether the catalog still needs confirmation; the queue routes proposed catalogs to planning | `tools/plan.py:41-58`; `.github/bible/bible_queue.py:502-505` |
+| `analysis` | string | Analysis directory | `tools/plan.py:41-58` |
+| `budget`, `depth` | integer, string | Discovery budget and coverage depth | `tools/plan.py:41-58` |
+| `components` | array of objects | Component inventory | `tools/plan.py:42-54` |
+| `components[].name`, `paths` | string, array of strings | Component key and owned source paths | `tools/plan.py:21-27,42-54` |
+| `components[].files`, `lines`, `packets`, `est_sessions`, `routes` | integers | Inventory counts and work estimates | `tools/plan.py:21-38,42-54` |
+| `components[].calls_into`, `calls_detail`, `called_by` | arrays/object | Component dependency names and called symbols | `tools/plan.py:42-58` |
+| `cross_calls` | integer | Number of discovered cross-component calls | `tools/plan.py:42-58` |
 
 ### GitHub API entity fields used
 
@@ -111,7 +111,7 @@ These are the fields the queue reads or writes on GitHub-managed objects; other 
 | --- | --- | --- | --- |
 | Issue | `number`, `title`, `body`, `state`, `state_reason`, `labels[].name`, `assignees[].login`, `created_at`, `closed_at`, `pull_request` | Tracker/session identity, settings and attempt text, state/labels, assignment and timing, and issue-to-PR distinction | `.github/bible/bible_queue.py:129-151,272-281,316-329,435-449,488-514` |
 | Pull request | `number`, `state`, `user.login`, `head.repo.full_name`, `head.ref`, `head.sha`, `base.ref`, `draft`, `requested_reviewers`, `merged_at`, `body`, file `filename` | Identifies session PRs, branch/ref, verification/review status, merge state, tracker relation, and allowed changed files | `.github/bible/bible_queue.py:172-220,404-429,578-585,659-687` |
-| Timeline event | `event`, `created_at`, `performed_via_github_app.slug`, `actor.login` or `user.login`, `body`, `source.issue.repository.full_name`, `source.issue.pull_request`, `source.issue.number` | Detects agent work, start failures, assignments, and same-repository cross-referenced PRs | `.github/bible/bible_queue.py:176-220` <!-- recheck: was .github/bible/bible_queue.py:176-220 --> |
+| Timeline event | `event`, `created_at`, `performed_via_github_app.slug`, `actor.login` or `user.login`, `body`, `source.issue.repository.full_name`, `source.issue.pull_request`, `source.issue.number` | Detects agent work, start failures, assignments, and same-repository cross-referenced PRs | `.github/bible/bible_queue.py:176-220` |
 | Repository/ref/commit response | `default_branch`, `object.sha`, file `content`, commit `committer.date`, pull-request `node_id` | Selects branch revisions, decodes repository files, measures session activity, and identifies a PR for the GraphQL ready mutation | `.github/bible/bible_queue.py:153-170,186-194,196-220,276-291` |
 | Label | `name` | Name and description define queue/run/session markers | `.github/bible/bible_queue.py:73-83,133-151,261-266` |
 
@@ -137,8 +137,8 @@ These are the fields the queue reads or writes on GitHub-managed objects; other 
 | Session issue labels | `bible-plan`, `bible-chunk`, `bible-verify`, `bible-assemble`, `bible-verify-all`, `bible-delta`, `bible-waiting-answer`, `bible-needs-human`, `bible-hold`, and `bible/<component>` | Session kind, component, answer-wait, and human-hold markers | Queue issue creation, labeling, and follow-up | `.github/bible/bible_queue.py:73-83,449-474,538-571,640-660,688-713,739-774` |
 | Issue body fields | `Tracker`, `Component`, `Base branch`, `Attempt`; hidden settings JSON for tracker | Connects tasks and pull requests to a run and supports retry/model selection | `Queue.plan_phase`, `start_chunk`, `fail_or_retry`, `assemble_phase`, `main` | `.github/bible/bible_queue.py:70-72,481-487,538-571,473-485,739-774,828-854` |
 | `attempt` | positive integer text, initially `1`; retry changes to `2` | One retry is allowed before a human hold | `ATTEMPT`, `fail_or_retry`, `held` | `.github/bible/bible_queue.py:71,438-449,455-483` |
-| Component `status.json.state` | `NEW_CHAT`, `COMPONENT_DONE`, `WAITING_ANSWER`, `STOP` | Component-session terminal/waiting states consumed by the queue | Toolkit status artifact; `Queue.session`, `Queue.component`, `Queue.follow` read it | `.github/bible/bible_queue.py:65-66,425-428,600-603,688-708`; example `codebase-analysis/ledger/components/bible-mode-b/status.json:1-8` |
-| Component `status.json` counters | `packets_done`, `packets_total` integers; `last_job_digest` string; `updated` timestamp | Progress, completion denominator, last job identity, and update time | Toolkit status artifact; queue reads `packets_done` | `.github/bible/bible_queue.py:790-792`; examples `codebase-analysis/ledger/components/bible-mode-b/status.json:1-8`, `codebase-analysis/ledger/components/catalog/status.json:1-8` |
+| Component `status.json.state` | `NEW_CHAT`, `COMPONENT_DONE`, `WAITING_ANSWER`, `STOP` | Component-session terminal/waiting states consumed by the queue | Toolkit status artifact; `Queue.session`, `Queue.component`, `Queue.follow` read it | `.github/bible/bible_queue.py:65-66,425-428,600-603,688-708` |
+| Component `status.json` counters | `packets_done`, `packets_total` integers; `last_job_digest` string; `updated` timestamp | Progress, completion denominator, last job identity, and update time | Toolkit status artifact; queue reads `packets_done` | `.github/bible/bible_queue.py:790-792` |
 | `status.json` for `tools/gate.py` | `passes_done` array of pass numbers; `open_questions` non-negative integer | Gate selection and blocked-work check; distinct from the main analysis ledger status above | `tools.gate.main` | `tools/gate.py:94-108` |
 | `verification-report.md` | One `Verdict` row (`PASS`, `PASS AFTER CORRECTIONS`, or `FAIL`); `Corrections` rows may be `major`; optional 16-hex `Analysis fingerprint` | Verdict and page fingerprint decide whether a component PR is opened or revised | `report_facts`, `Queue.component`, `Queue.assemble_phase` | `.github/bible/bible_queue.py:365-379,619-627,749-753` |
 | GitHub issue `state` and `state_reason` | `open` / `closed`; queue closes with `completed` or `not_planned` | External lifecycle used to select sessions and retries | `GitHub.close`, queue methods | `.github/bible/bible_queue.py:272-273,441-448,472-483` |

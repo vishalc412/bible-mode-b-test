@@ -127,7 +127,7 @@ stateDiagram-v2
 | Element | Evidence |
 | --- | --- |
 | Agent may open draft; queue marks it ready before merge | `.github/bible/bible_queue.py:313-320` |
-| Queue validates changed files and status before merging session PR | `.github/bible/bible_queue.py:659-713` <!-- recheck: was .github/bible/bible_queue.py:659-713 --> |
+| Queue validates changed files and status before merging session PR | `.github/bible/bible_queue.py:659-713` |
 | Failed session closes its PR | `.github/bible/bible_queue.py:521-540` |
 
 ### Component review pull request

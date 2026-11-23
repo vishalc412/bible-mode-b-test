@@ -2,6 +2,10 @@
 
 Status: CORRECTED AFTER VERIFICATION (report of 2026-11-23; revised pages not yet re-verified).
 
+## Current revision
+
+Applied the current `next.py` revision packet for `.github/bible/bible_queue.py` (17 cards). Reopened and rewrote `GitHub.me`, `GitHub.is_agent_pr`, `GitHub.start_error`, `GitHub.pr_files`, `GitHub.tarball`, `GitHub.merge`, `settings_of`, `Queue.held`, `Queue.run`, `Queue.component`, `Queue.follow`, `Queue.check`, `Queue.assemble_phase`, `Queue.revise_all_step`, `Queue.continue_if_unfinished`, `Queue.delta`, and `main`; updated source stamps, branch tables, call-graph edges, and the component README. Source lines: `.github/bible/bible_queue.py:160-1126`.
+
 ## 2026-11-23
 
 Applied from verification-report.md, fingerprint dee0a05d04621400, of 2026-11-23, verdict PASS AFTER CORRECTIONS.

@@ -9,23 +9,13 @@
   "report": "verification-report.md"
  },
  "baseline": {
-  "recorded": "2026-11-23T22:46:19",
-  "files": 20
+  "recorded": "2026-11-23T23:24:06",
+  "files": 24
  },
  "drift": {
-  "changed_files": 6,
-  "files": [
-   ".github/bible/bible_queue.py",
-   ".github/workflows/bible-delta.yml",
-   "tls-migration/01-inventory.md",
-   "tls-migration/02-certificate-plan.md",
-   "tls-migration/evidence/inventory.json",
-   "tls-migration/tls-services.yaml"
-  ],
-  "components": [
-   "bible-mode-b"
-  ],
-  "open_delta_work": 20
+  "changed_files": 0,
+  "files": [],
+  "components": []
  },
  "components": {
   "catalog": {
@@ -41,7 +31,7 @@
   "bible-mode-b": {
    "state": "STALE",
    "verdict": "PASS",
-   "why": "pages changed since the verification (fingerprint 8d9c4cbe0922bf75 then, 793b8917a18c2561 now): verify the changed parts"
+   "why": "pages changed since the verification (fingerprint 8d9c4cbe0922bf75 then, 2629c1e6c434116d now): verify the changed parts"
   },
   "tools": {
    "state": "STALE",
@@ -54,5 +44,5 @@
   "0 of 4 components verified"
  ],
  "notes": [],
- "checked": "2026-11-23T23:04:14"
+ "checked": "2026-11-23T23:31:12"
 }
