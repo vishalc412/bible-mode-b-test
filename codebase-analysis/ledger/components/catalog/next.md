@@ -1,17 +1,18 @@
 ```text
-NEXT PACKET 1 of 3 (0 done, 0%; 0 in this chat, budget 6)
+NEXT PACKET 2 of 3 (1 done, 33%; 1 in this chat, budget 6)
 Component: catalog
-Read:      components/catalog/service.py lines 1-49 (of 49), in full
-Write:     codebase-analysis/lld/catalog/service.md (create; right under its title: Source file: `components/catalog/service.py`)
+Read:      components/catalog/catalog.py lines 1-47 (of 47), in full
+Write:     codebase-analysis/lld/catalog/catalog.md (create; right under its title: Source file: `components/catalog/catalog.py`)
 Templates: references/output-templates.md - Front matter, lld/<component>/<module>.md, Function card
 
-To do in this packet (6):
+To do in this packet (7):
   - no page declares this file
-  - card `CatalogHandler` (class, lines 15-37) - branch lines to cite: none; calls: none; stamp `<!-- code: f7c8d0d6009d -->`: not named on the page
-  - card `CatalogHandler._send` (method, lines 16-22) - branch lines to cite: none; calls: `().encode`, `json.dumps`, `self.send_response`, `self.send_header`, `str`, `len`, `self.end_headers`, `self.wfile.write`; stamp `<!-- code: e4ce28347ba9 -->`: not named on the page
-  - card `CatalogHandler.do_GET` (method, lines 24-34) - branch lines to cite: 26, 28, 32; calls: `urllib.parse.urlsplit`, `self._send`, `path.startswith`, `urllib.parse.unquote`, `len`, `catalog.price_of`; stamp `<!-- code: 36b27ea8c095 -->`: not named on the page
-  - card `CatalogHandler.log_message` (method, lines 36-37) - branch lines to cite: none; calls: none; stamp `<!-- code: 98f39d7eebc6 -->`: not named on the page
-  - card `make_server` (function, lines 40-43) - branch lines to cite: 42; calls: `os.environ.get`, `int`, `ThreadingHTTPServer`; stamp `<!-- code: a060da66ba9d -->`: not named on the page
+  - card `get_product` (function, lines 15-17) - branch lines to cite: none; calls: `_PRODUCTS.get`; stamp `<!-- code: 9e5f194ac459 -->`: not named on the page
+  - card `price_of` (function, lines 20-24) - branch lines to cite: 22, 23; calls: `get_product`, `KeyError`; stamp `<!-- code: 9339c8a1a6d3 -->`: not named on the page
+  - card `in_stock` (function, lines 27-29) - branch lines to cite: none; calls: `get_product`; stamp `<!-- code: 9dfed2fca633 -->`: not named on the page
+  - card `image_url` (function, lines 32-33) - branch lines to cite: none; calls: `sku.lower`; stamp `<!-- code: ba322139b301 -->`: not named on the page
+  - card `fetch_supplier_feed` (function, lines 36-39) - branch lines to cite: none; calls: `urllib.request.urlopen`, `json.loads`, `resp.read`; stamp `<!-- code: d1d97f4f1787 -->`: not named on the page
+  - card `apply_feed` (function, lines 42-47) - branch lines to cite: 44, 45; calls: `feed.get`, `float`, `int`; stamp `<!-- code: 8a9129d98a7c -->`: not named on the page
 
 When every item is written, write one line to the user, and run next.py again.
 Write only under lld/catalog/, lld/api/catalog/ and ledger/components/catalog/: other components run in parallel.
