@@ -588,7 +588,7 @@ The work plan (every source file, component, lines, packets, status), packets do
 ```markdown
 # Revision log
 
-Applied from: verification-report.md of <date>, verdict <verdict>.
+Applied from verification-report.md, fingerprint <the report's Analysis fingerprint>, of <date>, verdict <verdict>.
 
 | Item | Location | What was done | Code re-opened | Agrees with the report? |
 
