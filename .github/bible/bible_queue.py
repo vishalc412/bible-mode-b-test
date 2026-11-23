@@ -50,6 +50,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -68,11 +69,18 @@ NO_PR_AFTER = 30 * 60      # seconds after assignment with no pull request: the 
 IDLE_AFTER = 20 * 60       # seconds without a push: the session has ended
 MAX_VERIFY_ROUNDS = 2
 MAX_TARBALL = 512 << 20    # bytes of a branch's tarball the queue downloads to run the check
-GATE_TIMEOUT = 900         # seconds for coverage.py / status.py on a branch
+GATE_TIMEOUT = 300         # seconds for coverage.py / status.py on a branch; a timeout means "could not check", never a failure
+MAX_UNPACKED = 2 << 30     # bytes a branch may unpack to, and at most MAX_MEMBERS files
+MAX_MEMBERS = 200000
+RUN_BUDGET = 19 * 60       # seconds per queue run (the job allows 20 minutes)
+MAX_SESSION_CAP = 22       # work sessions per component, whatever the plan estimates (2 x 10 + 2)
 MIN_SESSION_CAP = 4        # work sessions per component before a person decides: 2 x the estimate + 2, at least this
 MAX_CONTINUE = 3           # continuation comments for one assembly or whole verification before a person decides
 CONTINUE_MARK = "<!-- bible-continue -->"
 SETTINGS = re.compile(r"<!--\s*bible-settings\s*(\{.*?\})\s*-->", re.S)
+STATE = re.compile(r"<!--\s*bible-state\s*(\{.*?\})\s*-->", re.S)   # the queue's own counters, on its tracker
+UPDATED = re.compile(r"^Updated (\d{4}-\d\d-\d\dT\d\d:\d\d)", re.M)
+MAX_NOCHECK = 3            # checks in a row that could not run (time, size, a missing script), then a person
 ATTEMPT = re.compile(r"^Attempt:\s*(\d+)", re.M)
 NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,39}\Z")
 LABELS = {
@@ -84,6 +92,7 @@ LABELS = {
     "bible-verify-all": "Copilot session: verify the whole analysis",
     "bible-revise-all": "Copilot session: apply the whole verification's corrections",
     "bible-needs-revision": "A whole verification that asked for corrections: a revision follows",
+    "bible-stale-verdict": "A PASS not about the pages now, or not by this run: verified again",
     "bible-delta": "Copilot session: update after a code change",
     "bible-waiting-answer": "Copilot asked questions: answer on the pull request with @copilot",
     "bible-needs-human": "Failed twice: a person must look, then remove this label to retry",
@@ -273,7 +282,13 @@ class GitHub:
             buf.seek(0)
             root = os.path.abspath(dest)
             with tarfile.open(fileobj=buf, mode="r:gz") as tar:
+                unpacked, members = 0, 0
                 for member in tar:
+                    members += 1
+                    unpacked += max(member.size, 0)
+                    if members > MAX_MEMBERS or unpacked > MAX_UNPACKED:
+                        raise RuntimeError("GitHub tarball %s: more than %d files or %d MB unpacked, not checked"
+                                           % (ref, MAX_MEMBERS, MAX_UNPACKED >> 20))
                     parts = member.name.split("/", 1)
                     if len(parts) < 2 or not parts[1] or not (member.isfile() or member.isdir()):
                         continue
@@ -344,10 +359,19 @@ def age(stamp):
 
 
 SAFE_PATH = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)*\Z")
-SAFE_FILE = re.compile(r"^[A-Za-z0-9_.@+-][A-Za-z0-9_.@+/ -]{0,250}\Z")   # a path quoted in an issue for Copilot
+SAFE_FILE = re.compile(r"^[A-Za-z0-9_.-][A-Za-z0-9_./-]{0,250}\Z")   # a path quoted to Copilot: no spaces, no @, no prose
+ABANDONED_AFTER = 14 * 24 * 3600  # a tracker untouched this long no longer holds back update issues
 MAX_DELTA_ISSUES = 10      # update sessions one push may start; more, and a person decides
 SAFE_MODEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}\Z")
 DEPTH_VALUES = ("deep", "standard", "survey")  # coverage.DEPTHS
+
+
+def shown_files(paths, limit=10):
+    """File names for a comment or an issue Copilot reads: plain paths quoted, the others only counted."""
+    plain = [p for p in paths if SAFE_FILE.match(p)]
+    other = len(paths) - len(plain)
+    return ", ".join("`%s`" % p for p in plain[:limit]) + (" and %d more" % (len(plain) - limit) if len(plain) > limit else "") + \
+        (" and %d with unusual characters in their names" % other if other else "")
 
 
 def settings_of(tracker):
@@ -550,6 +574,7 @@ class Queue:
 
     # -- the whole run for one tracker
     def reconcile(self):
+        self.deadline = time.monotonic() + RUN_BUDGET
         self.default = self.gh.default_branch()
         for tracker in self.gh.issues(["bible-tracker"]):
             settings = settings_of(tracker)
@@ -565,6 +590,13 @@ class Queue:
         gh, analysis = self.gh, settings.get("analysis", "codebase-analysis")
         self.settings, self.tracker = settings, tracker
         self.run_label = "bible-run-%d" % tracker["number"]
+        found = STATE.search(tracker.get("body") or "")
+        try:
+            self.state = json.loads(found.group(1)) if found else {}
+        except ValueError:
+            self.state = {}
+        if not isinstance(self.state, dict):
+            self.state = {}
         catalog = json_file(gh, analysis + "/components.json", self.default)
         if not isinstance(catalog, dict) or catalog.get("proposed") or not isinstance(catalog.get("components"), list):
             return self.plan_phase(tracker, settings, analysis)
@@ -682,14 +714,22 @@ class Queue:
         status = status_of(gh, "%s/ledger/components/%s/status.json" % (analysis, name), branch)
         gate_ok, pages = (False, None)
         if status.get("state") == "COMPONENT_DONE":
+            if time.monotonic() + 2 * GATE_TIMEOUT + 300 > getattr(self, "deadline", float("inf")):
+                return "waiting for the next check (not enough of this run's time left for its check)"
             gate_ok, pages = self.check(analysis, name, branch)
+            if gate_ok is None:  # the check could not run (time, size, network): try again, start nothing
+                return self.could_not_check("nocheck:" + name, "The check of component %s" % name, [comp_label(name)],
+                                            "Codebase analysis - component %s needs a person" % name) or \
+                    "check could not run this time: retried at the next check"
+            self.state.pop("nocheck:" + name, None)
         if not gate_ok:
             merged_into_default = max([p.get("merged_at") or "" for p in gh.branch_prs(branch, self.default)] + [""])
             since = max(after, merged_into_default)  # a component merged earlier and now drifting starts a fresh count
             sessions = [i for i in self.run_issues(["bible-chunk", comp_label(name)], state="closed")
                         if (i.get("created_at") or "") >= since]
-            estimate = as_int(self.estimate.get(name)) or 2
-            cap = max(MIN_SESSION_CAP, 2 * estimate + 2)
+            # the estimate comes from components.json (written by the plan session): clamped, and the cap has a ceiling
+            estimate = min(max(as_int(self.estimate.get(name)) or 2, 1), 10)
+            cap = min(max(MIN_SESSION_CAP, 2 * estimate + 2), MAX_SESSION_CAP)
             if len(sessions) >= cap:
                 # Found in the audit: a session that reports COMPONENT_DONE while the queue's own check fails would
                 # otherwise get a new session at every check, with no limit.
@@ -701,7 +741,7 @@ class Queue:
                                        ["bible-hold", "bible-needs-human", comp_label(name), self.run_label])
                 return "needs a person: see #%d" % hold["number"]
             done = len(self.run_issues(["bible-chunk", comp_label(name)], state="closed"))
-            self.start_chunk(analysis, name, note="Session %d of about %s." % (done + 1, self.estimate.get(name, "?")))
+            self.start_chunk(analysis, name, note="Session %d of about %d." % (done + 1, estimate))
             return "session starting"
         closed_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed")
                          if i.get("state_reason") == "completed" and i.get("created_at", "") >= after]
@@ -778,7 +818,7 @@ class Queue:
             bad = [f for f in gh.pr_files(pr["number"])
                    if not (f.startswith(base) and (os.path.basename(f).startswith("verification-") or os.path.basename(f) == "citations.tsv"))]
         if bad:
-            retried = self.fail_or_retry(issue, pr, "files this kind of session may not write: " + ", ".join(bad[:10]))
+            retried = self.fail_or_retry(issue, pr, "files this kind of session may not write: " + shown_files(bad))
             return "session starting" if retried else "needs a person: see #%d" % issue["number"]
         status = status_of(gh, base + "status.json", pr["head"]["sha"])
         if kind == "chunk":
@@ -819,9 +859,9 @@ class Queue:
         try:
             try:
                 self.gh.tarball(branch, work)
-            except RuntimeError as err:  # too large, unreadable: the check fails (the session cap then applies)
+            except RuntimeError as err:  # too large, unreadable: the check could not run (no session is started for it)
                 self.log("gate %s: %s" % (name, err))
-                return False, None
+                return None, None
             run = subprocess.run([sys.executable, "-I", os.path.abspath(os.path.join(scripts, "coverage.py")), "--repo", work,
                                   "--analysis", analysis, "--depth", self.settings.get("depth", "deep"), "--component", name,
                                   "--report", "-"], capture_output=True, text=True, timeout=GATE_TIMEOUT)
@@ -831,8 +871,38 @@ class Queue:
                                      timeout=GATE_TIMEOUT)
             return run.returncode == 0, (printed.stdout.strip() or None)
         except subprocess.TimeoutExpired:
-            self.log("gate %s: the check took longer than %d seconds: treated as failing" % (name, GATE_TIMEOUT))
-            return False, None
+            self.log("gate %s: the check took longer than %d seconds: not checked this run" % (name, GATE_TIMEOUT))
+            return None, None
+        finally:
+            shutil.rmtree(work, ignore_errors=True)
+
+    def could_not_check(self, key, what, hold_labels, hold_title):
+        """A check that could not run counts; after MAX_NOCHECK in a row a person decides (it could fail the same way
+        forever: always too slow, too large, a missing script). Returns the tracker row, or None to just wait."""
+        self.state[key] = as_int(self.state.get(key)) + 1
+        if self.state[key] < MAX_NOCHECK:
+            return None
+        self.state.pop(key, None)
+        hold = self.gh.create_issue(hold_title, "Tracker: #%d\n\n%s could not run %d times in a row (the queue's log says why: a "
+                                    "timeout, a branch over the size limits, a missing script). Fix the cause, then remove the "
+                                    "label `bible-needs-human` from this issue." % (self.tracker["number"], what, MAX_NOCHECK),
+                                    hold_labels + ["bible-hold", "bible-needs-human", self.run_label])
+        return "needs a person: see #%d" % hold["number"]
+
+    def whole_fingerprint(self, analysis):
+        """The whole analysis's pages fingerprint on the default branch now (status.py --fingerprint), or None."""
+        scripts = os.path.join(self.skills, "analyzing-a-codebase", "scripts")
+        if not os.path.isfile(os.path.join(scripts, "status.py")):
+            return None
+        work = tempfile.mkdtemp(prefix="bible-whole-")
+        try:
+            self.gh.tarball(self.default, work)
+            printed = subprocess.run([sys.executable, "-I", os.path.abspath(os.path.join(scripts, "status.py")), "--repo", work,
+                                      "--analysis", analysis, "--fingerprint"], capture_output=True, text=True, timeout=GATE_TIMEOUT)
+            return printed.stdout.strip() or None
+        except (RuntimeError, subprocess.TimeoutExpired) as err:
+            self.log("whole fingerprint: %s" % err)
+            return None
         finally:
             shutil.rmtree(work, ignore_errors=True)
 
@@ -842,14 +912,45 @@ class Queue:
                 ("bible-assemble", settings.get("model"), "Codebase analysis - assemble the whole bible", "assemble.md"),
                 ("bible-verify-all", settings.get("verify_model"), "Codebase analysis - verify the whole analysis", None)):
             closed_done = [i for i in self.run_issues([kind], state="closed") if i.get("state_reason") == "completed"]
+            if kind == "bible-verify-all":
+                held_whole = self.whole_hold()
+                if held_whole:  # consulted before any check of the whole analysis (review: a hold was never read here)
+                    return held_whole
             if kind == "bible-verify-all" and closed_done:
                 # GitHub closes the issue itself when the pull request that says "Fixes #N" is merged: a closed
                 # verification is done only when the report on the default branch is a clean PASS (seen in review).
                 facts = report_facts(gh.file("%s/verification-report.md" % analysis, self.default))
                 newest = max(closed_done, key=lambda i: i.get("closed_at") or "")
-                if facts and facts[0] == "PASS" and not facts[1]:
-                    continue
-                if "bible-needs-revision" not in labels_of(newest) and not self.run_issues([kind]):
+                # Done means: a clean PASS, about the pages on the default branch now (its fingerprint), written by this
+                # run's own verification pull request (found in the second audit: a PASS left by an earlier run, or an
+                # issue closed by hand, would otherwise end the run with no verification).
+                report_path = "%s/verification-report.md" % analysis
+                on_default = gh.file(report_path, self.default)
+                by_this_run = any(p.get("merged_at") and p["base"]["ref"] == self.default and gh.is_agent_pr(p)
+                                  and ((p.get("head") or {}).get("repo") or {}).get("full_name") == gh.repo
+                                  and report_path in gh.pr_files(p["number"])
+                                  and gh.file(report_path, p["head"]["sha"]) == on_default  # the report as the session wrote it
+                                  for p in gh.linked_prs(newest["number"]))
+                clean = bool(facts and facts[0] == "PASS" and not facts[1])
+                if clean and by_this_run and facts[2]:
+                    if time.monotonic() + GATE_TIMEOUT + 300 > getattr(self, "deadline", float("inf")):
+                        return "verify-all: waiting for the next check (not enough of this run's time left)"
+                    pages_now = self.whole_fingerprint(analysis)
+                    if pages_now is None:  # could not compute it now: no verification round is used; counted, then a person
+                        held = self.could_not_check("nofp", "The fingerprint of the whole analysis", ["bible-whole"],
+                                                    "Codebase analysis - the whole analysis needs a person")
+                        return ("verify-all: " + held) if held else \
+                            "verify-all: the pages' fingerprint could not be computed now: checked again at the next check"
+                    self.state.pop("nofp", None)
+                    if facts[2] == pages_now:
+                        continue
+                if clean and not ({"bible-needs-revision", "bible-stale-verdict"} & labels_of(newest)) and not self.run_issues([kind]):
+                    # a PASS about other pages, or not written by this run: nothing to correct, verify again (a round)
+                    gh.label(newest["number"], "bible-stale-verdict")
+                    gh.comment(newest["number"], "The PASS on %s is not about the pages there now, or was not written by this "
+                               "run's verification: a new verification follows." % self.default)
+                    return "verify-all: the PASS is not about the pages now: verifying again"
+                if not clean and "bible-needs-revision" not in labels_of(newest) and not self.run_issues([kind]):
                     gh.label(newest["number"], "bible-needs-revision")
                     gh.comment(newest["number"], "Verdict %s: a revision of the whole analysis follows, then a new "
                                "verification." % (facts[0] if facts else "missing"))
@@ -877,6 +978,8 @@ class Queue:
                             gh.close(issue["number"], "not_planned")
                             return "verify-all: corrections asked (verdict %s): revision next" % (facts[0] if facts else "missing")
                     gh.close(issue["number"])
+                    if kind == "bible-verify-all":
+                        return "verify-all: merged; checked against the pages at the next check"  # the strict rule decides done
                     continue
                 if self.held(issue):
                     return "%s: needs a person: see #%d" % (kind[6:], issue["number"])
@@ -902,9 +1005,43 @@ class Queue:
             gh.create_issue(title, "Tracker: #%d\nBase branch: %s\nAttempt: 1\n\n%s" % (tracker["number"], self.default, body),
                             [kind, self.run_label], assignment(gh, self.default, model))
             return "%s session assigned" % kind[6:]
+        # Code that changed during the run: its update issues first, while the tracker is still open (an error leaves it
+        # open and the next check tries again), then once more after closing for a push that came in between.
+        deferred = self.deferred_updates(tracker)
+        if deferred:
+            self.delta(deferred, analysis, record=False)
         gh.comment(tracker["number"], "Every component, the assembly and the whole verification are merged. Done.")
         gh.close(tracker["number"])
+        late = sorted(set(self.deferred_updates(tracker)) - set(deferred))
+        if late:
+            try:
+                self.delta(late, analysis, record=False)
+            except Exception as err:  # the tracker is closed: say so where a person reads it, never lose them silently
+                gh.comment(tracker["number"], "Code that changed at the end of this run could not get its update issues (%s: %s). "
+                           "Run the update for these files by hand: %s" % (type(err).__name__, str(err)[:160], shown_files(late)))
         return "done"
+
+    def deferred_updates(self, tracker):
+        """Paths of pushes recorded on the tracker while the run was open (only the queue's own marks count)."""
+        me, paths = self.gh.me(), []
+        for e in self.gh.timeline(tracker["number"]):
+            actor = (e.get("actor") or e.get("user")) or {}
+            if e.get("event") != "commented" or actor.get("login") != me:
+                continue
+            for raw in re.findall(r"<!-- bible-deferred-update (\[.*?\]) -->", e.get("body") or ""):
+                try:
+                    paths += [p for p in json.loads(raw) if isinstance(p, str) and SAFE_FILE.match(p)]
+                except ValueError:
+                    continue
+        return sorted(set(paths))
+
+    def whole_hold(self):
+        """The row while a hold on the whole analysis waits for a person; a released one (label removed) is closed."""
+        for h in self.run_issues(["bible-hold", "bible-whole"]):
+            if "bible-needs-human" in labels_of(h):
+                return "verify-all: needs a person: see #%d" % h["number"]
+            self.gh.close(h["number"])  # the person removed the label: new rounds from here
+        return None
 
     def revise_all_step(self, tracker, analysis):
         """After a whole verification that asked for corrections: one revision session of the whole analysis, then a
@@ -923,9 +1060,12 @@ class Queue:
         # person last released the run (a release gives new rounds, starting with a revision of that verdict).
         asked_all = sorted(self.run_issues(["bible-verify-all", "bible-needs-revision"], state="closed"),
                            key=lambda i: i.get("closed_at") or "")
-        if not asked_all:
+        stale = [i for i in self.run_issues(["bible-verify-all", "bible-stale-verdict"], state="closed")
+                 if (i.get("created_at") or "") >= after]
+        if not asked_all and len(stale) < MAX_VERIFY_ROUNDS:
             return None
         asked = [i for i in asked_all if (i.get("created_at") or "") >= after]
+        rounds = len(asked) + len(stale)  # every verification without a clean, current PASS counts
         revisions = self.run_issues(["bible-revise-all"], state="all")
         open_rev = [i for i in revisions if i["state"] == "open"]
         if open_rev:
@@ -954,17 +1094,22 @@ class Queue:
                        or os.path.basename(f).startswith("verification-")]
                 if bad:
                     retried = self.fail_or_retry(issue, pr, "files a revision may not write (only %s/, never verification-*): %s"
-                                                 % (analysis, ", ".join(bad[:10])))
+                                                 % (analysis, shown_files(bad)))
                     return "revise-all: session starting" if retried else "revise-all: needs a person: see #%d" % issue["number"]
             return "revise-all: %s" % ("review and merge pull request #%d" % pr["number"] if pr else state)
-        last_asked = asked_all[-1].get("closed_at") or ""
-        if any((i.get("closed_at") or "") > last_asked and i.get("state_reason") == "completed" for i in revisions):
-            return None  # this verdict's corrections are applied: the loop opens the next whole verification
-        if len(asked) >= MAX_VERIFY_ROUNDS:
+        last_asked = asked_all[-1].get("closed_at") if asked_all else ""
+        newest_stale = max([i.get("closed_at") or "" for i in stale] + [""])
+        corrections_applied = bool(asked_all) and any((i.get("closed_at") or "") > (last_asked or "")
+                                                      and i.get("state_reason") == "completed" for i in revisions)
+        if rounds >= MAX_VERIFY_ROUNDS and (not asked_all or corrections_applied or newest_stale > (last_asked or "")):
+            pass  # rounds used up: a person decides (below)
+        elif not asked_all or corrections_applied or newest_stale > (last_asked or ""):
+            return None  # nothing to correct now: the loop opens the next whole verification
+        if rounds >= MAX_VERIFY_ROUNDS:
             hold = gh.create_issue("Codebase analysis - the whole analysis needs a person",
-                                   "Tracker: #%d\n\n%d whole verifications without a clean PASS. Read %s/verification-report.md "
+                                   "Tracker: #%d\n\n%d whole verifications without a clean, current PASS. Read %s/verification-report.md "
                                    "on %s, then remove the label `bible-needs-human` from this issue for new rounds."
-                                   % (tracker["number"], len(asked), analysis, self.default),
+                                   % (tracker["number"], rounds, analysis, self.default),
                                    ["bible-hold", "bible-needs-human", "bible-whole", self.run_label])
             return "verify-all: needs a person: see #%d" % hold["number"]
         body = ("Tracker: #%d\nBase branch: %s\nAttempt: 1\n\nUse the analyzing-a-codebase skill (in %s) in revision mode "
@@ -1022,7 +1167,8 @@ class Queue:
         lines = ["Codebase analysis run, kept up to date by the Bible - queue workflow every 15 minutes. Close this issue to stop "
                  "the run. Settings are in the hidden block below.", "", "| Component | State |", "| --- | --- |"]
         lines += ["| `%s` | %s |" % (k, v) for k, v in rows.items()]
-        lines += ["", "Updated %s." % now().isoformat(timespec="minutes"), "",
+        lines += ["", "<!-- bible-state %s -->" % json.dumps(getattr(self, "state", {}) or {}, sort_keys=True),
+                  "Updated %s." % now().isoformat(timespec="minutes"), "",
                   "<!-- bible-settings %s -->" % json.dumps(settings)]
         body = "\n".join(lines)
         if body.split("Updated")[0] != (tracker.get("body") or "").split("Updated")[0]:
@@ -1031,9 +1177,24 @@ class Queue:
             self.log("%-20s %s" % (k, v))
 
     # -- after a push: update issues for the components whose files changed
-    def delta(self, changed, settings_analysis="codebase-analysis"):
+    def delta(self, changed, settings_analysis="codebase-analysis", record=True):
         gh = self.gh
         self.default = gh.default_branch()
+        def last_activity(t):  # the queue's own "Updated" line, not GitHub's updated_at (which every comment moves)
+            found = UPDATED.search(t.get("body") or "")
+            return found.group(1) + ":00+00:00" if found else t.get("created_at")  # render() writes it in UTC
+        open_run = [t for t in gh.issues(["bible-tracker"]) if age(last_activity(t)) <= ABANDONED_AFTER] if record else []
+        if open_run:
+            # Seen live (24 Nov 2026): an update session and the run's own revision edited the same pages at once. While
+            # a run is open the change is recorded on its tracker, and replayed into update issues when the run ends.
+            plain = [p for p in changed if SAFE_FILE.match(p)]
+            gh.comment(open_run[0]["number"], "Code changed while this run is open: the update follows when the run ends "
+                       "(%d file(s)%s).\n<!-- bible-deferred-update %s -->" % (
+                           len(plain), "; %d with unusual names not recorded: update those by hand" % (len(changed) - len(plain))
+                           if len(changed) != len(plain) else "", json.dumps(plain)))
+            self.log("an analysis run is open (#%d): the change is recorded there and replayed when it ends"
+                     % open_run[0]["number"])
+            return
         catalog = json_file(gh, settings_analysis + "/components.json", self.default)
         if not catalog or not gh.file(settings_analysis + "/ledger/baseline.json", self.default):
             self.log("no assembled analysis (components.json and ledger/baseline.json) on %s: nothing to update" % self.default)
@@ -1060,7 +1221,7 @@ class Queue:
             # File names come from a push and reach Copilot as text: only plain paths are quoted, the others counted.
             files = [p for p in changed if components.assign(p, rows)[0] == name]
             shown = [p for p in files if SAFE_FILE.match(p)]
-            hidden = len(files) - len(shown)
+            hidden = len(files) - len(shown)  # quoted below through the same rule as shown_files
             if gh.issues(["bible-delta", comp_label(name)]):
                 self.log("update issue for %s already open: its session covers every change since the baseline when it runs" % name)
                 continue
