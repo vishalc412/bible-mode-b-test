@@ -49,7 +49,7 @@ The localhost developer fake (`http://localhost:8099/settle`) remains HTTP becau
 
 ## Rollback
 
-The supplier change can be reverted by restoring the supplier URL to HTTP and removing the explicit SSL context, but doing so would reintroduce plaintext delivery and should require supplier/application-owner approval. There are no application redirect, HSTS, or public TLS-termination changes to roll back. The payment partner, local fake, and internal catalog service/client were not changed.
+The supplier change can be reverted by restoring the supplier URL to HTTP and removing the `NoHTTPRedirectHandler`/verified HTTPS opener, but doing so would reintroduce plaintext delivery and should require supplier/application-owner approval. There are no application redirect, HSTS, or public TLS-termination changes to roll back. The payment partner, local fake, and internal catalog service/client were not changed.
 
 ## Statistics
 
