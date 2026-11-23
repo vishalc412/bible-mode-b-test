@@ -73,12 +73,14 @@ GATE_TIMEOUT = 300         # seconds for coverage.py / status.py on a branch; a 
 MAX_UNPACKED = 2 << 30     # bytes a branch may unpack to, and at most MAX_MEMBERS files
 MAX_MEMBERS = 200000
 RUN_BUDGET = 19 * 60       # seconds per queue run (the job allows 20 minutes)
-WORST_COMPONENT = 2 * GATE_TIMEOUT + 300 + 60  # a component's worst case: two checks, a tarball, the API calls
 MAX_SESSION_CAP = 22       # work sessions per component, whatever the plan estimates (2 x 10 + 2)
 MIN_SESSION_CAP = 4        # work sessions per component before a person decides: 2 x the estimate + 2, at least this
 MAX_CONTINUE = 3           # continuation comments for one assembly or whole verification before a person decides
 CONTINUE_MARK = "<!-- bible-continue -->"
 SETTINGS = re.compile(r"<!--\s*bible-settings\s*(\{.*?\})\s*-->", re.S)
+STATE = re.compile(r"<!--\s*bible-state\s*(\{.*?\})\s*-->", re.S)   # the queue's own counters, on its tracker
+UPDATED = re.compile(r"^Updated (\d{4}-\d\d-\d\dT\d\d:\d\d)", re.M)
+MAX_NOCHECK = 3            # checks in a row that could not run (time, size, a missing script), then a person
 ATTEMPT = re.compile(r"^Attempt:\s*(\d+)", re.M)
 NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,39}\Z")
 LABELS = {
@@ -588,6 +590,13 @@ class Queue:
         gh, analysis = self.gh, settings.get("analysis", "codebase-analysis")
         self.settings, self.tracker = settings, tracker
         self.run_label = "bible-run-%d" % tracker["number"]
+        found = STATE.search(tracker.get("body") or "")
+        try:
+            self.state = json.loads(found.group(1)) if found else {}
+        except ValueError:
+            self.state = {}
+        if not isinstance(self.state, dict):
+            self.state = {}
         catalog = json_file(gh, analysis + "/components.json", self.default)
         if not isinstance(catalog, dict) or catalog.get("proposed") or not isinstance(catalog.get("components"), list):
             return self.plan_phase(tracker, settings, analysis)
@@ -613,9 +622,6 @@ class Queue:
         self.estimate = {c["name"]: c.get("est_sessions", "?") for c in catalog["components"]}
         rows, active = {}, 0
         for name in wanted:
-            if time.monotonic() + WORST_COMPONENT > getattr(self, "deadline", float("inf")):
-                rows[name] = "waiting for the next check (not enough of this run's time left)"
-                continue
             try:
                 rows[name] = self.component(analysis, name)
             except Exception as err:  # kept to this component; the next run tries again
@@ -629,7 +635,7 @@ class Queue:
                     rows[name], active = "session starting", active + 1
                 except RuntimeError as err:
                     rows[name] = "error this run (retried next run): %s" % str(err)[:160]
-        if all(r == "merged" for r in rows.values()) and time.monotonic() + WORST_COMPONENT <= getattr(self, "deadline", float("inf")):
+        if all(r == "merged" for r in rows.values()):
             rows["(whole analysis)"] = self.assemble_phase(tracker, settings, analysis)
         self.render(tracker, settings, rows)
 
@@ -708,9 +714,14 @@ class Queue:
         status = status_of(gh, "%s/ledger/components/%s/status.json" % (analysis, name), branch)
         gate_ok, pages = (False, None)
         if status.get("state") == "COMPONENT_DONE":
+            if time.monotonic() + 2 * GATE_TIMEOUT + 300 > getattr(self, "deadline", float("inf")):
+                return "waiting for the next check (not enough of this run's time left for its check)"
             gate_ok, pages = self.check(analysis, name, branch)
             if gate_ok is None:  # the check could not run (time, size, network): try again, start nothing
-                return "check could not run this time: retried at the next check"
+                return self.could_not_check("nocheck:" + name, "The check of component %s" % name, [comp_label(name)],
+                                            "Codebase analysis - component %s needs a person" % name) or \
+                    "check could not run this time: retried at the next check"
+            self.state.pop("nocheck:" + name, None)
         if not gate_ok:
             merged_into_default = max([p.get("merged_at") or "" for p in gh.branch_prs(branch, self.default)] + [""])
             since = max(after, merged_into_default)  # a component merged earlier and now drifting starts a fresh count
@@ -865,6 +876,19 @@ class Queue:
         finally:
             shutil.rmtree(work, ignore_errors=True)
 
+    def could_not_check(self, key, what, hold_labels, hold_title):
+        """A check that could not run counts; after MAX_NOCHECK in a row a person decides (it could fail the same way
+        forever: always too slow, too large, a missing script). Returns the tracker row, or None to just wait."""
+        self.state[key] = as_int(self.state.get(key)) + 1
+        if self.state[key] < MAX_NOCHECK:
+            return None
+        self.state.pop(key, None)
+        hold = self.gh.create_issue(hold_title, "Tracker: #%d\n\n%s could not run %d times in a row (the queue's log says why: a "
+                                    "timeout, a branch over the size limits, a missing script). Fix the cause, then remove the "
+                                    "label `bible-needs-human` from this issue." % (self.tracker["number"], what, MAX_NOCHECK),
+                                    hold_labels + ["bible-hold", "bible-needs-human", self.run_label])
+        return "needs a person: see #%d" % hold["number"]
+
     def whole_fingerprint(self, analysis):
         """The whole analysis's pages fingerprint on the default branch now (status.py --fingerprint), or None."""
         scripts = os.path.join(self.skills, "analyzing-a-codebase", "scripts")
@@ -905,9 +929,14 @@ class Queue:
                                   for p in gh.linked_prs(newest["number"]))
                 clean = bool(facts and facts[0] == "PASS" and not facts[1])
                 if clean and by_this_run and facts[2]:
+                    if time.monotonic() + GATE_TIMEOUT + 300 > getattr(self, "deadline", float("inf")):
+                        return "verify-all: waiting for the next check (not enough of this run's time left)"
                     pages_now = self.whole_fingerprint(analysis)
-                    if pages_now is None:  # could not compute it now: no round is used, try again
-                        return "verify-all: the pages' fingerprint could not be computed now: checked again at the next check"
+                    if pages_now is None:  # could not compute it now: no verification round is used; counted, then a person
+                        return self.could_not_check("nofp", "The fingerprint of the whole analysis", ["bible-whole"],
+                                                    "Codebase analysis - the whole analysis needs a person") or \
+                            "verify-all: the pages' fingerprint could not be computed now: checked again at the next check"
+                    self.state.pop("nofp", None)
                     if facts[2] == pages_now:
                         continue
                 if clean and not ({"bible-needs-revision", "bible-stale-verdict"} & labels_of(newest)) and not self.run_issues([kind]):
@@ -971,11 +1000,16 @@ class Queue:
             gh.create_issue(title, "Tracker: #%d\nBase branch: %s\nAttempt: 1\n\n%s" % (tracker["number"], self.default, body),
                             [kind, self.run_label], assignment(gh, self.default, model))
             return "%s session assigned" % kind[6:]
+        # Code that changed during the run: its update issues first, while the tracker is still open (an error leaves it
+        # open and the next check tries again), then once more after closing for a push that came in between.
+        deferred = self.deferred_updates(tracker)
+        if deferred:
+            self.delta(deferred, analysis, record=False)
         gh.comment(tracker["number"], "Every component, the assembly and the whole verification are merged. Done.")
         gh.close(tracker["number"])
-        deferred = self.deferred_updates(tracker)
-        if deferred:  # code that changed during the run: its update issues now, against the run's baseline
-            self.delta(deferred, analysis)
+        late = sorted(set(self.deferred_updates(tracker)) - set(deferred))
+        if late:
+            self.delta(late, analysis, record=False)
         return "done"
 
     def deferred_updates(self, tracker):
@@ -1116,7 +1150,8 @@ class Queue:
         lines = ["Codebase analysis run, kept up to date by the Bible - queue workflow every 15 minutes. Close this issue to stop "
                  "the run. Settings are in the hidden block below.", "", "| Component | State |", "| --- | --- |"]
         lines += ["| `%s` | %s |" % (k, v) for k, v in rows.items()]
-        lines += ["", "Updated %s." % now().isoformat(timespec="minutes"), "",
+        lines += ["", "<!-- bible-state %s -->" % json.dumps(getattr(self, "state", {}) or {}, sort_keys=True),
+                  "Updated %s." % now().isoformat(timespec="minutes"), "",
                   "<!-- bible-settings %s -->" % json.dumps(settings)]
         body = "\n".join(lines)
         if body.split("Updated")[0] != (tracker.get("body") or "").split("Updated")[0]:
@@ -1125,10 +1160,13 @@ class Queue:
             self.log("%-20s %s" % (k, v))
 
     # -- after a push: update issues for the components whose files changed
-    def delta(self, changed, settings_analysis="codebase-analysis"):
+    def delta(self, changed, settings_analysis="codebase-analysis", record=True):
         gh = self.gh
         self.default = gh.default_branch()
-        open_run = [t for t in gh.issues(["bible-tracker"]) if age(t.get("updated_at") or t.get("created_at")) <= ABANDONED_AFTER]
+        def last_activity(t):  # the queue's own "Updated" line, not GitHub's updated_at (which every comment moves)
+            found = UPDATED.search(t.get("body") or "")
+            return found.group(1) + ":00+00:00" if found else t.get("created_at")  # render() writes it in UTC
+        open_run = [t for t in gh.issues(["bible-tracker"]) if age(last_activity(t)) <= ABANDONED_AFTER] if record else []
         if open_run:
             # Seen live (24 Nov 2026): an update session and the run's own revision edited the same pages at once. While
             # a run is open the change is recorded on its tracker, and replayed into update issues when the run ends.
