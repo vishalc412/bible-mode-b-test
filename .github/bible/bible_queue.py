@@ -511,7 +511,7 @@ class Queue:
                 rows[name] = self.component(analysis, name)
             except Exception as err:  # kept to this component; the next run tries again
                 rows[name] = "error this run (retried next run): %s: %s" % (type(err).__name__, str(err)[:160])
-            active += rows[name].endswith(("running", "starting")) or rows[name].startswith("waiting")
+            active += rows[name].endswith(("running", "starting", "merged")) or rows[name].startswith("waiting")
         cap = as_int(settings.get("concurrency"))
         for name in wanted:  # start components that are still waiting, up to the cap
             if rows[name] == "not started" and (not cap or active < cap):
@@ -603,8 +603,6 @@ class Queue:
         after = max([h.get("closed_at") or "" for h in holds] + [""])
         closed_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed")
                          if i.get("state_reason") == "completed" and i.get("created_at", "") >= after]
-        closed_revise = [i for i in self.run_issues(["bible-chunk", comp_label(name)], state="closed")
-                         if i.get("state_reason") == "completed" and "\nRevision (" in (i.get("body") or "") and i.get("created_at", "") >= after]
         any_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed") if i.get("state_reason") == "completed"]
         facts = report_facts(gh.file("%s/ledger/components/%s/verification-report.md" % (analysis, name), branch)) if any_verify else None
         if facts and facts[0] == "PASS" and not facts[1] and facts[2] and facts[2] == pages:
