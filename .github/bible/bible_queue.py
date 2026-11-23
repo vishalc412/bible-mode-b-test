@@ -616,7 +616,15 @@ class Queue:
         # started for another reason also applied changes (24 Nov 2026).
         about_these_pages = bool(facts and facts[2] and facts[2] == pages)
         needs_revision = bool(facts and (facts[0] != "PASS" or facts[1]))
-        if about_these_pages and needs_revision and len(closed_verify) >= MAX_VERIFY_ROUNDS:
+        # After any chunk session merged since the last verification (a revision, or a session started for drift or
+        # gaps) the pages are verified first: so no revision follows another, and every round ends in a verdict.
+        last_verify = max([i.get("closed_at") or "" for i in any_verify] + [""])
+        chunk_since_verify = any((i.get("closed_at") or "") > last_verify for i in self.run_issues(
+            ["bible-chunk", comp_label(name)], state="closed") if i.get("state_reason") == "completed")
+        # Each verification counts, so the rounds always end: after MAX_VERIFY_ROUNDS without a clean PASS on these
+        # pages (an unreadable report, a missing or wrong fingerprint and a verdict asking for corrections alike),
+        # a person decides.
+        if facts and not chunk_since_verify and len(closed_verify) >= MAX_VERIFY_ROUNDS:
             hold = gh.create_issue("Codebase analysis - component %s needs a person" % name,
                                    "Component: %s\nTracker: #%d\n\n%d verifications without a clean PASS (last verdict: %s). Read "
                                    "%s/ledger/components/%s/verification-report.md on branch %s. Fix the cause (edit the pages on "
@@ -625,7 +633,7 @@ class Queue:
                                        name, self.tracker["number"], len(closed_verify), facts[0], analysis, name, branch),
                                    ["bible-hold", "bible-needs-human", comp_label(name), self.run_label])
             return "needs a person: see #%d" % hold["number"]
-        if about_these_pages and needs_revision:  # the last verification's corrections are not applied yet
+        if about_these_pages and needs_revision and not chunk_since_verify:  # its corrections are not applied yet
             self.start_chunk(analysis, name, note="Revision (verdict %s): apply %s/ledger/components/%s/verification-report.md "
                              "(references/revision.md, Component mode), then run next.py --component %s." % (facts[0], analysis, name, name))
             return "session starting"
