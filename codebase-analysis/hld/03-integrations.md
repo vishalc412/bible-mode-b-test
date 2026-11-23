@@ -31,7 +31,7 @@ depends_on:
 | POC workflow | Manual dispatch with title, task, base branch and model | GitHub Actions event | Repository operators | GitHub workflow access; uses the repository secret for the API call | [Component design](../lld/bible-mode-b/README.md) | `.github/workflows/poc-assign-copilot.yml:11-29,34-69` |
 | `orders` | `line_total`, `order_total`, `validate`, `settle` | Python library functions | Importing Python code; no HTTP route is declared | None in these functions | [Orders module](../lld/orders/orders.md) | `components/orders/orders.py:19-51` |
 | `tools` | `python tools/plan.py`, `python tools/gate.py ...`, `tools/fanout.sh ...` | CLI commands | Local operator or automation invoking the commands | Shell/runner access; `gh` uses its configured auth | [Tools design](../lld/tools/README.md) | `tools/plan.py:41-62`; `tools/gate.py:81-117`; `tools/fanout.sh:2-5` |
-| `bible-mode-b` | `bible_queue.py start`, `reconcile`, `delta` | CLI commands invoked by workflows | GitHub Actions runner or a local operator | Requires `GITHUB_REPOSITORY` and `GH_TOKEN` | [Queue module](../lld/bible-mode-b/bible_queue.md#main) | `.github/bible/bible_queue.py:820-867` |
+| `bible-mode-b` | `bible_queue.py start`, `reconcile`, `delta` | CLI commands invoked by workflows | GitHub Actions runner or a local operator | Requires `GITHUB_REPOSITORY` and `GH_TOKEN` | [Queue module](../lld/bible-mode-b/bible_queue.md#main) | `.github/bible/bible_queue.py:820-867` <!-- recheck: was .github/bible/bible_queue.py:820-867 --> |
 
 The catalog API binds to `127.0.0.1` on port 8001 by default, configurable with `CATALOG_HOST` and `CATALOG_PORT`; no TLS or authentication is configured in the handler (`components/catalog/service.py:1-5,24-43`).
 
@@ -62,8 +62,6 @@ The catalog API binds to `127.0.0.1` on port 8001 by default, configurable with 
 | `bible-mode-b` | Analysis toolkit | Imports component helpers and runs coverage/status scripts | `.github/bible/bible_queue.py:397-399,698-735,794-802` |
 | `tools` | GitHub CLI | Creates component labels and issues from `plan.json` | `tools/fanout.sh:7-29` |
 | `tools.plan` | `tools.gate` | Uses the same test counter while generating the plan baseline | `tools/plan.py:15,36-38`; `tools/gate.py:33-39` |
-
-<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->
 
 <!-- cites .github/workflows/poc-assign-copilot.yml@dab60e0d846bfee50726dce662df48fc186ca3d3 -->
 

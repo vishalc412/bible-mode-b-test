@@ -108,8 +108,8 @@ stateDiagram-v2
 | --- | --- |
 | `create_issue` starts tracker and session records | `.github/bible/bible_queue.py:144-151,538-571,640-660` |
 | Issue body, assignment and label updates | `.github/bible/bible_queue.py:261-281,431-450` |
-| Normal close reason defaults to `completed` | `.github/bible/bible_queue.py:272-273` |
-| Failed attempts close as `not_planned`; a later attempt is newly created | `.github/bible/bible_queue.py:455-483` |
+| Normal close reason defaults to `completed` | `.github/bible/bible_queue.py:301-302` |
+| Failed attempts close as `not_planned`; a later attempt is newly created | `.github/bible/bible_queue.py:521-549` |
 
 ### Agent session pull request
 
@@ -126,9 +126,9 @@ stateDiagram-v2
 
 | Element | Evidence |
 | --- | --- |
-| Agent may open draft; queue marks it ready before merge | `.github/bible/bible_queue.py:284-291` |
-| Queue validates changed files and status before merging session PR | `.github/bible/bible_queue.py:659-713` |
-| Failed session closes its PR | `.github/bible/bible_queue.py:455-474` |
+| Agent may open draft; queue marks it ready before merge | `.github/bible/bible_queue.py:313-320` |
+| Queue validates changed files and status before merging session PR | `.github/bible/bible_queue.py:659-713` <!-- recheck: was .github/bible/bible_queue.py:659-713 --> |
+| Failed session closes its PR | `.github/bible/bible_queue.py:521-540` |
 
 ### Component review pull request
 
@@ -142,7 +142,7 @@ stateDiagram-v2
 
 | Element | Evidence |
 | --- | --- |
-| Component review PR is opened for a person to review | `.github/bible/bible_queue.py:608-612`; module docstring `.github/bible/bible_queue.py:28` |
+| Component review PR is opened for a person to review | `.github/bible/bible_queue.py:674-678`; module docstring `.github/bible/bible_queue.py:28` |
 
 The component status artifact also carries `NEW_CHAT`, `COMPONENT_DONE`, `WAITING_ANSWER`, and `STOP`; this repository code reads these values to decide queue behavior but does not write their transitions (`.github/bible/bible_queue.py:65-66,425-429,688-708`). The transitions belong to the analysis toolkit and are not inferred here.
 
@@ -153,16 +153,16 @@ The component status artifact also carries `NEW_CHAT`, `COMPONENT_DONE`, `WAITIN
 | `plan.json` | Gate and fanout tools | Planning tool | Regenerated from component Python files | `tools/plan.py:21-58`; `tools/gate.py:86`; `tools/fanout.sh:9` |
 | Component `status.json`, `inventory.md`, `risks.md`, `tests-report.md` | Gate tool | Not written by `tools/gate.py` | Read for validation; absent files fail the relevant pass | `tools/gate.py:42-78,89-108` |
 | `components.json`, issue templates, status and verification reports | Queue reads from GitHub default or component branch | Queue changes GitHub issue/PR state, not these local files | Component artifacts move with their branches; whole-system files are read from the default branch | `.github/bible/bible_queue.py:332-389,502-510,538-571,619-627,739-774` |
-| `baseline.json` | Queue checks its presence before delta work | Not written by the queue | Missing baseline prevents delta issue creation | `.github/bible/bible_queue.py:794-798` |
-| Changed-path list | `delta` reads one UTF-8 path per line | Workflow writes it to `$RUNNER_TEMP/changed.txt` | Removed with the runner workspace | `.github/workflows/bible-delta.yml:29-36`; `.github/bible/bible_queue.py:858-861` |
+| `baseline.json` | Queue checks its presence before delta work | Not written by the queue | Missing baseline prevents delta issue creation | `.github/bible/bible_queue.py:1037-1041` |
+| Changed-path list | `delta` reads one UTF-8 path per line | Workflow writes it to `$RUNNER_TEMP/changed.txt` | Removed with the runner workspace | `.github/workflows/bible-delta.yml:31-38`; `.github/bible/bible_queue.py:1121-1124` |
 | Gate tarball and extracted worktree | Coverage and status subprocesses | Queue streams and extracts under a temporary location | Temporary buffer closes; worktree is removed in `finally` | `.github/bible/bible_queue.py:237-260,723-735` |
 | POC `request.json`, `response.json` | `gh api` receives request file; `jq` reads response fields | POC job writes both in runner workspace | No checkout or repository commit; runner workspace is ephemeral | `.github/workflows/poc-assign-copilot.yml:55-69` |
 
 See [the data dictionary](../lld/data-dictionary.md) for field meanings and status values.
 
-<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->
+<!-- cites .github/bible/bible_queue.py@68e91ae09c53c283e7402334cfe2a715785b33ed -->
 
-<!-- cites .github/workflows/bible-delta.yml@ef194d8da7ce47dcc52e10ba2c833eee01185f63 -->
+<!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
 
 <!-- cites .github/workflows/poc-assign-copilot.yml@dab60e0d846bfee50726dce662df48fc186ca3d3 -->
 

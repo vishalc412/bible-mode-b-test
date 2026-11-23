@@ -14,10 +14,10 @@ depends_on: [hld/01-system-context, hld/04-data-architecture, hld/05-key-flows, 
 | Agent session issue | Issue assigned to Copilot for a planning, component, assembly, or verification session. | [`bible-mode-b`](../lld/bible-mode-b/README.md); `.github/bible/bible_queue.py:144-151,538-546,771-773` |
 | Component branch | Branch named `bible/<component>` used for analysis work before a review PR targets the default branch. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:553-558,608-612` |
 | Session PR | Copilot's pull request for one assigned work session; the queue validates it and may merge it into the component branch. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:404-409,659-715` |
-| Component review PR | PR from a completed component branch to the default branch for a person to review and merge. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:608-624` |
+| Component review PR | PR from a completed component branch to the default branch for a person to review and merge. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:608-624` <!-- recheck: was .github/bible/bible_queue.py:608-624 --> |
 | Verification report | Markdown artifact carrying a verdict and, for component checks, a fingerprint of the pages reviewed. | [`data dictionary`](../lld/data-dictionary.md); `.github/bible/bible_queue.py:365-378,619-623,749-753` |
 | Pages fingerprint | Short hash used to confirm that a verification report concerns the pages currently being checked. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:609-623,707-709` |
-| Delta issue | Issue asking for an analysis component to be refreshed after code changes since the baseline. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:790-817` |
+| Delta issue | Issue asking for an analysis component to be refreshed after code changes since the baseline. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:790-817` <!-- recheck: was .github/bible/bible_queue.py:790-817 --> |
 | SKU | Identifier used as the key for a product in the in-memory catalog. | [`catalog`](../lld/catalog/catalog.md); `components/catalog/catalog.py:8-12,15-17` |
 | Product feed | Supplier JSON response read by `fetch_supplier_feed`; `apply_feed` updates prices and stock for known SKUs. | [`catalog`](../lld/catalog/catalog.md); `components/catalog/catalog.py:36-47` |
 | In-process catalog access | Current order helper path, importing the catalog module and calling price and stock functions directly. | [`orders`](../lld/orders/orders.md); `components/orders/orders.py:5,19-20,35-42` |
@@ -29,8 +29,6 @@ depends_on: [hld/01-system-context, hld/04-data-architecture, hld/05-key-flows, 
 | Component gate | `tools/gate.py` checks component artifacts and runs unittest discovery for pass 3. | [`gate`](../lld/tools/gate.md); `tools/gate.py:42-78,81-117` |
 | Issue fanout | Bash command that creates labels and one component-analysis issue per component in the plan. | [`fanout`](../lld/tools/fanout.md); `tools/fanout.sh:7-30` |
 | Image CDN URL | A URL built by `image_url`; catalog code returns it but does not fetch the image. | [`catalog`](../lld/catalog/catalog.md), [`system context`](../hld/01-system-context.md); `components/catalog/catalog.py:6,32-33` |
-
-<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->
 
 <!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
 
