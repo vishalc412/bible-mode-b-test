@@ -93,7 +93,7 @@ Source file: `.github/bible/bible_queue.py`
 | `Queue.run` | method | 489-525 | [card](#queue_runtracker-settings) |
 | `Queue.plan_phase` | method | 527-549 | [card](#queue_plan_phasetracker-settings-analysis) |
 | `Queue.start_chunk` | method | 551-563 | [card](#queue_start_chunkanalysis-name-fresh-false-note) |
-| `Queue.component` | method | 565-643 | [card](#queue_componentanalysis-name) |
+| `Queue.component` | method | 565-642 | [card](#queue_componentanalysis-name) |
 | `Queue.follow` | method | 645-692 | [card](#queue_followanalysis-name-issue) |
 | `Queue.check` | method | 694-711 | [card](#queue_checkanalysis-name-branch) |
 | `Queue.assemble_phase` | method | 713-753 | [card](#queue_assemble_phasetracker-settings-analysis) |
@@ -1670,38 +1670,39 @@ for tracker in open bible-tracker issues:
 
 #### `Queue.run(tracker, settings)`
 
-Source: `.github/bible/bible_queue.py:489-525` <!-- code: 810b772ee155 -->
+Source: `.github/bible/bible_queue.py:489-525` <!-- code: 3557926dc2ac -->
 
 | | |
 | --- | --- |
 | Kind | instance method |
 | Called by | `Queue.reconcile` (`.github/bible/bible_queue.py:485`) |
-| Calls | `settings.get`, `json_file`, `self.plan_phase`, `isinstance`, `self.render`, `self.run_issues`, `self.component`, `as_int`, `self.start_chunk`, `self.assemble_phase`, `str`, `endswith`, `startswith`, `all` |
-| Purpose | Dispatches a tracker to planning or runs selected components within a concurrency limit, then renders their state. |
+| Calls | `settings.get`, `json_file`, `catalog.get`, `self.plan_phase`, `isinstance`, `c.get`, `().strip`, `n.strip`, `asked.split`, `self.render`, `join`, `self.run_issues`, `gh.close`, `self.component`, `endswith`, `startswith`, `type`, `str`, `as_int`, `self.start_chunk`, `all`, `self.assemble_phase`, `rows.values` |
+| Purpose | Sends an incomplete catalog to planning; otherwise validates selected components, advances their queue states within the configured concurrency cap, and renders tracker status. |
 
 **Steps**
 
-1. Selects `analysis` from settings or `codebase-analysis`, stores settings/tracker/run label, and loads `components.json` from the default branch. (`.github/bible/bible_queue.py:490-493`)
-2. If the catalog is missing/not a dict, proposed, or lacks a components list, delegates to `plan_phase` and returns. (`.github/bible/bible_queue.py:494-495`)
-3. Extracts named component entries, reads the requested component selection, expands `all`/empty to every catalog name or splits and strips the comma-separated selection, and finds unknown names. (`.github/bible/bible_queue.py:496-499`)
-4. If there are unknown names or no selected names, renders a stopped settings message and returns. (`.github/bible/bible_queue.py:500-504`)
-5. Closes open plan issues, records estimated sessions, calls `component` per selected name, catches errors per component into a bounded status string, and counts active/waiting states. (`.github/bible/bible_queue.py:505-514`)
-6. Parses concurrency; starts `not started` components while capacity remains, recording runtime errors as bounded statuses. (`.github/bible/bible_queue.py:515-522`)
-7. If every component state is `merged`, adds whole-analysis assembly status; renders the resulting rows. (`.github/bible/bible_queue.py:523-525`)
+1. Selects `analysis` from settings or `codebase-analysis`, stores settings/tracker/run label, and reads `components.json` from the default branch. (`.github/bible/bible_queue.py:490-493`)
+2. If the catalog is not a dict, is marked proposed, or has no components list, returns the result of `plan_phase`. (`.github/bible/bible_queue.py:494-495`)
+3. Extracts names from dict entries with a truthy `name`; reads and strips the requested selection, expands `all` or empty selection to all names, otherwise splits and strips comma-separated names, then finds names absent from the catalog. (`.github/bible/bible_queue.py:496-499`)
+4. If the selection contains unknown names or is empty, renders a stopped-settings message listing the unknown names or explaining that none was selected, together with the catalog names. (`.github/bible/bible_queue.py:500-504`)
+5. Closes each open plan issue, records per-component session estimates, evaluates each selected component, converts an exception into a bounded per-component error string, and counts results ending in `running`, `starting`, or `merged`, or beginning with `waiting`. (`.github/bible/bible_queue.py:505-514`)
+6. Converts configured concurrency with `as_int`; for each `not started` component, starts a fresh chunk if the cap is zero or the active count is below it, incrementing the count or recording a bounded `RuntimeError` status. (`.github/bible/bible_queue.py:515-522`)
+7. Adds whole-analysis assembly status when all selected rows equal `merged`, then renders the rows. (`.github/bible/bible_queue.py:523-525`)
 
 **Pseudo-code**
 
 ```text
 analysis = settings.analysis or "codebase-analysis"
 store run fields; catalog = json_file(components.json)
-if catalog is invalid/proposed: return plan_phase(...)
+if catalog is invalid, proposed, or has no components list: return plan_phase(...)
 names = catalog component names
-wanted = all names or parsed requested names
-if unknown names or no wanted names: render stopped status; return
+selection = stripped settings.components or "all"
+wanted = all names if selection is "all" or empty, else parsed names
+if unknown names or wanted is empty: render stopped settings; return
 close open plan issues
-for wanted name: component(name), record per-component error, count active
-cap = concurrency as integer
-for wanted name: if not started and capacity available, start chunk
+for wanted name: evaluate component state; record errors; count active states
+cap = concurrency converted to integer
+for wanted name: if not started and (cap is zero or active < cap), start fresh chunk
 if every row is merged: add assembly status
 render rows
 ```
@@ -1710,20 +1711,20 @@ render rows
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py:494` | if | Catalog is invalid, proposed, or components is not a list | Returns the planning-phase result. |
-| `.github/bible/bible_queue.py:498` | conditional expression | Requested selection is `all` or empty | Uses all names; otherwise parses comma-separated names. |
+| `.github/bible/bible_queue.py:494` | if | Catalog is not a dict, is proposed, or lacks a components list | Returns the planning-phase result. |
+| `.github/bible/bible_queue.py:498` | conditional expression | Selection is `all` or empty | Uses all catalog names; otherwise parses comma-separated names. |
 | `.github/bible/bible_queue.py:500` | if | Selection contains unknown names or is empty | Renders stopped settings and returns. |
-| `.github/bible/bible_queue.py:503` | conditional expression | At least one unknown component exists | Reports unknown names; otherwise reports no component selected. |
-| `.github/bible/bible_queue.py:505` | for | For each open plan issue | Closes the issue. |
-| `.github/bible/bible_queue.py:509` | for | For each requested component | Evaluates component state. |
-| `.github/bible/bible_queue.py:510` | try | Component evaluation is invoked | Records the result or catches component failure. |
-| `.github/bible/bible_queue.py:512` | except | Component evaluation raises `Exception` | Stores a per-component error status. |
-| `.github/bible/bible_queue.py:514` | augmented assignment | For each component result | Increments active count when state ends in running/starting or begins waiting. |
-| `.github/bible/bible_queue.py:516` | for | For each requested component | Considers starting a waiting component. |
-| `.github/bible/bible_queue.py:517` | if | Component is not started and cap is zero or active is below cap | Attempts to start the next chunk. |
-| `.github/bible/bible_queue.py:518` | try | Start conditions hold | Starts the component and increments active. |
-| `.github/bible/bible_queue.py:521` | except | Starting the chunk raises `RuntimeError` | Records a bounded error status. |
-| `.github/bible/bible_queue.py:523` | if | Every component row equals `merged` | Adds whole-analysis phase state. |
+| `.github/bible/bible_queue.py:503` | conditional expression | Unknown names exist | Reports unknown names; otherwise reports no selected component. |
+| `.github/bible/bible_queue.py:505` | for | For each open plan issue | Closes that issue. |
+| `.github/bible/bible_queue.py:509` | for | For each selected component | Evaluates the component state. |
+| `.github/bible/bible_queue.py:510` | try | Evaluating a component | Stores its result or catches an exception. |
+| `.github/bible/bible_queue.py:512` | except | Component evaluation raises `Exception` | Stores a per-component error status with the exception type and at most 160 characters of its text. |
+| `.github/bible/bible_queue.py:514` | augmented assignment | For each result | Increments active count when its suffix is `running`, `starting`, or `merged`, or its prefix is `waiting`. |
+| `.github/bible/bible_queue.py:516` | for | For each selected component | Considers whether to start a waiting component. |
+| `.github/bible/bible_queue.py:517` | if | Status is `not started` and cap is zero or active is below cap | Attempts to start a fresh chunk. |
+| `.github/bible/bible_queue.py:518` | try | Start conditions hold | Starts the chunk and increments active count. |
+| `.github/bible/bible_queue.py:521` | except | Starting the chunk raises `RuntimeError` | Stores a bounded error status. |
+| `.github/bible/bible_queue.py:523` | if | Every selected row is `merged` | Adds whole-analysis assembly status. |
 
 #### `Queue.plan_phase(tracker, settings, analysis)`
 
@@ -1810,27 +1811,27 @@ create assigned chunk issue with component/base/attempt header and optional note
 
 #### `Queue.component(analysis, name)`
 
-Source: `.github/bible/bible_queue.py:565-643` <!-- code: 3a16b7371216 -->
+Source: `.github/bible/bible_queue.py:565-642` <!-- code: 9d544dd09fb5 -->
 
 | | |
 | --- | --- |
 | Kind | instance method |
 | Called by | `Queue.run` (`.github/bible/bible_queue.py:511`) |
-| Calls | `self.gh.branch_prs`, `get`, `self.run_issues`, `comp_label`, `self.held`, `self.follow`, `endswith`, `status_of`, `self.check`, `len`, `self.start_chunk`, `self.estimate.get`, `self.gh.close`, `labels_of`, `max`, `report_facts`, `self.gh.create_pr`, `self.gh.create_issue` |
-| Purpose | Advances a component's queue from branch/chunk work through coverage, component verification/revision, and a final PR. |
+| Calls | `gh.branch_prs`, `pr.get`, `get`, `self.run_issues`, `comp_label`, `self.held`, `self.follow`, `result.endswith`, `status_of`, `status.get`, `self.check`, `len`, `self.start_chunk`, `self.estimate.get`, `gh.close`, `labels_of`, `max`, `h.get`, `i.get`, `report_facts`, `gh.file`, `gh.create_pr`, `gh.create_issue`, `assignment`, `self.settings.get` |
+| Purpose | Advances a component through its tracker-specific pull requests and sessions, coverage gate, verification and revision rounds, and final review PR or human hold. |
 
 **Steps**
 
-1. Scans branch PRs into the default branch. Ignores a different repository, a PR predating the tracker, or a PR lacking this tracker reference; returns merged, review, or human-needed status for the first matching PR. (`.github/bible/bible_queue.py:566-576`)
-2. Combines open chunk and verification issues. For the first open session, returns human-needed if held; otherwise follows it and returns unless it merged. (`.github/bible/bible_queue.py:577-585`)
-3. If this run has no component issue in any state, returns `not started`; otherwise loads component status and runs the component gate only for `COMPONENT_DONE`. (`.github/bible/bible_queue.py:586-591`)
-4. If the gate fails, counts closed chunk issues, starts the next chunk with a session estimate, and returns `session starting`. (`.github/bible/bible_queue.py:592-595`)
-5. Loads hold issues; an open human-held issue returns human-needed, while an open hold whose label was removed is closed and the hold list refreshed. (`.github/bible/bible_queue.py:596-602`)
-6. Gets the newest hold close time and selects completed verification and revision issues from after that point; also finds all completed verifications. `closed_revise` is collected but is not read later in this method. (`.github/bible/bible_queue.py:603-608`)
-7. Reads verification facts only when at least one completed verification exists. A `PASS` with no major corrections and matching nonempty page fingerprint creates the component-to-default PR and returns its review status. (`.github/bible/bible_queue.py:609-614`)
-8. After `MAX_VERIFY_ROUNDS` completed verification issues, if the last facts are not a clean matching PASS, creates a human hold and returns its issue number. (`.github/bible/bible_queue.py:615-623`)
-9. Finds all completed verifications/revisions, compares their latest close times, and starts a revision chunk when the verification verdict is not PASS or has major corrections and the last revision is older than the verification. (`.github/bible/bible_queue.py:624-633`)
-10. Otherwise creates a verification issue on the component branch and returns `verify running`. (`.github/bible/bible_queue.py:634-643`)
+1. Scans PRs from the component branch into the default branch. Skips PRs from another repository, created before the tracker, or without its tracker reference; for the first remaining PR, returns `merged`, review status, or a human-needed status if it was closed without merging. (`.github/bible/bible_queue.py:566-576`)
+2. Combines open chunk and verification issues. For the first issue, returns human-needed if it is held; otherwise follows the session. (`.github/bible/bible_queue.py:577-585`)
+3. If the follow result does not end in `merged`, returns it. If there is no component issue in any state, returns `not started`; otherwise reads component status and runs the coverage check only when its state is `COMPONENT_DONE`. (`.github/bible/bible_queue.py:583-591`)
+4. If the gate did not pass, counts closed chunk issues, starts another chunk with a session estimate, and returns `session starting`. (`.github/bible/bible_queue.py:592-595`)
+5. Loads all hold issues. If one is open and still labeled `bible-needs-human`, returns a human-needed status; if the label was removed, closes that hold and reloads the hold list. (`.github/bible/bible_queue.py:596-602`)
+6. Finds the latest hold close time and completed verification issues created at or after it; separately finds all completed verification issues and reads/parses the report only when at least one exists. (`.github/bible/bible_queue.py:603-607`)
+7. A parsed `PASS` with no major corrections and a nonempty fingerprint matching the gate's page fingerprint creates a component-to-default PR and returns its review status. (`.github/bible/bible_queue.py:608-612`)
+8. Finds all completed verifications and completed revision chunk issues, compares their latest close times, and creates a human hold when a newer verification exists, the post-hold verification count reaches `MAX_VERIFY_ROUNDS`, and the report is not a clean matching PASS. (`.github/bible/bible_queue.py:613-627`)
+9. If report facts indicate a verdict other than `PASS` or any major correction, starts a revision chunk when the latest revision is older than the latest verification, then returns `session starting`. (`.github/bible/bible_queue.py:628-632`)
+10. Otherwise creates and assigns a verification issue on the component branch and returns `verify running`. (`.github/bible/bible_queue.py:633-642`)
 
 **Pseudo-code**
 
@@ -1845,11 +1846,12 @@ if no component issue ever existed: return not started
 status = component status
 if COMPONENT_DONE: run coverage gate
 if gate fails: start next chunk; return session starting
-handle open hold (stop for human label, otherwise close removed-label hold)
-facts = verification report when a completed verification exists
+handle open hold (stop for human label; otherwise close it and reload holds)
+closed_verify = completed verifications created since latest hold close
+facts = report facts if any completed verification exists
 if clean PASS and pages fingerprint matches: create final PR; return review state
-if max verification rounds reached without clean PASS: create human hold; return
-if corrections are unapplied: start revision chunk; return session starting
+if a newer verification than revision reaches the round limit without clean PASS: create human hold; return
+if verdict is not PASS or major corrections exist, and revision is older: start revision chunk; return
 create verification issue
 return verify running
 ```
@@ -1858,23 +1860,23 @@ return verify running
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py:568` | for | For each PR from the component branch into default | Checks whether it belongs to this tracker and repository. |
-| `.github/bible/bible_queue.py:570` | if | PR is from another repo, predates tracker, or body lacks tracker reference | Skips that PR. |
+| `.github/bible/bible_queue.py:568` | for | For each branch PR into the default branch | Checks whether it belongs to this repository and tracker. |
+| `.github/bible/bible_queue.py:570` | if | PR is from another repository, predates the tracker, or lacks its reference | Skips the PR. |
 | `.github/bible/bible_queue.py:572` | if | Matching PR has `merged_at` | Returns `merged`. |
-| `.github/bible/bible_queue.py:574` | if | Matching PR state is `open` | Returns its review status. |
-| `.github/bible/bible_queue.py:578` | if | An open chunk or verification issue exists | Selects its first issue for processing. |
-| `.github/bible/bible_queue.py:580` | if | Selected issue is held | Returns human-needed state. |
-| `.github/bible/bible_queue.py:583` | if | Following the session did not return a state ending `merged` | Returns that session result. |
-| `.github/bible/bible_queue.py:586` | if | No component issue exists in any state | Returns `not started`. |
-| `.github/bible/bible_queue.py:590` | if | Status state is `COMPONENT_DONE` | Runs the coverage check. |
-| `.github/bible/bible_queue.py:592` | if | Gate did not pass | Starts the next component chunk. |
-| `.github/bible/bible_queue.py:598` | if | At least one hold issue is open | Checks whether it still needs human attention. |
-| `.github/bible/bible_queue.py:599` | if | Open hold has `bible-needs-human` | Returns human-needed state. |
-| `.github/bible/bible_queue.py:609` | conditional expression | Any completed verification exists | Parses the report; otherwise facts are `None`. |
-| `.github/bible/bible_queue.py:610` | if | Facts are PASS, have no major corrections, and nonempty fingerprint matches pages | Creates final component PR. |
-| `.github/bible/bible_queue.py:615` | if | Verification count reached maximum and facts are not a clean matching PASS | Creates a human hold issue. |
-| `.github/bible/bible_queue.py:629` | if | Facts indicate a non-PASS verdict or major corrections | Considers whether revision is needed. |
-| `.github/bible/bible_queue.py:630` | if | Last revision close time is older than last verification close time | Starts a revision chunk. |
+| `.github/bible/bible_queue.py:574` | if | Matching PR is open | Returns its review status. |
+| `.github/bible/bible_queue.py:578` | if | An open chunk or verification issue exists | Selects the first session issue. |
+| `.github/bible/bible_queue.py:580` | if | The selected issue is held | Returns human-needed status. |
+| `.github/bible/bible_queue.py:583` | if | Following the issue did not return a state ending in `merged` | Returns that result. |
+| `.github/bible/bible_queue.py:586` | if | No issue for this component exists in any state | Returns `not started`. |
+| `.github/bible/bible_queue.py:590` | if | Component status is `COMPONENT_DONE` | Runs the coverage check. |
+| `.github/bible/bible_queue.py:592` | if | Coverage gate did not pass | Starts another chunk and returns `session starting`. |
+| `.github/bible/bible_queue.py:598` | if | At least one hold issue is open | Checks whether it still requires a person. |
+| `.github/bible/bible_queue.py:599` | if | The first open hold has `bible-needs-human` | Returns human-needed status; otherwise closes that hold and refreshes the issue list. |
+| `.github/bible/bible_queue.py:607` | conditional expression | At least one completed verification exists | Parses its report; otherwise `facts` is `None`. |
+| `.github/bible/bible_queue.py:608` | if | Facts are `PASS`, have no major corrections, and contain a nonempty matching page fingerprint | Creates the final component PR. |
+| `.github/bible/bible_queue.py:619` | if | A newer verification exists than revision, the post-hold round count reached its maximum, and facts are not a clean matching PASS | Creates a human hold. |
+| `.github/bible/bible_queue.py:628` | if | Facts are truthy and verdict is not `PASS`, or facts have major corrections | Checks whether to start a revision. |
+| `.github/bible/bible_queue.py:629` | if | Latest revision close time precedes latest verification close time | Starts a revision chunk and returns `session starting`. |
 
 #### `Queue.follow(analysis, name, issue)`
 
