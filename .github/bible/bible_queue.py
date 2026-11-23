@@ -610,13 +610,21 @@ class Queue:
                               "Component `%s`, verified (PASS, pages fingerprint %s). Tracker: #%d. Review the pages under "
                               "`%s/lld/%s/`, then merge." % (name, pages, self.tracker["number"], analysis, name))
             return "review the pull request #%d" % pr["number"]
-        all_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed") if i.get("state_reason") == "completed"]
-        all_revise = [i for i in self.run_issues(["bible-chunk", comp_label(name)], state="closed")
-                      if i.get("state_reason") == "completed" and "\nRevision (" in (i.get("body") or "")]
-        last_verify = max([i.get("closed_at") or "" for i in all_verify] + [""])
-        last_revise = max([i.get("closed_at") or "" for i in all_revise] + [""])
-        verdict_is_newest = last_verify > last_revise  # a revision merged after the last verdict is verified before any hold
-        if facts and verdict_is_newest and len(closed_verify) >= MAX_VERIFY_ROUNDS and (facts[0] != "PASS" or facts[1] or facts[2] != pages):
+        # Revise or verify is decided by the fingerprint, as next.py decides it: a verdict whose fingerprint equals the
+        # pages now is about these pages (its corrections are not applied yet); any other verdict is about pages that
+        # have changed since, so they are verified again. Issue titles are not used: on github.com a session started
+        # for another reason also changed the pages (24 Nov 2026).
+        about_these_pages = bool(facts and facts[2] and facts[2] == pages)
+        needs_revision = bool(facts and (facts[0] != "PASS" or facts[1]))
+        # After any chunk session merged since the last verification (a revision, or a session started for drift or
+        # gaps) the pages are verified first: so no revision follows another, and every round ends in a verdict.
+        last_verify = max([i.get("closed_at") or "" for i in any_verify] + [""])
+        chunk_since_verify = any((i.get("closed_at") or "") > last_verify for i in self.run_issues(
+            ["bible-chunk", comp_label(name)], state="closed") if i.get("state_reason") == "completed")
+        # Each verification counts, so the rounds always end: after MAX_VERIFY_ROUNDS without a clean PASS on these
+        # pages (an unreadable report, a missing or wrong fingerprint and a verdict asking for corrections alike),
+        # a person decides.
+        if facts and not chunk_since_verify and len(closed_verify) >= MAX_VERIFY_ROUNDS:
             hold = gh.create_issue("Codebase analysis - component %s needs a person" % name,
                                    "Component: %s\nTracker: #%d\n\n%d verifications without a clean PASS (last verdict: %s). Read "
                                    "%s/ledger/components/%s/verification-report.md on branch %s. Fix the cause (edit the pages on "
@@ -625,11 +633,10 @@ class Queue:
                                        name, self.tracker["number"], len(closed_verify), facts[0], analysis, name, branch),
                                    ["bible-hold", "bible-needs-human", comp_label(name), self.run_label])
             return "needs a person: see #%d" % hold["number"]
-        if facts and facts[0] != "PASS" or (facts and facts[1]):
-            if last_revise < last_verify:  # the last verification's corrections are not applied yet
-                self.start_chunk(analysis, name, note="Revision (verdict %s): apply %s/ledger/components/%s/verification-report.md "
-                                 "(references/revision.md, Component mode), then run next.py --component %s." % (facts[0], analysis, name, name))
-                return "session starting"
+        if about_these_pages and needs_revision and not chunk_since_verify:  # its corrections are not applied yet
+            self.start_chunk(analysis, name, note="Revision (verdict %s): apply %s/ledger/components/%s/verification-report.md "
+                             "(references/revision.md, Component mode), then run next.py --component %s." % (facts[0], analysis, name, name))
+            return "session starting"
         # no report yet, a PASS that does not match the pages (missing or old fingerprint), or a revision just merged: verify
         gh.create_issue("Codebase analysis - verify component %s" % name,
                         "Component: %s\nBase branch: %s\nAttempt: 1\n\nUse the verifying-a-codebase-analysis skill (in %s), scope: "
