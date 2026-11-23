@@ -32,3 +32,24 @@ Version: not provided
 Discovery succeeded and wrote `components.json`, `components.md`, and issue texts under `ledger/issues/`. The component analyses were completed in separate pull requests. The whole-system pass is now being assembled.
 
 At this session's start, `next.py` reported 11 of 13 packets done. Packet 2 refreshed the `bible-mode-b` cards for lines 307–662; packet 3 refreshed the cards for lines 663–867.
+
+## Sweep
+
+- Searched in-scope source and documentation with `rg --hidden`; excluded `.git`, `codebase-analysis`, and `.github/skills` using `**`-scoped globs. Verified the excluded trees did not appear in the file list.
+- Counts below are matching lines for the listed literal regular expressions. Categories overlap and are conservative search leads, not counts of confirmed runtime behaviors.
+
+| Surface | File types | Search patterns | Matching lines | Disposition |
+| --- | --- | --- | ---: | --- |
+| Addresses and schemes | `py,sh,yml,yaml,json,toml,properties,xml,conf,env,md` | `https?://`, `wss?://`, `jdbc:`, `mongodb://`, `redis://`, `amqp://`, `kafka`, `ldaps?://`, `smtp`, `ftp://`, `sftp`, `file://`, `:[0-9]{4,5}`; hostname pattern `[[:alnum:]_-]+\.(com|net|org|io|internal|example)(\b|:[0-9]+)` in config files | 14 + 0 hostnames | URL/address hits are documented in component pages; no separate hostnames in configuration files |
+| Outbound Python | `py` | `requests\.`, `httpx`, `aiohttp`, `urllib`, `grpc\.`, `zeep`, `http\.client`, `http\.request`, `urlopen\(` | 37 | GitHub and catalog/partner calls are traced in component pages; imports/tests are identified there |
+| Data stores and file I/O | `py` | `SQLAlchemy`, `sqlite`, `CREATE TABLE`, `ALTER TABLE`, `json\.(load|dump)`, `open\(`, `read_text\(`, `write_text\(`, `write_bytes\(`, `\.write\(` | 27 | Source/workflow state and file operations are documented; network `urlopen` matches are outbound-call false positives |
+| Messaging | `py,sh,yml,yaml` | `Kafka`, `Rabbit`, `Jms`, `Sqs`, `PubSub`, `create_issue`, `.comment(`, `workflow_dispatch`, `issue_comment`, `pull_request`, `issues(`, `review` | 46 | GitHub issue, comment, pull-request, and workflow messaging is documented |
+| Entry points | `py,sh,yml,yaml` | `main(`, `if __name__`, `argparse`, `workflow_dispatch`, `workflow_call`, `on:`, `make_server`, `BaseHTTPRequestHandler` | 68 | CLI, test, server, and workflow entry points are documented |
+| Scheduled/background work | `py,sh,yml,yaml` | `schedule:`, `cron`, `time.sleep`, `sleep(`, `while True`, `BackgroundService`, `Celery`, `threading`, `asyncio.create_task` | 6 | Queue schedule, pagination loop, test-server thread, and the undocumented supplier cron claim are catalogued |
+| Configuration and secrets | `py,sh,yml,yaml,json,toml` | `os.environ`, `os.getenv`, `env:`, `secrets.`, `inputs.`, `GH_TOKEN`, `TOKEN`, `PASSWORD`, `SECRET`, `API_KEY` | 38 | Workflow inputs, environment names, and secret references are documented without values |
+| Security | `py,sh,yml,yaml,json,toml` | `oauth2`, `jwt`, `Bearer`, `Authorization`, `api_key`, `apikey`, `X-API-Key`, `CORS`, `csrf`, `keystore`, `truststore`, `ssl`, `tls`, `verify=False`, `InsecureSkipVerify`, `permissions:`, `GH_TOKEN`, `shell:`, `subprocess` | 21 | Authorization, workflow permissions, and subprocess behavior are documented |
+| Outside programs/files | `py,sh,yml,yaml,json,toml` | `subprocess`, `child_process`, `os.system`, `gh api`, `curl`, `wget`, `sendmail`, `ftp` | 6 | Toolkit subprocesses and the POC `gh api` call are documented |
+| Publishing and registries | `py,sh,yml,yaml,json,toml` | `docker push/tag/login`, `REGISTRY`, `REPOSITORY_PREFIX`, `*.azurecr.io`, `ghcr.io`, `*.dkr.ecr.*`, `helm push`, `mvn deploy`, `npm publish`, `twine upload`, artifact repositories | 0 | No publishing or registry flow found |
+| Text addressed to an assistant | `py,sh,yml,yaml,json,toml,md,txt` | `AI assistant`, `assistant:`, `Copilot`, `Claude`, `ChatGPT`, `LLM`, `ignore previous/all`, `do not read/mention/report`, `you must`, `instructions to` | 49 | Product terminology and operational task text; exact locations recorded in `run-notes.md` |
+
+- No additional routes or system behaviors needing analysis were found beyond the already documented catalog endpoints, workflow adapters, and fanout-generated instructions.

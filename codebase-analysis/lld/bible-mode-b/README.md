@@ -20,18 +20,18 @@ exposes: []
 | Folders and files | `.github/bible/bible_queue.py`; workflow adapters in `.github/workflows/bible-plan.yml`, `.github/workflows/bible-queue.yml`, and `.github/workflows/bible-delta.yml`; independent `.github/workflows/poc-assign-copilot.yml` |
 | Technology | Python 3 standard library; GitHub Actions YAML |
 | Starts by | Manual `bible-plan` workflow starts a run; `bible-queue` reconciles on a 15-minute schedule or manual dispatch; `bible-delta` handles default-branch pushes outside the ignored paths. (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10`) |
-| Size | 1 Python source file, 848 lines, 66 functions/methods, 2 classes, 0 routes. (`.github/bible/bible_queue.py:1-848`) |
+| Size | 1 Python source file, 867 lines, 66 functions/methods, 2 classes, 0 routes. (`.github/bible/bible_queue.py:1-867`) |
 | Depth | Deep |
 
 ## Responsibility
 
-This component coordinates the Mode B analysis workflow through a `start`, `reconcile`, or `delta` CLI command. `Queue` reads tracker and session state from GitHub, assigns work, handles retries and human holds, checks component completion, and opens review pull requests; `GitHub` wraps the REST and GraphQL operations. (`.github/bible/bible_queue.py:9-11`, `.github/bible/bible_queue.py:396-798`)
+This component coordinates the Mode B analysis workflow through a `start`, `reconcile`, or `delta` CLI command. `Queue` reads tracker and session state from GitHub, assigns work, handles retries and human holds, checks component completion, and opens review pull requests; `GitHub` wraps the REST and GraphQL operations. (`.github/bible/bible_queue.py:9-11`, `.github/bible/bible_queue.py:396-817`)
 
 The `bible-plan.yml` workflow starts a run from a manual dispatch, `bible-queue.yml` invokes reconciliation on demand or every 15 minutes, and `bible-delta.yml` writes changed paths to a file and starts delta processing after a default-branch push. (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-plan.yml:50-54`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-queue.yml:34-37`, `.github/workflows/bible-delta.yml:6-10`, `.github/workflows/bible-delta.yml:29-36`)
 
-`poc-assign-copilot.yml` independently creates an issue and assigns Copilot through its inline `gh api` command; it does not invoke the queue or check out repository code. (`.github/workflows/poc-assign-copilot.yml:10-69`)
+`poc-assign-copilot.yml` independently creates an issue and assigns Copilot through its inline `gh api` command; it does not invoke the queue or check out repository code. Its required `task` input defaults to an instruction to create `docs/poc-hello.md` with one line, and the input becomes the issue body passed to Copilot. (`.github/workflows/poc-assign-copilot.yml:18-21,31-37,55-69`)
 
-No other analysis component calls into this component or is called by it (inferred: repository search for `bible_queue|\.github/bible/` in `*.py` and `*.yml` returned six references, all in this source file and its three workflow adapters). The queue's `delta` method does call the analysis toolkit's `components` helpers, which are outside the component catalog. (`.github/bible/bible_queue.py:775-781`)
+No other analysis component calls into this component or is called by it (inferred: repository search for `bible_queue|\.github/bible/` in `*.py` and `*.yml` returned six references, all in this source file and its three workflow adapters). The queue's `delta` method does call the analysis toolkit's `components` helpers, which are outside the component catalog. (`.github/bible/bible_queue.py:798-802`)
 
 ## Structure
 
@@ -67,7 +67,7 @@ flowchart TB
 | `bible-delta.yml` -> `main` and changed-path file | `.github/workflows/bible-delta.yml:29-36` |
 | `main` -> `Queue`, `GitHub` | `.github/bible/bible_queue.py:820-821` |
 | `Queue` -> `GitHub` | `.github/bible/bible_queue.py:397-402` |
-| `Queue.check` -> toolkit scripts | `.github/bible/bible_queue.py:699-711` |
+| `Queue.check` -> toolkit scripts | `.github/bible/bible_queue.py:723-732` |
 | `GitHub` -> GitHub API | `.github/bible/bible_queue.py:91-103`, `.github/bible/bible_queue.py:286-289` |
 
 ## Reconcile sequence
