@@ -1,7 +1,7 @@
 # HTTPS Migration Inventory
 
 Inventory date: 2026-11-23  
-Status: Phase 2 implementation underway; inventory confirmed by the repository owner in PR comment 7115356760.
+Status: Phase 2 supplier-feed change implemented; inventory confirmed by the repository owner in PR comment 7115356760. Phase 3 evidence is summarized in `https-migration-summary.md`.
 
 ## Scope and inputs
 
@@ -10,7 +10,7 @@ Status: Phase 2 implementation underway; inventory confirmed by the repository o
 - Public hostnames owned by this application: none.
 - Known external callers of this application's HTTP URLs: none.
 - The repository owner confirmed HTTPS for the supplier feed on the same host and path. The legacy payment partner has said TLS is coming soon, without a date; settlement must not break. Keep this endpoint on HTTP for now and list a human action.
-- No remote hosts were contacted. HTTPS support for external systems was not probed.
+- The supplier owner confirmed HTTPS support in PR comment 7115356760. No remote hosts were contacted and no live endpoint certificate was probed.
 
 The required analysis check was run with `python3 -I .github/skills/analyzing-a-codebase/scripts/status.py --repo . --analysis codebase-analysis --check`; it returned exit 20 (`UNVERIFIED (COMPONENTS_VERIFIED)`), reporting no whole-analysis verification report. The whole analysis was not relied on as fact; the relevant source was checked directly. `/home/runner/work/bible-mode-b-test/bible-mode-b-test/codebase-analysis/knowledge/graph.json` is absent, so no change-impact assessment was run.
 
@@ -24,17 +24,17 @@ There is no public or browser-facing listener in the application. The catalog co
 
 | URL or location | Classification | Use and disposition |
 | --- | --- | --- |
-| `https://feeds.supplier-one.example.com/v2/products.json` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/catalog/catalog.py:6,39-41`) | Third party | Supplier confirmed HTTPS on the same host and path in PR comment 7115356760. Switched to HTTPS using `ssl.create_default_context()` with certificate and hostname verification enabled. No remote connection was made. |
+| `https://feeds.supplier-one.example.com/v2/products.json` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/catalog/catalog.py:6,37-42`) | Third party | Supplier confirmed HTTPS on the same host and path in PR comment 7115356760. Switched to HTTPS using `ssl.create_default_context()` with certificate and hostname verification enabled. No remote connection was made. |
 | `http://partner-legacy.internal/settle` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/orders/orders.py:9,47-50`) | Third party | Production settlement URL, sent with `urllib.request.urlopen`. Partner has no TLS date; keep on HTTP so settlement is not broken. Human action: partner team to provide an HTTPS endpoint/date and plan a tested cutover. |
 | `http://localhost:8099/settle` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/orders/orders.py:12,47`) | Local developer fake | Selected only when `dev=True`; never deployed. Not a public endpoint and not a migration target. |
 | `http://127.0.0.1:8001` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/orders/catalog_client.py:11`) and `http://127.0.0.1:%d` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/orders/test_catalog_client.py:17`) | Internal service / test | The configurable catalog client calls the in-repository catalog API; its known callers are tests. The test server binds an ephemeral loopback port. Both remain unchanged for the separate mutual-TLS migration. |
 | `http://%s:%d` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/catalog/service.py:48`) | Non-network | Startup status text, not a request target. |
-| `https://cdn.example.com/img/` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/catalog/catalog.py:6,32-33`) | Non-network URL construction | Used to construct product image URLs; this repository does not fetch the images. |
+| `https://cdn.example.com/img/` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/catalog/catalog.py:7,33-34`) | Non-network URL construction | Used to construct product image URLs; this repository does not fetch the images. |
 | `https://api.github.com` (`/home/runner/work/bible-mode-b-test/bible-mode-b-test/.github/bible/bible_queue.py:91,96,103`) | HTTPS tooling endpoint | The repository's GitHub automation uses `urllib.request.urlopen`; its default API URL is HTTPS. `GITHUB_API_URL` can override the base URL. This is repository tooling rather than a sample-shop service endpoint. |
 
-The first scanner pass found **79** plain-HTTP lines. The run-specific allowlist at `/home/runner/work/bible-mode-b-test/bible-mode-b-test/https-migration/https-allowlist.txt` covers only non-network namespace/example URLs. The required second scan found **73** lines remaining and dropped **6**: one each for the XML namespace URL, the sample partner URL, `example.org`, and the localhost:8081 sample, plus two localhost:8080 examples.
+At the Phase 1 baseline, the first scanner pass found **79** plain-HTTP lines. The run-specific allowlist at `/home/runner/work/bible-mode-b-test/bible-mode-b-test/https-migration/https-allowlist.txt` covers only non-network namespace/example URLs. The Phase 1 scan found **73** lines remaining and dropped **6**: one each for the XML namespace URL, the sample partner URL, `example.org`, and the localhost:8081 sample, plus two localhost:8080 examples. After the supplier endpoint was changed, the final scan found **78 raw lines**, **72 remaining** after the same allowlist, and again dropped **6**.
 
-Of the 73 remaining scanner lines, 6 are in application source/tests: the supplier and payment partner URLs (third parties), the developer fake (local only), the catalog service URL (internal and out of scope), the test's loopback URL, and the catalog startup status text (non-network). Two more lines are generic HTTP probes in the TLS migration tool, described above; they can connect to a supplied target but were not run. The other 65 lines are non-network content: `/home/runner/work/bible-mode-b-test/bible-mode-b-test/.github/skills/` contains documentation, examples, URL-parser patterns, and diagnostic templates; `/home/runner/work/bible-mode-b-test/bible-mode-b-test/tools/plan.py` and `tools/gate.py` contain scanner patterns/instructions; and `/home/runner/work/bible-mode-b-test/bible-mode-b-test/codebase-analysis/` contains documentation and ledger entries quoting URLs, not runtime calls. The analysis status above applies: those pages were not treated as verified facts. Remaining placeholder/template strings (for example `http://<host>`, `http://$host`, and formatted URL text) are not usable network URLs and are left visible when the scanner's host-only allowlist format cannot represent them safely.
+Of the 72 final remaining scanner lines, 5 are in application source/tests: the payment partner endpoint, developer fake, catalog service URL (internal/out of scope), test loopback URL, and catalog startup status text. Two more lines are generic HTTP probes in the TLS migration tool, described above; they can connect to a supplied target but were not run. The other 65 lines are non-network content: `/home/runner/work/bible-mode-b-test/bible-mode-b-test/.github/skills/` contains documentation, examples, URL-parser patterns, and diagnostic templates; `/home/runner/work/bible-mode-b-test/bible-mode-b-test/tools/plan.py` and `tools/gate.py` contain scanner patterns/instructions; and `/home/runner/work/bible-mode-b-test/bible-mode-b-test/codebase-analysis/` contains documentation and ledger entries quoting URLs, not runtime calls. The analysis status above applies: those pages were not treated as verified facts. Remaining placeholder/template strings (for example `http://<host>`, `http://$host`, and formatted URL text) are not usable network URLs and are left visible when the scanner's host-only allowlist format cannot represent them safely.
 
 ## Outbound clients
 
@@ -72,19 +72,22 @@ No application use of LDAP, SMTP, or FTP was found.
 Baseline command: `python3 -m unittest discover -s . -p "test_*.py" -t .`  
 Result: **PASS** — 9 tests ran; `OK`. Full output is saved in `/home/runner/work/bible-mode-b-test/bible-mode-b-test/https-migration/tests-before.txt`.
 
+Post-change command: `python3 -m unittest discover -s . -p "test_*.py" -t .`  
+Result: **PASS** — 10 tests ran; `OK`. Full output is saved in `/home/runner/work/bible-mode-b-test/bible-mode-b-test/https-migration/tests-after.txt`. The added test checks the HTTPS URL, timeout, hostname verification, and `CERT_REQUIRED`; it does not contact the supplier.
+
 The tests include local HTTP catalog-client requests, but no redirect, cookie, HTTPS-header, HSTS, or outbound certificate-verification assertions. The Phase 1 “Configuration alone” check was **not run**: there is no test/deployment environment or product setting that can enable HTTPS without a code/configuration change.
 
 ## Scanner totals and locations needing decisions
 
-- Raw first-pass plain-HTTP lines: **79**.
-- Lines remaining after this run's allowlist: **73** (6 dropped).
+- Phase 1 baseline: **79** raw plain-HTTP lines; **73** remaining after allowlist (6 dropped).
+- Final scan after the supplier URL change: **78** raw plain-HTTP lines; **72** remaining after allowlist (6 dropped).
 - Locations needing an external HTTPS-support decision/action: **1** — the legacy payment partner. The supplier endpoint was confirmed by the repository owner and switched to HTTPS; its live certificate was not probed.
 - Every remaining scanner hit is accounted for as an application endpoint, test/local endpoint, internal service endpoint (out of scope), a generic migration-tool probe, or non-network documentation/example/template.
 
-## Human actions and Phase 1 hand-off
+## Human actions and follow-up
 
 1. Ask the partner team for a dated HTTPS settlement endpoint and a settlement-safe cutover plan. Do not probe `partner-legacy.internal:443`; keep settlement on HTTP in the meantime.
 2. Keep the catalog service and its caller unchanged in this task; handle that internal service link separately with `migrating-service-calls-to-tls` (issue #77).
 3. No public certificate, DNS, redirect, or HSTS action is identified for this repository because it has no public-facing listener or owned public hostname.
 
-**Phase 1 inventory was confirmed by the repository owner. No remote hosts were contacted.**
+**Phase 1 inventory was confirmed by the repository owner. Phase 2 changed only the supplier feed URL/client context and its focused test; the live supplier endpoint was not contacted.**
