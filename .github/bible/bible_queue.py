@@ -761,6 +761,8 @@ class Queue:
                     return "%s: needs a person: see #%d" % (kind[6:], issue["number"])
                 if state == "no-start":
                     self.fail_or_retry(issue, None, "no pull request after assignment")
+                if pr and state == "running":  # Copilot is still working on it: not ready for review yet
+                    return "%s: running (pull request #%d)" % (kind[6:], pr["number"])
                 return "%s: %s" % (kind[6:], "review and merge pull request #%d" % pr["number"] if pr else state)
             if text:
                 title, body = issue_text(gh, "%s/ledger/issues/%s" % (analysis, text), self.default, title)
@@ -798,8 +800,10 @@ class Queue:
         sys.path.insert(0, os.path.abspath(os.path.join(self.skills, "analyzing-a-codebase", "scripts")))
         import components  # noqa: E402  (the toolkit's own membership rules)
         rows = components.rows_of(catalog)
+        # The same rule as bible-delta.yml's paths-ignore: only the analysis itself and the skills are left out; code
+        # under .github/ (workflows, scripts) can belong to a component.
         touched = sorted({c for c in components.component_map([{"path": p} for p in changed
-                                                                if not p.startswith((settings_analysis + "/", ".github/"))], rows).values()})
+                                                                if not p.startswith((settings_analysis + "/", self.skills.rstrip("/") + "/"))], rows).values()})
         for name in touched:
             files = [p for p in changed if components.assign(p, rows)[0] == name]
             if gh.issues(["bible-delta", comp_label(name)]):
