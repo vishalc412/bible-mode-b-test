@@ -18,7 +18,7 @@ Version: not provided
 | --- | --- | --- |
 | 1 | Inventory and coverage ledger | done |
 | 2 | Components and packet plan; run discovery | done |
-| 3–11 | Component pages and whole-system analysis | not started; outside this task |
+| 3–11 | Component pages and whole-system analysis | in progress |
 
 ## Components
 
@@ -29,4 +29,6 @@ Version: not provided
 | `bible-mode-b` | `.github/bible/`, `.github/workflows/` | Python 3 and GitHub Actions YAML (`.github/bible/bible_queue.py:1-10`) | Manual dispatch, 15-minute schedule, and default-branch push workflows (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10,16-18`, `.github/workflows/poc-assign-copilot.yml:11-13`) | `bible_queue.py start`, `reconcile`, `delta` (`.github/bible/bible_queue.py:1-10,797-844`) | 4 |
 | `tools` | `tools/` | Python 3 and Bash (`tools/plan.py:8-15`, `tools/fanout.sh:1-6`) | CLI and shell invocation (`tools/plan.py:41-61`, `tools/gate.py:81-116`, `tools/fanout.sh:1-6`) | `plan.py`, `gate.py`, `fanout.sh` (`tools/plan.py:41-61`, `tools/gate.py:81-116`, `tools/fanout.sh:1-6`) | 3 |
 
-Discovery succeeded and wrote `components.json`, `components.md`, and issue texts under `ledger/issues/`. No component was started. Next: have the user choose component names or all before starting component analysis.
+Discovery succeeded and wrote `components.json`, `components.md`, and issue texts under `ledger/issues/`. The component analyses were completed in separate pull requests. The whole-system pass is now being assembled.
+
+At this session's start, `next.py` reported 11 of 13 packets done. Packet 2 of 13's `bible-mode-b` cards are updated to the current source.
