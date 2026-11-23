@@ -1,0 +1,797 @@
+#!/usr/bin/env python3
+"""Mode B: GitHub workflows drive the codebase analysis, one Copilot session at a time per component.
+
+Called by the workflows in examples/github/workflows/ (copied to .github/workflows/ in the target
+repository); never by a skill. Every run works the state out again from GitHub (issues, pull
+requests, labels, branches) and from the files on the branches, so a run that fails or is skipped
+loses nothing: the next one (every 15 minutes) carries on.
+
+  python3 .github/bible/bible_queue.py start --components all --verify-model V [--model M] [--concurrency N]
+  python3 .github/bible/bible_queue.py reconcile
+  python3 .github/bible/bible_queue.py delta --changed-file FILE
+
+The flow, which is the person's Mode A steps done by a workflow:
+  1. start: a tracker issue holds the run's settings; the next reconcile assigns the plan issue to Copilot.
+  2. The person merges the plan pull request (components.json is then on the default branch).
+  3. Per selected component: branch bible/<name> (reset to the default branch at the run's start);
+     one chunk issue at a time assigned to Copilot with base_branch bible/<name>. A finished chunk pull
+     request by Copilot, from this repository, into bible/<name>, inside the component's folders (never
+     its verification files), that makes progress, is merged into bible/<name>; then the next chunk.
+  4. When the component's check passes on bible/<name> (coverage.py --component), a verify issue is
+     assigned on the verification model. A PASS whose recorded fingerprint matches the pages: a pull
+     request bible/<name> -> default branch for the person. Otherwise a revision chunk, then verify
+     again, at most MAX_VERIFY_ROUNDS times; then a person.
+  5. When every selected component's pull request is merged: the assemble issue, then the whole
+     verification; the person merges each. The tracker closes itself.
+  6. delta: after a push to the default branch, one update issue per component whose files changed.
+
+Nothing is ever merged into the default branch by this script: a person merges those pull requests.
+A session that fails is retried once; a second failure labels the issue bible-needs-human and
+unassigns Copilot. Removing that label (a person) retries it. Copilot's questions (WAITING FOR ANSWERS)
+label the issue bible-waiting-answer and pause that component only. Closing the tracker issue stops
+the run. Every issue of a run carries the label bible-run-<tracker number>.
+
+Environment: GITHUB_REPOSITORY (owner/name), GH_TOKEN (a user token allowed to assign Copilot),
+GITHUB_API_URL (default https://api.github.com), BIBLE_SKILLS (default .github/skills),
+BIBLE_AGENT_LOGINS (comma list; default Copilot,copilot-swe-agent[bot]), BIBLE_NOW (tests only).
+Standard library only.
+"""
+
+from __future__ import annotations
+
+import argparse
+import base64
+import datetime
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tarfile
+import tempfile
+import urllib.error
+import urllib.parse
+import urllib.request
+
+sys.dont_write_bytecode = True
+
+COPILOT = "copilot-swe-agent[bot]"
+AGENT_LOGINS = {l.strip() for l in os.environ.get("BIBLE_AGENT_LOGINS", "Copilot,copilot-swe-agent[bot],copilot-swe-agent").split(",") if l.strip()}
+FINAL_STATES = ("NEW_CHAT", "COMPONENT_DONE", "WAITING_ANSWER", "STOP")
+NO_PR_AFTER = 30 * 60      # seconds after assignment with no pull request: the session did not start
+IDLE_AFTER = 20 * 60       # seconds without a push: the session has ended
+MAX_VERIFY_ROUNDS = 2
+SETTINGS = re.compile(r"<!--\s*bible-settings\s*(\{.*?\})\s*-->", re.S)
+ATTEMPT = re.compile(r"^Attempt:\s*(\d+)", re.M)
+NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$")
+LABELS = {
+    "bible-tracker": "One analysis run: settings and progress",
+    "bible-plan": "Copilot session: plan the components",
+    "bible-chunk": "Copilot session: part of one component",
+    "bible-verify": "Copilot session: verify one component",
+    "bible-assemble": "Copilot session: whole-system pages",
+    "bible-verify-all": "Copilot session: verify the whole analysis",
+    "bible-delta": "Copilot session: update after a code change",
+    "bible-waiting-answer": "Copilot asked questions: answer on the pull request with @copilot",
+    "bible-needs-human": "Failed twice: a person must look, then remove this label to retry",
+}
+
+
+# ---------------------------------------------------------------- GitHub ----------
+
+class GitHub:
+    def __init__(self, repo, token, api=None):
+        self.repo, self.token = repo, token
+        self.api = (api or os.environ.get("GITHUB_API_URL") or "https://api.github.com").rstrip("/")
+        self.known_labels = None
+
+    def request(self, method, url, body=None, timeout=60):
+        data = json.dumps(body).encode() if body is not None else None
+        req = urllib.request.Request(url, data=data, method=method)
+        req.add_header("Accept", "application/vnd.github+json")
+        req.add_header("X-GitHub-Api-Version", "2022-11-28")
+        if self.token:
+            req.add_header("Authorization", "Bearer " + self.token)
+        if data is not None:
+            req.add_header("Content-Type", "application/json")
+        return urllib.request.urlopen(req, timeout=timeout)
+
+    def call(self, method, path, body=None, ok404=False):
+        url = path if path.startswith("http") else "%s/repos/%s%s" % (self.api, self.repo, path)
+        try:
+            with self.request(method, url, body) as resp:
+                payload = resp.read()
+        except urllib.error.HTTPError as err:
+            if err.code == 404 and ok404:
+                return None
+            detail = err.read().decode("utf-8", "replace")[:300]
+            raise RuntimeError("GitHub %s %s: HTTP %d %s" % (method, path.split("?")[0], err.code, detail))
+        except (urllib.error.URLError, TimeoutError, OSError) as err:
+            raise RuntimeError("GitHub %s %s: %s" % (method, path.split("?")[0], err))
+        return json.loads(payload) if payload else {}
+
+    def paged(self, path):
+        out, page = [], 1
+        while True:
+            sep = "&" if "?" in path else "?"
+            batch = self.call("GET", "%s%sper_page=100&page=%d" % (path, sep, page))
+            out += batch
+            if len(batch) < 100:
+                return out
+            page += 1
+
+    def issues(self, labels, state="open"):
+        q = urllib.parse.quote(",".join(labels))
+        return [i for i in self.paged("/issues?state=%s&labels=%s" % (state, q)) if "pull_request" not in i]
+
+    def ensure_label(self, name, why="Codebase analysis run"):
+        if self.known_labels is None:
+            self.known_labels = {l["name"] for l in self.paged("/labels")}
+        if name not in self.known_labels:
+            self.call("POST", "/labels", {"name": name, "color": "5319e7", "description": why[:100]})
+            self.known_labels.add(name)
+
+    def ensure_labels(self):
+        for name, why in LABELS.items():
+            self.ensure_label(name, why)
+
+    def create_issue(self, title, body, labels, assign=None):
+        for name in labels:
+            self.ensure_label(name, LABELS.get(name, "Codebase analysis run"))
+        payload = {"title": title, "body": body, "labels": labels}
+        if assign is not None:
+            payload["assignees"] = [COPILOT]
+            payload["agent_assignment"] = assign
+        return self.call("POST", "/issues", payload)
+
+    def default_branch(self):
+        return self.call("GET", "")["default_branch"]
+
+    def branch_sha(self, branch):
+        ref = self.call("GET", "/git/ref/heads/" + urllib.parse.quote(branch), ok404=True)
+        return ref["object"]["sha"] if ref else None
+
+    def create_branch(self, branch, sha):
+        self.call("POST", "/git/refs", {"ref": "refs/heads/" + branch, "sha": sha})
+
+    def reset_branch(self, branch, sha):
+        self.call("PATCH", "/git/refs/heads/" + urllib.parse.quote(branch), {"sha": sha, "force": True})
+
+    def file(self, path, ref):
+        got = self.call("GET", "/contents/%s?ref=%s" % (urllib.parse.quote(path), urllib.parse.quote(ref)), ok404=True)
+        if not got or isinstance(got, list) or "content" not in got:
+            return None
+        return base64.b64decode(got["content"]).decode("utf-8", "replace")
+
+    def prs(self, base=None, state="open"):
+        path = "/pulls?state=%s" % state + ("&base=" + urllib.parse.quote(base) if base else "")
+        return self.paged(path)
+
+    def timeline(self, number):
+        return self.paged("/issues/%d/timeline" % number)
+
+    def linked_prs(self, number):
+        """Pull requests of this repository that mention the issue (a mention from another repository is ignored)."""
+        nums = []
+        for event in self.timeline(number):
+            source = (event.get("source") or {}).get("issue") or {}
+            where = ((source.get("repository") or {}).get("full_name")) or self.repo
+            if event.get("event") == "cross-referenced" and source.get("pull_request") and where == self.repo:
+                nums.append(source["number"])
+        found = [self.call("GET", "/pulls/%d" % n, ok404=True) for n in sorted(set(nums))]
+        return [p for p in found if p]
+
+    def branch_prs(self, branch, base):
+        """Pull requests from this repository's own branch into base (a fork's branch of the same name is not one)."""
+        owner = self.repo.split("/")[0]
+        return self.paged("/pulls?state=all&head=%s&base=%s" % (urllib.parse.quote(owner + ":" + branch), urllib.parse.quote(base)))
+
+    def assigned_at(self, issue):
+        """When Copilot was last assigned to the issue (the issue's creation when the timeline says nothing)."""
+        times = [e.get("created_at") for e in self.timeline(issue["number"]) if e.get("event") == "assigned" and e.get("created_at")]
+        return max(times) if times else issue["created_at"]
+
+    def pr_files(self, number):
+        """Every path a pull request touches, the old name of a renamed file included."""
+        out = []
+        for f in self.paged("/pulls/%d/files" % number):
+            out.append(f["filename"])
+            if f.get("previous_filename"):
+                out.append(f["previous_filename"])
+        return out
+
+    def commit_time(self, sha):
+        return self.call("GET", "/commits/" + sha)["commit"]["committer"]["date"]
+
+    def tarball(self, ref, dest):
+        """Unpack the tree of ref into dest (no git needed), streaming to a temporary file; links and
+        paths that would leave dest are skipped."""
+        url = "%s/repos/%s/tarball/%s" % (self.api, self.repo, urllib.parse.quote(ref))
+        with tempfile.TemporaryFile() as buf:
+            try:
+                with self.request("GET", url, timeout=300) as resp:
+                    shutil.copyfileobj(resp, buf)
+            except (urllib.error.URLError, TimeoutError, OSError) as err:
+                raise RuntimeError("GitHub tarball %s: %s" % (ref, err))
+            buf.seek(0)
+            root = os.path.abspath(dest)
+            with tarfile.open(fileobj=buf, mode="r:gz") as tar:
+                for member in tar:
+                    parts = member.name.split("/", 1)
+                    if len(parts) < 2 or not parts[1] or not (member.isfile() or member.isdir()):
+                        continue
+                    target = os.path.normpath(os.path.join(root, parts[1]))
+                    if not target.startswith(root + os.sep):
+                        continue
+                    if member.isdir():
+                        os.makedirs(target, exist_ok=True)
+                        continue
+                    os.makedirs(os.path.dirname(target), exist_ok=True)
+                    with tar.extractfile(member) as src, open(target, "wb") as out:
+                        shutil.copyfileobj(src, out)
+
+    def label(self, number, name):
+        self.ensure_label(name, LABELS.get(name, "Codebase analysis run"))
+        self.call("POST", "/issues/%d/labels" % number, {"labels": [name]})
+
+    def unlabel(self, number, name):
+        self.call("DELETE", "/issues/%d/labels/%s" % (number, urllib.parse.quote(name)), ok404=True)
+
+    def comment(self, number, text):
+        self.call("POST", "/issues/%d/comments" % number, {"body": text})
+
+    def close(self, number, reason="completed"):
+        self.call("PATCH", "/issues/%d" % number, {"state": "closed", "state_reason": reason})
+
+    def set_body(self, number, body):
+        self.call("PATCH", "/issues/%d" % number, {"body": body})
+
+    def unassign(self, number):
+        self.call("DELETE", "/issues/%d/assignees" % number, {"assignees": [COPILOT]})
+
+    def assign(self, number, assign):
+        self.call("POST", "/issues/%d/assignees" % number, {"assignees": [COPILOT], "agent_assignment": assign})
+
+    def ready(self, pr):
+        """Copilot opens draft pull requests; a draft cannot be merged. Mark it ready (GraphQL only)."""
+        query = "mutation($id: ID!) { markPullRequestReadyForReview(input: {pullRequestId: $id}) { clientMutationId } }"
+        url = self.api + "/graphql" if not self.api.endswith("/api/v3") else self.api[:-len("/v3")] + "/graphql"
+        try:
+            with self.request("POST", url, {"query": query, "variables": {"id": pr["node_id"]}}) as resp:
+                resp.read()
+        except urllib.error.HTTPError as err:
+            raise RuntimeError("GitHub GraphQL markPullRequestReadyForReview: HTTP %d" % err.code)
+
+    def merge(self, pr, title):
+        if pr.get("draft"):
+            self.ready(pr)
+        self.call("PUT", "/pulls/%d/merge" % pr["number"], {"merge_method": "squash", "commit_title": title})
+
+    def close_pr(self, number):
+        self.call("PATCH", "/pulls/%d" % number, {"state": "closed"})
+
+    def create_pr(self, head, base, title, body):
+        return self.call("POST", "/pulls", {"head": head, "base": base, "title": title, "body": body})
+
+
+# ---------------------------------------------------------------- helpers ---------
+
+def now():
+    stamp = os.environ.get("BIBLE_NOW")
+    return datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00")) if stamp else datetime.datetime.now(datetime.timezone.utc)
+
+
+def age(stamp):
+    return (now() - datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00"))).total_seconds()
+
+
+def settings_of(tracker):
+    match = SETTINGS.search(tracker.get("body") or "")
+    try:
+        return json.loads(match.group(1)) if match else None
+    except ValueError:
+        return None
+
+
+def labels_of(item):
+    return {l["name"] if isinstance(l, dict) else l for l in item.get("labels", [])}
+
+
+def comp_label(name):
+    return "bible/" + name
+
+
+def issue_text(gh, path, ref, fallback_title):
+    """(title, body) from a ledger/issues/*.md file written by discover.py."""
+    text = gh.file(path, ref) or ""
+    lines = text.splitlines()
+    if lines and lines[0].startswith("Title:"):
+        return lines[0][len("Title:"):].strip(), "\n".join(lines[1:]).strip()
+    return fallback_title, text.strip()
+
+
+def assignment(gh, base, model):
+    out = {"target_repo": gh.repo, "base_branch": base}
+    if model:
+        out["model"] = model
+    return out
+
+
+def json_file(gh, path, ref):
+    text = gh.file(path, ref)
+    try:
+        return json.loads(text) if text else None
+    except ValueError:
+        return None
+
+
+def section(text, title):
+    match = re.search(r"^##\s+%s\s*$" % re.escape(title), text, re.M)
+    if not match:
+        return ""
+    rest = text[match.end():]
+    nxt = re.search(r"^##\s", rest, re.M)
+    return rest[:nxt.start()] if nxt else rest
+
+
+def report_facts(text):
+    """(verdict, major corrections, fingerprint) of a verification report, by the same rules as status.py:
+    exactly one Verdict row, holding one verdict, outside comments and code blocks."""
+    if not text:
+        return None
+    visible = re.sub(r"<!--.*?-->|^```.*?^```", "", text, flags=re.S | re.M)
+    found = re.findall(r"^\|\s*Verdict\s*\|\s*\**\s*(PASS AFTER CORRECTIONS|PASS|FAIL)\s*\**\s*\|\s*$", visible, re.M | re.I)
+    rows = re.findall(r"^\|\s*Verdict\s*\|", visible, re.M | re.I)
+    if len(found) != 1 or len(rows) != 1:
+        return ("UNREADABLE", 0, None)
+    majors = sum(1 for line in section(visible, "Corrections").splitlines()
+                 if line.lstrip().startswith("|") and re.search(r"\|\s*major\s*\|", line, re.I))
+    printed = re.search(r"^\|\s*Analysis fingerprint\s*\|\s*`?([0-9a-f]{16})`?", visible, re.M | re.I)
+    return found[0].upper(), majors, printed.group(1) if printed else None
+
+
+def as_int(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
+
+
+def status_of(gh, path, ref):
+    """A component's status.json as a dict (an unreadable one counts as empty, never as a crash)."""
+    data = json_file(gh, path, ref)
+    return data if isinstance(data, dict) else {}
+
+
+# ---------------------------------------------------------------- the queue -------
+
+class Queue:
+    def __init__(self, gh, log=print):
+        self.gh, self.log = gh, log
+        self.skills = os.environ.get("BIBLE_SKILLS", ".github/skills")
+
+    def run_issues(self, labels, state="open"):
+        return self.gh.issues(labels + [self.run_label], state=state)
+
+    def agent_pr(self, issue, base):
+        """The open pull request Copilot opened for this issue: by the agent, from this repository, into base."""
+        for pr in reversed(self.gh.linked_prs(issue["number"])):
+            author = (pr.get("user") or {}).get("login", "")
+            head_repo = ((pr.get("head") or {}).get("repo") or {}).get("full_name")
+            if pr["state"] == "open" and author in AGENT_LOGINS and head_repo == self.gh.repo and pr["base"]["ref"] == base:
+                return pr
+        return None
+
+    # -- one session (any kind): has it started, finished, failed?
+    def session(self, issue, base, analysis, comp=None):
+        """('waiting'|'running'|'finished'|'no-start', pr) for an open session issue."""
+        pr = self.agent_pr(issue, base)
+        if pr is None:
+            return ("no-start" if age(self.gh.assigned_at(issue)) > NO_PR_AFTER else "waiting"), None
+        pushed = age(self.gh.commit_time(pr["head"]["sha"]))
+        asked = bool(pr.get("requested_reviewers")) or not pr.get("draft", False)
+        if comp and "bible-chunk" in labels_of(issue):
+            status = status_of(self.gh, "%s/ledger/components/%s/status.json" % (analysis, comp), pr["head"]["sha"])
+            final = status.get("state") in FINAL_STATES
+            return ("finished" if (final and (asked or pushed > IDLE_AFTER)) or pushed > 3 * IDLE_AFTER else "running"), pr
+        return ("finished" if asked or pushed > IDLE_AFTER else "running"), pr
+
+    def held(self, issue):
+        """A session a person must look at; or, once they removed the label, one to retry now."""
+        if "bible-needs-human" in labels_of(issue):
+            return True
+        if not issue.get("assignees"):  # unassigned by a second failure, label removed by a person: retry
+            body = ATTEMPT.sub("Attempt: 1", issue.get("body") or "")
+            self.gh.set_body(issue["number"], body)
+            base = re.search(r"^Base branch:\s*(\S+)", body, re.M)
+            self.gh.assign(issue["number"], assignment(self.gh, base.group(1) if base else self.default, self.model_for(issue)))
+            self.gh.comment(issue["number"], "The label `bible-needs-human` was removed: assigned to Copilot again (attempt 1).")
+        return False
+
+    def model_for(self, issue):
+        kinds = labels_of(issue)
+        return self.settings.get("verify_model") if kinds & {"bible-verify", "bible-verify-all"} else self.settings.get("model")
+
+    def fail_or_retry(self, issue, pr, why):
+        """Close a failed session and open attempt 2, or hold the second failure for a person. True when retried."""
+        attempt = int((ATTEMPT.search(issue.get("body") or "") or [None, "1"])[1])
+        if pr:
+            self.gh.comment(pr["number"], "Not merged: %s." % why)
+            self.gh.close_pr(pr["number"])
+        if attempt >= 2:
+            self.gh.label(issue["number"], "bible-needs-human")
+            self.gh.unassign(issue["number"])
+            self.gh.comment(issue["number"], "Second attempt failed: %s. A person must look. To retry, fix the cause (or this issue's "
+                            "text), then remove the label `bible-needs-human`." % why)
+            return False
+        self.gh.comment(issue["number"], "Attempt %d failed: %s. Opening attempt %d." % (attempt, why, attempt + 1))
+        self.gh.close(issue["number"], "not_planned")
+        body = ATTEMPT.sub("Attempt: %d" % (attempt + 1), issue["body"]) if ATTEMPT.search(issue["body"] or "") else \
+            "Attempt: 2\n\n" + (issue["body"] or "")
+        base = re.search(r"^Base branch:\s*(\S+)", issue["body"] or "", re.M)
+        self.gh.create_issue(issue["title"], body, sorted(l for l in labels_of(issue) if l.startswith("bible")),
+                             assignment(self.gh, base.group(1) if base else self.default, self.model_for(issue)))
+        return True
+
+    # -- the whole run for one tracker
+    def reconcile(self):
+        self.default = self.gh.default_branch()
+        for tracker in self.gh.issues(["bible-tracker"]):
+            settings = settings_of(tracker)
+            if not settings:
+                self.log("tracker #%d has no readable bible-settings block: skipped" % tracker["number"])
+                continue
+            try:
+                self.run(tracker, settings)
+            except Exception as err:  # one bad tracker never stops the others
+                self.log("tracker #%d: %s: %s" % (tracker["number"], type(err).__name__, err))
+
+    def run(self, tracker, settings):
+        gh, analysis = self.gh, settings.get("analysis", "codebase-analysis")
+        self.settings, self.tracker = settings, tracker
+        self.run_label = "bible-run-%d" % tracker["number"]
+        catalog = json_file(gh, analysis + "/components.json", self.default)
+        if not isinstance(catalog, dict) or catalog.get("proposed") or not isinstance(catalog.get("components"), list):
+            return self.plan_phase(tracker, settings, analysis)
+        names = [c.get("name") for c in catalog["components"] if isinstance(c, dict) and c.get("name")]
+        asked = settings.get("components", "all").strip()
+        wanted = names if asked in ("all", "") else [n.strip() for n in asked.split(",") if n.strip()]
+        unknown = [n for n in wanted if n not in names]
+        if unknown or not wanted:
+            return self.render(tracker, settings, {"(settings)": "stopped: %s; components.json has %s. Close this tracker and start "
+                                                   "a new run with the right names." % (
+                                                       "unknown component(s) " + ", ".join(unknown) if unknown else "no component selected",
+                                                       ", ".join(names))})
+        for issue in self.run_issues(["bible-plan"]):  # the plan is merged: its session is over
+            gh.close(issue["number"])
+        self.estimate = {c["name"]: c.get("est_sessions", "?") for c in catalog["components"]}
+        rows, active = {}, 0
+        for name in wanted:
+            try:
+                rows[name] = self.component(analysis, name)
+            except Exception as err:  # kept to this component; the next run tries again
+                rows[name] = "error this run (retried next run): %s: %s" % (type(err).__name__, str(err)[:160])
+            active += rows[name].endswith(("running", "starting")) or rows[name].startswith("waiting")
+        cap = as_int(settings.get("concurrency"))
+        for name in wanted:  # start components that are still waiting, up to the cap
+            if rows[name] == "not started" and (not cap or active < cap):
+                try:
+                    self.start_chunk(analysis, name, fresh=True)
+                    rows[name], active = "session starting", active + 1
+                except RuntimeError as err:
+                    rows[name] = "error this run (retried next run): %s" % str(err)[:160]
+        if all(r == "merged" for r in rows.values()):
+            rows["(whole analysis)"] = self.assemble_phase(tracker, settings, analysis)
+        self.render(tracker, settings, rows)
+
+    def plan_phase(self, tracker, settings, analysis):
+        gh = self.gh
+        open_plan = self.run_issues(["bible-plan"])
+        if not open_plan:
+            title, body = issue_text(gh, analysis + "/ledger/issues/plan.md", self.default, "Codebase analysis - plan the components")
+            if not body:
+                body = ("Use the analyzing-a-codebase skill (in %s) for passes 1 and 2 only: run next.py --new-session, write the "
+                        "`## Components` table in %s/progress.md, then run discover.py until it exits 0. Do not start any "
+                        "component." % (self.skills, analysis))
+            gh.create_issue(title, "Tracker: #%d\nBase branch: %s\nAttempt: 1\n\n%s" % (tracker["number"], self.default, body),
+                            ["bible-plan", self.run_label], assignment(gh, self.default, settings.get("model")))
+            return self.render(tracker, settings, {"(plan)": "plan session assigned"})
+        issue = open_plan[0]
+        if self.held(issue):
+            return self.render(tracker, settings, {"(plan)": "needs a person: see #%d" % issue["number"]})
+        state, pr = self.session(issue, self.default, analysis)
+        if state == "no-start":
+            self.fail_or_retry(issue, None, "no pull request %d minutes after assignment" % (NO_PR_AFTER // 60))
+        self.render(tracker, settings, {"(plan)": "review and merge the plan pull request #%d" % pr["number"]
+                                        if pr else "plan session %s" % state})
+
+    def start_chunk(self, analysis, name, fresh=False, note=""):
+        """Assign the next chunk. At the run's first chunk for a component, its branch starts again from the default branch."""
+        gh, branch = self.gh, "bible/" + name
+        head_sha = gh.branch_sha(self.default)
+        if not gh.branch_sha(branch):
+            gh.create_branch(branch, head_sha)
+        elif fresh and not self.run_issues([comp_label(name)], state="all"):
+            gh.reset_branch(branch, head_sha)
+        title, body = issue_text(gh, "%s/ledger/issues/%s.md" % (analysis, name), self.default,
+                                 "Codebase analysis - component %s" % name)
+        head = "Component: %s\nBase branch: %s\nAttempt: 1\n" % (name, branch)
+        gh.create_issue(title, head + (note + "\n" if note else "") + "\n" + body, ["bible-chunk", comp_label(name), self.run_label],
+                        assignment(gh, branch, self.settings.get("model")))
+
+    def component(self, analysis, name):
+        gh, branch = self.gh, "bible/" + name
+        since = self.tracker["created_at"]
+        for pr in gh.branch_prs(branch, self.default):
+            same_repo = ((pr.get("head") or {}).get("repo") or {}).get("full_name") == gh.repo
+            if not same_repo or pr.get("created_at", "") < since or "Tracker: #%d" % self.tracker["number"] not in (pr.get("body") or ""):
+                continue  # a fork's branch of the same name, an older run's, or one this run did not open
+            if pr.get("merged_at"):
+                return "merged"
+            if pr["state"] == "open":
+                return "review the pull request #%d" % pr["number"]
+            return "needs a person: its pull request #%d was closed without merging; reopen it, or start a new run" % pr["number"]
+        open_sessions = self.run_issues(["bible-chunk", comp_label(name)]) + self.run_issues(["bible-verify", comp_label(name)])
+        if open_sessions:
+            issue = open_sessions[0]
+            if self.held(issue):
+                return "needs a person: see #%d" % issue["number"]
+            result = self.follow(analysis, name, issue)
+            if not result.endswith("merged"):
+                return result
+            # merged: decide the next step now, in the same run (the merge event starts no workflow)
+        if not self.run_issues([comp_label(name)], state="all"):
+            return "not started"
+        status = status_of(gh, "%s/ledger/components/%s/status.json" % (analysis, name), branch)
+        gate_ok, pages = (False, None)
+        if status.get("state") == "COMPONENT_DONE":
+            gate_ok, pages = self.check(analysis, name, branch)
+        if not gate_ok:
+            done = len(self.run_issues(["bible-chunk", comp_label(name)], state="closed"))
+            self.start_chunk(analysis, name, note="Session %d of about %s." % (done + 1, self.estimate.get(name, "?")))
+            return "session starting"
+        holds = self.run_issues(["bible-hold", comp_label(name)], state="all")
+        open_hold = [h for h in holds if h["state"] == "open"]
+        if open_hold:
+            if "bible-needs-human" in labels_of(open_hold[0]):
+                return "needs a person: see #%d" % open_hold[0]["number"]
+            gh.close(open_hold[0]["number"])  # the person removed the label: new rounds from here
+            holds = self.run_issues(["bible-hold", comp_label(name)], state="all")
+        after = max([h.get("closed_at") or "" for h in holds] + [""])
+        closed_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed")
+                         if i.get("state_reason") == "completed" and i.get("created_at", "") >= after]
+        closed_revise = [i for i in self.run_issues(["bible-chunk", comp_label(name)], state="closed")
+                         if i.get("state_reason") == "completed" and "\nRevision (" in (i.get("body") or "") and i.get("created_at", "") >= after]
+        any_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed") if i.get("state_reason") == "completed"]
+        facts = report_facts(gh.file("%s/ledger/components/%s/verification-report.md" % (analysis, name), branch)) if any_verify else None
+        if facts and facts[0] == "PASS" and not facts[1] and facts[2] and facts[2] == pages:
+            pr = gh.create_pr(branch, self.default, "Codebase analysis: component %s" % name,
+                              "Component `%s`, verified (PASS, pages fingerprint %s). Tracker: #%d. Review the pages under "
+                              "`%s/lld/%s/`, then merge." % (name, pages, self.tracker["number"], analysis, name))
+            return "review the pull request #%d" % pr["number"]
+        if facts and len(closed_verify) >= MAX_VERIFY_ROUNDS and (facts[0] != "PASS" or facts[1] or facts[2] != pages):
+            hold = gh.create_issue("Codebase analysis - component %s needs a person" % name,
+                                   "Component: %s\nTracker: #%d\n\n%d verifications without a clean PASS (last verdict: %s). Read "
+                                   "%s/ledger/components/%s/verification-report.md on branch %s. Fix the cause (edit the pages on "
+                                   "the branch, or the issue texts), then remove the label `bible-needs-human` from this issue: the "
+                                   "queue then starts new rounds of revision and verification." % (
+                                       name, self.tracker["number"], len(closed_verify), facts[0], analysis, name, branch),
+                                   ["bible-hold", "bible-needs-human", comp_label(name), self.run_label])
+            return "needs a person: see #%d" % hold["number"]
+        all_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed") if i.get("state_reason") == "completed"]
+        all_revise = [i for i in self.run_issues(["bible-chunk", comp_label(name)], state="closed")
+                      if i.get("state_reason") == "completed" and "\nRevision (" in (i.get("body") or "")]
+        last_verify = max([i.get("closed_at") or "" for i in all_verify] + [""])
+        last_revise = max([i.get("closed_at") or "" for i in all_revise] + [""])
+        if facts and facts[0] != "PASS" or (facts and facts[1]):
+            if last_revise < last_verify:  # the last verification's corrections are not applied yet
+                self.start_chunk(analysis, name, note="Revision (verdict %s): apply %s/ledger/components/%s/verification-report.md "
+                                 "(references/revision.md, Component mode), then run next.py --component %s." % (facts[0], analysis, name, name))
+                return "session starting"
+        # no report yet, a PASS that does not match the pages (missing or old fingerprint), or a revision just merged: verify
+        gh.create_issue("Codebase analysis - verify component %s" % name,
+                        "Component: %s\nBase branch: %s\nAttempt: 1\n\nUse the verifying-a-codebase-analysis skill (in %s), scope: "
+                        "component %s, in this new session. Record the fingerprint of the pages you judge in the report's header "
+                        "(analyzing-a-codebase's scripts/status.py --fingerprint --component %s). Write "
+                        "%s/ledger/components/%s/verification-report.md and nothing outside %s/ledger/components/%s/. "
+                        "Summarise the verdict in the pull request description." % (
+                            name, branch, self.skills, name, name, analysis, name, analysis, name),
+                        ["bible-verify", comp_label(name), self.run_label], assignment(gh, branch, self.settings.get("verify_model")))
+        return "verify running"
+
+    def follow(self, analysis, name, issue):
+        gh, branch = self.gh, "bible/" + name
+        kind = "verify" if "bible-verify" in labels_of(issue) else "chunk"
+        state, pr = self.session(issue, branch, analysis, name)
+        if state == "waiting":
+            return "session starting"
+        if state == "no-start":
+            retried = self.fail_or_retry(issue, None, "no pull request from Copilot into %s %d minutes after assignment" % (branch, NO_PR_AFTER // 60))
+            return "session starting" if retried else "needs a person: see #%d" % issue["number"]
+        if state == "running":
+            return "%s running" % kind
+        base = "%s/ledger/components/%s/" % (analysis, name)
+        if kind == "chunk":
+            allowed = ("%s/lld/%s/" % (analysis, name), "%s/lld/api/%s/" % (analysis, name), base)
+            bad = [f for f in gh.pr_files(pr["number"])
+                   if not f.startswith(allowed) or os.path.basename(f).startswith("verification-")]
+        else:
+            bad = [f for f in gh.pr_files(pr["number"])
+                   if not (f.startswith(base) and (os.path.basename(f).startswith("verification-") or os.path.basename(f) == "citations.tsv"))]
+        if bad:
+            retried = self.fail_or_retry(issue, pr, "files this kind of session may not write: " + ", ".join(bad[:10]))
+            return "session starting" if retried else "needs a person: see #%d" % issue["number"]
+        status = status_of(gh, base + "status.json", pr["head"]["sha"])
+        if kind == "chunk":
+            if status.get("state") == "WAITING_ANSWER":
+                if "bible-waiting-answer" not in labels_of(issue):
+                    gh.label(issue["number"], "bible-waiting-answer")
+                    gh.label(pr["number"], "bible-waiting-answer")
+                return "waiting for answers on #%d" % pr["number"]
+            before = as_int(status_of(gh, base + "status.json", branch).get("packets_done"))
+            revision = "\nRevision (" in (issue.get("body") or "")
+            progressed = as_int(status.get("packets_done")) > before or status.get("state") == "COMPONENT_DONE"
+            if status.get("state") == "STOP" or not progressed:
+                retried = self.fail_or_retry(issue, pr, "no progress (state %s, packets %s -> %s)" % (status.get("state"), before, status.get("packets_done")))
+                return "session starting" if retried else "needs a person: see #%d" % issue["number"]
+            if revision and status.get("state") != "COMPONENT_DONE":
+                retried = self.fail_or_retry(issue, pr, "the revision did not end at COMPONENT DONE")
+                return "session starting" if retried else "needs a person: see #%d" % issue["number"]
+        elif not gh.file(base + "verification-report.md", pr["head"]["sha"]):
+            retried = self.fail_or_retry(issue, pr, "no verification report written")
+            return "session starting" if retried else "needs a person: see #%d" % issue["number"]
+        gh.merge(pr, "bible(%s): %s session #%d" % (name, kind, issue["number"]))
+        gh.unlabel(issue["number"], "bible-waiting-answer")
+        gh.close(issue["number"])
+        return "%s merged" % kind
+
+    def check(self, analysis, name, branch):
+        """(gate passes, pages fingerprint) of the component on its branch, with the default branch's own scripts."""
+        scripts = os.path.join(self.skills, "analyzing-a-codebase", "scripts")
+        if not os.path.isfile(os.path.join(scripts, "coverage.py")):
+            self.log("no %s/coverage.py in this checkout: check skipped, treated as failing" % scripts)
+            return False, None
+        work = tempfile.mkdtemp(prefix="bible-gate-")
+        try:
+            self.gh.tarball(branch, work)
+            run = subprocess.run([sys.executable, "-I", os.path.abspath(os.path.join(scripts, "coverage.py")), "--repo", work,
+                                  "--analysis", analysis, "--depth", self.settings.get("depth", "deep"), "--component", name,
+                                  "--report", "-"], capture_output=True, text=True)
+            self.log("gate %s: %s" % (name, (run.stdout.strip().splitlines() or ["no output"])[-1]))
+            printed = subprocess.run([sys.executable, "-I", os.path.abspath(os.path.join(scripts, "status.py")), "--repo", work,
+                                      "--analysis", analysis, "--fingerprint", "--component", name], capture_output=True, text=True)
+            return run.returncode == 0, (printed.stdout.strip() or None)
+        finally:
+            shutil.rmtree(work, ignore_errors=True)
+
+    def assemble_phase(self, tracker, settings, analysis):
+        gh = self.gh
+        for kind, model, title, text in (
+                ("bible-assemble", settings.get("model"), "Codebase analysis - assemble the whole bible", "assemble.md"),
+                ("bible-verify-all", settings.get("verify_model"), "Codebase analysis - verify the whole analysis", None)):
+            if any(i.get("state_reason") == "completed" for i in self.run_issues([kind], state="closed")):
+                continue
+            open_ = self.run_issues([kind])
+            if open_:
+                issue = open_[0]
+                merged = [p for p in gh.linked_prs(issue["number"]) if p.get("merged_at") and p["base"]["ref"] == self.default
+                          and (p.get("user") or {}).get("login", "") in AGENT_LOGINS
+                          and ((p.get("head") or {}).get("repo") or {}).get("full_name") == gh.repo]
+                if merged:
+                    if kind == "bible-verify-all":
+                        facts = report_facts(gh.file("%s/verification-report.md" % analysis, self.default))
+                        if not facts or facts[0] != "PASS" or facts[1]:
+                            return ("verify-all: needs a person: the whole verification's verdict is %s; apply its corrections "
+                                    "(revision mode) and have them re-checked, then close this tracker" % (facts[0] if facts else "missing"))
+                    gh.close(issue["number"])
+                    continue
+                if self.held(issue):
+                    return "%s: needs a person: see #%d" % (kind[6:], issue["number"])
+                state, pr = self.session(issue, self.default, analysis)
+                if state == "no-start":
+                    self.fail_or_retry(issue, None, "no pull request after assignment")
+                return "%s: %s" % (kind[6:], "review and merge pull request #%d" % pr["number"] if pr else state)
+            if text:
+                title, body = issue_text(gh, "%s/ledger/issues/%s" % (analysis, text), self.default, title)
+            else:
+                body = ("Use the verifying-a-codebase-analysis skill (in %s) on the whole analysis in %s/, in this new session. "
+                        "Record the pages' fingerprint (analyzing-a-codebase's scripts/status.py --fingerprint) in the report's "
+                        "header, write verification-report.md, then run status.py --write." % (self.skills, analysis))
+            gh.create_issue(title, "Tracker: #%d\nBase branch: %s\nAttempt: 1\n\n%s" % (tracker["number"], self.default, body),
+                            [kind, self.run_label], assignment(gh, self.default, model))
+            return "%s session assigned" % kind[6:]
+        gh.comment(tracker["number"], "Every component, the assembly and the whole verification are merged. Done.")
+        gh.close(tracker["number"])
+        return "done"
+
+    def render(self, tracker, settings, rows):
+        lines = ["Codebase analysis run, kept up to date by the Bible - queue workflow every 15 minutes. Close this issue to stop "
+                 "the run. Settings are in the hidden block below.", "", "| Component | State |", "| --- | --- |"]
+        lines += ["| `%s` | %s |" % (k, v) for k, v in rows.items()]
+        lines += ["", "Updated %s." % now().isoformat(timespec="minutes"), "",
+                  "<!-- bible-settings %s -->" % json.dumps(settings)]
+        body = "\n".join(lines)
+        if body.split("Updated")[0] != (tracker.get("body") or "").split("Updated")[0]:
+            self.gh.set_body(tracker["number"], body)
+        for k, v in rows.items():
+            self.log("%-20s %s" % (k, v))
+
+    # -- after a push: update issues for the components whose files changed
+    def delta(self, changed, settings_analysis="codebase-analysis"):
+        gh = self.gh
+        self.default = gh.default_branch()
+        catalog = json_file(gh, settings_analysis + "/components.json", self.default)
+        if not catalog or not gh.file(settings_analysis + "/ledger/baseline.json", self.default):
+            self.log("no assembled analysis (components.json and ledger/baseline.json) on %s: nothing to update" % self.default)
+            return
+        sys.path.insert(0, os.path.abspath(os.path.join(self.skills, "analyzing-a-codebase", "scripts")))
+        import components  # noqa: E402  (the toolkit's own membership rules)
+        rows = components.rows_of(catalog)
+        touched = sorted({c for c in components.component_map([{"path": p} for p in changed
+                                                                if not p.startswith((settings_analysis + "/", ".github/"))], rows).values()})
+        for name in touched:
+            files = [p for p in changed if components.assign(p, rows)[0] == name]
+            if gh.issues(["bible-delta", comp_label(name)]):
+                self.log("update issue for %s already open: its session covers every change since the baseline when it runs" % name)
+                continue
+            gh.create_issue("Codebase analysis - update component %s after a code change" % name,
+                            "Component: %s\nBase branch: %s\nAttempt: 1\n\nThe code of component `%s` changed: %s.\n\n"
+                            "Use the tracking-codebase-changes skill (in %s) to bring %s/ in line with every change since the "
+                            "analysis's baseline (not only these files), then run analyzing-a-codebase's scripts/status.py --write: "
+                            "it reports STALE until the changed parts are verified in a new session on a different model "
+                            "(verifying-a-codebase-analysis, scope: component %s)." % (
+                                name, self.default, name, ", ".join("`%s`" % f for f in files[:20]), self.skills,
+                                settings_analysis, name),
+                            ["bible-delta", comp_label(name)], assignment(gh, self.default, None))
+            self.log("update issue for %s (%d files)" % (name, len(files)))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    sub = parser.add_subparsers(dest="cmd", required=True)
+    start = sub.add_parser("start")
+    start.add_argument("--components", default="all")
+    start.add_argument("--model", default="")
+    start.add_argument("--verify-model", required=True)
+    start.add_argument("--concurrency", type=int, default=0)
+    start.add_argument("--analysis", default="codebase-analysis")
+    start.add_argument("--depth", default="deep")
+    sub.add_parser("reconcile")
+    d = sub.add_parser("delta")
+    d.add_argument("--changed-file", required=True, help="file with one changed path per line")
+    d.add_argument("--analysis", default="codebase-analysis")
+    args = parser.parse_args()
+
+    repo, token = os.environ.get("GITHUB_REPOSITORY"), os.environ.get("GH_TOKEN")
+    if not repo or not token:
+        raise SystemExit("GITHUB_REPOSITORY and GH_TOKEN must be set (GH_TOKEN from the BIBLE_ASSIGN_TOKEN secret)")
+    gh = GitHub(repo, token)
+    queue = Queue(gh)
+    try:
+        if args.cmd == "start":
+            if not args.verify_model.strip() or args.model == args.verify_model:
+                raise SystemExit("--verify-model must name a model different from --model: the verification is a second opinion")
+            names = [n.strip() for n in args.components.split(",") if n.strip()]
+            if not names or any(n != "all" and not NAME.match(n) for n in names):
+                raise SystemExit("--components: 'all', or component names separated by commas, as in components.md")
+            gh.ensure_labels()
+            if gh.issues(["bible-tracker"]):
+                raise SystemExit("an analysis run is already open (label bible-tracker): close it first")
+            settings = {"components": args.components, "model": args.model, "verify_model": args.verify_model,
+                        "concurrency": args.concurrency, "analysis": args.analysis, "depth": args.depth}
+            issue = gh.create_issue("Codebase analysis run", "<!-- bible-settings %s -->" % json.dumps(settings), ["bible-tracker"])
+            print("Opened the tracker issue #%d. The queue workflow (Bible - queue) assigns the planning session at its next run "
+                  "(every 15 minutes); run it by hand to start now." % issue.get("number", 0))
+        elif args.cmd == "reconcile":
+            queue.reconcile()
+        else:
+            with open(args.changed_file, encoding="utf-8") as handle:
+                changed = [l.strip() for l in handle if l.strip()]
+            queue.delta(changed, args.analysis)
+    except RuntimeError as err:
+        raise SystemExit(str(err))
+
+
+if __name__ == "__main__":
+    main()
