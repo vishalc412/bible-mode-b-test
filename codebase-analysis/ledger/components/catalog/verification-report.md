@@ -2,26 +2,26 @@
 
 | | |
 | --- | --- |
-| Verdict | PASS AFTER CORRECTIONS |
+| Verdict | PASS |
 | Scope | component catalog |
-| Analysis fingerprint | 88472b50b1711fc6 (`status.py --fingerprint --component catalog`, run after judging; pages unchanged by this check) |
+| Analysis fingerprint | 96716433d8828161 (`status.py --fingerprint --component catalog`, run after judging; this check changed no page) |
 | Analysis snapshot | 3 source files, 108 lines (`components.md` row for `catalog`); generated 2026-11-23 |
 | Repository at verification | 3 source files, 108 lines in `components/catalog/` (plus an empty `__init__.py`); drift since stored inventory: none |
 | Depth stated / depth found | deep / deep (every function has a card with pseudo-code and cited branch lines) |
-| Verified with | GitHub Copilot coding agent (model not stated); a new session (issue "verify component catalog", attempt 1), different from the one that wrote the analysis |
-| Analysis produced with | not stated (issue text names only the base branch `bible/catalog`) |
+| Verified with | GitHub Copilot coding agent (model not stated); a new session (issue "verify component catalog", attempt 1) |
+| Analysis produced with | not stated (the issue names only the base branch `bible/catalog`) |
 | Sampling level | standard |
 | Date | 2026-11-23 |
 
+After corrections: every flagged statement re-checked: 7 of 7 confirmed.
+
 ## Summary
 
-This round supersedes the earlier report of the same date, kept as `verification-report-2026-11-23.md`. I re-ran `coverage.py` and `status.py --fingerprint --component catalog` myself: the fingerprint (88472b50b1711fc6) is identical to the earlier one, so the pages judged are unchanged and none of the earlier corrections has been applied yet. I re-opened all three source files and the orders files that call them, and re-judged every flagged statement against the code; all eight findings below hold.
+This is the second verification of the catalog component. It follows the revision recorded in `revision-log.md`, which applied the corrections of the earlier report (kept as `verification-report-2026-11-23-2.md`; the first round is `verification-report-2026-11-23.md`). All seven applied corrections (V-001 to V-007 of that report) hold against the code. The two items the revision deferred (V-008 and N-01) are not catalog-page problems: they belong to the whole-system `components.json`, `components.md` and data dictionary, and stay open for the assemble step.
 
-The catalog pages are complete and mostly accurate. `coverage.py` passes at `deep`: all 3 files, 13 symbols and 10 function cards are covered, and all 139 citations resolve. The sample is 55 citation rows. Fifty-two are confirmed and three are wrong, so accuracy is 94.5%. That is just under the 95% needed for a plain `PASS`. The four cards audited in depth are all `Complete`.
+`coverage.py`, run by me, passes at `deep`: 3 of 3 files, 13 of 13 symbols, 10 of 10 function cards, 168 of 168 citations resolve. The sample is 64 citation rows: 61 confirmed and 3 overstated, so accuracy is 95.3%. All four cards audited in depth are `Complete`. The earlier gaps are closed: the README now shows the orders HTTP client, says the client's only callers are tests, and states that the routes have no authentication and no TLS; both GET routes have endpoint cards with sequence diagrams.
 
-The weakness is how the component fits into the system, not what its functions do. The README says "no caller of the HTTP routes is identified in the repository". The repository does contain one: `components/orders/catalog_client.py` calls `GET /price/<sku>` over plain HTTP (`catalog_client.py:4,11,21-23`), and `components/orders/test_catalog_client.py` exercises the server. The pages also never say that the catalog HTTP API has no authentication and no TLS. A reader would be misled about the main interface and its security. One card also names the wrong caller of `get_product`.
-
-The verdict is `PASS AFTER CORRECTIONS`. Coverage is 100%, accuracy is above 85%, usable depth is 100%, there are two `major` corrections (limit five), and every problem has a correction.
+The remaining findings are four minor ones. The main one is a search count the pages cannot reproduce: "four hits" for `fetch_supplier_feed` (the repository now has 14, all but one inside the analysis pages themselves). The conclusion drawn from it, that nothing in the code calls the function, is correct. Accuracy is only 0.3 points above the 95% bar, so a reader should treat the margin as thin. There is no `major` finding, no significant omission and no secret value, so the verdict is `PASS`.
 
 ## Scores
 
@@ -30,125 +30,141 @@ The verdict is `PASS AFTER CORRECTIONS`. Coverage is 100%, accuracy is above 85%
 | Source files with a page | 3 / 3 (100.0%) |
 | Symbols accounted for | 13 / 13 (100.0%) |
 | Functions with a full card (pseudo-code, branches cited) | 10 / 10 (100.0%) |
-| Branch lines cited / call-graph edges drawn / front matter | 8 / 8; 3 / 3 same-file calls; 4 / 4 pages |
-| Routes with an endpoint card | 0 / 0 found by the script (100.0%); see finding V-006 |
-| Citations that resolve | 139 / 139 (100.0%) |
+| Branch lines cited / call-graph edges drawn / front matter | 8 / 8; 3 / 3 same-file calls; 5 / 5 pages |
+| Routes with an endpoint card | script finds 0 / 0 routes (100.0%); I found 2 routes in `do_GET` and 2 endpoint cards exist |
+| Citations that resolve | 168 / 168 (100.0%) |
 | Coverage gate | PASS |
-| Citations in the analysis / checked | 139 / 55 |
-| Confirmed / Citation off / Overstated / Wrong / Unsupported | 52 / 0 / 0 / 3 / 0 |
-| Omissions (significant) / Inconsistent | 3 (1 significant) / 1 |
-| Accuracy / citation quality | 94.5% / 94.5% |
+| Citations in the analysis / checked | 168 / 64 |
+| Confirmed / Citation off / Overstated / Wrong / Unsupported | 61 / 0 / 3 / 0 / 0 |
+| Omissions (significant) / Inconsistent | 2 (0 significant) / 0 |
+| Accuracy / citation quality | 95.3% / 95.3% |
 | Cards audited: Complete / Partial / Shallow / Wrong | 4 / 0 / 0 / 0 |
 | Depth / depth, usable | 100% / 100% |
 
 ## How the sample was selected
 
-Run: `python3 -I coverage.py --repo . --analysis codebase-analysis --depth deep --component catalog --report ledger/components/catalog/verification-coverage.md`. This rewrote the component's `citations.tsv` (139 rows: README 40, catalog.md 49, service.md 41, test_catalog.md 9). Sampling is `standard`.
+Run: `python3 -I coverage.py --repo . --analysis codebase-analysis --depth deep --component catalog --report ledger/components/catalog/verification-coverage.md`. It rewrote `ledger/components/catalog/citations.tsv` (168 rows). Level `standard`.
 
-- **Group A** (component `README.md`, all): every README row, 40 rows. The index list is in the table below.
-- **Group B** (`inferred` or `assumed`, all): one row, 89 (`catalog.md:269`).
-- **Group C** (rule, outbound, security, auth, permission headings, all): the Business rules and Outbound calls tables are in the README, so they are already in group A.
-- **Group D** (other rows whose index is divisible by 7): rows 42, 49, 56, 63, 70, 77, 84, 91, 98, 105, 112, 119, 126, 133 (14 rows).
-- **Group E** (calls from catalog into other components): none. The coverage report lists 0, and I searched `components/catalog/` for imports of `orders` and found none.
-- Total 55 rows.
+- **Group A** (component `README.md`, all): rows 26-68, 43 rows.
+- **Group B** (`inferred` or `assumed`, all): rows 4, 12 (`lld/api/catalog/catalog.md`) and 118 (`lld/catalog/catalog.md:269`), 3 rows.
+- **Group C** (headings with rule, outbound, security, auth, permission): the README holds the Business rules and Outbound calls tables, so those rows are already in group A. No other page has such a heading.
+- **Group D** (other rows with index divisible by 7): 7, 14, 21, 70, 77, 84, 91, 98, 105, 112, 119, 126, 133, 140, 147, 154, 161, 168, 18 rows.
+- **Group E** (calls from catalog into another component): none. The coverage report lists 0, and `components/catalog/` imports nothing from `orders`.
+- Total 64 rows. The tsv lists each distinct range once per page, so a few README ranges (for example `catalog.py:8-12,15-29` on line 28) have no row of their own; I read every README line anyway (see "Outside the sample").
 
 ## Earlier corrections re-confirmed
 
-None: first verification of this component.
+Each was re-opened in the pages and in the code.
+
+| Earlier item | Holds? | Lines re-opened |
+| --- | --- | --- |
+| V-001 HTTP client missing from README | Yes. Structure diagram and evidence table show `orders.catalog_client` -> `service` over HTTP on :8001, "tests only in repository"; text at README line 103 gives the `remote_price\|remote_line_total` search: 10 hits in 2 files, which I reproduced. | `components/orders/catalog_client.py:1-4,11,16,19-23,29`; `components/orders/test_catalog_client.py:37-54` |
+| V-002 `get_product` caller | Yes. `catalog.md` lists `price_of` (line 21) and `in_stock` (line 28) only. | `components/catalog/catalog.py:21,28`; `components/catalog/service.py:31` |
+| V-003 `price_of` and `in_stock` callers | Yes. `orders.line_total` and `orders.validate` are named. | `components/orders/orders.py:19-20,35-42` |
+| V-004 no authentication, no TLS | Yes. README lines 105 and 155 and the endpoint cards say so, with the `(inferred` mark. | `components/catalog/service.py:24-34,40-43,48` |
+| V-005 Tests table rows | Yes. Both rows have three cells. | `components/catalog/test_catalog.py:6-8` |
+| V-006 endpoint cards and sequence diagram | Yes. `lld/api/catalog/catalog.md` has cards for `/health` and `/price/<sku>` with request, responses (200, 404), auth, data and a sequence diagram with `alt` for the price route. Statuses match `service.py:26-34`. | `components/catalog/service.py:24-34` |
+| V-007 `do_GET` -> `price_of` edge | Yes. `service.md` call graph has it. | `components/catalog/service.py:31` |
+| V-008 whole-system `components.json` / `components.md` | Not applied by design (outside the component's folder). `components.md` still lists `catalog` as called by `orders` through `in_stock, price_of` only. Still open for the assemble step. | `components/orders/catalog_client.py:19-23` |
+| N-01 `name` field in the data dictionary | Not applied by design; the data dictionary does not exist yet. | `components/catalog/catalog.py:8-12` |
 
 ## Corrections
 
 | # | Page and line, or citation row | Verdict | Weight | What the code shows | Evidence | Correction |
 | --- | --- | --- | --- | --- | --- | --- |
-| V-001 | `lld/catalog/README.md:32,97,141` (rows 18, 35) | Wrong | major | `orders` has an in-repo HTTP client of the catalog API (the repository owner confirms it is the path for when orders runs as its own service). Its only callers today are `test_catalog_client.py`, so there is no production HTTP caller in the repository, but the client and the plain-HTTP link exist and the pages deny both. `remote_price` builds `<CATALOG_URL>/price/<sku>` (default `http://127.0.0.1:8001`) and calls `urlopen`. The module docstring says it is for orders running as its own service. | `components/orders/catalog_client.py:1-4,11,16,21-23`; `components/orders/test_catalog_client.py:44-48,66-70` | Replace "no caller of the HTTP routes is identified" with: `orders` has an HTTP client, `catalog_client.remote_price`, for `GET /price/<sku>` over plain HTTP (for when orders runs as its own service); only the tests call it today. Add that edge (dashed or labelled "tests only") to the Structure diagram and its evidence table, and drop the "HTTP clients not identified are not shown" caveat. |
-| V-002 | `lld/catalog/catalog.md:69` (row 46) | Wrong | minor | `service.py:31` calls `catalog.price_of`, not `get_product`. The handler reaches `get_product` only through `price_of`. | `components/catalog/service.py:31`; `components/catalog/catalog.py:21` | Remove the HTTP handler from `get_product`'s "Called by". It is called by `price_of` (`catalog.py:21`) and `in_stock` (`catalog.py:28`). |
-| V-003 | `lld/catalog/catalog.md:98,138` | Omission | minor | `price_of` is also called by `orders.line_total`. `in_stock` is called by `orders.validate`. The README says so, but the cards say "Called by: not established" for `in_stock` and omit orders for `price_of`. | `components/orders/orders.py:20,40` | Add `orders.line_total` (`orders.py:20`) to the `price_of` "Called by" and `orders.validate` (`orders.py:40`) to the `in_stock` "Called by". |
-| V-004 | `lld/catalog/README.md` (Public interface, Errors and resilience, For the whole-system pages) | Omission (significant) | major | The HTTP API has no authentication or authorisation check and no TLS. It binds the default `127.0.0.1:8001` over plain `ThreadingHTTPServer`, and any host or port can be set through `CATALOG_HOST` / `CATALOG_PORT`. The pages call out plain HTTP only for the supplier feed. | `components/catalog/service.py:24-34,40-43`; `components/orders/catalog_client.py:4` ("today the call is plain HTTP") | State that the routes are unauthenticated and served over plain HTTP, and that the one known client is plain HTTP too. Add it to "For the whole-system pages" as a risk. |
-| V-005 | `lld/catalog/test_catalog.md:40-43` | Inconsistent | minor | The Tests table header has three columns (Test, What it checks, Evidence). Both rows have two cells, with the citation inside the second. | `lld/catalog/test_catalog.md:40-43` | Split each row into three cells so the table renders correctly. |
-| V-006 | `lld/catalog/README.md` (Public interface) | Omission | minor | The two GET routes (`/health`, `/price/<sku>`) have no endpoint pages (`lld/api/catalog/`). They are covered only inside the `do_GET` card, because the inventory counts 0 routes for the stdlib `BaseHTTPRequestHandler`. The card lacks an authentication line and a sequence diagram for the three-party GET /price flow (client, handler, `catalog.price_of`, with its 404 `alt`). | `components/catalog/service.py:24-34` | Add endpoint cards for the two routes (inputs, 200 and 404 responses, no authentication, data touched) and a sequence diagram for `GET /price/<sku>`. |
-| V-007 | `lld/catalog/service.md:41-51` | Omission | minor | The call graph omits the edge `do_GET -> catalog.price_of`, the handler's only call into the catalog module. | `components/catalog/service.py:31` | Add the edge with the label "looks up price". |
-| V-008 | `codebase-analysis/components.json` and `components.md` (outside this component's folder) | Inconsistent | minor | `orders` `calls_into` lists only `in_stock` and `price_of` (in-process). The HTTP call to the catalog API in `catalog_client.py` is not listed. | `components/orders/catalog_client.py:21-23` | For the whole-system assembly: record the HTTP link orders -> catalog. This file is not changed here. |
+| V-009 | `lld/catalog/README.md:149,157` (rows 64, 65, 66) | Overstated | minor | The pages say a repository search for `fetch_supplier_feed` "found four hits, with the only source-code hit being its definition". The search now gives 14 hits in 7 files; 13 are in the analysis folder itself and 1 is the definition. The count cannot be reproduced and depends on how many pages mention the name. The conclusion (no call site) is right. | `components/catalog/catalog.py:36-39`; search `fetch_supplier_feed` in the repository | Say "the only hit outside the analysis pages is the definition at `catalog.py:36`" and drop the count. |
+| V-010 | `lld/api/catalog/catalog.md:280` | Omission | minor | The `Called by` of `GET /price/<sku>` names `remote_price` and its tests only. `test_percent_encoded_sku_decoded` and `test_query_string_ignored_by_server` also call `/price/...` directly through the test's own `get` helper. | `components/orders/test_catalog_client.py:30-35,56-62` | Add "and direct requests in `test_catalog_client.py:56-62`". |
+| V-011 | `lld/catalog/README.md` (Outbound calls, Data) | Omission | minor | `IMAGE_CDN` (`https://cdn.example.com/img/`) is the base of every URL `image_url` returns, so a reader of the README learns about the supplier feed but not about the CDN host the product images point at. It is only a string; the code makes no request to it. | `components/catalog/catalog.py:6,32-33` | Add one sentence to the README: image URLs are built, not fetched, from the CDN prefix. |
 
 ## Coverage findings
 
-`coverage.py` result: **PASS** (depth deep, component catalog). Every measure is 100% (table above). Drift since the stored inventory: none. `ledger/not-documented.md` does not exist, so nothing is excluded. The inventory total (3 files, 108 lines) matches the `components.md` row and my own count (`catalog.py` 47, `service.py` 49, `test_catalog.py` 12). The empty `__init__.py` is not a source file.
+`coverage.py` result: **PASS** (depth deep, component catalog). Every measure is 100% (copied from `verification-coverage.md`):
 
-The gate reports 0 routes, but `do_GET` serves two routes (finding V-006). The script cannot see routes dispatched by `BaseHTTPRequestHandler`, so this is a gap in the tool, not in the pages.
+| Measure | Done / Total | Share |
+| --- | --- | --- |
+| Source files with a page | 3 / 3 | 100.0% |
+| Symbols accounted for | 13 / 13 | 100.0% |
+| Functions with a full card | 10 / 10 | 100.0% |
+| Routes with an endpoint card | 0 / 0 | 100.0% |
+| Citations that resolve | 168 / 168 | 100.0% |
+| Branch lines cited in their card | 8 / 8 | 100.0% |
+| Same-file calls drawn in call graphs | 3 / 3 | 100.0% |
+| LLD pages with knowledge-graph front matter | 5 / 5 | 100.0% |
+| Calls into other components cited on the calling card | 0 / 0 | 100.0% |
+
+Drift since the stored inventory: none. `ledger/not-documented.md` does not exist, so nothing is excluded. The inventory (3 files, 108 lines) matches the `components.md` row and my count: `catalog.py` 47, `service.py` 49, `test_catalog.py` 12. The empty `__init__.py` is not a source file. The script finds no routes in `BaseHTTPRequestHandler` code; the pages cover the two routes anyway.
 
 ## Depth findings
 
-The component has 3 source files (fewer than seven), so the largest card of each non-test file was audited, plus two extra cards. The test file's card is a row, not a card.
+Fewer than seven source files, so the largest non-test card of each file, plus the two endpoint cards.
 
 | File | Card | Score | What is missing |
 | --- | --- | --- | --- |
-| `catalog.py` | `apply_feed` (42-47) | Complete | Every branch (the `for`, `if`, absent `products` key), write, cast and error (`KeyError`, `ValueError`, `TypeError`) is stated. Pseudo-code matches the code. |
-| `service.py` | `CatalogHandler.do_GET` (24-34) | Complete | `/health`, `/price/` prefix, `unquote`, the `KeyError` -> 404 path, the fallback 404 and the ignored query string are all stated, and the pseudo-code follows the code's order. It does not state that there is no authentication (V-004, V-006). |
-| `service.py` | `make_server` (40-43) | Complete | Falsey-host and `None`-port rules, the environment defaults and the `int()` conversion are all correct. |
-| `catalog.py` | `price_of` (20-24) | Complete | Behaviour fully described. Only the "Called by" is incomplete (V-003). |
-
-Routes: `GET /health` and `GET /price/<sku>` are judged inside the `do_GET` card (inputs, status codes and data touched are right; authentication is not mentioned).
+| `catalog.py` | `apply_feed` (42-47) | Complete | Loop, `if`, missing `products` key, `float`/`int` writes and the raise paths all stated; pseudo-code matches. |
+| `service.py` | `CatalogHandler.do_GET` (24-34) | Complete | `/health`, `/price/` prefix, `unquote`, `KeyError` -> 404, fallback 404 and query-string handling stated; order matches. |
+| `service.py` | endpoint card `GET /health` | Complete | Inputs, 200 and 404 bodies, no auth, no data. |
+| `service.py` | endpoint card `GET /price/<sku>` | Complete | Decoded SKU, empty or unknown SKU -> 404, ignored query, data read through `price_of`, no auth. Only V-010 (callers) is missing. |
 
 ## Diagram findings
 
-Rendered? No. The diagrams were read against the syntax rules, not rendered (no renderer available).
+Rendered? No: read against the syntax rules only, no renderer available.
 
 | Diagram | D1 | D2 | D3 | D4 | D5 | D7 | D9 | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `README.md` Structure flowchart | ok | ok | fail | ok | ok | ok | ok | D3: the HTTP client `orders.catalog_client` is missing (V-001). Every edge has a row in the evidence table, and I opened each cited line. The supplier edge says HTTP, as `catalog.py:5` shows. |
-| `README.md` Main types class diagram | ok | ok | ok | ok | ok | ok | ok | `_send`, `do_GET` and `log_message` match `service.py:15-37`. The `make_server` -> handler edge is cited. |
-| `catalog.md` Call graph | ok | ok | ok | ok | ok | ok | ok | Edges match `catalog.py:21,28,17,44-47,38-39`. `image_url` has no edges and is not drawn, which is acceptable. |
-| `service.md` Call graph | ok | ok | fail | ok | ok | ok | ok | The `do_GET` -> `catalog.price_of` edge is missing (V-007). |
-| Missing: sequence for `GET /price/<sku>` | fail | | | | | | | V-006 (three participants and an error path). No data-model diagram is expected in component scope. |
+| `README.md` Structure flowchart | ok | ok | ok | ok | ok | ok | ok | Every edge has an evidence row, all opened. The client edge says HTTP, default :8001, tests only; the supplier edge says HTTP (`catalog.py:5`). |
+| `README.md` Main types class diagram | ok | ok | ok | ok | ok | ok | ok | Methods match `service.py:15-37`; `*args` inside parentheses might upset a strict parser (unverified, not rendered). |
+| `catalog.md` Call graph | ok | ok | ok | ok | ok | ok | ok | Edges match `catalog.py:17,21,28,44-47,38-39`. |
+| `service.md` Call graph | ok | ok | ok | ok | ok | ok | ok | `do_GET` -> `price_of` edge present (`service.py:31`). |
+| `api/catalog` sequence, `/health` | ok | ok | ok | ok | ok | ok | ok | Two participants, `alt` for 404. |
+| `api/catalog` sequence, `/price/<sku>` | ok | ok | ok | ok | ok | ok | ok | Three participants, `alt` for known and unknown SKU, "plain HTTP" on the edge. |
 
-I searched `components/catalog/` for ways the code reaches outside itself. The only one is `urllib.request.urlopen` of the supplier URL (`catalog.py:38`); it is on the diagram. No database, queue, mail or file access.
+Search of `components/catalog/` for ways to reach outside: only `urllib.request.urlopen` of the supplier URL (`catalog.py:38`); no database, queue, mail or file access. No data-model diagram is expected in component scope.
 
 ## Data dictionary and mind map findings
 
-Not in component scope (they do not exist yet; the whole verification covers them). The only store this component owns is the in-memory `_PRODUCTS` dictionary. The README's Data table covers the fields written (`price`, `stock`), and the `apply_feed` card covers the feed fields (`products`, `sku`, `price`, `stock`). The `name` field is not mentioned: minor, for the data dictionary.
+Not in component scope; they do not exist yet. The one store this component owns is `_PRODUCTS`; the README Data table and the `apply_feed` card cover `price`, `stock`, `products` and `sku`. The `name` field is still not mentioned (N-01, for the data dictionary).
 
 ## Knowledge base findings
 
-Not in component scope. Front matter on all 4 pages is present (coverage: 4 / 4). `uses`, `reads`, `writes`, `calls`, `config` and `exposes` agree with the code. The `exposes: route:GET /price/{sku}` entry rests on `service.py:28`.
+Not in component scope (no graph yet). Front matter is present on all 5 pages, and `uses`, `reads`, `writes`, `calls`, `config` and `exposes` agree with the code. One note: `lld/catalog/README.md` front matter `uses` lists `catalog.price_of` and `catalog.in_stock`, which are its own functions, and omits the orders client edge; harmless, but the graph builder should be checked at assembly.
 
 ## Readability and prose findings
 
-- The README opens with a table and a Responsibility paragraph, in a sensible order. The three module pages have a Summary and an Index, and every function can be found from the index.
-- The rule numbers `C-01` to `C-03` are the component's own rule ids, not claim numbers in the old layout; no template text is left.
-- Every fifth cited sentence or row on the README was checked: all agree with their citation except those in V-001. Rows on lines 28, 97 and 141 were checked specifically.
-- V-005 (a table that will not render).
+- The README opens with a table and a Responsibility paragraph; the three module pages open with a Summary and an Index. Every function is reachable from an index.
+- Rule ids `C-01` to `C-03` are the component's own, not old-layout claim numbers. No template text is left.
+- Every cited sentence or row of the README was read against its citation (not only every fifth): all agree except those in V-009.
+- The README mixes "the HTTP client is exercised by the orders tests" and "tests only" wording consistently.
 
 ## Ledger findings
 
-Not in component scope (`progress.md` and `ledger/coverage-ledger.md` belong to planning). The component folder holds `citations.tsv`, `coverage-report.md`, `next.md`, `session.json` and `status.json` (state `COMPONENT_DONE`, 3 of 3 packets).
+Not in component scope. The folder holds `citations.tsv`, `coverage-report.md`, `next.md`, `revision-log.md`, `session.json`, `status.json` (state `COMPONENT_DONE`, 3 of 3 packets) and the verification files.
 
 ## Consistency findings
 
-- The README, module pages, front matter and `components.md` agree on names, file counts and line counts (3 files, 108 lines, 10 functions).
-- README line 91 and 92 say `orders` calls `price_of` and `in_stock`, while `catalog.md:98,138` disagree (V-003).
-- README line 97 and 141 disagree with `orders/catalog_client.py` (V-001).
-- No secret value appears in the analysis. The only credentials-like text is URLs without credentials.
+- Names, file counts (3), line counts (108) and function counts (10) agree across README, module pages, front matter and `components.md`.
+- `components.md` and `components.json` do not show the HTTP link orders -> catalog (V-008, deferred to assembly).
+- No secret value appears in the analysis. The only URLs are host names without credentials.
 
 ## Limits
 
-- A sample was checked (55 of 139 citations), not every citation. Four function cards were audited, not all ten.
+- A sample was checked (64 of 168 citations); four cards were audited, not all ten.
 - The coverage script matches names; it does not read meaning.
 - Verification shows the analysis matches the code, not what runs in production. The application, its tests and its build were not run.
 - Diagrams were read, not rendered.
-- The README's "4 hits" search count for `fetch_supplier_feed` was not reproducible (the analysis pages themselves now contain the name); I confirmed only that `catalog.py:36` is the single source-code occurrence.
-- The analysing model is not stated, so I cannot say whether the same model wrote and verified it. A person or another model should re-check the two `major` corrections (V-001, V-004) and a few confirmed statements.
+- Accuracy is 95.3%, 0.3 points above the `PASS` bar. One more overstated row would give `PASS AFTER CORRECTIONS`.
+- The analysing model is not stated, so I cannot say whether the same model wrote and verified it. A person or another model should re-check a few confirmed statements, especially the two `(inferred` no-authentication statements.
 
 ## Everything checked
 
 | Citation row | Why selected | Verdict | Note |
 | --- | --- | --- | --- |
-| 1-40 (all of `README.md`), except 18 and 35 | A | Confirmed | Each cited line opened. Rows on `orders.py` and `catalog.py` for the business rules, outbound call, configuration and errors confirmed. |
-| 18 | A (`README.md:97`) | Wrong | V-001 |
-| 35 | A (`README.md:141`) | Wrong | V-001 (the "no HTTP caller identified" statement) |
-| 36 | A (`README.md:141`) | Confirmed | Plain HTTP and the docstring's "nightly from cron" claim; no schedule in the repository |
-| 42, 49, 56, 63, 70, 77, 84 | D (`catalog.md`) | Confirmed | |
-| 89 | B (`inferred`, `catalog.md:269`) | Confirmed | Correctly marked inferred; no schedule at `catalog.py:36-39` |
-| 91, 98, 105, 112, 119, 126, 133 | D (`service.md`, `test_catalog.md`) | Confirmed | |
-| 46 | `catalog.md:69` | Wrong | V-002 (the other two rows on that line, 44 and 45, are Confirmed) |
-| 51 | `catalog.md:98` | Confirmed | `service.py:31` calls `price_of`; omission of `orders` is V-003 |
+| 4, 12 | B (`api/catalog/catalog.md:20,67`) | Confirmed | Marked `(inferred`; the handler has no identity check (`service.py:24-34`). |
+| 118 | B (`catalog.md:269`) | Confirmed | Marked inferred; no schedule at `catalog.py:36-39`. |
+| 26-63, 67, 68 | A (`README.md`) | Confirmed | Each cited line opened. Includes rows 46-48 (business rules), 50 (supplier JSON), 51 (`CATALOG_HOST`), 56-59 (no logging or metrics: searched `components/catalog/` for logging, metric, trace: none), 62-63 (client and tests). |
+| 64, 65, 66 | A (`README.md:149,157`) | Overstated | V-009. The code at `catalog.py:36-39` supports "not called here"; the hit count is not reproducible. |
+| 7, 14, 21 | D (`api/catalog/catalog.md`) | Confirmed | |
+| 70, 77, 84, 91, 98, 105, 112 | D (`catalog.md`) | Confirmed | |
+| 119, 126, 133, 140, 147, 154 | D (`service.md`) | Confirmed | |
+| 161, 168 | D (`test_catalog.md`) | Confirmed | |
 
-Outside the sample: the `orders` caller (`catalog_client.py`) and `test_catalog_client.py` were read in full; `orders.py:5,19-20,35-42` confirmed. Group E (calls from catalog into another component): none.
+Outside the sample (read by me, all confirmed except as noted): every other README line, including the line-28 `orders` import and `price_of`/`in_stock` calls (`orders.py:5,19-20,35-42`), the structure evidence table, the configuration defaults (`service.py:40-42`) and the 10 runtime functions (6 in `catalog.py`, 4 in `service.py`); all `catalog.md` and `service.md` callers and branch tables; both endpoint cards' status codes (`service.py:26-34`); the `remote_price|remote_line_total` search (10 hits, 2 files: `catalog_client.py`, `test_catalog_client.py`), reproduced. Group E: none. Findings V-010 and V-011 come from this reading, not from the sample.
