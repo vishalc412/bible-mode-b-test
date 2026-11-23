@@ -29,11 +29,13 @@ The component stores three product records in the module-level `_PRODUCTS` dicti
 
 ## Structure
 
-The modules and their direct data and call paths are shown below; HTTP clients not identified in the repository are not shown.
+The modules and their direct data and call paths are shown below; the HTTP client is exercised by the orders tests.
 
 ```mermaid
 flowchart TB
   orders["orders<br/>direct in-process caller"]
+  ordershttp["orders.catalog_client<br/>remote price client"]
+  ordershttptests["test_catalog_client.py<br/>exercises remote client"]
   subgraph catunit["catalog"]
     service["service.py<br/>HTTP GET handler"]
     catalogmod["catalog.py<br/>lookups and feed updates"]
@@ -42,6 +44,8 @@ flowchart TB
   end
   supplier{{"Supplier One feed<br/>external"}}
   orders -->|"price_of and in_stock"| catalogmod
+  ordershttptests -->|"calls remote_price and remote_line_total"| ordershttp
+  ordershttp -->|"GET /price/{sku}<br/>HTTP, default :8001<br/>tests only in repository"| service
   service -->|"catalog.price_of"| catalogmod
   catalogmod -->|"reads and updates"| records
   testmod -->|"catalog.price_of"| catalogmod
@@ -51,6 +55,8 @@ flowchart TB
 | Element | Evidence |
 | --- | --- |
 | `orders` -> `catalogmod` | `components/orders/orders.py:5,19-20,35-42` |
+| `ordershttptests` -> `ordershttp` | `components/orders/test_catalog_client.py:37-54` |
+| `ordershttp` -> `service` | `components/orders/catalog_client.py:1-4,11,16,19-23`; search `remote_price|remote_line_total` in `*.py`: 10 hits in 2 files, calls occur in `test_catalog_client.py` and the client's internal call at `components/orders/catalog_client.py:29` |
 | `service` -> `catalogmod` | `components/catalog/service.py:12,24-34` |
 | `catalogmod` -> `_PRODUCTS` | `components/catalog/catalog.py:8-12,15-17,42-47` |
 | `testmod` -> `catalogmod` | `components/catalog/test_catalog.py:3,7-8` |
@@ -90,11 +96,13 @@ classDiagram
 | --- | --- | --- | --- |
 | `catalog.price_of(sku)` | function | [catalog module](catalog.md#price_ofsku) | `orders` calls it for each line total (`components/orders/orders.py:19-20`). |
 | `catalog.in_stock(sku, qty)` | function | [catalog module](catalog.md#in_stocksku-qty1) | `orders.validate` calls it for positive-quantity lines (`components/orders/orders.py:35-42`). |
-| `GET /health` | route | [service module](service.md#cataloghandlerdo_get) | The handler matches `/health` and returns status 200 (`components/catalog/service.py:26-27`). |
-| `GET /price/<sku>` | route | [service module](service.md#cataloghandlerdo_get) | The handler matches the `/price/` prefix, looks up the remaining decoded path, and responds (`components/catalog/service.py:28-34`). |
+| `GET /health` | route | [endpoint card](../api/catalog/catalog.md#get-health) | The handler matches `/health` and returns status 200 (`components/catalog/service.py:26-27`). |
+| `GET /price/<sku>` | route | [endpoint card](../api/catalog/catalog.md#get-pricesku) | The handler matches the `/price/` prefix, looks up the remaining decoded path, and responds (`components/catalog/service.py:28-34`). |
 | `python3 -m components.catalog.service` | command | [service module](service.md#module-level-code) | The documented invocation and main guard (`components/catalog/service.py:1-5,46-49`). |
 
-The repository shows `orders` as a caller of the two Python functions; no caller of the HTTP routes is identified here (`components/orders/orders.py:5,19-20,35-42`; the API's documented purpose is in `components/catalog/service.py:1-5`).
+`orders.catalog_client.remote_price` constructs `GET /price/<sku>` using `CATALOG_URL` (default `http://127.0.0.1:8001`) and plain HTTP. A search for `remote_price|remote_line_total` in Python files found 10 hits in 2 files: the test call sites and `remote_line_total`'s internal call to `remote_price`; no other in-repository caller was found (`components/orders/catalog_client.py:1-4,11,16,19-23,26-29`; `components/orders/test_catalog_client.py:37-54`; search `remote_price|remote_line_total` in `*.py`).
+
+The GET routes do not check authentication or authorization, and the server is created with `ThreadingHTTPServer` without TLS configuration (inferred: `CatalogHandler.do_GET` has no identity or permission checks and `make_server` constructs the server that the module identifies as HTTP; `components/catalog/service.py:24-34,40-43,48`).
 
 ## Business rules
 
@@ -138,12 +146,13 @@ The repository shows `orders` as a caller of the two Python functions; no caller
 
 ## Surprises
 
-`orders` uses direct Python calls to `price_of` and `in_stock`; the HTTP API is another interface, and no HTTP caller is identified in the repository (`components/orders/orders.py:5,19-20,35-42`; `components/catalog/service.py:24-34`). The supplier URL uses plain HTTP, and the fetch function's docstring says it runs nightly from cron, but a repository search for `fetch_supplier_feed` found four hits, with the only source-code hit being its definition (`components/catalog/catalog.py:36-39`; search: `fetch_supplier_feed` in the repository, 4 hits). This component does not show the claimed schedule.
+`orders` uses direct Python calls to `price_of` and `in_stock`; it also has an HTTP client for the price route, which is exercised by the orders tests (`components/orders/orders.py:5,19-20,35-42`; `components/orders/catalog_client.py:19-23`; `components/orders/test_catalog_client.py:37-54`). The supplier URL uses plain HTTP, and the fetch function's docstring says it runs nightly from cron, but a repository search for `fetch_supplier_feed` found four hits, with the only source-code hit being its definition (`components/catalog/catalog.py:36-39`; search: `fetch_supplier_feed` in the repository, 4 hits). This component does not show the claimed schedule.
 
 The component and class diagrams were checked by reading their syntax; no Mermaid renderer was available.
 
 ## For the whole-system pages
 
+- **Risk:** The catalog GET routes have no authentication or authorization checks and use plain HTTP without TLS; the known orders HTTP client also uses plain HTTP (`components/catalog/service.py:24-34,40-43,48`; `components/orders/catalog_client.py:1-4,11,19-23`).
 - **Risk:** Supplier-feed transport uses plain HTTP, and the URL is hard-coded (`components/catalog/catalog.py:5,36-39`).
 - **Surprise:** The supplier-fetch docstring claims a nightly cron run, but no invocation is shown by the repository search for `fetch_supplier_feed` (4 hits, with the only source-code hit at `components/catalog/catalog.py:36`) or by the function body (`components/catalog/catalog.py:36-39`).
 - **Open questions:** No question requiring a person to answer was identified from the catalog component files.

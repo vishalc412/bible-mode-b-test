@@ -39,8 +39,8 @@ The test class inherits from `unittest.TestCase` and has one test. Running this 
 
 | Test | What it checks | Evidence |
 | --- | --- | --- |
-| `CatalogTest` | Groups the catalog test under `unittest.TestCase` (`components/catalog/test_catalog.py:6-8`). |
-| `CatalogTest.test_price_of_known_sku` | Asserts that `catalog.price_of("SKU-1")` equals `24.0` (`components/catalog/test_catalog.py:7-8`). |
+| `CatalogTest` | Groups the catalog test under `unittest.TestCase` | `components/catalog/test_catalog.py:6-8` |
+| `CatalogTest.test_price_of_known_sku` | Asserts that `catalog.price_of("SKU-1")` equals `24.0` | `components/catalog/test_catalog.py:7-8` |
 
 ## Module-level code
 

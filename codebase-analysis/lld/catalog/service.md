@@ -45,9 +45,11 @@ flowchart LR
   make_server["make_server"]
   handler["CatalogHandler"]
   doget["CatalogHandler.do_GET"]
+  priceof["catalog.price_of"]
   send["CatalogHandler._send"]
   make_server -->|"passes handler class"| handler
   doget -->|"sends each response"| send
+  doget -->|"looks up price"| priceof
 ```
 
 ## Classes
