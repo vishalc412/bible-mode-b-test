@@ -37,7 +37,7 @@ Run with `python3 -I`. They parse files and never execute repository code.
 
 | Script | When |
 | --- | --- |
-| [scripts/next.py](scripts/next.py) `--repo . --analysis <folder> --depth <depth> [--component <name>]` | **The loop.** Before every piece of work. Prints the one next job: a packet (file, lines, page, every card and route to write), a pass, `NEW CHAT` or `DONE`; with `--component`, that component's jobs only, ending in `COMPONENT DONE <name>`. `--board` prints where every component stands |
+| [scripts/next.py](scripts/next.py) `--repo . --analysis <folder> --depth <depth> [--component <name>]` | **The loop.** Before every piece of work. Prints the one next job: a packet (file, lines, page, every card and route to write), a pass, `NEW CHAT` or `DONE`; with `--component`, that component's jobs only, ending in `COMPONENT DONE <name>` (or `NEXT REVISION <name>` while its verification's corrections are not applied). `--board` prints where every component stands |
 | [scripts/discover.py](scripts/discover.py) `--repo . --analysis <folder>` | After pass 2. Checks the `## Components` plan and writes the catalog (`components.json`, `components.md` with a call graph) and ready-to-paste issue texts (`ledger/issues/`) |
 | [scripts/inventory.py](scripts/inventory.py) `--repo . --analysis <folder>` | Pass 1, and whenever files change. Writes the work list `ledger/symbol-checklist.md`: every file, function, route, branch line and call |
 | [scripts/coverage.py](scripts/coverage.py) `--repo . --analysis <folder> --depth <depth> [--component <name>]` | After each component, and in the quality gate. Fails until the work list is fully documented; writes `ledger/coverage-report.md` (with `--component`: `ledger/components/<name>/`) |
