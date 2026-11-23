@@ -577,6 +577,8 @@ The questions an agent must not guess the answer to.
 
 ## progress.md
 
+Name the repository by its name, and every file by its path from the repository root: never an absolute path such as `/home/runner/work/...` or `/Users/<name>/...` in any page or ledger file. The analysis is committed, so an absolute path leaks the machine and the user's name.
+
 Headings `next.py` reads: `## Components` (pass 2, the plan table) and `## Sweep` (pass 6). Write `## Sweep` only when pass 6 is done: `next.py` takes the heading as the pass done, so an empty one skips the sweep. In component mode, a component's sessions do not edit `progress.md`: its state is in `ledger/components/<name>/status.json`.
 
 The work plan (every source file, component, lines, packets, status), packets done with the line ranges, components done, the last `Q-` number, every search with its hit count and what became of the hits, each `coverage.py` run with its figures, the reader test answers, and the next step.
@@ -586,7 +588,7 @@ The work plan (every source file, component, lines, packets, status), packets do
 ```markdown
 # Revision log
 
-Applied from: verification-report.md of <date>, verdict <verdict>.
+Applied from verification-report.md, fingerprint <the report's Analysis fingerprint>, of <date>, verdict <verdict>.
 
 | Item | Location | What was done | Code re-opened | Agrees with the report? |
 

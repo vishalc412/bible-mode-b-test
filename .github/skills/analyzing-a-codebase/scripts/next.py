@@ -20,6 +20,7 @@ Prints one of:
   NEW CHAT               stop; tell the user to continue in a new chat
   STOP: no progress      the same job came back with nothing written: stop and tell the user why
   DONE                   the coverage gate passes; finish as SKILL.md says
+  NEXT REVISION NAME ... (--component) the component's verification asked for corrections not applied yet: apply them
   COMPONENT DONE NAME    (--component) the component's pages are written and its check passes: stop
   WAITING FOR ANSWERS    (--component) questions.md has open questions: stop and ask the person
 
@@ -47,13 +48,31 @@ import inventory  # noqa: E402
 import coverage  # noqa: E402
 import delta  # noqa: E402
 import components  # noqa: E402
+import status  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+REPO_ABS = None  # set by main(); commands are printed relative to it
+
+
+def shown(name):
+    """A script's path as printed and saved in ledger/next.md: relative to the repository when the skill sits
+    inside it, under ~ when it sits in the home folder, so no machine-specific path lands in a committed file."""
+    path = os.path.realpath(os.path.join(HERE, name))
+    for base, prefix in ((REPO_ABS, ""), (os.path.expanduser("~"), "~/")):
+        if not base:
+            continue
+        base = os.path.realpath(base)
+        try:
+            if os.path.commonpath([path, base]) == base:
+                return prefix + os.path.relpath(path, base)
+        except ValueError:  # another drive (Windows)
+            continue
+    return path
 PACKET_LINES = 400
 PACKET_FUNCTIONS = 25
 NOT_CARDED = ("class", "table", "view", "paragraph", "imports")
 STOP_AFTER_REPEATS = 2  # the same job printed this many more times, nothing written in between: STOP
-JOB_HEADS = ("NEXT PACKET", "NEXT PASS", "NEXT DELTA")
+JOB_HEADS = ("NEXT PACKET", "NEXT PASS", "NEXT DELTA", "NEXT REVISION")
 CLOSING_HEADS = ("NEW CHAT", "DONE", "COMPONENT DONE", "WAITING FOR ANSWERS")
 OPEN_QUESTION = re.compile(r"^\s*[-*]\s+\[ \]\s+\S", re.M)
 # One chat's session, shared by main() and finish(): path, state, max_steps, note; and, in component
@@ -198,7 +217,7 @@ def delta_job(repo, analysis, excludes, files, depth):
     work = delta.pending_work(repo, analysis, excludes)
     if work is None:
         return None
-    here = os.path.join(HERE, "delta.py")
+    here = shown("delta.py")
     if work["drift"] or work["behind_pages"]:
         why = ("the code changed since the analysis last matched it" if work["drift"] else
                "%d pages count lines in another version of the code (after a merge or a page restored from Git): %s"
@@ -250,7 +269,7 @@ def delta_job(repo, analysis, excludes, files, depth):
         return out + ["", "Then run next.py again."]
     if work["knowledge"]:
         return ["NEXT DELTA: rebuild the knowledge base",
-                "Run: python3 -I %s --repo . --analysis %s" % (os.path.join(HERE, "knowledge.py"), analysis),
+                "Run: python3 -I %s --repo . --analysis %s" % (shown("knowledge.py"), analysis),
                 "Then update knowledge/AGENT-CONTEXT.md where the change touches it, and run next.py again."]
     return None
 
@@ -370,7 +389,9 @@ def main() -> None:
     parser.add_argument("--board", action="store_true", help="print where every component stands, then stop")
     args = parser.parse_args()
 
+    global REPO_ABS
     repo = os.path.abspath(args.repo)
+    REPO_ABS = repo
     analysis = norm(args.analysis)
     if os.path.isabs(args.analysis) or ".." in analysis.split("/") or analysis in ("", "."):
         inventory.fail("--analysis must be a folder inside the repository, given relative to it")
@@ -386,7 +407,7 @@ def main() -> None:
             sys.stdout.write("\n".join([
                 "NEXT PASS: discovery (--component needs the component catalog)",
                 "Run next.py without --component until pass 2 is done (the `## Components` plan in progress.md), then run:",
-                "  python3 -I %s --repo . --analysis %s" % (os.path.join(HERE, "discover.py"), analysis),
+                "  python3 -I %s --repo . --analysis %s" % (shown("discover.py"), analysis),
                 "and show its table to the user. Then run this command again."]) + "\n")
             return
         names = [c["name"] for c in catalog["components"]]
@@ -420,7 +441,7 @@ def main() -> None:
         pass  # the plan, the inventory and the catalog exist: discover.py checked them
     elif not os.path.isfile(os.path.join(analysis_abs, "ledger", "inventory.json")):
         out = ["NEXT PASS 1: inventory",
-               "Run: python3 -I %s --repo . --analysis %s%s" % (os.path.join(HERE, "inventory.py"), analysis, "".join(" --exclude " + e for e in excludes)),
+               "Run: python3 -I %s --repo . --analysis %s%s" % (shown("inventory.py"), analysis, "".join(" --exclude " + e for e in excludes)),
                "Then write ledger/coverage-ledger.md (references/passes.md, Pass 1), then run next.py again."]
     elif components.plan_section(components.read_plan_text(analysis_abs)) is None:
         comps = {}
@@ -435,7 +456,7 @@ def main() -> None:
         out += ["  - %s: %d source files, %d packets, %d routes" % (c, v[0], v[1], v[2]) for c, v in sorted(comps.items(), key=lambda x: -x[1][1])]
         out += ["Total packets: %d. Split a large folder into the areas its routes, packages and services show." % sum(v[1] for v in comps.values()),
                 "Then run discover.py, which checks the plan and writes the component catalog and its table:",
-                "  python3 -I %s --repo . --analysis %s" % (os.path.join(HERE, "discover.py"), analysis),
+                "  python3 -I %s --repo . --analysis %s" % (shown("discover.py"), analysis),
                 "Show its table to the user once and ask: which components (names, or all)? For one component, continue with",
                 "next.py --component NAME. For all of them in this chat, run next.py again: it hands you packets in priority order."]
     if out:
@@ -478,7 +499,7 @@ def main() -> None:
     if not comp and not rows and done == 0 and total > 0:
         out = ["NEXT PASS 2b: discovery",
                "The plan is written; check it and build the component catalog before the first packet:",
-               "  python3 -I %s --repo . --analysis %s" % (os.path.join(HERE, "discover.py"), analysis),
+               "  python3 -I %s --repo . --analysis %s" % (shown("discover.py"), analysis),
                "Fix the plan until it exits 0, show its table to the user (on GitHub: in the pull request description) and ask",
                "which components: names, or all. Then run next.py again (with --component NAME for one component)."]
         return finish(out, analysis_abs, repo)
@@ -490,7 +511,7 @@ def main() -> None:
             out += ["  " + q for q in waiting[:20]]
             out += ["", "Stop now. Put these questions to the person (on GitHub: in the pull request description) and end the session.",
                     "When the answers are here, write each one under its question, change \"- [ ]\" to \"- [x]\", and run next.py again.",
-                    "The next session starts with: python3 -I %s --repo . --analysis %s --depth %s%s --new-session" % (os.path.join(HERE, "next.py"), analysis, args.depth, flag)]
+                    "The next session starts with: python3 -I %s --repo . --analysis %s --depth %s%s --new-session" % (shown("next.py"), analysis, args.depth, flag)]
             return finish(out, analysis_abs, repo)
 
     if pending is not None:
@@ -500,7 +521,7 @@ def main() -> None:
                    "%d packets done in this chat (%d of %d %s, %d%%). Stop now and tell the user:" % (
                        in_session, done, total, "in component %s" % comp if comp else "overall", 100 * done // max(total, 1)),
                    "  continue the codebase analysis%s in %s" % (" of component %s" % comp if comp else "", analysis),
-                   "The next chat starts with: python3 -I %s --repo . --analysis %s --depth %s%s --new-session" % (os.path.join(HERE, "next.py"), analysis, args.depth, flag)]
+                   "The next chat starts with: python3 -I %s --repo . --analysis %s --depth %s%s --new-session" % (shown("next.py"), analysis, args.depth, flag)]
             return finish(out, analysis_abs, repo)
         owner = comp_name(f["path"])
         page = pages[0] if pages else module_page(f["path"], owner, [g["path"] for g in source if comp_name(g["path"]) == owner])
@@ -526,7 +547,7 @@ def main() -> None:
                     "next.py stops to ask once the packets are done." % (len(waiting), comp)]
         out += ["", "When every item is written, %swrite one line to the user, and run next.py again." % ("" if comp else "tick the packet in progress.md, "),
                 "Keep going: run next.py after every packet until it prints NEW CHAT or %s. Do not end your turn in between." % ("COMPONENT DONE" if comp else "DONE"),
-                "Command: python3 -I %s --repo . --analysis %s --depth %s%s" % (os.path.join(HERE, "next.py"), analysis, args.depth, flag)]
+                "Command: python3 -I %s --repo . --analysis %s --depth %s%s" % (shown("next.py"), analysis, args.depth, flag)]
         if comp:
             out.insert(-2, "Write only under lld/%s/, lld/api/%s/ and ledger/components/%s/: other components run in parallel." % (comp, comp, comp))
         return finish(out, analysis_abs, repo)
@@ -548,7 +569,7 @@ def main() -> None:
         ("9: mind map, front page, reference", [h for h in ("00-mind-map.md", "README.md", "reference/glossary.md", "reference/configuration.md",
                                                            "reference/risks-and-surprises.md", "reference/open-questions.md") if h not in docs], "Write: "),
         ("10: knowledge base", [h for h in ("knowledge/AGENT-CONTEXT.md",) if h not in docs] +
-         ([] if os.path.isfile(os.path.join(analysis_abs, "knowledge", "graph.json")) else ["run python3 -I %s --repo . --analysis %s" % (os.path.join(HERE, "knowledge.py"), analysis)]), "Do: "),
+         ([] if os.path.isfile(os.path.join(analysis_abs, "knowledge", "graph.json")) else ["run python3 -I %s --repo . --analysis %s" % (shown("knowledge.py"), analysis)]), "Do: "),
     ]
     for name, missing, text in steps:
         if missing:
@@ -565,8 +586,8 @@ def main() -> None:
                "  1. the checks in references/quality-gate.md;"]
         if not os.path.isfile(os.path.join(analysis_abs, "ledger", "baseline.json")):
             out.append("  2. record the code this analysis describes, so later changes are a delta (it adds a cites line to each page): "
-                       "python3 -I %s --repo . --analysis %s --init --label NAME" % (os.path.join(HERE, "delta.py"), analysis))
-        out += ["  3. knowledge.py, on the final pages: python3 -I %s --repo . --analysis %s" % (os.path.join(HERE, "knowledge.py"), analysis),
+                       "python3 -I %s --repo . --analysis %s --init --label NAME" % (shown("delta.py"), analysis))
+        out += ["  3. knowledge.py, on the final pages: python3 -I %s --repo . --analysis %s" % (shown("knowledge.py"), analysis),
                 "  4. status.py --write, then finish as SKILL.md says (the bible stays unverified until verifying-a-codebase-analysis passes)."]
     else:
         out = ["NEXT PASS 11: quality gate", "coverage.py reports gaps; fix them from ledger/coverage-report.md, then run next.py again.", ""] + \
@@ -585,14 +606,48 @@ def component_end(repo, analysis, analysis_abs, comp, docs, total, depth, exclud
                            "--depth", depth, "--component", comp] + sum((["--exclude", e] for e in excludes), []),
                           capture_output=True, text=True)
     if gate.returncode == 0:
+        pending = revision_pending(analysis, analysis_abs, comp)
+        if pending:
+            return pending
         return ["COMPONENT DONE %s" % comp,
                 "coverage.py --component %s: result PASS at depth %s (%d packets). Stop now and tell the user:" % (comp, depth, total),
                 "  component %s is analysed and its check passes (report: %s/ledger/components/%s/coverage-report.md)" % (comp, analysis, comp),
                 "  next: verify it in a new session on a different model (verifying-a-codebase-analysis, scope: component %s)" % comp,
-                "Where the other components stand: python3 -I %s --repo . --analysis %s --board" % (os.path.join(HERE, "next.py"), analysis)]
+                "Where the other components stand: python3 -I %s --repo . --analysis %s --board" % (shown("next.py"), analysis)]
     return ["NEXT PASS: component check for %s" % comp,
             "coverage.py --component %s reports gaps; fix them from %s/ledger/components/%s/coverage-report.md, then run next.py again." % (comp, analysis, comp),
             ""] + [line for line in gate.stdout.splitlines() if line.startswith("  - ")][:15]
+
+
+def revision_pending(analysis, analysis_abs, comp):
+    """NEXT REVISION when the component's verification asked for corrections that are not applied yet: its verdict is
+    FAIL or PASS AFTER CORRECTIONS (not re-checked), and its fingerprint still equals the pages, so no page has
+    changed since. Without this, a revision session sees the gate pass and stops with nothing applied."""
+    rel = "%s/ledger/components/%s/verification-report.md" % (analysis, comp)
+    facts = status.report_facts(os.path.join(analysis_abs, "ledger", "components", comp, "verification-report.md"))
+    # the same rule as the queue (bible_queue.py): any verdict but PASS, or a PASS that lists a major correction
+    if not facts or not (facts["verdict"] in ("FAIL", "PASS AFTER CORRECTIONS") or (facts["verdict"] == "PASS" and facts["majors"])):
+        return None
+    if not facts["fingerprint"] or facts["fingerprint"] != status.fingerprint(analysis_abs, comp):
+        return None  # the pages changed after the verification: applied, or under way; verify again
+    report = status.read(os.path.join(analysis_abs, "ledger", "components", comp, "verification-report.md")) or ""
+    ids = set(re.findall(r"^\|\s*(V-\d+)\s*\|", status.section(report, "Corrections"), re.M))
+    log = status.read(os.path.join(analysis_abs, "ledger", "components", comp, "revision-log.md")) or ""
+    # Correction numbers restart in every report, so only the part of the log written for THIS report counts: from
+    # the line that names its fingerprint (references/revision.md, Component mode).
+    at = log.find(facts["fingerprint"])
+    this_round = log[at:] if at >= 0 else ""
+    if ids and all(re.search(r"\b%s\b" % re.escape(i), this_round) for i in ids):
+        return None  # every correction of this report is answered (some need no page change, with the reason written)
+    return ["NEXT REVISION %s: apply the verification's corrections" % comp,
+            "%s gives verdict %s (%d major) and its fingerprint %s equals the pages now: no correction is applied yet."
+            % (rel, facts["verdict"], facts["majors"], facts["fingerprint"]),
+            "Apply every row of its Corrections table, majors first (references/revision.md, Component mode): change the pages "
+            "under %s/lld/%s/ and %s/lld/api/%s/, and record each item in %s/ledger/components/%s/revision-log.md."
+            % (analysis, comp, analysis, comp, analysis, comp),
+            "Start this round's section of the log with: Applied from verification-report.md, fingerprint %s."
+            % facts["fingerprint"],
+            "Do not edit the verification report. Then run next.py again."]
 
 
 def finish(lines, analysis_abs, repo):
