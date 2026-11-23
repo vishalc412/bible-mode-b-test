@@ -1,0 +1,49 @@
+environment: local
+role: both
+# Record the actual migration model before stage 1; it is not known in this session.
+migrator_model: null
+in_scope_hosts:
+  - localhost
+  - 127.0.0.1
+  - catalog
+out_of_scope:
+  - host: feeds.supplier-one.example.com
+    reason: Supplier feed is covered by the separate HTTPS migration, issue 75.
+  - host: partner-legacy.internal
+    reason: Payment partner is covered by the separate HTTPS migration, issue 75.
+  - file: components/orders/orders.py
+    reason: The localhost payment fake and partner settlement are not catalog calls.
+  - host: cdn.example.com
+    reason: Product image URLs are outside the catalog-to-orders call.
+producer:
+  name: catalog
+  # Planning only: no producer stage has been completed; E0 requires 1-6 later.
+  stage: 0
+  config_files: []
+  profiles: []
+  legacy_http_port: 8001
+  allowlist: tls-migration/allowed-consumers.yaml
+  access_log: tls-migration/evidence/catalog-access.log
+consumers_of_others:
+  - calls: catalog
+    service: orders
+consumer:
+  live_verify:
+    - kit: tls-migration/kits/kit-catalog-for-orders
+      cert: tls-migration/kits/kit-catalog-for-orders/client.crt
+      key: $TLS_PRIVATE_DIR/local/catalog/orders/client.key
+cert_plan: tls-migration/local/certs-to-check.yaml
+probe_plan: tls-migration/probe-plan.yaml
+evidence:
+  inventory: tls-migration/evidence/inventory.json
+  tests:
+    - components/catalog/build/test-results
+    - components/orders/build/test-results
+  certs: tls-migration/evidence/certs.json
+  probes: tls-migration/evidence/probes.json
+  readiness: tls-migration/evidence/readiness.json
+  consumer_verify:
+    - tls-migration/evidence/verify-result-orders.json
+kits: tls-migration/kits
+report: tls-migration/03-migration-summary.md
+exceptions: tls-migration/exceptions.yaml
