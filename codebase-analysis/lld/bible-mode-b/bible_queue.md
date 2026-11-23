@@ -3,12 +3,12 @@ id: lld/bible-mode-b/bible_queue
 kind: module
 component: bible-mode-b
 source: .github/bible/bible_queue.py
-summary: Wraps GitHub REST and GraphQL operations used by the Mode B analysis workflow
-reads: [config:GITHUB_API_URL, config:BIBLE_AGENT_LOGINS, config:BIBLE_AGENT_APP]
+summary: Coordinates Mode B issue workflows through GitHub REST and GraphQL
+reads: [file:--changed-file list, config:GITHUB_REPOSITORY, config:GH_TOKEN, config:GITHUB_API_URL, config:BIBLE_AGENT_LOGINS, config:BIBLE_AGENT_APP, config:BIBLE_NOW, config:BIBLE_SKILLS]
 writes: [file:destination tree passed to GitHub.tarball]
-calls: [external:GitHub API]
-uses: [symbol:GitHub]
-config: [config:GITHUB_API_URL, config:BIBLE_AGENT_LOGINS, config:BIBLE_AGENT_APP]
+calls: [external:GitHub API, symbol:components.rows_of, symbol:components.component_map, symbol:components.assign]
+uses: [symbol:GitHub, symbol:Queue]
+config: [config:GITHUB_REPOSITORY, config:GH_TOKEN, config:GITHUB_API_URL, config:BIBLE_AGENT_LOGINS, config:BIBLE_AGENT_APP, config:BIBLE_NOW, config:BIBLE_SKILLS]
 exposes: []
 ---
 
@@ -20,13 +20,13 @@ Source file: `.github/bible/bible_queue.py`
 | --- | --- |
 | Component | `bible-mode-b` (its design page is `README.md` in this folder) |
 | Lines | 844 |
-| Role | Defines the GitHub API client used by the queue workflow. |
-| Imports that matter | Python standard-library JSON, URL, base64, temporary-file, archive, and filesystem modules used by `GitHub`. |
-| Module-level state | `COPILOT`, `AGENT_LOGINS`, `AGENT_APP`, `START_ERROR`, `FINAL_STATES`, `NO_PR_AFTER`, `IDLE_AFTER`, `MAX_VERIFY_ROUNDS`, `SETTINGS`, `ATTEMPT`, `NAME`, and `LABELS` are initialized at import; the client reads the three agent/API environment settings while those constants initialize. (`.github/bible/bible_queue.py:59-83`) |
+| Role | Runs the Mode B analysis queue and its GitHub API client. |
+| Imports that matter | Python standard-library JSON, URL, base64, temporary-file, archive, subprocess, and filesystem modules used by the API client, queue, and CLI. (`.github/bible/bible_queue.py:42-55`) |
+| Module-level state | `COPILOT`, `AGENT_LOGINS`, `AGENT_APP`, `START_ERROR`, `FINAL_STATES`, `NO_PR_AFTER`, `IDLE_AFTER`, `MAX_VERIFY_ROUNDS`, `SETTINGS`, `ATTEMPT`, `NAME`, and `LABELS` are initialized at import; environment-backed values include `BIBLE_AGENT_LOGINS` and `BIBLE_AGENT_APP`. (`.github/bible/bible_queue.py:59-83`) |
 
 ## Summary
 
-`GitHub` stores the repository, token, API base URL, and a lazily populated label cache. Its methods cover request construction and pagination, issue/label operations, branch and file access, pull-request and timeline queries, archive download, and pull-request lifecycle operations. Read the cards in the same order as the class: low-level request helpers first, then query and mutation wrappers. (`.github/bible/bible_queue.py:88-302`)
+`main` exposes the `start`, `reconcile`, and `delta` CLI commands. It constructs `Queue` and `GitHub`; `Queue` coordinates tracker/session state and delegates repository operations to `GitHub`, whose methods build REST requests and a GraphQL ready-for-review mutation. `Queue.delta` also imports component-membership helpers from the analysis toolkit. (`.github/bible/bible_queue.py:797-840`, `.github/bible/bible_queue.py:396-794`, `.github/bible/bible_queue.py:88-302`, `.github/bible/bible_queue.py:775-781`)
 
 ## Index
 
@@ -109,14 +109,14 @@ flowchart LR
   request["GitHub.request"]
   call["GitHub.call"]
   paged["GitHub.paged"]
-  ensure["GitHub.ensure_label"]
-  ensure_all["GitHub.ensure_labels"]
-  create_issue["GitHub.create_issue"]
+  ensurelabel["ensure_label"]
+  ensureall["ensure_labels"]
+  createissue["create_issue"]
   timeline["GitHub.timeline"]
   linked["GitHub.linked_prs"]
-  agent_events["GitHub.agent_events"]
-  is_agent["GitHub.is_agent_pr"]
-  start_error["GitHub.start_error"]
+  agentevents["agent_events"]
+  isagent["is_agent_pr"]
+  starterror["start_error"]
   assigned["GitHub.assigned_at"]
   tarball["GitHub.tarball"]
   label["GitHub.label"]
@@ -124,115 +124,279 @@ flowchart LR
   merge["GitHub.merge"]
   now["now"]
   age["age"]
-  settings_of["settings_of"]
-  issue_text["issue_text"]
-  json_file["json_file"]
+  settingsof["settings_of"]
+  issuetext["issue_text"]
+  jsonfile["json_file"]
   section["section"]
-  report_facts["report_facts"]
-  status_of["status_of"]
-  labels_of["labels_of"]
-  comp_label["comp_label"]
+  reportfacts["report_facts"]
+  statusof["status_of"]
+  labelsof["labels_of"]
+  complabel["comp_label"]
   assignment["assignment"]
-  as_int["as_int"]
-  queue_init["Queue.__init__"]
-  run_issues["Queue.run_issues"]
-  agent_pr["Queue.agent_pr"]
+  asint["as_int"]
+  queueinit["Queue.__init__"]
+  runissues["Queue.run_issues"]
+  agentpr["Queue.agent_pr"]
   session["Queue.session"]
   held["Queue.held"]
-  model_for["Queue.model_for"]
-  hold_start_error["Queue.hold_start_error"]
-  fail_or_retry["Queue.fail_or_retry"]
+  modelfor["Queue.model_for"]
+  holdstarterror["Queue.hold_start_error"]
+  failorretry["Queue.fail_or_retry"]
   reconcile["Queue.reconcile"]
   run["Queue.run"]
-  plan_phase["Queue.plan_phase"]
-  start_chunk["Queue.start_chunk"]
+  planphase["Queue.plan_phase"]
+  startchunk["Queue.start_chunk"]
   component["Queue.component"]
   follow["Queue.follow"]
   check["Queue.check"]
-  assemble_phase["Queue.assemble_phase"]
+  assemblephase["Queue.assemble_phase"]
   render["Queue.render"]
   delta["Queue.delta"]
   main["main"]
+  cmprows["components.rows_of"]
+  cmpmap["components.component_map"]
+  cmpassign["components.assign"]
+  assign["assign"]
+  branchprs["branch_prs"]
+  branchsha["branch_sha"]
+  close["close"]
+  closepr["close_pr"]
+  comment["comment"]
+  committime["commit_time"]
+  createbranch["create_branch"]
+  createpr["create_pr"]
+  defaultbranch["default_branch"]
+  file["file"]
+  issues["issues"]
+  unassign["unassign"]
+  unlabel["unlabel"]
+  prfiles["pr_files"]
+  prs["prs"]
+  resetbranch["reset_branch"]
+  setbody["set_body"]
   paged -->|"call"| call
   call -->|"request"| request
-  ensure_all -->|"ensure_label"| ensure
-  create_issue -->|"ensure_label"| ensure
+  ensureall -->|"ensure_label"| ensurelabel
+  createissue -->|"ensure_label"| ensurelabel
   linked -->|"timeline"| timeline
   linked -->|"call"| call
-  agent_events -->|"timeline"| timeline
-  is_agent -->|"agent_events"| agent_events
-  start_error -->|"assigned_at"| assigned
-  start_error -->|"timeline"| timeline
+  agentevents -->|"timeline"| timeline
+  isagent -->|"agent_events"| agentevents
+  starterror -->|"assigned_at"| assigned
+  starterror -->|"timeline"| timeline
   assigned -->|"timeline"| timeline
-  label -->|"ensure_label"| ensure
+  label -->|"ensure_label"| ensurelabel
   ready -->|"request"| request
   merge -->|"ready"| ready
   merge -->|"call"| call
   age -->|"now"| now
-  issue_text -->|"file"| call
-  json_file -->|"file"| call
-  report_facts -->|"section"| section
-  status_of -->|"json_file"| json_file
-  run_issues -->|"issues"| call
-  agent_pr -->|"linked_prs"| linked
-  agent_pr -->|"is_agent_pr"| is_agent
-  session -->|"agent_pr"| agent_pr
+  issuetext -->|"file"| call
+  jsonfile -->|"file"| call
+  reportfacts -->|"section"| section
+  statusof -->|"json_file"| jsonfile
+  runissues -->|"issues"| call
+  agentpr -->|"linked_prs"| linked
+  agentpr -->|"is_agent_pr"| isagent
+  session -->|"agent_pr"| agentpr
   session -->|"age"| age
-  session -->|"labels_of"| labels_of
-  held -->|"labels_of"| labels_of
+  session -->|"labels_of"| labelsof
+  held -->|"labels_of"| labelsof
   held -->|"assignment"| assignment
-  held -->|"model_for"| model_for
-  model_for -->|"labels_of"| labels_of
-  hold_start_error -->|"start_error"| start_error
-  fail_or_retry -->|"model_for"| model_for
-  fail_or_retry -->|"labels_of"| labels_of
-  reconcile -->|"settings_of"| settings_of
+  held -->|"model_for"| modelfor
+  modelfor -->|"labels_of"| labelsof
+  holdstarterror -->|"start_error"| starterror
+  failorretry -->|"model_for"| modelfor
+  failorretry -->|"labels_of"| labelsof
+  reconcile -->|"settings_of"| settingsof
   reconcile -->|"run"| run
-  run -->|"json_file"| json_file
-  run -->|"plan_phase"| plan_phase
+  run -->|"json_file"| jsonfile
+  run -->|"plan_phase"| planphase
   run -->|"component"| component
-  run -->|"as_int"| as_int
-  run -->|"start_chunk"| start_chunk
-  run -->|"assemble_phase"| assemble_phase
-  plan_phase -->|"run_issues"| run_issues
-  plan_phase -->|"issue_text"| issue_text
-  plan_phase -->|"session"| session
-  plan_phase -->|"held"| held
-  plan_phase -->|"hold_start_error"| hold_start_error
-  plan_phase -->|"fail_or_retry"| fail_or_retry
-  start_chunk -->|"branch_sha"| call
-  start_chunk -->|"comp_label"| comp_label
-  start_chunk -->|"issue_text"| issue_text
-  component -->|"branch_prs"| paged
-  component -->|"run_issues"| run_issues
+  run -->|"as_int"| asint
+  run -->|"start_chunk"| startchunk
+  run -->|"assemble_phase"| assemblephase
+  planphase -->|"run_issues"| runissues
+  planphase -->|"issue_text"| issuetext
+  planphase -->|"session"| session
+  planphase -->|"held"| held
+  planphase -->|"hold_start_error"| holdstarterror
+  planphase -->|"fail_or_retry"| failorretry
+  startchunk -->|"branch_sha"| branchsha
+  startchunk -->|"comp_label"| complabel
+  startchunk -->|"issue_text"| issuetext
+  component -->|"branch_prs"| branchprs
+  component -->|"run_issues"| runissues
   component -->|"follow"| follow
-  component -->|"status_of"| status_of
+  component -->|"status_of"| statusof
   component -->|"check"| check
-  component -->|"report_facts"| report_facts
-  component -->|"comp_label"| comp_label
+  component -->|"report_facts"| reportfacts
+  component -->|"comp_label"| complabel
   follow -->|"session"| session
-  follow -->|"fail_or_retry"| fail_or_retry
-  follow -->|"labels_of"| labels_of
-  follow -->|"status_of"| status_of
-  follow -->|"as_int"| as_int
+  follow -->|"fail_or_retry"| failorretry
+  follow -->|"labels_of"| labelsof
+  follow -->|"status_of"| statusof
+  follow -->|"as_int"| asint
   check -->|"tarball"| tarball
-  assemble_phase -->|"run_issues"| run_issues
-  assemble_phase -->|"session"| session
-  assemble_phase -->|"report_facts"| report_facts
-  assemble_phase -->|"issue_text"| issue_text
-  assemble_phase -->|"held"| held
-  assemble_phase -->|"fail_or_retry"| fail_or_retry
+  assemblephase -->|"run_issues"| runissues
+  assemblephase -->|"session"| session
+  assemblephase -->|"report_facts"| reportfacts
+  assemblephase -->|"issue_text"| issuetext
+  assemblephase -->|"held"| held
+  assemblephase -->|"fail_or_retry"| failorretry
   render -->|"now"| now
-  delta -->|"json_file"| json_file
-  delta -->|"comp_label"| comp_label
+  delta -->|"json_file"| jsonfile
+  delta -->|"comp_label"| complabel
   delta -->|"assignment"| assignment
+  delta -->|"rows_of"| cmprows
+  delta -->|"component_map"| cmpmap
+  delta -->|"assign"| cmpassign
   main -->|"GitHub"| init
-  main -->|"Queue"| queue_init
-  main -->|"ensure_labels"| ensure_all
+  main -->|"Queue"| queueinit
+  main -->|"ensure_labels"| ensureall
   main -->|"issues"| paged
-  main -->|"create_issue"| create_issue
+  main -->|"create_issue"| createissue
   main -->|"reconcile"| reconcile
   main -->|"delta"| delta
+  agentevents -->|"timeline"| timeline
+  agentpr -->|"is_agent_pr"| isagent
+  agentpr -->|"linked_prs"| linked
+  assemblephase -->|"assignment"| assignment
+  assemblephase -->|"close"| close
+  assemblephase -->|"comment"| comment
+  assemblephase -->|"create_issue"| createissue
+  assemblephase -->|"fail_or_retry"| failorretry
+  assemblephase -->|"file"| file
+  assemblephase -->|"held"| held
+  assemblephase -->|"hold_start_error"| holdstarterror
+  assemblephase -->|"is_agent_pr"| isagent
+  assemblephase -->|"issue_text"| issuetext
+  assemblephase -->|"linked_prs"| linked
+  assemblephase -->|"report_facts"| reportfacts
+  assemblephase -->|"run_issues"| runissues
+  assemblephase -->|"session"| session
+  assign -->|"call"| call
+  branchprs -->|"paged"| paged
+  branchsha -->|"call"| call
+  check -->|"run"| run
+  close -->|"call"| call
+  closepr -->|"call"| call
+  comment -->|"call"| call
+  committime -->|"call"| call
+  component -->|"assignment"| assignment
+  component -->|"branch_prs"| branchprs
+  component -->|"close"| close
+  component -->|"comp_label"| complabel
+  component -->|"create_issue"| createissue
+  component -->|"create_pr"| createpr
+  component -->|"file"| file
+  component -->|"held"| held
+  component -->|"labels_of"| labelsof
+  component -->|"report_facts"| reportfacts
+  component -->|"run_issues"| runissues
+  component -->|"start_chunk"| startchunk
+  component -->|"status_of"| statusof
+  createbranch -->|"call"| call
+  createissue -->|"call"| call
+  createissue -->|"ensure_label"| ensurelabel
+  createpr -->|"call"| call
+  defaultbranch -->|"call"| call
+  delta -->|"assign"| cmpassign
+  delta -->|"comp_label"| complabel
+  delta -->|"create_issue"| createissue
+  delta -->|"default_branch"| defaultbranch
+  delta -->|"issues"| issues
+  delta -->|"json_file"| jsonfile
+  ensurelabel -->|"call"| call
+  ensurelabel -->|"paged"| paged
+  ensureall -->|"ensure_label"| ensurelabel
+  failorretry -->|"assignment"| assignment
+  failorretry -->|"close"| close
+  failorretry -->|"close_pr"| closepr
+  failorretry -->|"comment"| comment
+  failorretry -->|"create_issue"| createissue
+  failorretry -->|"label"| label
+  failorretry -->|"labels_of"| labelsof
+  failorretry -->|"model_for"| modelfor
+  failorretry -->|"unassign"| unassign
+  file -->|"call"| call
+  follow -->|"as_int"| asint
+  follow -->|"close"| close
+  follow -->|"fail_or_retry"| failorretry
+  follow -->|"file"| file
+  follow -->|"hold_start_error"| holdstarterror
+  follow -->|"label"| label
+  follow -->|"labels_of"| labelsof
+  follow -->|"merge"| merge
+  follow -->|"pr_files"| prfiles
+  follow -->|"status_of"| statusof
+  follow -->|"unlabel"| unlabel
+  held -->|"assign"| assign
+  held -->|"comment"| comment
+  held -->|"labels_of"| labelsof
+  held -->|"model_for"| modelfor
+  held -->|"set_body"| setbody
+  holdstarterror -->|"comment"| comment
+  holdstarterror -->|"label"| label
+  holdstarterror -->|"start_error"| starterror
+  holdstarterror -->|"unassign"| unassign
+  isagent -->|"agent_events"| agentevents
+  issuetext -->|"file"| file
+  issues -->|"paged"| paged
+  jsonfile -->|"file"| file
+  label -->|"call"| call
+  main -->|"create_issue"| createissue
+  main -->|"ensure_labels"| ensureall
+  main -->|"issues"| issues
+  modelfor -->|"labels_of"| labelsof
+  planphase -->|"assignment"| assignment
+  planphase -->|"create_issue"| createissue
+  planphase -->|"fail_or_retry"| failorretry
+  planphase -->|"held"| held
+  planphase -->|"hold_start_error"| holdstarterror
+  planphase -->|"issue_text"| issuetext
+  planphase -->|"render"| render
+  planphase -->|"run_issues"| runissues
+  planphase -->|"session"| session
+  prfiles -->|"paged"| paged
+  prs -->|"paged"| paged
+  reconcile -->|"default_branch"| defaultbranch
+  reconcile -->|"issues"| issues
+  reconcile -->|"settings_of"| settingsof
+  render -->|"set_body"| setbody
+  reportfacts -->|"section"| section
+  resetbranch -->|"call"| call
+  run -->|"as_int"| asint
+  run -->|"assemble_phase"| assemblephase
+  run -->|"close"| close
+  run -->|"json_file"| jsonfile
+  run -->|"plan_phase"| planphase
+  run -->|"render"| render
+  run -->|"run_issues"| runissues
+  run -->|"start_chunk"| startchunk
+  runissues -->|"issues"| issues
+  session -->|"agent_events"| agentevents
+  session -->|"agent_pr"| agentpr
+  session -->|"assigned_at"| assigned
+  session -->|"commit_time"| committime
+  session -->|"labels_of"| labelsof
+  session -->|"start_error"| starterror
+  session -->|"status_of"| statusof
+  setbody -->|"call"| call
+  startchunk -->|"assignment"| assignment
+  startchunk -->|"branch_sha"| branchsha
+  startchunk -->|"comp_label"| complabel
+  startchunk -->|"create_branch"| createbranch
+  startchunk -->|"create_issue"| createissue
+  startchunk -->|"issue_text"| issuetext
+  startchunk -->|"reset_branch"| resetbranch
+  startchunk -->|"run_issues"| runissues
+  starterror -->|"assigned_at"| assigned
+  starterror -->|"timeline"| timeline
+  statusof -->|"json_file"| jsonfile
+  tarball -->|"request"| request
+  timeline -->|"paged"| paged
+  unassign -->|"call"| call
+  unlabel -->|"call"| call
 ```
 
 ## Classes
@@ -1213,7 +1377,7 @@ Source: `.github/bible/bible_queue.py:397-399` <!-- code: 11924208c0e9 -->
 | | |
 | --- | --- |
 | Kind | instance initializer |
-| Called by | Queue construction is in the later entry-point source packet. |
+| Called by | `main` (`.github/bible/bible_queue.py:817`) |
 | Calls | `os.environ.get` |
 | Purpose | Stores the GitHub client and logger, and selects the skills directory. |
 
@@ -1236,7 +1400,7 @@ Source: `.github/bible/bible_queue.py:401-402` <!-- code: 9186c4a33e43 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.run` (`.github/bible/bible_queue.py:505`), `Queue.plan_phase` (`.github/bible/bible_queue.py:529`), `Queue.start_chunk` (`.github/bible/bible_queue.py:557`), `Queue.component` (`.github/bible/bible_queue.py:577`), `Queue.follow` (later call sites), `Queue.assemble_phase` (`.github/bible/bible_queue.py:718`), `Queue.delta` (`.github/bible/bible_queue.py:782`) |
+| Called by | `Queue.run` (`.github/bible/bible_queue.py:505`), `Queue.plan_phase` (`.github/bible/bible_queue.py:529`), `Queue.start_chunk` (`.github/bible/bible_queue.py:557`), `Queue.component` (`.github/bible/bible_queue.py:577`, `.github/bible/bible_queue.py:586`, `.github/bible/bible_queue.py:593`, `.github/bible/bible_queue.py:596`, `.github/bible/bible_queue.py:602`, `.github/bible/bible_queue.py:604`, `.github/bible/bible_queue.py:606`, `.github/bible/bible_queue.py:608`, `.github/bible/bible_queue.py:624`, `.github/bible/bible_queue.py:625`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:718`, `.github/bible/bible_queue.py:720`) |
 | Calls | `self.gh.issues` |
 | Purpose | Queries issues for the requested labels plus this run's unique label. |
 
@@ -1291,7 +1455,7 @@ Source: `.github/bible/bible_queue.py:413-429` <!-- code: 6fe9d410226f -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:542`), `Queue.component` (later call site), `Queue.follow` (`.github/bible/bible_queue.py:648`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:735`) |
+| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:542`), `Queue.follow` (`.github/bible/bible_queue.py:648`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:735`) |
 | Calls | `self.agent_pr`, `self.gh.start_error`, `age`, `self.gh.assigned_at`, `self.gh.agent_events`, `sorted`, `self.gh.commit_time`, `bool`, `status_of`, `labels_of`, `get` |
 | Purpose | Classifies an issue's session as waiting, running, finished, no-start, or start-error and returns its PR if present. |
 
@@ -1369,7 +1533,6 @@ return False
 | --- | --- | --- | --- |
 | `.github/bible/bible_queue.py:433` | if | Issue has `bible-needs-human` | Returns `True`. |
 | `.github/bible/bible_queue.py:435` | if | Issue has no assignees | Resets attempt, assigns, and comments; otherwise skips retry work. |
-| `.github/bible/bible_queue.py:438` | conditional expression | A base branch regex match exists | Uses its first group; otherwise uses `self.default`. |
 | `.github/bible/bible_queue.py:439` | conditional expression | A base-branch match exists | Passes the captured branch to `assignment`; otherwise passes `self.default`. |
 
 #### `Queue.model_for(issue)`
@@ -1434,7 +1597,7 @@ Source: `.github/bible/bible_queue.py:455-474` <!-- code: c86515a02433 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:547`), `Queue.follow` (later call sites), `Queue.assemble_phase` (`.github/bible/bible_queue.py:740`) |
+| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:547`), `Queue.follow` (`.github/bible/bible_queue.py:655`, `.github/bible/bible_queue.py:668`, `.github/bible/bible_queue.py:681`, `.github/bible/bible_queue.py:684`, `.github/bible/bible_queue.py:687`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:740`) |
 | Calls | `ATTEMPT.search`, `int`, `self.gh.comment`, `self.gh.close_pr`, `self.gh.label`, `self.gh.unassign`, `self.gh.close`, `ATTEMPT.sub`, `re.search`, `self.gh.create_issue`, `sorted`, `assignment`, `self.model_for`, `labels_of`, `startswith` |
 | Purpose | Closes a failed attempt and opens its retry, or holds the issue after a second failure. |
 
@@ -1475,7 +1638,7 @@ Source: `.github/bible/bible_queue.py:477-487` <!-- code: 405a62c3c051 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | Queue entry point in the later source packet. |
+| Called by | `main` (`.github/bible/bible_queue.py:834`) |
 | Calls | `self.gh.default_branch`, `self.gh.issues`, `settings_of`, `self.log`, `self.run`, `type` |
 | Purpose | Processes each open tracker independently so one failing tracker does not prevent others. |
 
@@ -1913,7 +2076,7 @@ Source: `.github/bible/bible_queue.py:768-794` <!-- code: 173a0090e878 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | Queue entry point in the later source packet. |
+| Called by | `main` (`.github/bible/bible_queue.py:838`) |
 | Calls | `self.gh.default_branch`, `json_file`, `self.log`, `self.gh.file`, `sys.path.insert`, `os.path.abspath`, `os.path.join`, `components.rows_of`, `components.component_map`, `sorted`, `startswith`, `components.assign`, `self.gh.issues`, `self.gh.create_issue`, `assignment`, `comp_label`, `len` |
 | Purpose | Creates one update issue for each analysis component affected by changed files when an assembled baseline exists. |
 
@@ -2368,8 +2531,14 @@ return data if data is a dict, otherwise {}
 
 ## Module-level code
 
-The file declares standard-library imports, module configuration constants, a label-description mapping, and the `GitHub` class in this region. The remaining module-level workflow implementation is documented in the later source packets. (`.github/bible/bible_queue.py:1-87`, `.github/bible/bible_queue.py:88-302`)
+The module imports Python standard-library utilities and initializes queue labels, environment-derived agent settings, regexes, and timing/verification constants. (`.github/bible/bible_queue.py:42-83`)
+
+It declares the `GitHub` API client, helper functions, and `Queue` coordinator; the CLI `main` parses arguments, and the module guard calls it when executed as a script. (`.github/bible/bible_queue.py:88-302`, `.github/bible/bible_queue.py:307-391`, `.github/bible/bible_queue.py:396-794`, `.github/bible/bible_queue.py:797-844`)
 
 ## Surprises
 
 `tarball` filters archive members to regular files and directories and checks normalized targets against the destination root before writing them. (`.github/bible/bible_queue.py:246-259`)
+
+The `Queue.session` docstring lists four result states, but the code also returns `start-error` when `GitHub.start_error` is truthy. (`.github/bible/bible_queue.py:413-418`)
+
+`Queue.component` builds `closed_revise` after a human hold but does not use it later in the method; it separately builds and uses `all_revise`. (`.github/bible/bible_queue.py:604-608`, `.github/bible/bible_queue.py:624-630`)

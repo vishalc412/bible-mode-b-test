@@ -1,6 +1,7 @@
 ```text
-NEXT PASS 5: component design for bible-mode-b
-All 4 packets of bible-mode-b are done.
-Write lld/bible-mode-b/README.md (references/passes.md, Pass 5). Its outbound calls table names every call into another component; its inbound part names the components that call it (components.md lists both).
-Then run next.py again.
+COMPONENT DONE bible-mode-b
+coverage.py --component bible-mode-b: result PASS at depth deep (4 packets). Stop now and tell the user:
+  component bible-mode-b is analysed and its check passes (report: codebase-analysis/ledger/components/bible-mode-b/coverage-report.md)
+  next: verify it in a new session on a different model (verifying-a-codebase-analysis, scope: component bible-mode-b)
+Where the other components stand: python3 -I /home/runner/work/bible-mode-b-test/bible-mode-b-test/.github/skills/analyzing-a-codebase/scripts/next.py --repo . --analysis codebase-analysis --board
 ```
