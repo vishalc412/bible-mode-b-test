@@ -1,0 +1,292 @@
+{
+  "tool": "tls_inventory.py",
+  "generated_at": "2026-11-23T22:00:15Z",
+  "repo": ".",
+  "http_urls": [
+    {
+      "file": "codebase-analysis/ledger/components/catalog/verification-report-2026-11-23-2.md",
+      "line": 63,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "| V-001 | `lld/catalog/README.md:32,97,141` (rows 18, 35) | Wrong | major | `orders` has an in-repo HTTP client of the catalog API (the repository owner confirms it is the path for when orders runs as",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/ledger/components/catalog/verification-report-2026-11-23.md",
+      "line": 61,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "| V-001 | `lld/catalog/README.md:32,97,141` (rows 18, 35) | Wrong | major | `orders` has an HTTP client of the catalog API. `remote_price` builds `<CATALOG_URL>/price/<sku>` (default `http://127.0.0.1",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/ledger/components/orders/questions.md",
+      "line": 4,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "Answer: Both paths are intentional. `orders.py` imports the catalog directly when orders and catalog run in one process (today's deployment). `catalog_client.py` is for orders running as its own servi",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/catalog/README.md",
+      "line": 103,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "`orders.catalog_client.remote_price` constructs `GET /price/<sku>` using `CATALOG_URL` (default `http://127.0.0.1:8001`) and plain HTTP. A search for `remote_price|remote_line_total` in Python files f",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/README.md",
+      "line": 23,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "The component provides order line and discounted-total calculations, validates requested quantities against catalog stock, and submits order settlements (`components/orders/orders.py:19-51`). Its `cat",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/README.md",
+      "line": 97,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "| `catalog` HTTP API | Reads a SKU price through the separate HTTP client. | HTTP | `CATALOG_URL`; default `http://127.0.0.1:8001` | `remote_price` default timeout is 5 seconds; no retry or fallback s",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/README.md",
+      "line": 98,
+      "host": "partner-legacy.internal",
+      "port": "",
+      "url": "http://partner-legacy.internal/settle",
+      "text": "| Payment partner | Sends JSON settlement request. | HTTP | `http://partner-legacy.internal/settle`, unless `dev` selects `http://localhost:8099/settle` | `settle` default timeout is 15 seconds; no re",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/README.md",
+      "line": 98,
+      "host": "localhost",
+      "port": "8099",
+      "url": "http://localhost:8099/settle",
+      "text": "| Payment partner | Sends JSON settlement request. | HTTP | `http://partner-legacy.internal/settle`, unless `dev` selects `http://localhost:8099/settle` | `settle` default timeout is 15 seconds; no re",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/README.md",
+      "line": 104,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "| `CATALOG_URL` | Base URL for the catalog HTTP client; read each time `catalog_url()` runs. | `http://127.0.0.1:8001` | `os.environ` | `components/orders/catalog_client.py:11,14-16` |",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/README.md",
+      "line": 129,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "- The direct catalog import and HTTP client are intentional for different deployment modes: in-process catalog access today and HTTP access when orders runs separately (answer to Q1; code paths at `co",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/README.md",
+      "line": 134,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "- **Deployment detail:** The direct-import path serves today's in-process deployment, and the HTTP client is intended for orders running separately (answer to Q1). Only tests call the HTTP path today,",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/catalog_client.md",
+      "line": 20,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "| Module-level state | `DEFAULT_CATALOG_URL = \"http://127.0.0.1:8001\"` (`components/orders/catalog_client.py:11`) |",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/catalog_client.md",
+      "line": 71,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "**Output and side effects**: Returns a string based on the environment value or `http://127.0.0.1:8001`; it does not cache the environment value (`components/orders/catalog_client.py:11,14-16`).",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/catalog_client.md",
+      "line": 147,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "The module imports JSON, environment, URL parsing, and URL request libraries and defines `DEFAULT_CATALOG_URL` as `http://127.0.0.1:8001` (`components/orders/catalog_client.py:6-11`). The default and ",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/catalog_client.md",
+      "line": 151,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "This HTTP access path is intended for orders running as its own service; the direct catalog import in `orders.py` is intended when both modules run in one process (today's deployment) (answer to Q1; `",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/orders.md",
+      "line": 215,
+      "host": "partner-legacy.internal",
+      "port": "",
+      "url": "http://partner-legacy.internal/settle",
+      "text": "The module imports `json`, `urllib.request`, and `catalog`; defines the partner settlement URL as `http://partner-legacy.internal/settle`, the development URL as `http://localhost:8099/settle`, and di",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "codebase-analysis/lld/orders/orders.md",
+      "line": 215,
+      "host": "localhost",
+      "port": "8099",
+      "url": "http://localhost:8099/settle",
+      "text": "The module imports `json`, `urllib.request`, and `catalog`; defines the partner settlement URL as `http://partner-legacy.internal/settle`, the development URL as `http://localhost:8099/settle`, and di",
+      "doc": true,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "components/catalog/catalog.py",
+      "line": 5,
+      "host": "feeds.supplier-one.example.com",
+      "port": "",
+      "url": "http://feeds.supplier-one.example.com/v2/products.json",
+      "text": "SUPPLIER_FEED_URL = \"http://feeds.supplier-one.example.com/v2/products.json\"",
+      "doc": false,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "components/catalog/service.py",
+      "line": 48,
+      "host": "%s",
+      "port": "%d",
+      "url": "http://%s:%d",
+      "text": "print(\"catalog API on http://%s:%d\" % server.server_address)",
+      "doc": false,
+      "comment": false,
+      "kind": "templated"
+    },
+    {
+      "file": "components/orders/catalog_client.py",
+      "line": 11,
+      "host": "127.0.0.1",
+      "port": "8001",
+      "url": "http://127.0.0.1:8001",
+      "text": "DEFAULT_CATALOG_URL = \"http://127.0.0.1:8001\"",
+      "doc": false,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "components/orders/orders.py",
+      "line": 9,
+      "host": "partner-legacy.internal",
+      "port": "",
+      "url": "http://partner-legacy.internal/settle",
+      "text": "PARTNER_SETTLE_URL = \"http://partner-legacy.internal/settle\"",
+      "doc": false,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "components/orders/orders.py",
+      "line": 12,
+      "host": "localhost",
+      "port": "8099",
+      "url": "http://localhost:8099/settle",
+      "text": "DEV_SETTLE_URL = \"http://localhost:8099/settle\"",
+      "doc": false,
+      "comment": false,
+      "kind": "url"
+    },
+    {
+      "file": "components/orders/test_catalog_client.py",
+      "line": 17,
+      "host": "127.0.0.1",
+      "port": "%d",
+      "url": "http://127.0.0.1:%d",
+      "text": "cls.base = \"http://127.0.0.1:%d\" % cls.server.server_address[1]",
+      "doc": false,
+      "comment": false,
+      "kind": "url"
+    }
+  ],
+  "hosts": [
+    [
+      "127.0.0.1",
+      15
+    ],
+    [
+      "partner-legacy.internal",
+      3
+    ],
+    [
+      "localhost",
+      3
+    ],
+    [
+      "feeds.supplier-one.example.com",
+      1
+    ],
+    [
+      "%s",
+      1
+    ]
+  ],
+  "verify_off": [],
+  "private_keys": [],
+  "ai_directed_text": [
+    {
+      "file": ".github/bible/bible_queue.py",
+      "line": 284,
+      "text": "\"\"\"Copilot opens draft pull requests; a draft cannot be merged. Mark it ready (GraphQL only).\"\"\""
+    }
+  ],
+  "local_dev_refs": []
+}
