@@ -34,7 +34,7 @@ The localhost developer fake (`http://localhost:8099/settle`) remains HTTP becau
 
 | Check | Result and recorded output |
 | --- | --- |
-| Tests | **PASS.** `python3 -m unittest discover -s . -p "test_*.py" -t .` — 10 tests ran; `OK`. Full output: `/home/runner/work/bible-mode-b-test/bible-mode-b-test/https-migration/tests-after.txt`. Added test assertions verify the supplier HTTPS URL, timeout, `context.check_hostname == True`, and `context.verify_mode == ssl.CERT_REQUIRED`; no existing assertions were changed. |
+| Tests | **PASS.** `python3 -m unittest discover -s . -p "test_*.py" -t .` — 11 tests ran; `OK`. Full output: `https-migration/tests-after.txt`. Added test assertions verify the supplier HTTPS URL, timeout, `context.check_hostname == True`, `context.verify_mode == ssl.CERT_REQUIRED`, and refusal of an HTTP redirect; no existing assertions were changed. |
 | Redirect | **Not run.** No public application host or inbound route exists. |
 | Form POST | **Not run.** No public application host or form endpoint exists. |
 | Serves TLS | **Not run.** There is no public application listener; the external supplier was not contacted. |
@@ -44,8 +44,8 @@ The localhost developer fake (`http://localhost:8099/settle`) remains HTTP becau
 | Configuration alone | **Not run.** No HTTPS-only configuration switch or test deployment environment was available in Phase 1. |
 | HSTS | **Not applicable.** The application has no inbound TLS termination point. |
 | Cookies | **Not applicable.** No application cookies or sessions were found. |
-| Outbound verification | **PASS (local configuration evidence only).** The focused test confirmed the `ssl.create_default_context()` has hostname verification enabled and requires certificate verification. Search for disabled verification settings in application/tooling source found no matches. Live supplier verification was not run. |
-| No leftovers | **PASS with accounted findings.** `bash .github/skills/migrating-http-to-https/scripts/find-http-urls.sh . https-migration/https-allowlist.txt` reported `Plain-http lines remaining: 72`; 6 lines were dropped by the run-specific allowlist. Remaining hits are classified in `https-inventory.md`: 5 application source/test lines (partner, local fake, internal catalog client/test, and a startup message), 2 generic migration-tool probe lines, and 65 documentation/example/template or scanner-pattern lines. |
+| Outbound verification | **PASS (local configuration evidence only).** The focused tests confirmed the `ssl.create_default_context()` has hostname verification enabled, requires certificate verification, and the supplier fetch's redirect handler raises `HTTPError` on an HTTP redirect. Search for disabled verification settings in application/tooling source found no matches. Live supplier verification was not run. |
+| No leftovers | **PASS with accounted findings.** `bash .github/skills/migrating-http-to-https/scripts/find-http-urls.sh . https-migration/https-allowlist.txt` reported `Plain-http lines remaining: 73`; 6 lines were dropped by the run-specific allowlist. Remaining hits are classified in `https-migration/https-inventory.md`: 6 application source/test lines (partner, local fake, internal catalog client/test, startup message, and the intentional HTTP target in the downgrade test), 2 generic migration-tool probe lines, and 65 documentation/example/template or scanner-pattern lines. |
 
 ## Rollback
 

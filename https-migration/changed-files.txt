@@ -1,8 +1,8 @@
-/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/catalog/catalog.py
-/home/runner/work/bible-mode-b-test/bible-mode-b-test/components/catalog/test_catalog.py
-/home/runner/work/bible-mode-b-test/bible-mode-b-test/https-migration/https-allowlist.txt
-/home/runner/work/bible-mode-b-test/bible-mode-b-test/https-migration/https-inventory.md
-/home/runner/work/bible-mode-b-test/bible-mode-b-test/https-migration/tests-before.txt
-/home/runner/work/bible-mode-b-test/bible-mode-b-test/https-migration/tests-after.txt
-/home/runner/work/bible-mode-b-test/bible-mode-b-test/https-migration/https-migration-summary.md
-/home/runner/work/bible-mode-b-test/bible-mode-b-test/https-migration/changed-files.txt
+components/catalog/catalog.py
+components/catalog/test_catalog.py
+https-migration/https-allowlist.txt
+https-migration/https-inventory.md
+https-migration/tests-before.txt
+https-migration/tests-after.txt
+https-migration/https-migration-summary.md
+https-migration/changed-files.txt
