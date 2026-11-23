@@ -1,0 +1,36 @@
+# Mode B, after the analysis is done: when code changes on the default branch, open one
+# update issue per component whose files changed, assigned to Copilot. Pushes to other
+# branches start the workflow but its job is skipped at once.
+name: "Bible - update after code changes"
+
+on:
+  push:
+    paths-ignore:
+      - "codebase-analysis/**"
+      - ".github/**"
+
+permissions:
+  contents: read
+
+jobs:
+  delta:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Open update issues for changed components
+        env:
+          GH_TOKEN: ${{ secrets.BIBLE_ASSIGN_TOKEN }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          [ -n "${GH_TOKEN:-}" ] || { echo "::error::Secret BIBLE_ASSIGN_TOKEN is missing"; exit 1; }
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "First push of the branch: nothing to compare."; exit 0
+          fi
+          git diff --name-only "$BEFORE" "$AFTER" > "$RUNNER_TEMP/changed.txt"
+          python3 -I .github/bible/bible_queue.py delta --changed-file "$RUNNER_TEMP/changed.txt"

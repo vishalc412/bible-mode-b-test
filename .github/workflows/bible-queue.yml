@@ -1,0 +1,37 @@
+# Mode B, the queue: every 15 minutes (and on demand) it looks at every open session,
+# merges finished work into the component branches, checks components, assigns the next
+# session, and opens the component pull requests for a person to review.
+# Safe to run any time: it works the state out from GitHub each run.
+name: "Bible - queue"
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bible-queue
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    # Only from the default branch: a run started on another branch would run that branch's script with the token.
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # The default branch only: the toolkit scripts that judge the work come from here,
+      # never from a pull request. Pull request files are downloaded as data.
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Reconcile the analysis run
+        env:
+          GH_TOKEN: ${{ secrets.BIBLE_ASSIGN_TOKEN }}
+        run: |
+          set -euo pipefail
+          [ -n "${GH_TOKEN:-}" ] || { echo "::error::Secret BIBLE_ASSIGN_TOKEN is missing (docs/github-guide.md, Part 6.2)"; exit 1; }
+          python3 -I .github/bible/bible_queue.py reconcile

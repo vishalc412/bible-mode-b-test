@@ -1,0 +1,54 @@
+# Mode B, step 1: start an analysis run. A person presses "Run workflow" once.
+# It only opens the tracker issue (the run's settings and progress). The queue workflow
+# (bible-queue.yml) does everything after that, starting at its next run; to start at once,
+# run "Bible - queue" by hand. Setup: docs/github-guide.md, Part 7.
+name: "Bible - start an analysis run"
+
+on:
+  workflow_dispatch:
+    inputs:
+      components:
+        description: "Components to analyse: all, or names separated by commas (as in components.md)"
+        required: true
+        default: "all"
+      model:
+        description: "Model for the analysis sessions (empty = Copilot's default)"
+        required: false
+        default: ""
+      verify_model:
+        description: "Model for the verification sessions (must differ from the analysis model)"
+        required: true
+      concurrency:
+        description: "Most components worked at once (0 = no limit)"
+        required: true
+        default: "0"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bible-plan
+  cancel-in-progress: false
+
+jobs:
+  start:
+    # Only from the default branch: a run started on another branch would run that branch's script with the token.
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Open the tracker issue
+        env:
+          GH_TOKEN: ${{ secrets.BIBLE_ASSIGN_TOKEN }}
+          COMPONENTS: ${{ inputs.components }}
+          MODEL: ${{ inputs.model }}
+          VERIFY_MODEL: ${{ inputs.verify_model }}
+          CONCURRENCY: ${{ inputs.concurrency }}
+        run: |
+          set -euo pipefail
+          [ -n "${GH_TOKEN:-}" ] || { echo "::error::Secret BIBLE_ASSIGN_TOKEN is missing (docs/github-guide.md, Part 6.2)"; exit 1; }
+          python3 -I .github/bible/bible_queue.py start --components "$COMPONENTS" --model "$MODEL" \
+            --verify-model "$VERIFY_MODEL" --concurrency "$CONCURRENCY"

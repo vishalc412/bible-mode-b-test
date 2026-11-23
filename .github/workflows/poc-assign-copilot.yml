@@ -1,0 +1,72 @@
+# Proof of concept: can a workflow start the Copilot cloud agent by itself?
+# Setup and how to read the result: docs/github-guide.md, Part 6.
+#
+# Needs a repository secret BIBLE_ASSIGN_TOKEN holding a fine-grained personal
+# access token (GitHub accepts only user tokens for assigning Copilot; the
+# built-in GITHUB_TOKEN is not accepted). It checks out and runs no repository
+# code. Inputs reach the script through environment variables only, never
+# pasted into the script, so text typed into the form cannot become a command.
+name: "POC - assign Copilot to a new issue"
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Issue title"
+        required: true
+        default: "POC: Copilot assigned by a workflow"
+      task:
+        description: "What Copilot should do"
+        required: true
+        default: "Create the file docs/poc-hello.md containing one line: Hello from Copilot. Change nothing else."
+      base_branch:
+        description: "Branch Copilot starts from"
+        required: true
+        default: "main"
+      model:
+        description: "Model name (leave empty for the default model)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Create the issue and assign Copilot
+        env:
+          GH_TOKEN: ${{ secrets.BIBLE_ASSIGN_TOKEN }}
+          REPO: ${{ github.repository }}
+          TITLE: ${{ inputs.title }}
+          TASK: ${{ inputs.task }}
+          BASE: ${{ inputs.base_branch }}
+          MODEL: ${{ inputs.model }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::error::Secret BIBLE_ASSIGN_TOKEN is missing. See docs/github-guide.md, Part 6.2."
+            exit 1
+          fi
+          jq -n --arg title "$TITLE" --arg body "$TASK" --arg repo "$REPO" \
+                --arg base "$BASE" --arg model "$MODEL" '
+            {
+              title: $title,
+              body: $body,
+              assignees: ["copilot-swe-agent[bot]"],
+              agent_assignment: (
+                {target_repo: $repo, base_branch: $base}
+                + (if $model == "" then {} else {model: $model} end)
+              )
+            }' > request.json
+          echo "Request (no secrets in it):"
+          cat request.json
+          gh api --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "repos/$REPO/issues" --input request.json > response.json
+          jq -r '"Created issue #\(.number): \(.html_url)"' response.json
+          jq -r '"Assignees now: \([.assignees[]?.login] | join(", "))"' response.json
+          echo "Next: open the issue link. A pull request from Copilot should appear within a few minutes."
