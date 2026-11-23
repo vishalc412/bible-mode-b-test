@@ -1,8 +1,8 @@
 {
  "component": "bible-mode-b",
- "packets_done": 2,
+ "packets_done": 3,
  "packets_total": 3,
- "state": "NEXT",
+ "state": "COMPONENT_DONE",
  "last_job_digest": "6f28ff07ec3c3353",
- "updated": "2026-11-23T20:22:47"
+ "updated": "2026-11-23T20:26:11"
 }
