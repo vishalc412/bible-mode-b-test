@@ -99,6 +99,7 @@ Source file: `.github/bible/bible_queue.py`
 | `Queue.assemble_phase` | method | 713-753 | [card](#queue_assemble_phasetracker-settings-analysis) |
 | `Queue.render` | method | 755-765 | [card](#queue_rendertracker-settings-rows) |
 | `Queue.delta` | method | 768-794 | [card](#queue_deltachanged-settings_analysiscodebase-analysis) |
+| `main` | function | 797-840 | [card](#main) |
 
 ## Call graph
 
@@ -151,6 +152,7 @@ flowchart LR
   assemble_phase["Queue.assemble_phase"]
   render["Queue.render"]
   delta["Queue.delta"]
+  main["main"]
   paged -->|"call"| call
   call -->|"request"| request
   ensure_all -->|"ensure_label"| ensure
@@ -224,6 +226,13 @@ flowchart LR
   delta -->|"json_file"| json_file
   delta -->|"comp_label"| comp_label
   delta -->|"assignment"| assignment
+  main -->|"GitHub"| init
+  main -->|"Queue"| queue_init
+  main -->|"ensure_labels"| ensure_all
+  main -->|"issues"| paged
+  main -->|"create_issue"| create_issue
+  main -->|"reconcile"| reconcile
+  main -->|"delta"| delta
 ```
 
 ## Classes
@@ -1939,6 +1948,63 @@ for each touched component:
 | `.github/bible/bible_queue.py:782` | if | A matching delta issue is already open | Logs and skips creating a duplicate issue. |
 
 ## Functions and methods
+
+### `main()`
+
+Source: `.github/bible/bible_queue.py:797-840` <!-- code: f407f91f47e7 -->
+
+| | |
+| --- | --- |
+| Kind | module entry point |
+| Called by | Module guard (`.github/bible/bible_queue.py:843-844`) |
+| Calls | `argparse.ArgumentParser`, `add_subparsers`, `add_parser`, `add_argument`, `parse_args`, `os.environ.get`, `SystemExit`, `GitHub`, `Queue`, `ensure_labels`, `issues`, `create_issue`, `print`, `strip`, `split`, `any`, `Queue.reconcile`, `open`, `Queue.delta`, `str` |
+| Purpose | Parses `start`, `reconcile`, and `delta` commands and dispatches to the queue workflow. |
+
+**Steps**
+
+1. Builds the command parser from the module docstring's first line; defines `start` options (`--components`, `--model`, required `--verify-model`, concurrency, analysis, depth), `reconcile`, and `delta` (`--changed-file` required, analysis), then parses arguments. (`.github/bible/bible_queue.py:798-811`)
+2. Reads `GITHUB_REPOSITORY` and `GH_TOKEN`; raises `SystemExit` if either is missing. Creates `GitHub` and `Queue` clients. (`.github/bible/bible_queue.py:813-817`)
+3. For `start`, requires a nonempty verification model different from the normal model; parses component names and requires either `all` or names matching `NAME`. (`.github/bible/bible_queue.py:819-824`)
+4. Ensures labels and exits if a tracker issue is already open. Builds settings from arguments, creates a labeled tracker issue containing the hidden settings JSON, and prints its number and queue start guidance. (`.github/bible/bible_queue.py:825-832`)
+5. For `reconcile`, calls `queue.reconcile`. Otherwise reads nonempty, stripped changed-file lines from the specified file and calls `queue.delta(changed, args.analysis)`. (`.github/bible/bible_queue.py:833-838`)
+6. Converts `RuntimeError` from command handling to `SystemExit(str(err))`. (`.github/bible/bible_queue.py:839-840`)
+
+**Pseudo-code**
+
+```text
+parse required subcommand and its arguments
+repo, token = GITHUB_REPOSITORY, GH_TOKEN
+if either is missing: exit
+gh = GitHub(repo, token); queue = Queue(gh)
+try:
+    if start:
+        require distinct nonempty verify model
+        parse and validate component selection
+        ensure labels; exit if a tracker is already open
+        create tracker with settings; print issue number
+    elif reconcile: queue.reconcile()
+    else:
+        read nonempty changed paths from file
+        queue.delta(changed, analysis)
+on RuntimeError: exit with its text
+```
+
+**Branches and errors**
+
+| Line | Branch | When | What happens |
+| --- | --- | --- | --- |
+| `.github/bible/bible_queue.py:814` | if | Repository or token environment value is missing | Exits with a required-environment message. |
+| `.github/bible/bible_queue.py:815` | raise | Either required environment value is missing | Raises `SystemExit`. |
+| `.github/bible/bible_queue.py:819` | if | Command is `start` | Validates and starts an analysis run. |
+| `.github/bible/bible_queue.py:820` | if | Verification model is empty or equals normal model | Exits with the distinct-model requirement. |
+| `.github/bible/bible_queue.py:821` | raise | Verification model validation fails | Raises `SystemExit`. |
+| `.github/bible/bible_queue.py:823` | if | No names or any name other than `all` fails `NAME` | Exits with component-selection guidance. |
+| `.github/bible/bible_queue.py:824` | raise | Component selection fails validation | Raises `SystemExit`. |
+| `.github/bible/bible_queue.py:826` | if | An open tracker issue exists | Exits rather than opening another run. |
+| `.github/bible/bible_queue.py:827` | raise | An open tracker exists | Raises `SystemExit`. |
+| `.github/bible/bible_queue.py:833` | elif | Command is `reconcile` | Calls `queue.reconcile`; other command is handled by the `else`. |
+| `.github/bible/bible_queue.py:839` | except | Command handling raises `RuntimeError` | Enters error conversion. |
+| `.github/bible/bible_queue.py:840` | raise | A `RuntimeError` was caught | Raises `SystemExit` with the error text. |
 
 ### `now()`
 
