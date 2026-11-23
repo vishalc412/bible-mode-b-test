@@ -1,0 +1,33 @@
+# Spring Boot 3.1+ consumer, route B: the key and certificate come as one
+# PKCS12 file ({{PRODUCER}}-{{CONSUMER}}.p12). Mount it read-only; take its
+# password from a secret (an environment variable set from a Secret, or a
+# mounted file through spring.config.import=configtree:), never from a file in
+# the repository.
+#
+# A PKCS12 key store cannot use a PEM trust file in the same bundle, so make a
+# trust store from ca-bundle.pem once. It holds public certificates only, so
+# its password is not a secret:
+#
+#   keytool -importcert -noprompt -alias {{PRODUCER}}-server-ca -file ca-bundle.pem \
+#           -keystore {{PRODUCER}}-truststore.p12 -storetype PKCS12 -storepass changeit
+#
+# (The .p12 you were sent does not contain the CA to trust.)
+spring:
+  ssl:
+    bundle:
+      jks:
+        {{PRODUCER}}-client:
+          keystore:
+            location: "file:/etc/tls/{{PRODUCER}}/{{PRODUCER}}-{{CONSUMER}}.p12"
+            password: "${CLIENT_P12_PASSWORD}"     # an environment variable set from a secret
+            type: PKCS12
+          truststore:
+            location: "file:/etc/tls/{{PRODUCER}}/{{PRODUCER}}-truststore.p12"
+            password: "changeit"
+            type: PKCS12
+{{PRODUCER}}:
+  base-url: "{{ENDPOINT_BASE}}"
+
+# The Java side is the same as in spring.yml: RestClientSsl.fromBundle("{{PRODUCER}}-client").
+# A client reads the bundle once, at start-up: restart the service after the bundle is replaced.
+# The bundle lasts 30 days at most. Move to route A (./make-csr.sh) at the next renewal.

@@ -1,0 +1,57 @@
+# Spring Boot 3.2+ consumer (3.1: the same bundle, with RestTemplateBuilder.setSslBundle
+# or WebClientSsl; RestClient and reload-on-update start at 3.2).
+#
+# Mount client.crt, the key and ca-bundle.pem as files, read-only, as a folder
+# (never a single file with subPath: such a mount never updates).
+#
+# Kubernetes: a kubernetes.io/tls Secret always names its files tls.crt and
+# tls.key. Either read those names below, or map them in the volume:
+#
+#   volumes:
+#     - name: {{PRODUCER}}-client
+#       projected:
+#         sources:
+#           - secret:
+#               name: {{CONSUMER}}-{{PRODUCER}}-client      # kubernetes.io/tls
+#               items:
+#                 - { key: tls.crt, path: client.crt }
+#                 - { key: tls.key, path: client.key }
+#           - configMap:
+#               name: {{PRODUCER}}-server-ca                # ca-bundle.pem from this kit (public)
+#               items:
+#                 - { key: ca-bundle.pem, path: ca-bundle.pem }
+#
+# Do not use the Secret's ca.crt for trust: it is the CA that signed YOUR
+# certificate, not the one that signs {{PRODUCER}}'s.
+spring:
+  ssl:
+    bundle:
+      pem:
+        {{PRODUCER}}-client:
+          keystore:
+            certificate: "file:/etc/tls/{{PRODUCER}}/client.crt"
+            private-key: "file:/etc/tls/{{PRODUCER}}/client.key"
+          truststore:
+            certificate: "file:/etc/tls/{{PRODUCER}}/ca-bundle.pem"
+{{PRODUCER}}:
+  base-url: "{{ENDPOINT_BASE}}"
+
+# Java, with RestClient:
+#   @Bean RestClient producerClient(RestClient.Builder builder, RestClientSsl ssl,
+#                                   @Value("${{{PRODUCER}}.base-url}") String baseUrl) {
+#       return builder.baseUrl(baseUrl).apply(ssl.fromBundle("{{PRODUCER}}-client")).build();
+#   }
+# WebClient: builder.apply(webClientSsl.fromBundle("{{PRODUCER}}-client")).
+# RestTemplate: restTemplateBuilder.sslBundle(sslBundles.getBundle("{{PRODUCER}}-client"))
+#   (setSslBundle(...) before Spring Boot 3.4).
+# Feign, Apache HttpClient, the JDK HttpClient: build them from
+#   sslBundles.getBundle("{{PRODUCER}}-client").createSslContext().
+# Never add a TrustManager, HostnameVerifier or "trust all" of your own.
+#
+# Renewal: a client built this way reads the bundle once, at start-up.
+# "reload-on-update" refreshes embedded web servers only, not HTTP clients.
+# After a renewed certificate is in place, restart the service (or roll the
+# deployment). To avoid the restart, set reload-on-update: true on this
+# bundle (spring.ssl.bundle.pem.{{PRODUCER}}-client.reload-on-update: true) and
+# rebuild the client from SslBundles.addBundleUpdateHandler("{{PRODUCER}}-client", ...).
+# The handler is called only for a bundle with reload-on-update: true.
