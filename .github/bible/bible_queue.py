@@ -579,10 +579,10 @@ class Queue:
             issue = open_sessions[0]
             if self.held(issue):
                 return "needs a person: see #%d" % issue["number"]
-            result = self.follow(analysis, name, issue)
-            if not result.endswith("merged"):
-                return result
-            # merged: decide the next step now, in the same run (the merge event starts no workflow)
+            # A merge is the end of this run's work for the component. Right after a merge GitHub can still return the
+            # branch's files from before it (seen on github.com, 24 Nov 2026), so the next step is decided at the next
+            # check, from fresh data.
+            return self.follow(analysis, name, issue)
         if not self.run_issues([comp_label(name)], state="all"):
             return "not started"
         status = status_of(gh, "%s/ledger/components/%s/status.json" % (analysis, name), branch)
@@ -612,7 +612,13 @@ class Queue:
                               "Component `%s`, verified (PASS, pages fingerprint %s). Tracker: #%d. Review the pages under "
                               "`%s/lld/%s/`, then merge." % (name, pages, self.tracker["number"], analysis, name))
             return "review the pull request #%d" % pr["number"]
-        if facts and len(closed_verify) >= MAX_VERIFY_ROUNDS and (facts[0] != "PASS" or facts[1] or facts[2] != pages):
+        all_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed") if i.get("state_reason") == "completed"]
+        all_revise = [i for i in self.run_issues(["bible-chunk", comp_label(name)], state="closed")
+                      if i.get("state_reason") == "completed" and "\nRevision (" in (i.get("body") or "")]
+        last_verify = max([i.get("closed_at") or "" for i in all_verify] + [""])
+        last_revise = max([i.get("closed_at") or "" for i in all_revise] + [""])
+        verdict_is_newest = last_verify > last_revise  # a revision merged after the last verdict is verified before any hold
+        if facts and verdict_is_newest and len(closed_verify) >= MAX_VERIFY_ROUNDS and (facts[0] != "PASS" or facts[1] or facts[2] != pages):
             hold = gh.create_issue("Codebase analysis - component %s needs a person" % name,
                                    "Component: %s\nTracker: #%d\n\n%d verifications without a clean PASS (last verdict: %s). Read "
                                    "%s/ledger/components/%s/verification-report.md on branch %s. Fix the cause (edit the pages on "
@@ -621,11 +627,6 @@ class Queue:
                                        name, self.tracker["number"], len(closed_verify), facts[0], analysis, name, branch),
                                    ["bible-hold", "bible-needs-human", comp_label(name), self.run_label])
             return "needs a person: see #%d" % hold["number"]
-        all_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed") if i.get("state_reason") == "completed"]
-        all_revise = [i for i in self.run_issues(["bible-chunk", comp_label(name)], state="closed")
-                      if i.get("state_reason") == "completed" and "\nRevision (" in (i.get("body") or "")]
-        last_verify = max([i.get("closed_at") or "" for i in all_verify] + [""])
-        last_revise = max([i.get("closed_at") or "" for i in all_revise] + [""])
         if facts and facts[0] != "PASS" or (facts and facts[1]):
             if last_revise < last_verify:  # the last verification's corrections are not applied yet
                 self.start_chunk(analysis, name, note="Revision (verdict %s): apply %s/ledger/components/%s/verification-report.md "
