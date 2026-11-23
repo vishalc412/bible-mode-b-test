@@ -6,6 +6,7 @@ GET /health       ->  200 {"status": "ok"}
 """
 import json
 import os
+import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from components.catalog import catalog
@@ -21,10 +22,11 @@ class CatalogHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        if self.path == "/health":
+        path = urllib.parse.urlsplit(self.path).path
+        if path == "/health":
             return self._send(200, {"status": "ok"})
-        if self.path.startswith("/price/"):
-            sku = self.path[len("/price/"):]
+        if path.startswith("/price/"):
+            sku = urllib.parse.unquote(path[len("/price/"):])
             try:
                 return self._send(200, {"sku": sku, "price": catalog.price_of(sku)})
             except KeyError:
