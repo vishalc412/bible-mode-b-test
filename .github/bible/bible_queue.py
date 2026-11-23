@@ -74,7 +74,7 @@ MAX_CONTINUE = 3           # continuation comments for one assembly or whole ver
 CONTINUE_MARK = "<!-- bible-continue -->"
 SETTINGS = re.compile(r"<!--\s*bible-settings\s*(\{.*?\})\s*-->", re.S)
 ATTEMPT = re.compile(r"^Attempt:\s*(\d+)", re.M)
-NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$")
+NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,39}\Z")
 LABELS = {
     "bible-tracker": "One analysis run: settings and progress",
     "bible-plan": "Copilot session: plan the components",
@@ -343,10 +343,10 @@ def age(stamp):
     return (now() - datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00"))).total_seconds()
 
 
-SAFE_PATH = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)*$")
-SAFE_FILE = re.compile(r"^[A-Za-z0-9_.@+-][A-Za-z0-9_.@+/ -]{0,250}$")   # a path quoted in an issue for Copilot
+SAFE_PATH = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)*\Z")
+SAFE_FILE = re.compile(r"^[A-Za-z0-9_.@+-][A-Za-z0-9_.@+/ -]{0,250}\Z")   # a path quoted in an issue for Copilot
 MAX_DELTA_ISSUES = 10      # update sessions one push may start; more, and a person decides
-SAFE_MODEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$")
+SAFE_MODEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}\Z")
 DEPTH_VALUES = ("deep", "standard", "survey")  # coverage.DEPTHS
 
 
@@ -570,7 +570,13 @@ class Queue:
             return self.plan_phase(tracker, settings, analysis)
         # components.json is written by the plan session and merged by a person; its names still reach labels,
         # branch names and issue text, so the plan's own name rule is applied again here
-        names = [c.get("name") for c in catalog["components"] if isinstance(c, dict) and NAME.match(str(c.get("name") or ""))]
+        listed = [str(c.get("name") or "") for c in catalog["components"] if isinstance(c, dict)]
+        names = [n for n in listed if NAME.match(n)]
+        if len(names) != len(listed):
+            # never a silent skip: a run that left a component out could close as done without analysing it
+            return self.render(tracker, settings, {"(settings)": "stopped: components.json holds %d component name(s) that do not "
+                                                   "follow the plan's name rule. Fix the plan (pass 2), run discover.py again, "
+                                                   "then start a new run." % (len(listed) - len(names))})
         asked = settings.get("components", "all").strip()
         wanted = names if asked in ("all", "") else [n.strip() for n in asked.split(",") if n.strip()]
         unknown = [n for n in wanted if n not in names]
@@ -678,8 +684,10 @@ class Queue:
         if status.get("state") == "COMPONENT_DONE":
             gate_ok, pages = self.check(analysis, name, branch)
         if not gate_ok:
+            merged_into_default = max([p.get("merged_at") or "" for p in gh.branch_prs(branch, self.default)] + [""])
+            since = max(after, merged_into_default)  # a component merged earlier and now drifting starts a fresh count
             sessions = [i for i in self.run_issues(["bible-chunk", comp_label(name)], state="closed")
-                        if (i.get("created_at") or "") >= after]
+                        if (i.get("created_at") or "") >= since]
             estimate = as_int(self.estimate.get(name)) or 2
             cap = max(MIN_SESSION_CAP, 2 * estimate + 2)
             if len(sessions) >= cap:
@@ -757,6 +765,11 @@ class Queue:
         if state == "running":
             return "%s running" % kind
         base = "%s/ledger/components/%s/" % (analysis, name)
+        try:
+            gh.pr_files(pr["number"])
+        except RuntimeError as err:  # an incomplete file list cannot be checked: the session fails, it is never merged
+            retried = self.fail_or_retry(issue, pr, str(err))
+            return "session starting" if retried else "needs a person: see #%d" % issue["number"]
         if kind == "chunk":
             allowed = ("%s/lld/%s/" % (analysis, name), "%s/lld/api/%s/" % (analysis, name), base)
             bad = [f for f in gh.pr_files(pr["number"])
@@ -804,7 +817,11 @@ class Queue:
             return False, None
         work = tempfile.mkdtemp(prefix="bible-gate-")
         try:
-            self.gh.tarball(branch, work)
+            try:
+                self.gh.tarball(branch, work)
+            except RuntimeError as err:  # too large, unreadable: the check fails (the session cap then applies)
+                self.log("gate %s: %s" % (name, err))
+                return False, None
             run = subprocess.run([sys.executable, "-I", os.path.abspath(os.path.join(scripts, "coverage.py")), "--repo", work,
                                   "--analysis", analysis, "--depth", self.settings.get("depth", "deep"), "--component", name,
                                   "--report", "-"], capture_output=True, text=True, timeout=GATE_TIMEOUT)
@@ -813,6 +830,9 @@ class Queue:
                                       "--analysis", analysis, "--fingerprint", "--component", name], capture_output=True, text=True,
                                      timeout=GATE_TIMEOUT)
             return run.returncode == 0, (printed.stdout.strip() or None)
+        except subprocess.TimeoutExpired:
+            self.log("gate %s: the check took longer than %d seconds: treated as failing" % (name, GATE_TIMEOUT))
+            return False, None
         finally:
             shutil.rmtree(work, ignore_errors=True)
 
