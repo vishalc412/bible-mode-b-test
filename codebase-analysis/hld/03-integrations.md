@@ -63,7 +63,7 @@ The catalog API binds to `127.0.0.1` on port 8001 by default, configurable with 
 | `tools` | GitHub CLI | Creates component labels and issues from `plan.json` | `tools/fanout.sh:7-29` |
 | `tools.plan` | `tools.gate` | Uses the same test counter while generating the plan baseline | `tools/plan.py:15,36-38`; `tools/gate.py:33-39` |
 
-<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->
+<!-- cites .github/bible/bible_queue.py@68e91ae09c53c283e7402334cfe2a715785b33ed -->
 
 <!-- cites .github/workflows/poc-assign-copilot.yml@dab60e0d846bfee50726dce662df48fc186ca3d3 -->
 

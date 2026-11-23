@@ -36,4 +36,6 @@ Depth: deep. Snapshot: 20 files, 2026-11-23. Inventory: `ledger/inventory.json` 
 
 ## Coverage from coverage.py
 
-The whole-analysis gate passes at deep: all 11 of 11 source files with symbols have pages, all 108 symbols and 90 full function cards are accounted for, all 217 branch lines are cited, all 179 same-file call-graph edges are drawn, 17 of 17 LLD pages have front matter, and 1,745 of 1,758 citations resolve (99.3%). The separate catalog endpoint cards cover both manually matched GET paths; the static route counter detects none (`ledger/coverage-report.md`).
+The whole-analysis gate passes at deep: all 11 of 11 source files with symbols have pages, all 111 symbols and 93 full function cards are accounted for, all 274 branch lines are cited, all 210 same-file call-graph edges are drawn, 17 of 17 LLD pages have front matter, and 1,886 of 1,886 citations resolve (100%). The changed queue source file is 1,130 lines long (`.github/bible/bible_queue.py:1-1130`). The separate catalog endpoint cards cover both manually matched GET paths; the static route counter detects none (`ledger/coverage-report.md`).
+
+<!-- cites .github/bible/bible_queue.py@68e91ae09c53c283e7402334cfe2a715785b33ed -->

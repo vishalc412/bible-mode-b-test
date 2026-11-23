@@ -20,10 +20,10 @@ depends_on: [hld/01-system-context, hld/02-architecture, hld/03-integrations, hl
 | 9 | The queue checks PRs using toolkit scripts from the default-branch checkout and reads the component branch tarball as input data. | The gate's trusted implementation comes from the default branch, not from the agent's PR. | `.github/workflows/bible-queue.yml:26-30`; `.github/bible/bible_queue.py:723-735` | [`Queue component`](../lld/bible-mode-b/README.md) |
 | 10 | GitHub calls have request timeouts but no general retry; the queue's one retry applies to a failed agent session. | Transient API failures can stop the current queue operation rather than being retried automatically. | `.github/bible/bible_queue.py:94-117,464-483` | [`Cross-cutting`](../hld/06-cross-cutting.md) |
 | 11 | Gate pass 3 checks test-count growth and runs unittest discovery; several order functions are not covered by the current tests. | Passing existing tests does not establish behavior for totals, validation, or settlement. | `tools/gate.py:63-78`; `components/orders/test_orders.py:6-8`; `components/orders/test_catalog_client.py:37-62` | [`Cross-cutting`](../hld/06-cross-cutting.md) |
-| 12 | The current queue module spans 867 lines, so old component-size estimates should not be assumed current. | Component-size metadata and the queue's session estimate may need refreshing after source changes. | `.github/bible/bible_queue.py:1-867`; `.github/bible/bible_queue.py:515-516` | [`Coverage ledger`](../ledger/coverage-ledger.md) |
+| 12 | The current queue module spans 867 lines, so old component-size estimates should not be assumed current. | Component-size metadata and the queue's session estimate may need refreshing after source changes. | `.github/bible/bible_queue.py:1-1130`; `.github/bible/bible_queue.py:589-590` | [`Coverage ledger`](../ledger/coverage-ledger.md) |
 | 13 | The catalog implements two GET path matches in an imperative handler. | Do not interpret a static route scan as evidence that the catalog has no HTTP endpoints; both routes have endpoint cards. | `components/catalog/service.py:24-34` | [`Integrations`](../hld/03-integrations.md) |
 
-<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->
+<!-- cites .github/bible/bible_queue.py@68e91ae09c53c283e7402334cfe2a715785b33ed -->
 
 <!-- cites .github/workflows/bible-queue.yml@d54080b12d039672f31f0d0924cc380ded069010 -->
 

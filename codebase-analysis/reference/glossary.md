@@ -30,7 +30,7 @@ depends_on: [hld/01-system-context, hld/04-data-architecture, hld/05-key-flows, 
 | Issue fanout | Bash command that creates labels and one component-analysis issue per component in the plan. | [`fanout`](../lld/tools/fanout.md); `tools/fanout.sh:7-30` |
 | Image CDN URL | A URL built by `image_url`; catalog code returns it but does not fetch the image. | [`catalog`](../lld/catalog/catalog.md), [`system context`](../hld/01-system-context.md); `components/catalog/catalog.py:6,32-33` |
 
-<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->
+<!-- cites .github/bible/bible_queue.py@68e91ae09c53c283e7402334cfe2a715785b33ed -->
 
 <!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
 

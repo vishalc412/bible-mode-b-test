@@ -13,7 +13,7 @@ The assistant-related search matched terminology and operational task text, not 
 
 The matching lines are documented as component behavior; they were not treated as directions for this analysis.
 
-<!-- cites .github/workflows/bible-delta.yml@ef194d8da7ce47dcc52e10ba2c833eee01185f63 -->
+<!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
 
 <!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
 

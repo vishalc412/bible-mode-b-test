@@ -2,6 +2,30 @@
 
 Status: CORRECTED AFTER VERIFICATION (report of 2026-11-23; revised pages not yet re-verified).
 
+## Current revision
+
+Applied the current `next.py` revision packet for `.github/bible/bible_queue.py` (17 cards). Reopened and rewrote `GitHub.me`, `GitHub.is_agent_pr`, `GitHub.start_error`, `GitHub.pr_files`, `GitHub.tarball`, `GitHub.merge`, `settings_of`, `Queue.held`, `Queue.run`, `Queue.component`, `Queue.follow`, `Queue.check`, `Queue.assemble_phase`, `Queue.revise_all_step`, `Queue.continue_if_unfinished`, `Queue.delta`, and `main`; updated source stamps, branch tables, call-graph edges, and the component README. Source lines: `.github/bible/bible_queue.py:160-1126`.
+
+Applied from verification-report.md, fingerprint 26ea3631571ae969.
+
+| Item | Location | What was changed |
+| --- | --- | --- |
+| V-001 | `bible_queue.md` | Rebased the `main` and `settings_of` cards to the current source line ranges and removed stale branch rows. |
+| V-002 | `bible_queue.md`, `settings_of` | Documented non-object markers, safe analysis paths, allowed depths, and model-name validation in the pseudo-code and branch table. |
+| V-003 | `bible_queue.md`, `main` | Rewrote the steps and branches for `--analysis`, `--depth`, settings refusal, reconcile, delta, and current error handling. |
+| V-004 | `README.md`, `ledger/coverage-ledger.md` | Updated source-file totals and current deep-gate figures: 111 symbols, 274 branch lines, 1,884 citations, and a 1,130-line queue file. |
+| V-005 | `bible_queue.md` | Corrected callers for `GitHub.me`, `Queue.continue_if_unfinished`, and `Queue.revise_all_step` to current call lines. |
+
+### Remaining review corrections
+
+| Item | Location | What was changed |
+| --- | --- | --- |
+| V-006 | `lld/bible-mode-b/README.md` | Changed the component size to 69 functions/methods, matching `coverage.py --component bible-mode-b`; the whole gate now resolves 1,886 citations. |
+| V-007 | `lld/bible-mode-b/bible_queue.md` | Added settings-validation refusal to `main` pseudo-code and made the component-name validation branch explicit. |
+| V-008 | `lld/bible-mode-b/bible_queue.md` | Replaced the placeholder callers for `settings_of` with `Queue.reconcile:555` and `main:1113`. |
+
+| V-009 | `README.md` | Corrected every component row to use its own deep component coverage count: catalog 10, orders 7, bible-mode-b 69, and tools 7 functions. |
+
 ## 2026-11-23
 
 Applied from verification-report.md, fingerprint dee0a05d04621400, of 2026-11-23, verdict PASS AFTER CORRECTIONS.
