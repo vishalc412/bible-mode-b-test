@@ -33,7 +33,7 @@ the run. Every issue of a run carries the label bible-run-<tracker number>.
 
 Environment: GITHUB_REPOSITORY (owner/name), GH_TOKEN (a user token allowed to assign Copilot),
 GITHUB_API_URL (default https://api.github.com), BIBLE_SKILLS (default .github/skills),
-BIBLE_AGENT_LOGINS (comma list; default Copilot,copilot-swe-agent[bot]), BIBLE_NOW (tests only).
+BIBLE_AGENT_LOGINS (comma list; default Copilot,copilot-swe-agent[bot],copilot-swe-agent), BIBLE_AGENT_APP (default copilot-swe-agent), BIBLE_NOW (tests only).
 Standard library only.
 """
 
