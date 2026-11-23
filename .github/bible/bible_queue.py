@@ -67,6 +67,8 @@ FINAL_STATES = ("NEW_CHAT", "COMPONENT_DONE", "WAITING_ANSWER", "STOP")
 NO_PR_AFTER = 30 * 60      # seconds after assignment with no pull request: the session did not start
 IDLE_AFTER = 20 * 60       # seconds without a push: the session has ended
 MAX_VERIFY_ROUNDS = 2
+MAX_CONTINUE = 3           # continuation comments for one assembly or whole verification before a person decides
+CONTINUE_MARK = "<!-- bible-continue -->"
 SETTINGS = re.compile(r"<!--\s*bible-settings\s*(\{.*?\})\s*-->", re.S)
 ATTEMPT = re.compile(r"^Attempt:\s*(\d+)", re.M)
 NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$")
@@ -763,6 +765,10 @@ class Queue:
                     self.fail_or_retry(issue, None, "no pull request after assignment")
                 if pr and state == "running":  # Copilot is still working on it: not ready for review yet
                     return "%s: running (pull request #%d)" % (kind[6:], pr["number"])
+                if pr and state == "finished":
+                    unfinished = self.continue_if_unfinished(issue, pr, kind, analysis)
+                    if unfinished:
+                        return unfinished
                 return "%s: %s" % (kind[6:], "review and merge pull request #%d" % pr["number"] if pr else state)
             if text:
                 title, body = issue_text(gh, "%s/ledger/issues/%s" % (analysis, text), self.default, title)
@@ -776,6 +782,36 @@ class Queue:
         gh.comment(tracker["number"], "Every component, the assembly and the whole verification are merged. Done.")
         gh.close(tracker["number"])
         return "done"
+
+    def continue_if_unfinished(self, issue, pr, kind, analysis):
+        """A session that ended before its work was done (seen on github.com, 24 Nov 2026: the assembly stopped at
+        Copilot's session limit after 52 minutes). Done means: the assembly recorded its baseline (the last step of the
+        Finish order), the whole verification wrote its report. Otherwise ask Copilot to continue on the same pull
+        request, at most MAX_CONTINUE times, then a person. None when the work is done."""
+        gh = self.gh
+        marker = "%s/ledger/baseline.json" % analysis if kind == "bible-assemble" else "%s/verification-report.md" % analysis
+        if gh.file(marker, pr["head"]["sha"]):
+            return None
+        events = gh.timeline(pr["number"])
+        finished = max([e.get("created_at") or "" for e in events if e.get("event") == "copilot_work_finished"
+                        and (e.get("performed_via_github_app") or {}).get("slug") == AGENT_APP] + [""])
+        asked = [e.get("created_at") or "" for e in events if e.get("event") == "commented" and CONTINUE_MARK in (e.get("body") or "")]
+        if asked and max(asked) > finished:
+            return "%s: continuing (pull request #%d)" % (kind[6:], pr["number"])  # asked; Copilot has not started yet
+        if len(asked) >= MAX_CONTINUE:
+            if "bible-needs-human" not in labels_of(issue):
+                gh.label(issue["number"], "bible-needs-human")
+                gh.comment(issue["number"], "%d continuations and %s is still missing on #%d. A person must look: read the "
+                           "pull request's last summary, then remove the label `bible-needs-human` to give more sessions."
+                           % (len(asked), marker, pr["number"]))
+            return "%s: needs a person: see #%d" % (kind[6:], issue["number"])
+        gh.comment(pr["number"], "@copilot continue: run `python3 -I %s/analyzing-a-codebase/scripts/next.py --repo . --analysis %s "
+                   "--depth %s --new-session` and do exactly what it prints until it prints DONE%s. Then summarise in a "
+                   "comment what you finished and the last line next.py printed.\n%s"
+                   % (self.skills, analysis, self.settings.get("depth", "deep"),
+                      " (the Finish order ends with delta.py --init, which records ledger/baseline.json)" if kind == "bible-assemble"
+                      else ", or for the whole verification until verification-report.md is written", CONTINUE_MARK))
+        return "%s: continuing, session %d (pull request #%d)" % (kind[6:], len(asked) + 2, pr["number"])
 
     def render(self, tracker, settings, rows):
         lines = ["Codebase analysis run, kept up to date by the Bible - queue workflow every 15 minutes. Close this issue to stop "
