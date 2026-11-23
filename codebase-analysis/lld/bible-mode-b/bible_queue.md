@@ -103,6 +103,8 @@ Source file: `.github/bible/bible_queue.py`
 
 ## Call graph
 
+Edges are derived by matching calls to same-file function names; matching names alone can confuse methods with external calls, so consult the cited cards for the receiver.
+
 ```mermaid
 flowchart LR
   init["GitHub.__init__"]
@@ -190,11 +192,8 @@ flowchart LR
   merge -->|"ready"| ready
   merge -->|"call"| call
   age -->|"now"| now
-  issuetext -->|"file"| call
-  jsonfile -->|"file"| call
   reportfacts -->|"section"| section
   statusof -->|"json_file"| jsonfile
-  runissues -->|"issues"| call
   agentpr -->|"linked_prs"| linked
   agentpr -->|"is_agent_pr"| isagent
   session -->|"agent_pr"| agentpr
@@ -253,7 +252,6 @@ flowchart LR
   main -->|"GitHub"| init
   main -->|"Queue"| queueinit
   main -->|"ensure_labels"| ensureall
-  main -->|"issues"| paged
   main -->|"create_issue"| createissue
   main -->|"reconcile"| reconcile
   main -->|"delta"| delta
@@ -277,7 +275,6 @@ flowchart LR
   assign -->|"call"| call
   branchprs -->|"paged"| paged
   branchsha -->|"call"| call
-  check -->|"run"| run
   close -->|"call"| call
   closepr -->|"call"| call
   comment -->|"call"| call
@@ -416,7 +413,7 @@ Source: `.github/bible/bible_queue.py:89-92` <!-- code: b511658beb68 -->
 | | |
 | --- | --- |
 | Kind | instance initializer |
-| Called by | No call site is in this source range. |
+| Called by | `main` (`.github/bible/bible_queue.py:820`) |
 | Calls | `os.environ.get`, `rstrip` |
 | Purpose | Stores API credentials and a slash-trimmed API base URL, then initializes the label cache. |
 
@@ -558,7 +555,7 @@ Source: `.github/bible/bible_queue.py:129-131` <!-- code: b3f969457f25 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.run_issues` (`.github/bible/bible_queue.py:402`), `Queue.reconcile` (`.github/bible/bible_queue.py:479`), `Queue.delta` (`.github/bible/bible_queue.py:786`), `main` (`.github/bible/bible_queue.py:830`) |
 | Calls | `urllib.parse.quote`, `join`, `GitHub.paged` |
 | Purpose | Lists issues for encoded labels and a state, excluding pull requests. |
 
@@ -613,7 +610,7 @@ Source: `.github/bible/bible_queue.py:140-142` <!-- code: 3233fadcc4c0 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `main` (`.github/bible/bible_queue.py:829`) |
 | Calls | `LABELS.items`, `GitHub.ensure_label` |
 | Purpose | Ensures each label defined in the module's `LABELS` mapping exists. |
 
@@ -641,7 +638,7 @@ Source: `.github/bible/bible_queue.py:144-151` <!-- code: c0db4afc186c -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.fail_or_retry` (`.github/bible/bible_queue.py:472`), `Queue.plan_phase` (`.github/bible/bible_queue.py:536`), `Queue.start_chunk` (`.github/bible/bible_queue.py:562`), `Queue.component` (`.github/bible/bible_queue.py:620`, `.github/bible/bible_queue.py:634`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:752`), `Queue.delta` (`.github/bible/bible_queue.py:789`), `main` (`.github/bible/bible_queue.py:834`) |
 | Calls | `GitHub.ensure_label`, `LABELS.get`, `GitHub.call` |
 | Purpose | Ensures labels, optionally configures agent assignment, and creates an issue. |
 
@@ -674,7 +671,7 @@ Source: `.github/bible/bible_queue.py:153-154` <!-- code: 4eb167486c4d -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.reconcile` (`.github/bible/bible_queue.py:478`), `Queue.delta` (`.github/bible/bible_queue.py:774`) |
 | Calls | `GitHub.call` |
 | Purpose | Returns the repository's `default_branch` value. |
 
@@ -695,7 +692,7 @@ Source: `.github/bible/bible_queue.py:156-158` <!-- code: 446defb234bd -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.start_chunk` (`.github/bible/bible_queue.py:554-555`) |
 | Calls | `GitHub.call`, `urllib.parse.quote` |
 | Purpose | Returns a branch reference's object SHA or `None` when the reference is absent. |
 
@@ -724,7 +721,7 @@ Source: `.github/bible/bible_queue.py:160-161` <!-- code: b860758c1ca1 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.start_chunk` (`.github/bible/bible_queue.py:556`) |
 | Calls | `GitHub.call` |
 | Purpose | Creates a Git reference for a branch at a supplied SHA. |
 
@@ -745,7 +742,7 @@ Source: `.github/bible/bible_queue.py:163-164` <!-- code: 43e383793681 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.start_chunk` (`.github/bible/bible_queue.py:558`) |
 | Calls | `GitHub.call`, `urllib.parse.quote` |
 | Purpose | Force-updates a branch reference to a supplied SHA. |
 
@@ -766,7 +763,7 @@ Source: `.github/bible/bible_queue.py:166-170` <!-- code: e383f7bd9e38 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `issue_text` (`.github/bible/bible_queue.py:334`), `json_file` (`.github/bible/bible_queue.py:349`), `Queue.component` (`.github/bible/bible_queue.py:607`), `Queue.follow` (`.github/bible/bible_queue.py:690`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:731`), `Queue.delta` (`.github/bible/bible_queue.py:776`) |
 | Calls | `GitHub.call`, `urllib.parse.quote`, `isinstance`, `base64.b64decode`, `decode` |
 | Purpose | Retrieves and decodes a text file from a repository reference. |
 
@@ -797,7 +794,7 @@ Source: `.github/bible/bible_queue.py:172-174` <!-- code: e46dcb273277 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | No call site found; unused (inferred: search for `.prs(` in `.github/bible/bible_queue.py` returned no matches). |
 | Calls | `urllib.parse.quote`, `GitHub.paged` |
 | Purpose | Lists pull requests by state and optional base branch. |
 
@@ -848,7 +845,7 @@ Source: `.github/bible/bible_queue.py:179-188` <!-- code: 91e30cd14abd -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.agent_pr` (`.github/bible/bible_queue.py:406`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:727`) |
 | Calls | `GitHub.timeline`, `get`, `append`, `GitHub.call`, `sorted`, `set` |
 | Purpose | Finds existing pull requests in this repository cross-referenced from an issue. |
 
@@ -882,7 +879,7 @@ Source: `.github/bible/bible_queue.py:190-193` <!-- code: fa42118d7d5a -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.component` (`.github/bible/bible_queue.py:568`) |
 | Calls | `split`, `GitHub.paged`, `urllib.parse.quote` |
 | Purpose | Lists all-state pull requests from this repository's branch into a specified base. |
 
@@ -905,7 +902,7 @@ Source: `.github/bible/bible_queue.py:195-199` <!-- code: 23a18c0ca1f4 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `GitHub.is_agent_pr` (`.github/bible/bible_queue.py:205`) |
+| Called by | `GitHub.is_agent_pr` (`.github/bible/bible_queue.py:205`), `Queue.session` (`.github/bible/bible_queue.py:420`) |
 | Calls | `GitHub.timeline`, `get` |
 | Purpose | Returns qualifying Copilot work timeline events as `(event, timestamp)` pairs. |
 
@@ -928,7 +925,7 @@ Source: `.github/bible/bible_queue.py:201-205` <!-- code: 5e675426c513 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.agent_pr` (`.github/bible/bible_queue.py:408`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:728`) |
 | Calls | `get`, `GitHub.agent_events`, `any` |
 | Purpose | Tests whether a pull request is attributed to a configured agent login or has a Copilot-start event. |
 
@@ -957,7 +954,7 @@ Source: `.github/bible/bible_queue.py:207-215` <!-- code: d25f1505b57a -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.session` (`.github/bible/bible_queue.py:417`), `Queue.hold_start_error` (`.github/bible/bible_queue.py:449`) |
 | Calls | `GitHub.assigned_at`, `GitHub.timeline`, `get`, `START_ERROR.search`, `splitlines`, `strip` |
 | Purpose | Returns the first matching agent start-error comment since the last assignment, or `None`. |
 
@@ -991,7 +988,7 @@ Source: `.github/bible/bible_queue.py:217-220` <!-- code: 8dec0d30b502 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `GitHub.start_error` (`.github/bible/bible_queue.py:209`) |
+| Called by | `GitHub.start_error` (`.github/bible/bible_queue.py:209`), `Queue.session` (`.github/bible/bible_queue.py:419`) |
 | Calls | `GitHub.timeline`, `get`, `max` |
 | Purpose | Returns the newest timestamp for an assignment event, falling back to issue creation time. |
 
@@ -1020,7 +1017,7 @@ Source: `.github/bible/bible_queue.py:222-229` <!-- code: 4c64f0e6b538 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.follow` (`.github/bible/bible_queue.py:661`, `.github/bible/bible_queue.py:664`, `.github/bible/bible_queue.py:683`) |
 | Calls | `GitHub.paged`, `append`, `get` |
 | Purpose | Returns each changed filename and, when present, its previous name. |
 
@@ -1053,7 +1050,7 @@ Source: `.github/bible/bible_queue.py:231-232` <!-- code: a3036655ce65 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.session` (`.github/bible/bible_queue.py:423`) |
 | Calls | `GitHub.call` |
 | Purpose | Returns the committer date for a commit SHA. |
 
@@ -1074,7 +1071,7 @@ Source: `.github/bible/bible_queue.py:234-259` <!-- code: 37cdbd678a08 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.check` (`.github/bible/bible_queue.py:706`) |
 | Calls | `urllib.parse.quote`, `tempfile.TemporaryFile`, `GitHub.request`, `shutil.copyfileobj`, `seek`, `os.path.abspath`, `tarfile.open`, `RuntimeError`, `split`, `len`, `isfile`, `isdir`, `os.path.normpath`, `os.path.join`, `startswith`, `os.makedirs`, `os.path.dirname`, `tar.extractfile`, `open` |
 | Purpose | Downloads a repository archive to a temporary file and writes accepted regular files/directories under `dest`. |
 
@@ -1117,7 +1114,7 @@ Source: `.github/bible/bible_queue.py:261-263` <!-- code: 3c67a9360e66 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.hold_start_error` (`.github/bible/bible_queue.py:450`), `Queue.fail_or_retry` (`.github/bible/bible_queue.py:462`), `Queue.follow` (`.github/bible/bible_queue.py:673-674`) |
 | Calls | `GitHub.ensure_label`, `LABELS.get`, `GitHub.call` |
 | Purpose | Ensures and adds one label to an issue. |
 
@@ -1140,7 +1137,7 @@ Source: `.github/bible/bible_queue.py:265-266` <!-- code: caf34958b931 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.follow` (`.github/bible/bible_queue.py:694`) |
 | Calls | `GitHub.call`, `urllib.parse.quote` |
 | Purpose | Removes a label from an issue and permits a missing-label response. |
 
@@ -1161,7 +1158,7 @@ Source: `.github/bible/bible_queue.py:268-269` <!-- code: a05e7f494734 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.held` (`.github/bible/bible_queue.py:440`), `Queue.hold_start_error` (`.github/bible/bible_queue.py:452`), `Queue.fail_or_retry` (`.github/bible/bible_queue.py:459`, `.github/bible/bible_queue.py:464`, `.github/bible/bible_queue.py:467`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:755`) |
 | Calls | `GitHub.call` |
 | Purpose | Creates an issue comment with the given body. |
 
@@ -1182,7 +1179,7 @@ Source: `.github/bible/bible_queue.py:271-272` <!-- code: db2a40d380a0 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.fail_or_retry` (`.github/bible/bible_queue.py:468`), `Queue.run` (`.github/bible/bible_queue.py:506`), `Queue.component` (`.github/bible/bible_queue.py:601`), `Queue.follow` (`.github/bible/bible_queue.py:695`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:735`, `.github/bible/bible_queue.py:756`) |
 | Calls | `GitHub.call` |
 | Purpose | Closes an issue with the supplied state reason. |
 
@@ -1203,7 +1200,7 @@ Source: `.github/bible/bible_queue.py:274-275` <!-- code: 56545a0f998b -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.held` (`.github/bible/bible_queue.py:437`), `Queue.render` (`.github/bible/bible_queue.py:767`) |
 | Calls | `GitHub.call` |
 | Purpose | Replaces an issue's body. |
 
@@ -1224,7 +1221,7 @@ Source: `.github/bible/bible_queue.py:277-278` <!-- code: 415484346894 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.hold_start_error` (`.github/bible/bible_queue.py:451`), `Queue.fail_or_retry` (`.github/bible/bible_queue.py:463`) |
 | Calls | `GitHub.call` |
 | Purpose | Removes the configured Copilot assignee from an issue. |
 
@@ -1245,7 +1242,7 @@ Source: `.github/bible/bible_queue.py:280-281` <!-- code: 8fb2f09224db -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.held` (`.github/bible/bible_queue.py:439`) |
 | Calls | `GitHub.call` |
 | Purpose | Assigns Copilot to an issue with the provided agent-assignment data. |
 
@@ -1300,7 +1297,7 @@ Source: `.github/bible/bible_queue.py:293-296` <!-- code: 68adaed91bed -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.follow` (`.github/bible/bible_queue.py:693`) |
 | Calls | `get`, `GitHub.ready`, `GitHub.call` |
 | Purpose | Marks a draft ready, when needed, and requests a squash merge with the supplied title. |
 
@@ -1329,7 +1326,7 @@ Source: `.github/bible/bible_queue.py:298-299` <!-- code: c5e4b3b311ae -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.fail_or_retry` (`.github/bible/bible_queue.py:460`) |
 | Calls | `GitHub.call` |
 | Purpose | Closes a pull request. |
 
@@ -1350,7 +1347,7 @@ Source: `.github/bible/bible_queue.py:301-302` <!-- code: 9b2aa4667c1c -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | No call site is in this source range. |
+| Called by | `Queue.component` (`.github/bible/bible_queue.py:609`) |
 | Calls | `GitHub.call` |
 | Purpose | Creates a pull request and returns the API result. |
 
@@ -1400,7 +1397,7 @@ Source: `.github/bible/bible_queue.py:401-402` <!-- code: 9186c4a33e43 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.run` (`.github/bible/bible_queue.py:505`), `Queue.plan_phase` (`.github/bible/bible_queue.py:529`), `Queue.start_chunk` (`.github/bible/bible_queue.py:557`), `Queue.component` (`.github/bible/bible_queue.py:577`, `.github/bible/bible_queue.py:586`, `.github/bible/bible_queue.py:593`, `.github/bible/bible_queue.py:596`, `.github/bible/bible_queue.py:602`, `.github/bible/bible_queue.py:604`, `.github/bible/bible_queue.py:606`, `.github/bible/bible_queue.py:608`, `.github/bible/bible_queue.py:624`, `.github/bible/bible_queue.py:625`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:718`, `.github/bible/bible_queue.py:720`) |
+| Called by | `Queue.run` (`.github/bible/bible_queue.py:505`), `Queue.plan_phase` (`.github/bible/bible_queue.py:529`), `Queue.start_chunk` (`.github/bible/bible_queue.py:557`), `Queue.component` (`.github/bible/bible_queue.py:577`, `.github/bible/bible_queue.py:586`, `.github/bible/bible_queue.py:593`, `.github/bible/bible_queue.py:596`, `.github/bible/bible_queue.py:602`, `.github/bible/bible_queue.py:604`, `.github/bible/bible_queue.py:606`, `.github/bible/bible_queue.py:613-614`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:722`, `.github/bible/bible_queue.py:724`) |
 | Calls | `self.gh.issues` |
 | Purpose | Queries issues for the requested labels plus this run's unique label. |
 
@@ -1817,14 +1814,14 @@ Source: `.github/bible/bible_queue.py:565-642` <!-- code: 9d544dd09fb5 -->
 | --- | --- |
 | Kind | instance method |
 | Called by | `Queue.run` (`.github/bible/bible_queue.py:511`) |
-| Calls | `gh.branch_prs`, `pr.get`, `get`, `self.run_issues`, `comp_label`, `self.held`, `self.follow`, `result.endswith`, `status_of`, `status.get`, `self.check`, `len`, `self.start_chunk`, `self.estimate.get`, `gh.close`, `labels_of`, `max`, `h.get`, `i.get`, `report_facts`, `gh.file`, `gh.create_pr`, `gh.create_issue`, `assignment`, `self.settings.get` |
+| Calls | `gh.branch_prs`, `pr.get`, `get`, `self.run_issues`, `comp_label`, `self.held`, `self.follow`, `status_of`, `status.get`, `self.check`, `len`, `self.start_chunk`, `self.estimate.get`, `gh.close`, `labels_of`, `max`, `h.get`, `i.get`, `report_facts`, `gh.file`, `gh.create_pr`, `gh.create_issue`, `assignment`, `self.settings.get` |
 | Purpose | Advances a component through its tracker-specific pull requests and sessions, coverage gate, verification and revision rounds, and final review PR or human hold. |
 
 **Steps**
 
 1. Scans PRs from the component branch into the default branch. Skips PRs from another repository, created before the tracker, or without its tracker reference; for the first remaining PR, returns `merged`, review status, or a human-needed status if it was closed without merging. (`.github/bible/bible_queue.py:566-576`)
-2. Combines open chunk and verification issues. For the first issue, returns human-needed if it is held; otherwise follows the session. (`.github/bible/bible_queue.py:577-585`)
-3. If the follow result does not end in `merged`, returns it. If there is no component issue in any state, returns `not started`; otherwise reads component status and runs the coverage check only when its state is `COMPONENT_DONE`. (`.github/bible/bible_queue.py:583-591`)
+2. Combines open chunk and verification issues. For the first issue, returns human-needed if it is held; otherwise returns the result of following the session. (`.github/bible/bible_queue.py:577-585`)
+3. If no open session issue exists, returns `not started` when there is no component issue in any state; otherwise reads component status and runs the coverage check only when its state is `COMPONENT_DONE`. (`.github/bible/bible_queue.py:586-591`)
 4. If the gate did not pass, counts closed chunk issues, starts another chunk with a session estimate, and returns `session starting`. (`.github/bible/bible_queue.py:592-595`)
 5. Loads all hold issues. If one is open and still labeled `bible-needs-human`, returns a human-needed status; if the label was removed, closes that hold and reloads the hold list. (`.github/bible/bible_queue.py:596-602`)
 6. Finds the latest hold close time and completed verification issues created at or after it; separately finds all completed verification issues and reads/parses the report only when at least one exists. (`.github/bible/bible_queue.py:603-607`)
@@ -1840,8 +1837,7 @@ for matching same-repository PR from this tracker:
     return merged, review, or needs-person state
 if open chunk/verify issue:
     if held: return needs-person
-    result = follow(issue)
-    if not merged: return result
+    return follow(issue)
 if no component issue ever existed: return not started
 status = component status
 if COMPONENT_DONE: run coverage gate
@@ -1866,7 +1862,6 @@ return verify running
 | `.github/bible/bible_queue.py:574` | if | Matching PR is open | Returns its review status. |
 | `.github/bible/bible_queue.py:578` | if | An open chunk or verification issue exists | Selects the first session issue. |
 | `.github/bible/bible_queue.py:580` | if | The selected issue is held | Returns human-needed status. |
-| `.github/bible/bible_queue.py:583` | if | Following the issue did not return a state ending in `merged` | Returns that result. |
 | `.github/bible/bible_queue.py:586` | if | No issue for this component exists in any state | Returns `not started`. |
 | `.github/bible/bible_queue.py:590` | if | Component status is `COMPONENT_DONE` | Runs the coverage check. |
 | `.github/bible/bible_queue.py:592` | if | Coverage gate did not pass | Starts another chunk and returns `session starting`. |
@@ -2180,7 +2175,7 @@ Source: `.github/bible/bible_queue.py:307-309` <!-- code: 9fb56903ebfa -->
 | | |
 | --- | --- |
 | Kind | module function |
-| Called by | `age` (`.github/bible/bible_queue.py:313`) |
+| Called by | `age` (`.github/bible/bible_queue.py:313`), `Queue.render` (`.github/bible/bible_queue.py:763`) |
 | Calls | `os.environ.get`, `datetime.datetime.fromisoformat`, `datetime.datetime.now`, `replace` |
 | Purpose | Returns the configured test time or the current UTC time. |
 
@@ -2537,7 +2532,7 @@ return data if data is a dict, otherwise {}
 
 The module imports Python standard-library utilities and initializes queue labels, environment-derived agent settings, regexes, and timing/verification constants. (`.github/bible/bible_queue.py:42-83`)
 
-It declares the `GitHub` API client, helper functions, and `Queue` coordinator; the CLI `main` parses arguments, and the module guard calls it when executed as a script. (`.github/bible/bible_queue.py:88-302`, `.github/bible/bible_queue.py:307-391`, `.github/bible/bible_queue.py:396-798`, `.github/bible/bible_queue.py:801-848`)
+It declares the `GitHub` API client (`.github/bible/bible_queue.py:88-302`), helper functions (`.github/bible/bible_queue.py:307-391`), and `Queue` coordinator (`.github/bible/bible_queue.py:396-798`). The CLI `main` parses arguments, and the module guard calls it when executed as a script. (`.github/bible/bible_queue.py:801-848`)
 
 ## Surprises
 
