@@ -1,0 +1,48 @@
+{
+ "schema": 1,
+ "status": "DRAFT",
+ "gate": "NOT RUN",
+ "verification": {
+  "verdict": "none",
+  "date": "",
+  "major_corrections": 0,
+  "report": ""
+ },
+ "baseline": {
+  "recorded": "2026-11-23T22:46:19",
+  "files": 20
+ },
+ "drift": {
+  "changed_files": 0,
+  "files": [],
+  "components": []
+ },
+ "components": {
+  "catalog": {
+   "state": "STALE",
+   "verdict": "PASS",
+   "why": "pages changed since the verification (fingerprint 96716433d8828161 then, cf014b3ef3120d3d now): verify the changed parts"
+  },
+  "orders": {
+   "state": "STALE",
+   "verdict": "PASS",
+   "why": "pages changed since the verification (fingerprint 2328b6c86811f8a8 then, c9d09f1d26615ac8 now): verify the changed parts"
+  },
+  "bible-mode-b": {
+   "state": "STALE",
+   "verdict": "PASS",
+   "why": "pages changed since the verification (fingerprint 8d9c4cbe0922bf75 then, 793b8917a18c2561 now): verify the changed parts"
+  },
+  "tools": {
+   "state": "STALE",
+   "verdict": "PASS",
+   "why": "pages changed since the verification (fingerprint 381f98a228eed7a1 then, 27b3c93a70c22b1b now): verify the changed parts"
+  }
+ },
+ "reasons": [
+  "no verification report",
+  "0 of 4 components verified"
+ ],
+ "notes": [],
+ "checked": "2026-11-23T22:52:31"
+}

@@ -178,7 +178,7 @@ One line per analysis file, in reading order. Generated inventory, coverage, and
 | Business rules | 20 |
 | Statements marked inferred / assumed | 25 |
 | Risks and surprises / unanswered questions | 13 / 0 |
-| Knowledge graph nodes / edges / chunks | 211 / 508 / 294 |
+| Knowledge graph nodes / edges / chunks | 211 / 508 / 298 |
 
 <!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
 

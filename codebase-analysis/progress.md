@@ -24,7 +24,7 @@ Version: not provided
 | 8 | HLD pages | done |
 | 9 | Mind map, front page, reference | done |
 | 10 | Knowledge base | done |
-| 11 | Quality gate and final baseline | in progress |
+| 11 | Quality gate and final baseline | done |
 
 ## Components
 
@@ -65,7 +65,7 @@ At this session's start, `next.py` reported 11 of 13 packets done. Packet 2 refr
 - Refreshed the generated inventory from the current source: 20 files, 14 source files, 1,343 source lines, 108 symbols, and 0 statically detected routes. The catalog GET paths are documented separately because its handler uses imperative path matching rather than route decorators.
 - Updated the coverage ledger to map all 20 in-scope files to analysis pages.
 - Completed HLD pages, mind maps, front page, reference pages, and the knowledge base. The first knowledge graph build identified unmatched front-matter names and two spellings for Supplier One; these were corrected before regenerating the graph.
-- The final knowledge graph contains 211 nodes, 508 edges, and 294 chunks; all LLD front-matter names resolve. The primer is 1,693 words and documents 20 rules.
+- The final knowledge graph contains 211 nodes, 508 edges, and 298 chunks; all LLD front-matter names resolve. The primer is 1,693 words and documents 20 rules.
 - The two component questions have answers and are recorded as resolved; no unanswered questions are open.
 
 ## Quality gate
@@ -100,7 +100,7 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 
 - The 43 Mermaid blocks were checked against their evidence and required diagram types; no renderer was available, so they were not rendered. This limitation is recorded in `README.md`.
 - All sweep searches and assistant-directed repository text locations are recorded in this file and `run-notes.md`. No secret values were copied into the analysis.
-- `knowledge.py` reports 211 nodes, 508 edges, 294 chunks, and no unmatched front-matter names. The 72 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
+- `knowledge.py` reports 211 nodes, 508 edges, 298 chunks, and no unmatched front-matter names. The 72 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
 - The three knowledge-base reader questions are summarized after final graph generation.
 
 <!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->

@@ -241,7 +241,7 @@
     "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
-    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
     "lld/bible-mode-b/bible_queue.md#queue-part9",
     "progress.md#sweep"
    ]
@@ -368,8 +368,8 @@
     "lld/bible-mode-b/bible_queue.md#issue_textgh-path-ref-fallback_title",
     "lld/bible-mode-b/bible_queue.md#json_filegh-path-ref",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part6",
     "lld/bible-mode-b/bible_queue.md#queue-part7",
-    "lld/bible-mode-b/bible_queue.md#queue-part8",
     "lld/bible-mode-b/bible_queue.md#queue-part9",
     "progress.md#sweep"
    ]
@@ -444,7 +444,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part4",
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
-    "lld/bible-mode-b/bible_queue.md#queue-part8"
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
    ]
   },
   "symbol:.github/bible/bible_queue.py#GitHub.branch_prs": {
@@ -515,7 +515,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part4",
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
-    "lld/bible-mode-b/bible_queue.md#queue-part8"
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
    ]
   },
   "symbol:.github/bible/bible_queue.py#GitHub.start_error": {
@@ -542,7 +542,6 @@
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
     "lld/bible-mode-b/bible_queue.md#queue-part2",
-    "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#surprises"
    ]
   },
@@ -591,7 +590,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part2",
     "lld/bible-mode-b/bible_queue.md#github-part5",
     "lld/bible-mode-b/bible_queue.md#index",
-    "lld/bible-mode-b/bible_queue.md#queue-part7"
+    "lld/bible-mode-b/bible_queue.md#queue-part6"
    ]
   },
   "symbol:.github/bible/bible_queue.py#GitHub.commit_time": {
@@ -639,7 +638,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part1",
     "lld/bible-mode-b/bible_queue.md#github-part5",
     "lld/bible-mode-b/bible_queue.md#index",
-    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
     "lld/bible-mode-b/bible_queue.md#surprises"
    ]
   },
@@ -665,8 +664,9 @@
     "lld/bible-mode-b/bible_queue.md#github-part2",
     "lld/bible-mode-b/bible_queue.md#github-part6",
     "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
-    "lld/bible-mode-b/bible_queue.md#queue-part7"
+    "lld/bible-mode-b/bible_queue.md#queue-part6"
    ]
   },
   "symbol:.github/bible/bible_queue.py#GitHub.unlabel": {
@@ -690,7 +690,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part1",
     "lld/bible-mode-b/bible_queue.md#github-part6",
     "lld/bible-mode-b/bible_queue.md#index",
-    "lld/bible-mode-b/bible_queue.md#queue-part7"
+    "lld/bible-mode-b/bible_queue.md#queue-part6"
    ]
   },
   "symbol:.github/bible/bible_queue.py#GitHub.comment": {
@@ -716,7 +716,7 @@
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
-    "lld/bible-mode-b/bible_queue.md#queue-part8"
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
    ]
   },
   "symbol:.github/bible/bible_queue.py#GitHub.close": {
@@ -742,10 +742,9 @@
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
-    "lld/bible-mode-b/bible_queue.md#queue-part4",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part6",
     "lld/bible-mode-b/bible_queue.md#queue-part7",
-    "lld/bible-mode-b/bible_queue.md#queue-part8",
     "lld/data-dictionary.md#queue-issues-and-component-status",
     "lld/data-dictionary.md#status-and-enum-values"
    ]
@@ -772,7 +771,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part6",
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part2",
-    "lld/bible-mode-b/bible_queue.md#queue-part9"
+    "lld/bible-mode-b/bible_queue.md#queue-part8"
    ]
   },
   "symbol:.github/bible/bible_queue.py#GitHub.unassign": {
@@ -796,6 +795,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part1",
     "lld/bible-mode-b/bible_queue.md#github-part6",
     "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part3"
    ]
   },
@@ -871,7 +871,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part1",
     "lld/bible-mode-b/bible_queue.md#github-part7",
     "lld/bible-mode-b/bible_queue.md#index",
-    "lld/bible-mode-b/bible_queue.md#queue-part7"
+    "lld/bible-mode-b/bible_queue.md#queue-part6"
    ]
   },
   "symbol:.github/bible/bible_queue.py#GitHub.close_pr": {
@@ -944,7 +944,7 @@
    "chunks": [
     "lld/bible-mode-b/bible_queue.md#agestamp",
     "lld/bible-mode-b/bible_queue.md#now",
-    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
     "lld/tools/gate.md#checkcomponent-n-plan-out"
    ]
   },
@@ -1022,7 +1022,7 @@
     "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
-    "lld/bible-mode-b/bible_queue.md#queue-part7"
+    "lld/bible-mode-b/bible_queue.md#queue-part6"
    ]
   },
   "symbol:.github/bible/bible_queue.py#comp_label": {
@@ -1074,7 +1074,7 @@
     "lld/bible-mode-b/bible_queue.md#issue_textgh-path-ref-fallback_title",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
-    "lld/bible-mode-b/bible_queue.md#queue-part8"
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
    ]
   },
   "symbol:.github/bible/bible_queue.py#assignment": {
@@ -1102,7 +1102,7 @@
     "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
-    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
     "lld/bible-mode-b/bible_queue.md#queue-part9"
    ]
   },
@@ -1128,7 +1128,7 @@
    "chunks": [
     "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#json_filegh-path-ref",
-    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part9",
     "lld/bible-mode-b/bible_queue.md#status_ofgh-path-ref"
    ]
@@ -1178,7 +1178,7 @@
    ],
    "chunks": [
     "lld/bible-mode-b/bible_queue.md#queue-part5",
-    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
     "lld/bible-mode-b/bible_queue.md#report_factstext",
     "lld/bible-mode-b/bible_queue.md#sectiontext-title",
     "lld/data-dictionary.md#queue-issues-and-component-status",
@@ -1206,8 +1206,9 @@
    ],
    "chunks": [
     "lld/bible-mode-b/bible_queue.md#as_intvalue",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
-    "lld/bible-mode-b/bible_queue.md#queue-part7"
+    "lld/bible-mode-b/bible_queue.md#queue-part6"
    ]
   },
   "symbol:.github/bible/bible_queue.py#status_of": {
@@ -1233,7 +1234,7 @@
     "lld/bible-mode-b/bible_queue.md#json_filegh-path-ref",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
-    "lld/bible-mode-b/bible_queue.md#queue-part7",
+    "lld/bible-mode-b/bible_queue.md#queue-part6",
     "lld/bible-mode-b/bible_queue.md#status_ofgh-path-ref"
    ]
   },
@@ -1313,9 +1314,10 @@
    "chunks": [
     "lld/bible-mode-b/bible_queue.md#github-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
-    "lld/bible-mode-b/bible_queue.md#queue-part8"
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
    ]
   },
   "symbol:.github/bible/bible_queue.py#Queue.agent_pr": {
@@ -1367,9 +1369,9 @@
     "lld/bible-mode-b/bible_queue.md#github-part5",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
     "lld/bible-mode-b/bible_queue.md#queue-part6",
     "lld/bible-mode-b/bible_queue.md#queue-part7",
-    "lld/bible-mode-b/bible_queue.md#queue-part8",
     "lld/bible-mode-b/bible_queue.md#surprises",
     "lld/data-dictionary.md#queue-issues-and-component-status",
     "lld/data-dictionary.md#status-and-enum-values"
@@ -1398,7 +1400,7 @@
     "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
-    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
     "lld/data-dictionary.md#queue-issues-and-component-status"
    ]
   },
@@ -1449,8 +1451,8 @@
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
-    "lld/bible-mode-b/bible_queue.md#queue-part7",
-    "lld/bible-mode-b/bible_queue.md#queue-part8"
+    "lld/bible-mode-b/bible_queue.md#queue-part6",
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
    ]
   },
   "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry": {
@@ -1479,8 +1481,8 @@
     "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part6",
     "lld/bible-mode-b/bible_queue.md#queue-part7",
-    "lld/bible-mode-b/bible_queue.md#queue-part8",
     "lld/data-dictionary.md#queue-issues-and-component-status"
    ]
   },
@@ -1514,7 +1516,6 @@
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#main",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
-    "lld/bible-mode-b/bible_queue.md#queue-part4",
     "lld/bible-mode-b/bible_queue.md#summary",
     "lld/data-dictionary.md#tracker-issue-settings",
     "progress.md#components"
@@ -1546,11 +1547,12 @@
     "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
     "lld/bible-mode-b/bible_queue.md#queue-part8",
-    "lld/bible-mode-b/bible_queue.md#queue-part9",
     "lld/data-dictionary.md#queue-issues-and-component-status",
     "lld/data-dictionary.md#tracker-issue-settings",
     "lld/tools/gate.md#checkcomponent-n-plan-out",
+    "progress.md#diagrams-evidence-and-knowledge-base",
     "progress.md#sweep"
    ]
   },
@@ -1578,7 +1580,7 @@
     "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
-    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
     "lld/data-dictionary.md#queue-issues-and-component-status"
    ]
   },
@@ -1602,7 +1604,7 @@
    "chunks": [
     "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
-    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
     "lld/data-dictionary.md#queue-issues-and-component-status"
    ]
@@ -1635,10 +1637,10 @@
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
     "lld/bible-mode-b/bible_queue.md#queue-part2",
-    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part6",
     "lld/bible-mode-b/bible_queue.md#queue-part7",
-    "lld/bible-mode-b/bible_queue.md#queue-part8",
     "lld/bible-mode-b/bible_queue.md#surprises",
     "lld/data-dictionary.md#queue-issues-and-component-status",
     "lld/data-dictionary.md#status-and-enum-values",
@@ -1673,6 +1675,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part7",
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
     "lld/bible-mode-b/bible_queue.md#queue-part6",
@@ -1740,8 +1743,7 @@
     "lld/bible-mode-b/bible_queue.md#queue-part1",
     "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
-    "lld/bible-mode-b/bible_queue.md#queue-part4",
-    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
     "lld/data-dictionary.md#queue-issues-and-component-status",
     "lld/data-dictionary.md#status-and-enum-values"
    ]
@@ -1766,8 +1768,9 @@
    "chunks": [
     "lld/bible-mode-b/bible_queue.md#github-part6",
     "lld/bible-mode-b/bible_queue.md#now",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
-    "lld/bible-mode-b/bible_queue.md#queue-part9"
+    "lld/bible-mode-b/bible_queue.md#queue-part8"
    ]
   },
   "symbol:.github/bible/bible_queue.py#Queue.delta": {
@@ -1800,7 +1803,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#main",
-    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
     "lld/bible-mode-b/bible_queue.md#summary",
     "lld/data-dictionary.md#files-read-and-written",
     "lld/data-dictionary.md#tracker-issue-settings",
@@ -2010,6 +2013,7 @@
     "lld/catalog/catalog.md#fetch_supplier_feedtimeout10",
     "lld/catalog/catalog.md#index",
     "lld/catalog/catalog.md#surprises",
+    "progress.md#reader-test",
     "reference/configuration.md#configuration-part2",
     "reference/glossary.md#glossary"
    ]
@@ -2046,6 +2050,7 @@
     "lld/catalog/catalog.md#surprises",
     "lld/data-dictionary.md#catalog-products",
     "lld/data-dictionary.md#stores",
+    "progress.md#reader-test",
     "reference/glossary.md#glossary"
    ]
   },
@@ -2121,12 +2126,14 @@
     "lld/api/catalog/catalog.md#endpoints-catalog",
     "lld/api/catalog/catalog.md#get-health",
     "lld/api/catalog/catalog.md#get-pricesku",
+    "lld/catalog/README.md#business-rules",
     "lld/catalog/README.md#modules",
     "lld/catalog/README.md#public-interface",
     "lld/catalog/service.md#cataloghandler",
     "lld/catalog/service.md#index",
     "lld/data-dictionary.md#status-and-enum-values",
-    "progress.md#components"
+    "progress.md#components",
+    "progress.md#reader-test"
    ]
   },
   "symbol:components/catalog/service.py#CatalogHandler.log_message": {
@@ -2544,15 +2551,15 @@
     "lld/bible-mode-b/bible_queue.md#now",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
     "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
     "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part6",
     "lld/bible-mode-b/bible_queue.md#queue-part7",
     "lld/bible-mode-b/bible_queue.md#queue-part8",
-    "lld/bible-mode-b/bible_queue.md#queue-part9",
     "lld/bible-mode-b/bible_queue.md#settings_oftracker",
     "lld/catalog/catalog.md#apply_feedfeed",
-    "lld/catalog/catalog.md#get_productsku",
-    "lld/catalog/service.md#make_serverhostnone-portnone"
+    "lld/catalog/catalog.md#get_productsku"
    ]
   },
   "symbol:components/orders/test_catalog_client.py#CatalogClientTest.test_remote_price": {

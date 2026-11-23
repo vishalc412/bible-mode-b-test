@@ -1366,9 +1366,9 @@ return POST /pulls with head, base, title, and body
 
 ### `Queue`
 
-Source: `.github/bible/bible_queue.py:396-798` <!-- recheck: was .github/bible/bible_queue.py:396-798, the card's code changed --> <!-- code: c7b3115b36f1 -->
+Source: `.github/bible/bible_queue.py:396-817` <!-- code: c7b3115b36f1 -->
 
-`Queue` coordinates tracker issues, component sessions, verification/revision cycles, assembly, and delta updates. Its constructor sets the GitHub client, logger, and skill directory; methods also populate run-specific fields such as `default`, `settings`, `tracker`, `run_label`, and `estimate`. (`.github/bible/bible_queue.py:397-399` <!-- recheck: was .github/bible/bible_queue.py:397-399, the card's code changed -->, `.github/bible/bible_queue.py:478` <!-- recheck: was .github/bible/bible_queue.py:478, the card's code changed -->, `.github/bible/bible_queue.py:491-492` <!-- recheck: was .github/bible/bible_queue.py:491-492, the card's code changed -->, `.github/bible/bible_queue.py:507` <!-- recheck: was .github/bible/bible_queue.py:507, the card's code changed -->)
+`Queue` coordinates tracker issues, component sessions, verification/revision cycles, assembly, and delta updates. Its constructor sets the GitHub client, logger, and skill directory; methods also populate run-specific fields such as `default`, `settings`, `tracker`, `run_label`, and `estimate` (`.github/bible/bible_queue.py:397-399,464-483,486-496,498-534`).
 
 #### `Queue.__init__(gh, log=print)`
 
