@@ -711,7 +711,7 @@ Source: `.github/bible/bible_queue.py:160-164` <!-- code: 6c567c6be9c4 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.__init__` (`.github/bible/bible_queue.py:402`) |
+| Called by | `Queue.continue_if_unfinished` (`.github/bible/bible_queue.py:992`) |
 | Calls | `getattr`, `GitHub.call`, `get` |
 | Purpose | Lazily fetches and caches the token owner's login. |
 
@@ -2187,7 +2187,7 @@ Source: `.github/bible/bible_queue.py:909-979` <!-- code: ecf0e4db8193 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.assemble_phase` (`.github/bible/bible_queue.py:850`) |
+| Called by | `Queue.assemble_phase` (`.github/bible/bible_queue.py:860`) |
 | Calls | `self.run_issues`, `gh.close`, `labels_of`, `max`, `h.get`, `sorted`, `i.get`, `self.held`, `self.session`, `self.hold_start_error`, `self.fail_or_retry`, `self.continue_if_unfinished`, `gh.linked_prs`, `p.get`, `gh.is_agent_pr`, `gh.pr_files`, `get`, `startswith`, `os.path.basename`, `join` |
 | Purpose | Coordinates whole-analysis revision sessions after a verification requests corrections, with bounded retries and human holds. |
 
@@ -2235,7 +2235,7 @@ Source: `.github/bible/bible_queue.py:981-1019` <!-- code: 607ef9d1096b -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.assemble_phase` (`.github/bible/bible_queue.py:868`), `Queue.revise_all_step` (`.github/bible/bible_queue.py:941`) |
+| Called by | `Queue.assemble_phase` (`.github/bible/bible_queue.py:892`), `Queue.revise_all_step` (`.github/bible/bible_queue.py:950`) |
 | Calls | `gh.pr_files`, `gh.me`, `max`, `e.get`, `gh.timeline`, `get`, `sorted`, `age`, `len`, `labels_of`, `gh.label`, `gh.comment`, `self.settings.get` |
 | Purpose | Continues a finished session whose required marker file is absent, up to a bounded number of continuation requests. |
 
@@ -2360,12 +2360,12 @@ Source: `.github/bible/bible_queue.py:1080-1126` <!-- code: d5e645d7911f -->
 
 **Steps**
 
-1. Builds a required-subcommand parser from the module docstring's first line; defines `start` options, `reconcile`, and `delta` options, then parses arguments. (`.github/bible/bible_queue.py:821-834`)
-2. Reads `GITHUB_REPOSITORY` and `GH_TOKEN`; raises `SystemExit` if either is falsey, then constructs `GitHub` and `Queue`. (`.github/bible/bible_queue.py:836-840`)
-3. For `start`, requires a nonempty verification model different from the normal model, parses component names, and requires at least one selection with each name either `all` or matching `NAME`. (`.github/bible/bible_queue.py:842-847`)
-4. Ensures labels and exits if a tracker is already open. Builds settings, creates a tracker issue with hidden settings JSON, and prints its issue number and queue-start guidance. (`.github/bible/bible_queue.py:848-855`)
-5. For `reconcile`, invokes `queue.reconcile`; otherwise reads nonempty stripped lines from the changed-file input and calls `queue.delta`. (`.github/bible/bible_queue.py:856-861`)
-6. Converts `RuntimeError` from command handling to `SystemExit` with the error text. (`.github/bible/bible_queue.py:862-863`)
+1. Builds a required-subcommand parser from the module docstring's first line; defines `start` options including `--analysis` and `--depth`, `reconcile`, and `delta` options, then parses arguments. (`.github/bible/bible_queue.py:1081-1094`)
+2. Reads `GITHUB_REPOSITORY` and `GH_TOKEN`; raises `SystemExit` if either is falsey, then constructs `GitHub` and `Queue`. (`.github/bible/bible_queue.py:1096-1100`)
+3. For `start`, requires a nonempty verification model different from the normal model, parses component names, and requires at least one selection with each name either `all` or matching `NAME`. (`.github/bible/bible_queue.py:1102-1107`)
+4. Ensures labels and exits if a tracker is already open. Builds settings, then calls `settings_of` on the generated marker; if validation rejects the settings, raises `SystemExit` explaining the allowed analysis path, depth, and model characters. Otherwise it creates a tracker issue with hidden settings JSON and prints its issue number and queue-start guidance. (`.github/bible/bible_queue.py:1108-1118`)
+5. For `reconcile`, invokes `queue.reconcile`; otherwise reads nonempty stripped lines from the changed-file input and calls `queue.delta`. (`.github/bible/bible_queue.py:1119-1124`)
+6. Converts `RuntimeError` from command handling to `SystemExit` with the error text. (`.github/bible/bible_queue.py:1125-1126`)
 
 **Pseudo-code**
 
@@ -2391,32 +2391,23 @@ on RuntimeError: exit with its text
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py:837` | if | Repository or token environment value is missing | Exits with a required-environment message. |
-| `.github/bible/bible_queue.py:838` | raise | Either required environment value is missing | Raises `SystemExit`. |
-| `.github/bible/bible_queue.py:842` | if | Command is `start` | Validates and starts an analysis run. |
-| `.github/bible/bible_queue.py:843` | if | Verification model is empty or equals normal model | Exits with the distinct-model requirement. |
-| `.github/bible/bible_queue.py:844` | raise | Verification model validation fails | Raises `SystemExit`. |
-| `.github/bible/bible_queue.py:846` | if | No names or any name other than `all` fails `NAME` | Exits with component-selection guidance. |
-| `.github/bible/bible_queue.py:847` | raise | Component selection fails validation | Raises `SystemExit`. |
-| `.github/bible/bible_queue.py:849` | if | An open tracker issue exists | Exits rather than opening another run. |
-| `.github/bible/bible_queue.py:850` | raise | An open tracker exists | Raises `SystemExit`. |
-| `.github/bible/bible_queue.py:856` | elif | Command is `reconcile` | Calls `queue.reconcile`; other command is handled by `else`. |
-| `.github/bible/bible_queue.py:862` | except | Command handling raises `RuntimeError` | Enters error conversion. |
-| `.github/bible/bible_queue.py:863` | raise | A `RuntimeError` was caught | Raises `SystemExit` with the error text. |
 | `.github/bible/bible_queue.py:1097` | if | Repository or token is missing | Exits with an environment requirement. |
 | `.github/bible/bible_queue.py:1098` | raise | Required environment is missing | Raises `SystemExit`. |
 | `.github/bible/bible_queue.py:1102` | if | Command is `start` | Validates and starts a run. |
-| `.github/bible/bible_queue.py:1103` | if | Verification model is invalid | Exits with the model requirement. |
+| `.github/bible/bible_queue.py:1103` | if | Verification model is empty or equals normal model | Exits with the model requirement. |
 | `.github/bible/bible_queue.py:1104` | raise | Model validation fails | Raises `SystemExit`. |
 | `.github/bible/bible_queue.py:1106` | if | Component selection is invalid | Exits with selection guidance. |
 | `.github/bible/bible_queue.py:1107` | raise | Selection validation fails | Raises `SystemExit`. |
 | `.github/bible/bible_queue.py:1109` | if | Tracker already exists | Exits without starting another run. |
 | `.github/bible/bible_queue.py:1110` | raise | Open tracker exists | Raises `SystemExit`. |
-| `.github/bible/bible_queue.py:1113` | elif | Command is `reconcile` | Calls `queue.reconcile`. |
-| `.github/bible/bible_queue.py:1114` | else | Command is `delta` | Reads changed paths and calls `queue.delta`. |
-| `.github/bible/bible_queue.py:1119` | except | Command handling raises `RuntimeError` | Converts it to `SystemExit`. |
-| `.github/bible/bible_queue.py:1125` | if | Module is run as a script | Calls `main`. |
-| `.github/bible/bible_queue.py:1126` | call | Script guard is active | Dispatches the CLI entry point. |
+| `.github/bible/bible_queue.py:1113` | if | Generated settings fail `settings_of` validation | Exits with the settings requirement. |
+| `.github/bible/bible_queue.py:1114-1115` | raise | Generated settings are unsafe or unsupported | Raises `SystemExit` with allowed path, depth, and model rules. |
+| `.github/bible/bible_queue.py:1119` | elif | Command is `reconcile` | Calls `queue.reconcile`. |
+| `.github/bible/bible_queue.py:1121` | else | Command is `delta` | Reads changed paths and calls `queue.delta`. |
+| `.github/bible/bible_queue.py:1125` | except | Command handling raises `RuntimeError` | Converts it to `SystemExit`. |
+| `.github/bible/bible_queue.py:1126` | raise | A `RuntimeError` was caught | Raises `SystemExit` with the error text. |
+| `.github/bible/bible_queue.py:1129` | if | Module is run as a script | Calls `main`. |
+| `.github/bible/bible_queue.py:1130` | call | Script guard is active | Dispatches the CLI entry point. |
 
 ### `now()`
 
@@ -2455,7 +2446,7 @@ Source: `.github/bible/bible_queue.py:342-343` <!-- code: f2f8bb65e56f -->
 | | |
 | --- | --- |
 | Kind | module function |
-| Called by | Queue functions in later source packets. |
+| Called by | `Queue.reconcile` (`.github/bible/bible_queue.py:555`), `main` (`.github/bible/bible_queue.py:1113`) |
 | Calls | `now`, `datetime.datetime.fromisoformat`, `replace`, `total_seconds` |
 | Purpose | Returns elapsed seconds between `stamp` and `now()`. |
 
@@ -2493,8 +2484,15 @@ Source: `.github/bible/bible_queue.py:353-373` <!-- code: 828d76009663 -->
 ```text
 match = SETTINGS search in tracker.body or ""
 try:
-    return parse match group 1 if matched, otherwise None
+    data = parse match group 1 if matched, otherwise None
 on ValueError: return None
+if data is not a dict: return None
+analysis = data.analysis or "codebase-analysis"
+if analysis fails SAFE_PATH or contains ".." path segments: return None
+if data.depth or "deep" is not in DEPTH_VALUES: return None
+for model and verify_model:
+    if nonempty value fails SAFE_MODEL: return None
+return data
 ```
 
 **Branches and errors**

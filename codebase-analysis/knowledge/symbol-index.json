@@ -51,7 +51,6 @@
    "card": [],
    "chunks": [
     "lld/bible-mode-b/bible_queue.md#github-part1",
-    "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part1"
    ]
@@ -1027,6 +1026,7 @@
     "lld/bible-mode-b/bible_queue.md#settings_oftracker"
    ],
    "chunks": [
+    "lld/bible-mode-b/bible_queue.md#main",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#settings_oftracker"
    ]
@@ -1327,7 +1327,6 @@
    "card": [],
    "chunks": [
     "lld/bible-mode-b/bible_queue.md#github-part1",
-    "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part1"
    ]
@@ -1560,6 +1559,7 @@
     "lld/bible-mode-b/README.md#modules",
     "lld/bible-mode-b/README.md#public-interface",
     "lld/bible-mode-b/README.md#responsibility",
+    "lld/bible-mode-b/bible_queue.md#agestamp",
     "lld/bible-mode-b/bible_queue.md#github-part2",
     "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#main",
@@ -1840,6 +1840,7 @@
    ],
    "card": [],
    "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#queue-part10",
     "lld/bible-mode-b/bible_queue.md#queue-part11"
@@ -1932,6 +1933,7 @@
     "lld/bible-mode-b/README.md#errors-and-resilience",
     "lld/bible-mode-b/README.md#modules",
     "lld/bible-mode-b/README.md#structure",
+    "lld/bible-mode-b/bible_queue.md#agestamp",
     "lld/bible-mode-b/bible_queue.md#github-part1",
     "lld/bible-mode-b/bible_queue.md#github-part2",
     "lld/bible-mode-b/bible_queue.md#github-part3",
@@ -1945,8 +1947,7 @@
     "lld/catalog/test_catalog.md#module-level-code",
     "lld/catalog/test_catalog.md#summary",
     "lld/data-dictionary.md#component-analysis-plan-json",
-    "lld/data-dictionary.md#files-read-and-written",
-    "lld/data-dictionary.md#queue-issues-and-component-status"
+    "lld/data-dictionary.md#files-read-and-written"
    ]
   },
   "symbol:components/catalog/catalog.py#get_product": {
@@ -2969,6 +2970,7 @@
     "lld/bible-mode-b/README.md#errors-and-resilience",
     "lld/bible-mode-b/README.md#modules",
     "lld/bible-mode-b/README.md#structure",
+    "lld/bible-mode-b/bible_queue.md#agestamp",
     "lld/bible-mode-b/bible_queue.md#github-part1",
     "lld/bible-mode-b/bible_queue.md#github-part2",
     "lld/bible-mode-b/bible_queue.md#github-part3",
@@ -2982,8 +2984,7 @@
     "lld/catalog/test_catalog.md#module-level-code",
     "lld/catalog/test_catalog.md#summary",
     "lld/data-dictionary.md#component-analysis-plan-json",
-    "lld/data-dictionary.md#files-read-and-written",
-    "lld/data-dictionary.md#queue-issues-and-component-status"
+    "lld/data-dictionary.md#files-read-and-written"
    ]
   },
   "symbol:tools/plan.py#scan": {
@@ -3037,6 +3038,7 @@
     "lld/bible-mode-b/README.md#errors-and-resilience",
     "lld/bible-mode-b/README.md#modules",
     "lld/bible-mode-b/README.md#structure",
+    "lld/bible-mode-b/bible_queue.md#agestamp",
     "lld/bible-mode-b/bible_queue.md#github-part1",
     "lld/bible-mode-b/bible_queue.md#github-part2",
     "lld/bible-mode-b/bible_queue.md#github-part3",
@@ -3050,8 +3052,7 @@
     "lld/catalog/test_catalog.md#module-level-code",
     "lld/catalog/test_catalog.md#summary",
     "lld/data-dictionary.md#component-analysis-plan-json",
-    "lld/data-dictionary.md#files-read-and-written",
-    "lld/data-dictionary.md#queue-issues-and-component-status"
+    "lld/data-dictionary.md#files-read-and-written"
    ]
   }
  },
