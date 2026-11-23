@@ -1,0 +1,78 @@
+{
+ "schema": 1,
+ "tool": "analyzing-a-codebase/scripts/discover.py 1.10.0",
+ "generated": "2026-11-23T18:37:17",
+ "proposed": false,
+ "analysis": "codebase-analysis",
+ "budget": 6,
+ "depth": "deep",
+ "components": [
+  {
+   "name": "catalog",
+   "paths": [
+    "components/catalog/"
+   ],
+   "files": 3,
+   "lines": 108,
+   "packets": 3,
+   "est_sessions": 2,
+   "routes": 0,
+   "calls_into": [],
+   "calls_detail": {},
+   "called_by": [
+    "orders"
+   ]
+  },
+  {
+   "name": "orders",
+   "paths": [
+    "components/orders/"
+   ],
+   "files": 4,
+   "lines": 158,
+   "packets": 4,
+   "est_sessions": 2,
+   "routes": 0,
+   "calls_into": [
+    "catalog"
+   ],
+   "calls_detail": {
+    "catalog": [
+     "in_stock",
+     "price_of"
+    ]
+   },
+   "called_by": []
+  },
+  {
+   "name": "bible-mode-b",
+   "paths": [
+    ".github/bible/",
+    ".github/workflows/"
+   ],
+   "files": 1,
+   "lines": 844,
+   "packets": 4,
+   "est_sessions": 2,
+   "routes": 0,
+   "calls_into": [],
+   "calls_detail": {},
+   "called_by": []
+  },
+  {
+   "name": "tools",
+   "paths": [
+    "tools/"
+   ],
+   "files": 3,
+   "lines": 210,
+   "packets": 3,
+   "est_sessions": 2,
+   "routes": 0,
+   "calls_into": [],
+   "calls_detail": {},
+   "called_by": []
+  }
+ ],
+ "cross_calls": 2
+}
