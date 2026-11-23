@@ -1,0 +1,5238 @@
+{
+ "generated": "2026-11-23T18:35:33",
+ "tool": "analyzing-a-codebase/scripts/inventory.py 1.8.0",
+ "totals": {
+  "files": 20,
+  "source_files": 14,
+  "source_lines": 1320,
+  "symbols": 108,
+  "routes": 0,
+  "by_kind": {
+   "other": 1,
+   "doc": 1,
+   "source": 14,
+   "config": 4
+  }
+ },
+ "excluded": [
+  {
+   "path": ".git",
+   "reason": "generated, vendored or tool folder"
+  },
+  {
+   "path": "codebase-analysis",
+   "reason": "the analysis output"
+  },
+  {
+   "path": ".github/skills/analyzing-a-codebase",
+   "reason": "this toolkit"
+  },
+  {
+   "path": ".github/skills/assessing-change-impact",
+   "reason": "this toolkit"
+  },
+  {
+   "path": ".github/skills/migrating-http-to-https",
+   "reason": "this toolkit"
+  },
+  {
+   "path": ".github/skills/migrating-service-calls-to-tls",
+   "reason": "this toolkit"
+  },
+  {
+   "path": ".github/skills/reviewing-codebase-shortcomings",
+   "reason": "this toolkit"
+  },
+  {
+   "path": ".github/skills/tracking-codebase-changes",
+   "reason": "this toolkit"
+  },
+  {
+   "path": ".github/skills/verifying-a-codebase-analysis",
+   "reason": "this toolkit"
+  }
+ ],
+ "files": [
+  {
+   "path": ".gitignore",
+   "kind": "other",
+   "lang": null,
+   "binary": false,
+   "lines": 2,
+   "symbols": [],
+   "routes": []
+  },
+  {
+   "path": "README.md",
+   "kind": "doc",
+   "lang": null,
+   "binary": false,
+   "lines": 7,
+   "symbols": [],
+   "routes": []
+  },
+  {
+   "path": ".github/bible/bible_queue.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 844,
+   "symbols": [
+    {
+     "name": "GitHub",
+     "qualname": "GitHub",
+     "kind": "class",
+     "start": 88,
+     "end": 302,
+     "size": 215,
+     "decorators": []
+    },
+    {
+     "name": "__init__",
+     "qualname": "GitHub.__init__",
+     "kind": "method",
+     "start": 89,
+     "end": 92,
+     "size": 4,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "rstrip",
+       "line": 91
+      },
+      {
+       "name": "os.environ.get",
+       "line": 91
+      }
+     ]
+    },
+    {
+     "name": "request",
+     "qualname": "GitHub.request",
+     "kind": "method",
+     "start": 94,
+     "end": 103,
+     "size": 10,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 95,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 99,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 101,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "().encode",
+       "line": 95
+      },
+      {
+       "name": "json.dumps",
+       "line": 95
+      },
+      {
+       "name": "urllib.request.Request",
+       "line": 96
+      },
+      {
+       "name": "req.add_header",
+       "line": 97
+      },
+      {
+       "name": "urllib.request.urlopen",
+       "line": 103
+      }
+     ]
+    },
+    {
+     "name": "call",
+     "qualname": "GitHub.call",
+     "kind": "method",
+     "start": 105,
+     "end": 117,
+     "size": 13,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 106,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 110,
+       "detail": "urllib.error.HTTPError"
+      },
+      {
+       "kind": "if",
+       "line": 111,
+       "detail": ""
+      },
+      {
+       "kind": "raise",
+       "line": 114,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 115,
+       "detail": ""
+      },
+      {
+       "kind": "raise",
+       "line": 116,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 117,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "path.startswith",
+       "line": 106
+      },
+      {
+       "name": "self.request",
+       "line": 108
+      },
+      {
+       "name": "resp.read",
+       "line": 109
+      },
+      {
+       "name": "RuntimeError",
+       "line": 114
+      },
+      {
+       "name": "().decode",
+       "line": 113
+      },
+      {
+       "name": "err.read",
+       "line": 113
+      },
+      {
+       "name": "path.split",
+       "line": 114
+      },
+      {
+       "name": "json.loads",
+       "line": 117
+      }
+     ]
+    },
+    {
+     "name": "paged",
+     "qualname": "GitHub.paged",
+     "kind": "method",
+     "start": 119,
+     "end": 127,
+     "size": 9,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 121,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 122,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 125,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 123
+      },
+      {
+       "name": "len",
+       "line": 125
+      }
+     ]
+    },
+    {
+     "name": "issues",
+     "qualname": "GitHub.issues",
+     "kind": "method",
+     "start": 129,
+     "end": 131,
+     "size": 3,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "urllib.parse.quote",
+       "line": 130
+      },
+      {
+       "name": "join",
+       "line": 130
+      },
+      {
+       "name": "self.paged",
+       "line": 131
+      }
+     ]
+    },
+    {
+     "name": "ensure_label",
+     "qualname": "GitHub.ensure_label",
+     "kind": "method",
+     "start": 133,
+     "end": 138,
+     "size": 6,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 134,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 136,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.paged",
+       "line": 135
+      },
+      {
+       "name": "self.call",
+       "line": 137
+      },
+      {
+       "name": "self.known_labels.add",
+       "line": 138
+      }
+     ]
+    },
+    {
+     "name": "ensure_labels",
+     "qualname": "GitHub.ensure_labels",
+     "kind": "method",
+     "start": 140,
+     "end": 142,
+     "size": 3,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 141,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "LABELS.items",
+       "line": 141
+      },
+      {
+       "name": "self.ensure_label",
+       "line": 142
+      }
+     ]
+    },
+    {
+     "name": "create_issue",
+     "qualname": "GitHub.create_issue",
+     "kind": "method",
+     "start": 144,
+     "end": 151,
+     "size": 8,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 145,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 148,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.ensure_label",
+       "line": 146
+      },
+      {
+       "name": "LABELS.get",
+       "line": 146
+      },
+      {
+       "name": "self.call",
+       "line": 151
+      }
+     ]
+    },
+    {
+     "name": "default_branch",
+     "qualname": "GitHub.default_branch",
+     "kind": "method",
+     "start": 153,
+     "end": 154,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 154
+      }
+     ]
+    },
+    {
+     "name": "branch_sha",
+     "qualname": "GitHub.branch_sha",
+     "kind": "method",
+     "start": 156,
+     "end": 158,
+     "size": 3,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 158,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 157
+      },
+      {
+       "name": "urllib.parse.quote",
+       "line": 157
+      }
+     ]
+    },
+    {
+     "name": "create_branch",
+     "qualname": "GitHub.create_branch",
+     "kind": "method",
+     "start": 160,
+     "end": 161,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 161
+      }
+     ]
+    },
+    {
+     "name": "reset_branch",
+     "qualname": "GitHub.reset_branch",
+     "kind": "method",
+     "start": 163,
+     "end": 164,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 164
+      },
+      {
+       "name": "urllib.parse.quote",
+       "line": 164
+      }
+     ]
+    },
+    {
+     "name": "file",
+     "qualname": "GitHub.file",
+     "kind": "method",
+     "start": 166,
+     "end": 170,
+     "size": 5,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 168,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 167
+      },
+      {
+       "name": "urllib.parse.quote",
+       "line": 167
+      },
+      {
+       "name": "isinstance",
+       "line": 168
+      },
+      {
+       "name": "().decode",
+       "line": 170
+      },
+      {
+       "name": "base64.b64decode",
+       "line": 170
+      }
+     ]
+    },
+    {
+     "name": "prs",
+     "qualname": "GitHub.prs",
+     "kind": "method",
+     "start": 172,
+     "end": 174,
+     "size": 3,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 173,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "urllib.parse.quote",
+       "line": 173
+      },
+      {
+       "name": "self.paged",
+       "line": 174
+      }
+     ]
+    },
+    {
+     "name": "timeline",
+     "qualname": "GitHub.timeline",
+     "kind": "method",
+     "start": 176,
+     "end": 177,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.paged",
+       "line": 177
+      }
+     ]
+    },
+    {
+     "name": "linked_prs",
+     "qualname": "GitHub.linked_prs",
+     "kind": "method",
+     "start": 179,
+     "end": 188,
+     "size": 10,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 182,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 185,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.timeline",
+       "line": 182
+      },
+      {
+       "name": "get",
+       "line": 183
+      },
+      {
+       "name": "source.get",
+       "line": 185
+      },
+      {
+       "name": "nums.append",
+       "line": 186
+      },
+      {
+       "name": "event.get",
+       "line": 185
+      },
+      {
+       "name": "self.call",
+       "line": 187
+      },
+      {
+       "name": "sorted",
+       "line": 187
+      },
+      {
+       "name": "set",
+       "line": 187
+      }
+     ]
+    },
+    {
+     "name": "branch_prs",
+     "qualname": "GitHub.branch_prs",
+     "kind": "method",
+     "start": 190,
+     "end": 193,
+     "size": 4,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.repo.split",
+       "line": 192
+      },
+      {
+       "name": "self.paged",
+       "line": 193
+      },
+      {
+       "name": "urllib.parse.quote",
+       "line": 193
+      }
+     ]
+    },
+    {
+     "name": "agent_events",
+     "qualname": "GitHub.agent_events",
+     "kind": "method",
+     "start": 195,
+     "end": 199,
+     "size": 5,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "e.get",
+       "line": 197
+      },
+      {
+       "name": "self.timeline",
+       "line": 197
+      },
+      {
+       "name": "get",
+       "line": 198
+      }
+     ]
+    },
+    {
+     "name": "is_agent_pr",
+     "qualname": "GitHub.is_agent_pr",
+     "kind": "method",
+     "start": 201,
+     "end": 205,
+     "size": 5,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 203,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "get",
+       "line": 203
+      },
+      {
+       "name": "pr.get",
+       "line": 203
+      },
+      {
+       "name": "any",
+       "line": 205
+      },
+      {
+       "name": "self.agent_events",
+       "line": 205
+      }
+     ]
+    },
+    {
+     "name": "start_error",
+     "qualname": "GitHub.start_error",
+     "kind": "method",
+     "start": 207,
+     "end": 215,
+     "size": 9,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 210,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 212,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.assigned_at",
+       "line": 209
+      },
+      {
+       "name": "self.timeline",
+       "line": 210
+      },
+      {
+       "name": "get",
+       "line": 211
+      },
+      {
+       "name": "START_ERROR.search",
+       "line": 213
+      },
+      {
+       "name": "e.get",
+       "line": 212
+      },
+      {
+       "name": "().splitlines",
+       "line": 214
+      },
+      {
+       "name": "strip",
+       "line": 214
+      }
+     ]
+    },
+    {
+     "name": "assigned_at",
+     "qualname": "GitHub.assigned_at",
+     "kind": "method",
+     "start": 217,
+     "end": 220,
+     "size": 4,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 220,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "e.get",
+       "line": 219
+      },
+      {
+       "name": "self.timeline",
+       "line": 219
+      },
+      {
+       "name": "max",
+       "line": 220
+      }
+     ]
+    },
+    {
+     "name": "pr_files",
+     "qualname": "GitHub.pr_files",
+     "kind": "method",
+     "start": 222,
+     "end": 229,
+     "size": 8,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 225,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 227,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.paged",
+       "line": 225
+      },
+      {
+       "name": "out.append",
+       "line": 226
+      },
+      {
+       "name": "f.get",
+       "line": 227
+      }
+     ]
+    },
+    {
+     "name": "commit_time",
+     "qualname": "GitHub.commit_time",
+     "kind": "method",
+     "start": 231,
+     "end": 232,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 232
+      }
+     ]
+    },
+    {
+     "name": "tarball",
+     "qualname": "GitHub.tarball",
+     "kind": "method",
+     "start": 234,
+     "end": 259,
+     "size": 26,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "except",
+       "line": 242,
+       "detail": ""
+      },
+      {
+       "kind": "raise",
+       "line": 243,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 247,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 249,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 252,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 254,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "urllib.parse.quote",
+       "line": 237
+      },
+      {
+       "name": "tempfile.TemporaryFile",
+       "line": 238
+      },
+      {
+       "name": "buf.seek",
+       "line": 244
+      },
+      {
+       "name": "os.path.abspath",
+       "line": 245
+      },
+      {
+       "name": "tarfile.open",
+       "line": 246
+      },
+      {
+       "name": "self.request",
+       "line": 240
+      },
+      {
+       "name": "shutil.copyfileobj",
+       "line": 241
+      },
+      {
+       "name": "RuntimeError",
+       "line": 243
+      },
+      {
+       "name": "member.name.split",
+       "line": 248
+      },
+      {
+       "name": "os.path.normpath",
+       "line": 251
+      },
+      {
+       "name": "member.isdir",
+       "line": 254
+      },
+      {
+       "name": "os.makedirs",
+       "line": 257
+      },
+      {
+       "name": "os.path.join",
+       "line": 251
+      },
+      {
+       "name": "target.startswith",
+       "line": 252
+      },
+      {
+       "name": "os.path.dirname",
+       "line": 257
+      },
+      {
+       "name": "tar.extractfile",
+       "line": 258
+      },
+      {
+       "name": "open",
+       "line": 258
+      },
+      {
+       "name": "len",
+       "line": 249
+      },
+      {
+       "name": "member.isfile",
+       "line": 249
+      }
+     ]
+    },
+    {
+     "name": "label",
+     "qualname": "GitHub.label",
+     "kind": "method",
+     "start": 261,
+     "end": 263,
+     "size": 3,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.ensure_label",
+       "line": 262
+      },
+      {
+       "name": "LABELS.get",
+       "line": 262
+      },
+      {
+       "name": "self.call",
+       "line": 263
+      }
+     ]
+    },
+    {
+     "name": "unlabel",
+     "qualname": "GitHub.unlabel",
+     "kind": "method",
+     "start": 265,
+     "end": 266,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 266
+      },
+      {
+       "name": "urllib.parse.quote",
+       "line": 266
+      }
+     ]
+    },
+    {
+     "name": "comment",
+     "qualname": "GitHub.comment",
+     "kind": "method",
+     "start": 268,
+     "end": 269,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 269
+      }
+     ]
+    },
+    {
+     "name": "close",
+     "qualname": "GitHub.close",
+     "kind": "method",
+     "start": 271,
+     "end": 272,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 272
+      }
+     ]
+    },
+    {
+     "name": "set_body",
+     "qualname": "GitHub.set_body",
+     "kind": "method",
+     "start": 274,
+     "end": 275,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 275
+      }
+     ]
+    },
+    {
+     "name": "unassign",
+     "qualname": "GitHub.unassign",
+     "kind": "method",
+     "start": 277,
+     "end": 278,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 278
+      }
+     ]
+    },
+    {
+     "name": "assign",
+     "qualname": "GitHub.assign",
+     "kind": "method",
+     "start": 280,
+     "end": 281,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 281
+      }
+     ]
+    },
+    {
+     "name": "ready",
+     "qualname": "GitHub.ready",
+     "kind": "method",
+     "start": 283,
+     "end": 291,
+     "size": 9,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 286,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 290,
+       "detail": "urllib.error.HTTPError"
+      },
+      {
+       "kind": "raise",
+       "line": 291,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.api.endswith",
+       "line": 286
+      },
+      {
+       "name": "len",
+       "line": 286
+      },
+      {
+       "name": "self.request",
+       "line": 288
+      },
+      {
+       "name": "resp.read",
+       "line": 289
+      },
+      {
+       "name": "RuntimeError",
+       "line": 291
+      }
+     ]
+    },
+    {
+     "name": "merge",
+     "qualname": "GitHub.merge",
+     "kind": "method",
+     "start": 293,
+     "end": 296,
+     "size": 4,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 294,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "pr.get",
+       "line": 294
+      },
+      {
+       "name": "self.ready",
+       "line": 295
+      },
+      {
+       "name": "self.call",
+       "line": 296
+      }
+     ]
+    },
+    {
+     "name": "close_pr",
+     "qualname": "GitHub.close_pr",
+     "kind": "method",
+     "start": 298,
+     "end": 299,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 299
+      }
+     ]
+    },
+    {
+     "name": "create_pr",
+     "qualname": "GitHub.create_pr",
+     "kind": "method",
+     "start": 301,
+     "end": 302,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.call",
+       "line": 302
+      }
+     ]
+    },
+    {
+     "name": "now",
+     "qualname": "now",
+     "kind": "function",
+     "start": 307,
+     "end": 309,
+     "size": 3,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 309,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "os.environ.get",
+       "line": 308
+      },
+      {
+       "name": "datetime.datetime.fromisoformat",
+       "line": 309
+      },
+      {
+       "name": "datetime.datetime.now",
+       "line": 309
+      },
+      {
+       "name": "stamp.replace",
+       "line": 309
+      }
+     ]
+    },
+    {
+     "name": "age",
+     "qualname": "age",
+     "kind": "function",
+     "start": 312,
+     "end": 313,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "total_seconds",
+       "line": 313
+      },
+      {
+       "name": "now",
+       "line": 313
+      },
+      {
+       "name": "datetime.datetime.fromisoformat",
+       "line": 313
+      },
+      {
+       "name": "stamp.replace",
+       "line": 313
+      }
+     ]
+    },
+    {
+     "name": "settings_of",
+     "qualname": "settings_of",
+     "kind": "function",
+     "start": 316,
+     "end": 321,
+     "size": 6,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 319,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 320,
+       "detail": "ValueError"
+      }
+     ],
+     "calls": [
+      {
+       "name": "SETTINGS.search",
+       "line": 317
+      },
+      {
+       "name": "tracker.get",
+       "line": 317
+      },
+      {
+       "name": "json.loads",
+       "line": 319
+      },
+      {
+       "name": "match.group",
+       "line": 319
+      }
+     ]
+    },
+    {
+     "name": "labels_of",
+     "qualname": "labels_of",
+     "kind": "function",
+     "start": 324,
+     "end": 325,
+     "size": 2,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 325,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "isinstance",
+       "line": 325
+      },
+      {
+       "name": "item.get",
+       "line": 325
+      }
+     ]
+    },
+    {
+     "name": "comp_label",
+     "qualname": "comp_label",
+     "kind": "function",
+     "start": 328,
+     "end": 329,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": []
+    },
+    {
+     "name": "issue_text",
+     "qualname": "issue_text",
+     "kind": "function",
+     "start": 332,
+     "end": 338,
+     "size": 7,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 336,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "gh.file",
+       "line": 334
+      },
+      {
+       "name": "text.splitlines",
+       "line": 335
+      },
+      {
+       "name": "startswith",
+       "line": 336
+      },
+      {
+       "name": "strip",
+       "line": 337
+      },
+      {
+       "name": "().strip",
+       "line": 337
+      },
+      {
+       "name": "join",
+       "line": 337
+      },
+      {
+       "name": "len",
+       "line": 337
+      },
+      {
+       "name": "text.strip",
+       "line": 338
+      }
+     ]
+    },
+    {
+     "name": "assignment",
+     "qualname": "assignment",
+     "kind": "function",
+     "start": 341,
+     "end": 345,
+     "size": 5,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 343,
+       "detail": ""
+      }
+     ],
+     "calls": []
+    },
+    {
+     "name": "json_file",
+     "qualname": "json_file",
+     "kind": "function",
+     "start": 348,
+     "end": 353,
+     "size": 6,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 351,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 352,
+       "detail": "ValueError"
+      }
+     ],
+     "calls": [
+      {
+       "name": "gh.file",
+       "line": 349
+      },
+      {
+       "name": "json.loads",
+       "line": 351
+      }
+     ]
+    },
+    {
+     "name": "section",
+     "qualname": "section",
+     "kind": "function",
+     "start": 356,
+     "end": 362,
+     "size": 7,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 358,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 362,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "re.search",
+       "line": 357
+      },
+      {
+       "name": "re.escape",
+       "line": 357
+      },
+      {
+       "name": "match.end",
+       "line": 360
+      },
+      {
+       "name": "nxt.start",
+       "line": 362
+      }
+     ]
+    },
+    {
+     "name": "report_facts",
+     "qualname": "report_facts",
+     "kind": "function",
+     "start": 365,
+     "end": 378,
+     "size": 14,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 368,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 373,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 378,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "re.sub",
+       "line": 370
+      },
+      {
+       "name": "re.findall",
+       "line": 371
+      },
+      {
+       "name": "len",
+       "line": 373
+      },
+      {
+       "name": "sum",
+       "line": 375
+      },
+      {
+       "name": "().splitlines",
+       "line": 375
+      },
+      {
+       "name": "().startswith",
+       "line": 376
+      },
+      {
+       "name": "re.search",
+       "line": 376
+      },
+      {
+       "name": "section",
+       "line": 375
+      },
+      {
+       "name": "line.lstrip",
+       "line": 376
+      },
+      {
+       "name": "upper",
+       "line": 378
+      },
+      {
+       "name": "printed.group",
+       "line": 378
+      }
+     ]
+    },
+    {
+     "name": "as_int",
+     "qualname": "as_int",
+     "kind": "function",
+     "start": 381,
+     "end": 385,
+     "size": 5,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "except",
+       "line": 384,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "int",
+       "line": 383
+      }
+     ]
+    },
+    {
+     "name": "status_of",
+     "qualname": "status_of",
+     "kind": "function",
+     "start": 388,
+     "end": 391,
+     "size": 4,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 391,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "json_file",
+       "line": 390
+      },
+      {
+       "name": "isinstance",
+       "line": 391
+      }
+     ]
+    },
+    {
+     "name": "Queue",
+     "qualname": "Queue",
+     "kind": "class",
+     "start": 396,
+     "end": 794,
+     "size": 399,
+     "decorators": []
+    },
+    {
+     "name": "__init__",
+     "qualname": "Queue.__init__",
+     "kind": "method",
+     "start": 397,
+     "end": 399,
+     "size": 3,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "os.environ.get",
+       "line": 399
+      }
+     ]
+    },
+    {
+     "name": "run_issues",
+     "qualname": "Queue.run_issues",
+     "kind": "method",
+     "start": 401,
+     "end": 402,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.gh.issues",
+       "line": 402
+      }
+     ]
+    },
+    {
+     "name": "agent_pr",
+     "qualname": "Queue.agent_pr",
+     "kind": "method",
+     "start": 404,
+     "end": 410,
+     "size": 7,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 406,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 408,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "reversed",
+       "line": 406
+      },
+      {
+       "name": "self.gh.linked_prs",
+       "line": 406
+      },
+      {
+       "name": "get",
+       "line": 407
+      },
+      {
+       "name": "self.gh.is_agent_pr",
+       "line": 408
+      },
+      {
+       "name": "pr.get",
+       "line": 407
+      }
+     ]
+    },
+    {
+     "name": "session",
+     "qualname": "Queue.session",
+     "kind": "method",
+     "start": 413,
+     "end": 429,
+     "size": 17,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 416,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 417,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 419,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 421,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 422,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 425,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 428,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 429,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.agent_pr",
+       "line": 415
+      },
+      {
+       "name": "self.gh.start_error",
+       "line": 417
+      },
+      {
+       "name": "age",
+       "line": 419
+      },
+      {
+       "name": "self.gh.assigned_at",
+       "line": 419
+      },
+      {
+       "name": "self.gh.agent_events",
+       "line": 420
+      },
+      {
+       "name": "sorted",
+       "line": 422
+      },
+      {
+       "name": "self.gh.commit_time",
+       "line": 423
+      },
+      {
+       "name": "bool",
+       "line": 424
+      },
+      {
+       "name": "pr.get",
+       "line": 424
+      },
+      {
+       "name": "status_of",
+       "line": 426
+      },
+      {
+       "name": "labels_of",
+       "line": 425
+      },
+      {
+       "name": "status.get",
+       "line": 427
+      }
+     ]
+    },
+    {
+     "name": "held",
+     "qualname": "Queue.held",
+     "kind": "method",
+     "start": 431,
+     "end": 441,
+     "size": 11,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 433,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 435,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 439,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "labels_of",
+       "line": 433
+      },
+      {
+       "name": "issue.get",
+       "line": 435
+      },
+      {
+       "name": "ATTEMPT.sub",
+       "line": 436
+      },
+      {
+       "name": "self.gh.set_body",
+       "line": 437
+      },
+      {
+       "name": "re.search",
+       "line": 438
+      },
+      {
+       "name": "self.gh.assign",
+       "line": 439
+      },
+      {
+       "name": "self.gh.comment",
+       "line": 440
+      },
+      {
+       "name": "assignment",
+       "line": 439
+      },
+      {
+       "name": "self.model_for",
+       "line": 439
+      },
+      {
+       "name": "base.group",
+       "line": 439
+      }
+     ]
+    },
+    {
+     "name": "model_for",
+     "qualname": "Queue.model_for",
+     "kind": "method",
+     "start": 443,
+     "end": 445,
+     "size": 3,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 445,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "labels_of",
+       "line": 444
+      },
+      {
+       "name": "self.settings.get",
+       "line": 445
+      }
+     ]
+    },
+    {
+     "name": "hold_start_error",
+     "qualname": "Queue.hold_start_error",
+     "kind": "method",
+     "start": 447,
+     "end": 453,
+     "size": 7,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.gh.start_error",
+       "line": 449
+      },
+      {
+       "name": "self.gh.label",
+       "line": 450
+      },
+      {
+       "name": "self.gh.unassign",
+       "line": 451
+      },
+      {
+       "name": "self.gh.comment",
+       "line": 452
+      }
+     ]
+    },
+    {
+     "name": "fail_or_retry",
+     "qualname": "Queue.fail_or_retry",
+     "kind": "method",
+     "start": 455,
+     "end": 474,
+     "size": 20,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 458,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 461,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 469,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 473,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "int",
+       "line": 457
+      },
+      {
+       "name": "ATTEMPT.search",
+       "line": 457
+      },
+      {
+       "name": "issue.get",
+       "line": 457
+      },
+      {
+       "name": "self.gh.comment",
+       "line": 459
+      },
+      {
+       "name": "self.gh.close_pr",
+       "line": 460
+      },
+      {
+       "name": "self.gh.label",
+       "line": 462
+      },
+      {
+       "name": "self.gh.unassign",
+       "line": 463
+      },
+      {
+       "name": "self.gh.close",
+       "line": 468
+      },
+      {
+       "name": "ATTEMPT.sub",
+       "line": 469
+      },
+      {
+       "name": "re.search",
+       "line": 471
+      },
+      {
+       "name": "self.gh.create_issue",
+       "line": 472
+      },
+      {
+       "name": "sorted",
+       "line": 472
+      },
+      {
+       "name": "assignment",
+       "line": 473
+      },
+      {
+       "name": "self.model_for",
+       "line": 473
+      },
+      {
+       "name": "base.group",
+       "line": 473
+      },
+      {
+       "name": "labels_of",
+       "line": 472
+      },
+      {
+       "name": "l.startswith",
+       "line": 472
+      }
+     ]
+    },
+    {
+     "name": "reconcile",
+     "qualname": "Queue.reconcile",
+     "kind": "method",
+     "start": 477,
+     "end": 487,
+     "size": 11,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 479,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 481,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 486,
+       "detail": "Exception"
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.gh.default_branch",
+       "line": 478
+      },
+      {
+       "name": "self.gh.issues",
+       "line": 479
+      },
+      {
+       "name": "settings_of",
+       "line": 480
+      },
+      {
+       "name": "self.log",
+       "line": 482
+      },
+      {
+       "name": "self.run",
+       "line": 485
+      },
+      {
+       "name": "type",
+       "line": 487
+      }
+     ]
+    },
+    {
+     "name": "run",
+     "qualname": "Queue.run",
+     "kind": "method",
+     "start": 489,
+     "end": 525,
+     "size": 37,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 494,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 498,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 500,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 503,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 505,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 509,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 512,
+       "detail": "Exception"
+      },
+      {
+       "kind": "loop",
+       "line": 516,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 517,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 521,
+       "detail": "RuntimeError"
+      },
+      {
+       "kind": "if",
+       "line": 523,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "settings.get",
+       "line": 490
+      },
+      {
+       "name": "json_file",
+       "line": 493
+      },
+      {
+       "name": "catalog.get",
+       "line": 494
+      },
+      {
+       "name": "self.plan_phase",
+       "line": 495
+      },
+      {
+       "name": "isinstance",
+       "line": 494
+      },
+      {
+       "name": "c.get",
+       "line": 496
+      },
+      {
+       "name": "().strip",
+       "line": 497
+      },
+      {
+       "name": "n.strip",
+       "line": 498
+      },
+      {
+       "name": "asked.split",
+       "line": 498
+      },
+      {
+       "name": "self.render",
+       "line": 501
+      },
+      {
+       "name": "join",
+       "line": 504
+      },
+      {
+       "name": "self.run_issues",
+       "line": 505
+      },
+      {
+       "name": "gh.close",
+       "line": 506
+      },
+      {
+       "name": "self.component",
+       "line": 511
+      },
+      {
+       "name": "endswith",
+       "line": 514
+      },
+      {
+       "name": "startswith",
+       "line": 514
+      },
+      {
+       "name": "type",
+       "line": 513
+      },
+      {
+       "name": "str",
+       "line": 513
+      },
+      {
+       "name": "as_int",
+       "line": 515
+      },
+      {
+       "name": "self.start_chunk",
+       "line": 519
+      },
+      {
+       "name": "all",
+       "line": 523
+      },
+      {
+       "name": "self.assemble_phase",
+       "line": 524
+      },
+      {
+       "name": "rows.values",
+       "line": 523
+      }
+     ]
+    },
+    {
+     "name": "plan_phase",
+     "qualname": "Queue.plan_phase",
+     "kind": "method",
+     "start": 527,
+     "end": 549,
+     "size": 23,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 530,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 532,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 540,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 543,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 546,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 548,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.run_issues",
+       "line": 529
+      },
+      {
+       "name": "issue_text",
+       "line": 531
+      },
+      {
+       "name": "gh.create_issue",
+       "line": 536
+      },
+      {
+       "name": "self.render",
+       "line": 538
+      },
+      {
+       "name": "assignment",
+       "line": 537
+      },
+      {
+       "name": "settings.get",
+       "line": 537
+      },
+      {
+       "name": "self.held",
+       "line": 540
+      },
+      {
+       "name": "self.session",
+       "line": 542
+      },
+      {
+       "name": "self.hold_start_error",
+       "line": 544
+      },
+      {
+       "name": "self.fail_or_retry",
+       "line": 547
+      }
+     ]
+    },
+    {
+     "name": "start_chunk",
+     "qualname": "Queue.start_chunk",
+     "kind": "method",
+     "start": 551,
+     "end": 563,
+     "size": 13,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 555,
+       "detail": ""
+      },
+      {
+       "kind": "elif",
+       "line": 557,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 562,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "gh.branch_sha",
+       "line": 554
+      },
+      {
+       "name": "gh.create_branch",
+       "line": 556
+      },
+      {
+       "name": "gh.reset_branch",
+       "line": 558
+      },
+      {
+       "name": "self.run_issues",
+       "line": 557
+      },
+      {
+       "name": "comp_label",
+       "line": 557
+      },
+      {
+       "name": "issue_text",
+       "line": 559
+      },
+      {
+       "name": "gh.create_issue",
+       "line": 562
+      },
+      {
+       "name": "assignment",
+       "line": 563
+      },
+      {
+       "name": "self.settings.get",
+       "line": 563
+      }
+     ]
+    },
+    {
+     "name": "component",
+     "qualname": "Queue.component",
+     "kind": "method",
+     "start": 565,
+     "end": 643,
+     "size": 79,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 568,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 570,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 572,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 574,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 578,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 580,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 583,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 586,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 590,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 592,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 598,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 599,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 609,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 610,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 615,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 629,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 630,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "gh.branch_prs",
+       "line": 568
+      },
+      {
+       "name": "pr.get",
+       "line": 572
+      },
+      {
+       "name": "get",
+       "line": 569
+      },
+      {
+       "name": "self.run_issues",
+       "line": 577
+      },
+      {
+       "name": "comp_label",
+       "line": 577
+      },
+      {
+       "name": "self.held",
+       "line": 580
+      },
+      {
+       "name": "self.follow",
+       "line": 582
+      },
+      {
+       "name": "result.endswith",
+       "line": 583
+      },
+      {
+       "name": "status_of",
+       "line": 588
+      },
+      {
+       "name": "status.get",
+       "line": 590
+      },
+      {
+       "name": "self.check",
+       "line": 591
+      },
+      {
+       "name": "len",
+       "line": 593
+      },
+      {
+       "name": "self.start_chunk",
+       "line": 594
+      },
+      {
+       "name": "self.estimate.get",
+       "line": 594
+      },
+      {
+       "name": "gh.close",
+       "line": 601
+      },
+      {
+       "name": "labels_of",
+       "line": 599
+      },
+      {
+       "name": "max",
+       "line": 603
+      },
+      {
+       "name": "h.get",
+       "line": 603
+      },
+      {
+       "name": "i.get",
+       "line": 605
+      },
+      {
+       "name": "report_facts",
+       "line": 609
+      },
+      {
+       "name": "gh.file",
+       "line": 609
+      },
+      {
+       "name": "gh.create_pr",
+       "line": 611
+      },
+      {
+       "name": "gh.create_issue",
+       "line": 616
+      },
+      {
+       "name": "assignment",
+       "line": 642
+      },
+      {
+       "name": "self.settings.get",
+       "line": 642
+      }
+     ]
+    },
+    {
+     "name": "follow",
+     "qualname": "Queue.follow",
+     "kind": "method",
+     "start": 645,
+     "end": 692,
+     "size": 48,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 647,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 649,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 651,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 654,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 656,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 657,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 660,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 667,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 669,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 671,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 672,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 673,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 680,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 682,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 683,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 685,
+       "detail": ""
+      },
+      {
+       "kind": "elif",
+       "line": 686,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 688,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "labels_of",
+       "line": 647
+      },
+      {
+       "name": "self.session",
+       "line": 648
+      },
+      {
+       "name": "self.hold_start_error",
+       "line": 652
+      },
+      {
+       "name": "self.fail_or_retry",
+       "line": 655
+      },
+      {
+       "name": "gh.pr_files",
+       "line": 662
+      },
+      {
+       "name": "().startswith",
+       "line": 663
+      },
+      {
+       "name": "f.startswith",
+       "line": 663
+      },
+      {
+       "name": "os.path.basename",
+       "line": 663
+      },
+      {
+       "name": "join",
+       "line": 668
+      },
+      {
+       "name": "status_of",
+       "line": 670
+      },
+      {
+       "name": "as_int",
+       "line": 677
+      },
+      {
+       "name": "status.get",
+       "line": 672
+      },
+      {
+       "name": "().get",
+       "line": 677
+      },
+      {
+       "name": "gh.file",
+       "line": 686
+      },
+      {
+       "name": "gh.label",
+       "line": 674
+      },
+      {
+       "name": "issue.get",
+       "line": 678
+      },
+      {
+       "name": "gh.merge",
+       "line": 689
+      },
+      {
+       "name": "gh.unlabel",
+       "line": 690
+      },
+      {
+       "name": "gh.close",
+       "line": 691
+      }
+     ]
+    },
+    {
+     "name": "check",
+     "qualname": "Queue.check",
+     "kind": "method",
+     "start": 694,
+     "end": 711,
+     "size": 18,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 697,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "os.path.join",
+       "line": 696
+      },
+      {
+       "name": "os.path.isfile",
+       "line": 697
+      },
+      {
+       "name": "self.log",
+       "line": 698
+      },
+      {
+       "name": "tempfile.mkdtemp",
+       "line": 700
+      },
+      {
+       "name": "self.gh.tarball",
+       "line": 702
+      },
+      {
+       "name": "subprocess.run",
+       "line": 703
+      },
+      {
+       "name": "shutil.rmtree",
+       "line": 711
+      },
+      {
+       "name": "os.path.abspath",
+       "line": 703
+      },
+      {
+       "name": "self.settings.get",
+       "line": 704
+      },
+      {
+       "name": "printed.stdout.strip",
+       "line": 709
+      },
+      {
+       "name": "().splitlines",
+       "line": 706
+      },
+      {
+       "name": "run.stdout.strip",
+       "line": 706
+      }
+     ]
+    },
+    {
+     "name": "assemble_phase",
+     "qualname": "Queue.assemble_phase",
+     "kind": "method",
+     "start": 713,
+     "end": 753,
+     "size": 41,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 715,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 718,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 721,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 725,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 726,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 728,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 730,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 733,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 736,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 739,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 741,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 742,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "any",
+       "line": 718
+      },
+      {
+       "name": "self.run_issues",
+       "line": 720
+      },
+      {
+       "name": "gh.create_issue",
+       "line": 748
+      },
+      {
+       "name": "settings.get",
+       "line": 716
+      },
+      {
+       "name": "self.held",
+       "line": 733
+      },
+      {
+       "name": "self.session",
+       "line": 735
+      },
+      {
+       "name": "issue_text",
+       "line": 743
+      },
+      {
+       "name": "assignment",
+       "line": 749
+      },
+      {
+       "name": "gh.close",
+       "line": 731
+      },
+      {
+       "name": "self.hold_start_error",
+       "line": 737
+      },
+      {
+       "name": "self.fail_or_retry",
+       "line": 740
+      },
+      {
+       "name": "i.get",
+       "line": 718
+      },
+      {
+       "name": "gh.linked_prs",
+       "line": 723
+      },
+      {
+       "name": "report_facts",
+       "line": 727
+      },
+      {
+       "name": "p.get",
+       "line": 723
+      },
+      {
+       "name": "gh.is_agent_pr",
+       "line": 724
+      },
+      {
+       "name": "gh.file",
+       "line": 727
+      },
+      {
+       "name": "get",
+       "line": 724
+      },
+      {
+       "name": "gh.comment",
+       "line": 751
+      }
+     ]
+    },
+    {
+     "name": "render",
+     "qualname": "Queue.render",
+     "kind": "method",
+     "start": 755,
+     "end": 765,
+     "size": 11,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 762,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 764,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "rows.items",
+       "line": 758
+      },
+      {
+       "name": "().isoformat",
+       "line": 759
+      },
+      {
+       "name": "json.dumps",
+       "line": 760
+      },
+      {
+       "name": "now",
+       "line": 759
+      },
+      {
+       "name": "join",
+       "line": 761
+      },
+      {
+       "name": "self.gh.set_body",
+       "line": 763
+      },
+      {
+       "name": "body.split",
+       "line": 762
+      },
+      {
+       "name": "split",
+       "line": 762
+      },
+      {
+       "name": "tracker.get",
+       "line": 762
+      },
+      {
+       "name": "self.log",
+       "line": 765
+      }
+     ]
+    },
+    {
+     "name": "delta",
+     "qualname": "Queue.delta",
+     "kind": "method",
+     "start": 768,
+     "end": 794,
+     "size": 27,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 772,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 780,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 782,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "gh.default_branch",
+       "line": 770
+      },
+      {
+       "name": "json_file",
+       "line": 771
+      },
+      {
+       "name": "self.log",
+       "line": 773
+      },
+      {
+       "name": "gh.file",
+       "line": 772
+      },
+      {
+       "name": "sys.path.insert",
+       "line": 775
+      },
+      {
+       "name": "os.path.abspath",
+       "line": 775
+      },
+      {
+       "name": "os.path.join",
+       "line": 775
+      },
+      {
+       "name": "components.rows_of",
+       "line": 777
+      },
+      {
+       "name": "sorted",
+       "line": 778
+      },
+      {
+       "name": "().values",
+       "line": 778
+      },
+      {
+       "name": "components.component_map",
+       "line": 778
+      },
+      {
+       "name": "p.startswith",
+       "line": 779
+      },
+      {
+       "name": "gh.issues",
+       "line": 782
+      },
+      {
+       "name": "gh.create_issue",
+       "line": 785
+      },
+      {
+       "name": "assignment",
+       "line": 793
+      },
+      {
+       "name": "comp_label",
+       "line": 782
+      },
+      {
+       "name": "join",
+       "line": 791
+      },
+      {
+       "name": "len",
+       "line": 794
+      },
+      {
+       "name": "components.assign",
+       "line": 781
+      }
+     ]
+    },
+    {
+     "name": "main",
+     "qualname": "main",
+     "kind": "function",
+     "start": 797,
+     "end": 840,
+     "size": 44,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 814,
+       "detail": ""
+      },
+      {
+       "kind": "raise",
+       "line": 815,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 819,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 820,
+       "detail": ""
+      },
+      {
+       "kind": "raise",
+       "line": 821,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 823,
+       "detail": ""
+      },
+      {
+       "kind": "raise",
+       "line": 824,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 826,
+       "detail": ""
+      },
+      {
+       "kind": "raise",
+       "line": 827,
+       "detail": ""
+      },
+      {
+       "kind": "elif",
+       "line": 833,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 839,
+       "detail": "RuntimeError"
+      },
+      {
+       "kind": "raise",
+       "line": 840,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "argparse.ArgumentParser",
+       "line": 798
+      },
+      {
+       "name": "__doc__.splitlines",
+       "line": 798
+      },
+      {
+       "name": "parser.add_subparsers",
+       "line": 799
+      },
+      {
+       "name": "sub.add_parser",
+       "line": 800
+      },
+      {
+       "name": "start.add_argument",
+       "line": 801
+      },
+      {
+       "name": "d.add_argument",
+       "line": 809
+      },
+      {
+       "name": "parser.parse_args",
+       "line": 811
+      },
+      {
+       "name": "os.environ.get",
+       "line": 813
+      },
+      {
+       "name": "SystemExit",
+       "line": 815
+      },
+      {
+       "name": "GitHub",
+       "line": 816
+      },
+      {
+       "name": "Queue",
+       "line": 817
+      },
+      {
+       "name": "gh.ensure_labels",
+       "line": 825
+      },
+      {
+       "name": "gh.issues",
+       "line": 826
+      },
+      {
+       "name": "gh.create_issue",
+       "line": 830
+      },
+      {
+       "name": "print",
+       "line": 831
+      },
+      {
+       "name": "n.strip",
+       "line": 822
+      },
+      {
+       "name": "any",
+       "line": 823
+      },
+      {
+       "name": "queue.reconcile",
+       "line": 834
+      },
+      {
+       "name": "queue.delta",
+       "line": 838
+      },
+      {
+       "name": "str",
+       "line": 840
+      },
+      {
+       "name": "args.verify_model.strip",
+       "line": 820
+      },
+      {
+       "name": "args.components.split",
+       "line": 822
+      },
+      {
+       "name": "json.dumps",
+       "line": 830
+      },
+      {
+       "name": "issue.get",
+       "line": 832
+      },
+      {
+       "name": "open",
+       "line": 836
+      },
+      {
+       "name": "l.strip",
+       "line": 837
+      },
+      {
+       "name": "NAME.match",
+       "line": 823
+      }
+     ]
+    },
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": [
+      {
+       "module": "__future__",
+       "name": "annotations",
+       "as": "annotations",
+       "line": 40
+      },
+      {
+       "module": "argparse",
+       "name": null,
+       "as": "argparse",
+       "line": 42
+      },
+      {
+       "module": "base64",
+       "name": null,
+       "as": "base64",
+       "line": 43
+      },
+      {
+       "module": "datetime",
+       "name": null,
+       "as": "datetime",
+       "line": 44
+      },
+      {
+       "module": "json",
+       "name": null,
+       "as": "json",
+       "line": 45
+      },
+      {
+       "module": "os",
+       "name": null,
+       "as": "os",
+       "line": 46
+      },
+      {
+       "module": "re",
+       "name": null,
+       "as": "re",
+       "line": 47
+      },
+      {
+       "module": "shutil",
+       "name": null,
+       "as": "shutil",
+       "line": 48
+      },
+      {
+       "module": "subprocess",
+       "name": null,
+       "as": "subprocess",
+       "line": 49
+      },
+      {
+       "module": "sys",
+       "name": null,
+       "as": "sys",
+       "line": 50
+      },
+      {
+       "module": "tarfile",
+       "name": null,
+       "as": "tarfile",
+       "line": 51
+      },
+      {
+       "module": "tempfile",
+       "name": null,
+       "as": "tempfile",
+       "line": 52
+      },
+      {
+       "module": "urllib.error",
+       "name": null,
+       "as": "urllib",
+       "line": 53
+      },
+      {
+       "module": "urllib.parse",
+       "name": null,
+       "as": "urllib",
+       "line": 54
+      },
+      {
+       "module": "urllib.request",
+       "name": null,
+       "as": "urllib",
+       "line": 55
+      },
+      {
+       "module": "components",
+       "name": null,
+       "as": "components",
+       "line": 776
+      }
+     ]
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": ".github/workflows/bible-delta.yml",
+   "kind": "config",
+   "lang": null,
+   "binary": false,
+   "lines": 36,
+   "symbols": [],
+   "routes": []
+  },
+  {
+   "path": ".github/workflows/bible-plan.yml",
+   "kind": "config",
+   "lang": null,
+   "binary": false,
+   "lines": 54,
+   "symbols": [],
+   "routes": []
+  },
+  {
+   "path": ".github/workflows/bible-queue.yml",
+   "kind": "config",
+   "lang": null,
+   "binary": false,
+   "lines": 37,
+   "symbols": [],
+   "routes": []
+  },
+  {
+   "path": ".github/workflows/poc-assign-copilot.yml",
+   "kind": "config",
+   "lang": null,
+   "binary": false,
+   "lines": 72,
+   "symbols": [],
+   "routes": []
+  },
+  {
+   "path": "components/__init__.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 0,
+   "symbols": [
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": []
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": "components/catalog/__init__.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 0,
+   "symbols": [
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": []
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": "components/catalog/catalog.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 47,
+   "symbols": [
+    {
+     "name": "get_product",
+     "qualname": "get_product",
+     "kind": "function",
+     "start": 15,
+     "end": 17,
+     "size": 3,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "_PRODUCTS.get",
+       "line": 17
+      }
+     ]
+    },
+    {
+     "name": "price_of",
+     "qualname": "price_of",
+     "kind": "function",
+     "start": 20,
+     "end": 24,
+     "size": 5,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 22,
+       "detail": ""
+      },
+      {
+       "kind": "raise",
+       "line": 23,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "get_product",
+       "line": 21
+      },
+      {
+       "name": "KeyError",
+       "line": 23
+      }
+     ]
+    },
+    {
+     "name": "in_stock",
+     "qualname": "in_stock",
+     "kind": "function",
+     "start": 27,
+     "end": 29,
+     "size": 3,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "get_product",
+       "line": 28
+      }
+     ]
+    },
+    {
+     "name": "image_url",
+     "qualname": "image_url",
+     "kind": "function",
+     "start": 32,
+     "end": 33,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "sku.lower",
+       "line": 33
+      }
+     ]
+    },
+    {
+     "name": "fetch_supplier_feed",
+     "qualname": "fetch_supplier_feed",
+     "kind": "function",
+     "start": 36,
+     "end": 39,
+     "size": 4,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "urllib.request.urlopen",
+       "line": 38
+      },
+      {
+       "name": "json.loads",
+       "line": 39
+      },
+      {
+       "name": "resp.read",
+       "line": 39
+      }
+     ]
+    },
+    {
+     "name": "apply_feed",
+     "qualname": "apply_feed",
+     "kind": "function",
+     "start": 42,
+     "end": 47,
+     "size": 6,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 44,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 45,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "feed.get",
+       "line": 44
+      },
+      {
+       "name": "float",
+       "line": 46
+      },
+      {
+       "name": "int",
+       "line": 47
+      }
+     ]
+    },
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": [
+      {
+       "module": "json",
+       "name": null,
+       "as": "json",
+       "line": 2
+      },
+      {
+       "module": "urllib.request",
+       "name": null,
+       "as": "urllib",
+       "line": 3
+      }
+     ]
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": "components/catalog/service.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 49,
+   "symbols": [
+    {
+     "name": "CatalogHandler",
+     "qualname": "CatalogHandler",
+     "kind": "class",
+     "start": 15,
+     "end": 37,
+     "size": 23,
+     "decorators": []
+    },
+    {
+     "name": "_send",
+     "qualname": "CatalogHandler._send",
+     "kind": "method",
+     "start": 16,
+     "end": 22,
+     "size": 7,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "().encode",
+       "line": 17
+      },
+      {
+       "name": "json.dumps",
+       "line": 17
+      },
+      {
+       "name": "self.send_response",
+       "line": 18
+      },
+      {
+       "name": "self.send_header",
+       "line": 19
+      },
+      {
+       "name": "str",
+       "line": 20
+      },
+      {
+       "name": "len",
+       "line": 20
+      },
+      {
+       "name": "self.end_headers",
+       "line": 21
+      },
+      {
+       "name": "self.wfile.write",
+       "line": 22
+      }
+     ]
+    },
+    {
+     "name": "do_GET",
+     "qualname": "CatalogHandler.do_GET",
+     "kind": "method",
+     "start": 24,
+     "end": 34,
+     "size": 11,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 26,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 28,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 32,
+       "detail": "KeyError"
+      }
+     ],
+     "calls": [
+      {
+       "name": "urllib.parse.urlsplit",
+       "line": 25
+      },
+      {
+       "name": "self._send",
+       "line": 27
+      },
+      {
+       "name": "path.startswith",
+       "line": 28
+      },
+      {
+       "name": "urllib.parse.unquote",
+       "line": 29
+      },
+      {
+       "name": "len",
+       "line": 29
+      },
+      {
+       "name": "catalog.price_of",
+       "line": 31
+      }
+     ]
+    },
+    {
+     "name": "log_message",
+     "qualname": "CatalogHandler.log_message",
+     "kind": "method",
+     "start": 36,
+     "end": 37,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": []
+    },
+    {
+     "name": "make_server",
+     "qualname": "make_server",
+     "kind": "function",
+     "start": 40,
+     "end": 43,
+     "size": 4,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 42,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "os.environ.get",
+       "line": 41
+      },
+      {
+       "name": "int",
+       "line": 42
+      },
+      {
+       "name": "ThreadingHTTPServer",
+       "line": 43
+      }
+     ]
+    },
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": [
+      {
+       "module": "json",
+       "name": null,
+       "as": "json",
+       "line": 7
+      },
+      {
+       "module": "os",
+       "name": null,
+       "as": "os",
+       "line": 8
+      },
+      {
+       "module": "urllib.parse",
+       "name": null,
+       "as": "urllib",
+       "line": 9
+      },
+      {
+       "module": "http.server",
+       "name": "BaseHTTPRequestHandler",
+       "as": "BaseHTTPRequestHandler",
+       "line": 10
+      },
+      {
+       "module": "http.server",
+       "name": "ThreadingHTTPServer",
+       "as": "ThreadingHTTPServer",
+       "line": 10
+      },
+      {
+       "module": "components.catalog",
+       "name": "catalog",
+       "as": "catalog",
+       "line": 12
+      }
+     ]
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": "components/catalog/test_catalog.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 12,
+   "symbols": [
+    {
+     "name": "CatalogTest",
+     "qualname": "CatalogTest",
+     "kind": "class",
+     "start": 6,
+     "end": 8,
+     "size": 3,
+     "decorators": []
+    },
+    {
+     "name": "test_price_of_known_sku",
+     "qualname": "CatalogTest.test_price_of_known_sku",
+     "kind": "method",
+     "start": 7,
+     "end": 8,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.assertEqual",
+       "line": 8
+      },
+      {
+       "name": "catalog.price_of",
+       "line": 8
+      }
+     ]
+    },
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": [
+      {
+       "module": "unittest",
+       "name": null,
+       "as": "unittest",
+       "line": 1
+      },
+      {
+       "module": "components.catalog",
+       "name": "catalog",
+       "as": "catalog",
+       "line": 3
+      }
+     ]
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": "components/orders/__init__.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 0,
+   "symbols": [
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": []
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": "components/orders/catalog_client.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 29,
+   "symbols": [
+    {
+     "name": "catalog_url",
+     "qualname": "catalog_url",
+     "kind": "function",
+     "start": 14,
+     "end": 16,
+     "size": 3,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "().rstrip",
+       "line": 16
+      },
+      {
+       "name": "os.environ.get",
+       "line": 16
+      }
+     ]
+    },
+    {
+     "name": "remote_price",
+     "qualname": "remote_price",
+     "kind": "function",
+     "start": 19,
+     "end": 23,
+     "size": 5,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "catalog_url",
+       "line": 21
+      },
+      {
+       "name": "urllib.parse.quote",
+       "line": 21
+      },
+      {
+       "name": "urllib.request.urlopen",
+       "line": 22
+      },
+      {
+       "name": "float",
+       "line": 23
+      },
+      {
+       "name": "json.loads",
+       "line": 23
+      },
+      {
+       "name": "resp.read",
+       "line": 23
+      }
+     ]
+    },
+    {
+     "name": "remote_line_total",
+     "qualname": "remote_line_total",
+     "kind": "function",
+     "start": 26,
+     "end": 29,
+     "size": 4,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 27,
+       "detail": ""
+      },
+      {
+       "kind": "raise",
+       "line": 28,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "ValueError",
+       "line": 28
+      },
+      {
+       "name": "remote_price",
+       "line": 29
+      }
+     ]
+    },
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": [
+      {
+       "module": "json",
+       "name": null,
+       "as": "json",
+       "line": 6
+      },
+      {
+       "module": "os",
+       "name": null,
+       "as": "os",
+       "line": 7
+      },
+      {
+       "module": "urllib.parse",
+       "name": null,
+       "as": "urllib",
+       "line": 8
+      },
+      {
+       "module": "urllib.request",
+       "name": null,
+       "as": "urllib",
+       "line": 9
+      }
+     ]
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": "components/orders/orders.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 51,
+   "symbols": [
+    {
+     "name": "line_total",
+     "qualname": "line_total",
+     "kind": "function",
+     "start": 19,
+     "end": 20,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "catalog.price_of",
+       "line": 20
+      }
+     ]
+    },
+    {
+     "name": "order_total",
+     "qualname": "order_total",
+     "kind": "function",
+     "start": 23,
+     "end": 32,
+     "size": 10,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 28,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 30,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "sum",
+       "line": 25
+      },
+      {
+       "name": "line_total",
+       "line": 25
+      },
+      {
+       "name": "max",
+       "line": 31
+      },
+      {
+       "name": "round",
+       "line": 32
+      }
+     ]
+    },
+    {
+     "name": "validate",
+     "qualname": "validate",
+     "kind": "function",
+     "start": 35,
+     "end": 42,
+     "size": 8,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 37,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 38,
+       "detail": ""
+      },
+      {
+       "kind": "elif",
+       "line": 40,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "errors.append",
+       "line": 39
+      },
+      {
+       "name": "catalog.in_stock",
+       "line": 40
+      }
+     ]
+    },
+    {
+     "name": "settle",
+     "qualname": "settle",
+     "kind": "function",
+     "start": 45,
+     "end": 51,
+     "size": 7,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 47,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "().encode",
+       "line": 48
+      },
+      {
+       "name": "json.dumps",
+       "line": 48
+      },
+      {
+       "name": "urllib.request.Request",
+       "line": 49
+      },
+      {
+       "name": "urllib.request.urlopen",
+       "line": 50
+      }
+     ]
+    },
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": [
+      {
+       "module": "json",
+       "name": null,
+       "as": "json",
+       "line": 2
+      },
+      {
+       "module": "urllib.request",
+       "name": null,
+       "as": "urllib",
+       "line": 3
+      },
+      {
+       "module": "components.catalog",
+       "name": "catalog",
+       "as": "catalog",
+       "line": 5
+      }
+     ]
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": "components/orders/test_catalog_client.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 66,
+   "symbols": [
+    {
+     "name": "CatalogClientTest",
+     "qualname": "CatalogClientTest",
+     "kind": "class",
+     "start": 12,
+     "end": 62,
+     "size": 51,
+     "decorators": []
+    },
+    {
+     "name": "setUpClass",
+     "qualname": "CatalogClientTest.setUpClass",
+     "kind": "method",
+     "start": 13,
+     "end": 19,
+     "size": 7,
+     "decorators": [
+      "classmethod"
+     ],
+     "branches": [],
+     "calls": [
+      {
+       "name": "service.make_server",
+       "line": 15
+      },
+      {
+       "name": "().start",
+       "line": 16
+      },
+      {
+       "name": "threading.Thread",
+       "line": 16
+      },
+      {
+       "name": "os.environ.get",
+       "line": 18
+      }
+     ]
+    },
+    {
+     "name": "tearDownClass",
+     "qualname": "CatalogClientTest.tearDownClass",
+     "kind": "method",
+     "start": 21,
+     "end": 28,
+     "size": 8,
+     "decorators": [
+      "classmethod"
+     ],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 25,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "cls.server.shutdown",
+       "line": 23
+      },
+      {
+       "name": "cls.server.server_close",
+       "line": 24
+      },
+      {
+       "name": "os.environ.pop",
+       "line": 26
+      }
+     ]
+    },
+    {
+     "name": "get",
+     "qualname": "CatalogClientTest.get",
+     "kind": "method",
+     "start": 30,
+     "end": 35,
+     "size": 6,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "except",
+       "line": 34,
+       "detail": "urllib.error.HTTPError"
+      }
+     ],
+     "calls": [
+      {
+       "name": "urllib.request.urlopen",
+       "line": 32
+      },
+      {
+       "name": "json.loads",
+       "line": 33
+      },
+      {
+       "name": "resp.read",
+       "line": 33
+      },
+      {
+       "name": "err.read",
+       "line": 35
+      }
+     ]
+    },
+    {
+     "name": "test_remote_price",
+     "qualname": "CatalogClientTest.test_remote_price",
+     "kind": "method",
+     "start": 37,
+     "end": 38,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.assertEqual",
+       "line": 38
+      },
+      {
+       "name": "catalog_client.remote_price",
+       "line": 38
+      }
+     ]
+    },
+    {
+     "name": "test_remote_line_total",
+     "qualname": "CatalogClientTest.test_remote_line_total",
+     "kind": "method",
+     "start": 40,
+     "end": 41,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.assertEqual",
+       "line": 41
+      },
+      {
+       "name": "catalog_client.remote_line_total",
+       "line": 41
+      }
+     ]
+    },
+    {
+     "name": "test_quantity_must_be_positive",
+     "qualname": "CatalogClientTest.test_quantity_must_be_positive",
+     "kind": "method",
+     "start": 43,
+     "end": 45,
+     "size": 3,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.assertRaises",
+       "line": 44
+      },
+      {
+       "name": "catalog_client.remote_line_total",
+       "line": 45
+      }
+     ]
+    },
+    {
+     "name": "test_unknown_sku",
+     "qualname": "CatalogClientTest.test_unknown_sku",
+     "kind": "method",
+     "start": 47,
+     "end": 49,
+     "size": 3,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.assertRaises",
+       "line": 48
+      },
+      {
+       "name": "catalog_client.remote_price",
+       "line": 49
+      }
+     ]
+    },
+    {
+     "name": "test_odd_skus_are_quoted_not_misrouted",
+     "qualname": "CatalogClientTest.test_odd_skus_are_quoted_not_misrouted",
+     "kind": "method",
+     "start": 51,
+     "end": 54,
+     "size": 4,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 52,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "self.assertRaises",
+       "line": 53
+      },
+      {
+       "name": "catalog_client.remote_price",
+       "line": 54
+      }
+     ]
+    },
+    {
+     "name": "test_query_string_ignored_by_server",
+     "qualname": "CatalogClientTest.test_query_string_ignored_by_server",
+     "kind": "method",
+     "start": 56,
+     "end": 58,
+     "size": 3,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.assertEqual",
+       "line": 57
+      },
+      {
+       "name": "self.get",
+       "line": 57
+      }
+     ]
+    },
+    {
+     "name": "test_percent_encoded_sku_decoded",
+     "qualname": "CatalogClientTest.test_percent_encoded_sku_decoded",
+     "kind": "method",
+     "start": 60,
+     "end": 62,
+     "size": 3,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.get",
+       "line": 61
+      },
+      {
+       "name": "self.assertEqual",
+       "line": 62
+      }
+     ]
+    },
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": [
+      {
+       "module": "json",
+       "name": null,
+       "as": "json",
+       "line": 1
+      },
+      {
+       "module": "os",
+       "name": null,
+       "as": "os",
+       "line": 2
+      },
+      {
+       "module": "threading",
+       "name": null,
+       "as": "threading",
+       "line": 3
+      },
+      {
+       "module": "unittest",
+       "name": null,
+       "as": "unittest",
+       "line": 4
+      },
+      {
+       "module": "urllib.error",
+       "name": null,
+       "as": "urllib",
+       "line": 5
+      },
+      {
+       "module": "urllib.request",
+       "name": null,
+       "as": "urllib",
+       "line": 6
+      },
+      {
+       "module": "components.catalog",
+       "name": "service",
+       "as": "service",
+       "line": 8
+      },
+      {
+       "module": "components.orders",
+       "name": "catalog_client",
+       "as": "catalog_client",
+       "line": 9
+      }
+     ]
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": "components/orders/test_orders.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 12,
+   "symbols": [
+    {
+     "name": "OrdersTest",
+     "qualname": "OrdersTest",
+     "kind": "class",
+     "start": 6,
+     "end": 8,
+     "size": 3,
+     "decorators": []
+    },
+    {
+     "name": "test_line_total",
+     "qualname": "OrdersTest.test_line_total",
+     "kind": "method",
+     "start": 7,
+     "end": 8,
+     "size": 2,
+     "decorators": [],
+     "branches": [],
+     "calls": [
+      {
+       "name": "self.assertEqual",
+       "line": 8
+      },
+      {
+       "name": "orders.line_total",
+       "line": 8
+      }
+     ]
+    },
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": [
+      {
+       "module": "unittest",
+       "name": null,
+       "as": "unittest",
+       "line": 1
+      },
+      {
+       "module": "components.orders",
+       "name": "orders",
+       "as": "orders",
+       "line": 3
+      }
+     ]
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": "tools/fanout.sh",
+   "kind": "source",
+   "lang": "shell",
+   "binary": false,
+   "lines": 31,
+   "symbols": [],
+   "routes": []
+  },
+  {
+   "path": "tools/gate.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 117,
+   "symbols": [
+    {
+     "name": "fail",
+     "qualname": "fail",
+     "kind": "function",
+     "start": 23,
+     "end": 26,
+     "size": 4,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 24,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 26,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "print",
+       "line": 25
+      }
+     ]
+    },
+    {
+     "name": "read",
+     "qualname": "read",
+     "kind": "function",
+     "start": 29,
+     "end": 30,
+     "size": 2,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "ternary",
+       "line": 30,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "path.exists",
+       "line": 30
+      },
+      {
+       "name": "path.read_text",
+       "line": 30
+      }
+     ]
+    },
+    {
+     "name": "count_tests",
+     "qualname": "count_tests",
+     "kind": "function",
+     "start": 33,
+     "end": 39,
+     "size": 7,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 35,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 36,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 37,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "ast.walk",
+       "line": 36
+      },
+      {
+       "name": "ast.parse",
+       "line": 36
+      },
+      {
+       "name": "read_text",
+       "line": 36
+      },
+      {
+       "name": "isinstance",
+       "line": 37
+      },
+      {
+       "name": "node.name.startswith",
+       "line": 37
+      }
+     ]
+    },
+    {
+     "name": "check",
+     "qualname": "check",
+     "kind": "function",
+     "start": 42,
+     "end": 78,
+     "size": 37,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 45,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 47,
+       "detail": ""
+      },
+      {
+       "kind": "elif",
+       "line": 51,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 53,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 55,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 57,
+       "detail": ""
+      },
+      {
+       "kind": "elif",
+       "line": 59,
+       "detail": ""
+      },
+      {
+       "kind": "elif",
+       "line": 61,
+       "detail": ""
+      },
+      {
+       "kind": "elif",
+       "line": 63,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 64,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 69,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 71,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 76,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "read",
+       "line": 46
+      },
+      {
+       "name": "sorted",
+       "line": 66
+      },
+      {
+       "name": "count_tests",
+       "line": 70
+      },
+      {
+       "name": "subprocess.run",
+       "line": 73
+      },
+      {
+       "name": "errors.append",
+       "line": 58
+      },
+      {
+       "name": "any",
+       "line": 59
+      },
+      {
+       "name": "risks.splitlines",
+       "line": 56
+      },
+      {
+       "name": "().as_posix",
+       "line": 66
+      },
+      {
+       "name": "glob",
+       "line": 67
+      },
+      {
+       "name": "p.relative_to",
+       "line": 66
+      }
+     ]
+    },
+    {
+     "name": "main",
+     "qualname": "main",
+     "kind": "function",
+     "start": 81,
+     "end": 113,
+     "size": 33,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "if",
+       "line": 87,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 91,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 96,
+       "detail": ""
+      },
+      {
+       "kind": "except",
+       "line": 97,
+       "detail": "json.JSONDecodeError"
+      },
+      {
+       "kind": "if",
+       "line": 99,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 102,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 105,
+       "detail": ""
+      },
+      {
+       "kind": "elif",
+       "line": 107,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 109,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 111,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "argparse.ArgumentParser",
+       "line": 82
+      },
+      {
+       "name": "ap.add_argument",
+       "line": 83
+      },
+      {
+       "name": "ap.parse_args",
+       "line": 85
+      },
+      {
+       "name": "json.loads",
+       "line": 86
+      },
+      {
+       "name": "read_text",
+       "line": 86
+      },
+      {
+       "name": "fail",
+       "line": 88
+      },
+      {
+       "name": "read",
+       "line": 94
+      },
+      {
+       "name": "status.get",
+       "line": 101
+      },
+      {
+       "name": "isinstance",
+       "line": 99
+      },
+      {
+       "name": "errors.append",
+       "line": 106
+      },
+      {
+       "name": "check",
+       "line": 110
+      },
+      {
+       "name": "print",
+       "line": 111
+      }
+     ]
+    },
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": [
+      {
+       "module": "argparse",
+       "name": null,
+       "as": "argparse",
+       "line": 13
+      },
+      {
+       "module": "ast",
+       "name": null,
+       "as": "ast",
+       "line": 14
+      },
+      {
+       "module": "json",
+       "name": null,
+       "as": "json",
+       "line": 15
+      },
+      {
+       "module": "pathlib",
+       "name": null,
+       "as": "pathlib",
+       "line": 16
+      },
+      {
+       "module": "subprocess",
+       "name": null,
+       "as": "subprocess",
+       "line": 17
+      },
+      {
+       "module": "sys",
+       "name": null,
+       "as": "sys",
+       "line": 18
+      }
+     ]
+    }
+   ],
+   "routes": []
+  },
+  {
+   "path": "tools/plan.py",
+   "kind": "source",
+   "lang": "python",
+   "binary": false,
+   "lines": 62,
+   "symbols": [
+    {
+     "name": "scan",
+     "qualname": "scan",
+     "kind": "function",
+     "start": 21,
+     "end": 38,
+     "size": 18,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 23,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 24,
+       "detail": ""
+      },
+      {
+       "kind": "ternary",
+       "line": 27,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 29,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 30,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 31,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 33,
+       "detail": ""
+      },
+      {
+       "kind": "loop",
+       "line": 34,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "sorted",
+       "line": 23
+      },
+      {
+       "name": "component_dir.glob",
+       "line": 23
+      },
+      {
+       "name": "().as_posix",
+       "line": 26
+      },
+      {
+       "name": "append",
+       "line": 27
+      },
+      {
+       "name": "path.read_text",
+       "line": 28
+      },
+      {
+       "name": "path.name.startswith",
+       "line": 29
+      },
+      {
+       "name": "ast.walk",
+       "line": 30
+      },
+      {
+       "name": "enumerate",
+       "line": 33
+      },
+      {
+       "name": "path.relative_to",
+       "line": 26
+      },
+      {
+       "name": "ast.parse",
+       "line": 30
+      },
+      {
+       "name": "isinstance",
+       "line": 31
+      },
+      {
+       "name": "text.splitlines",
+       "line": 33
+      },
+      {
+       "name": "HTTP.finditer",
+       "line": 34
+      },
+      {
+       "name": "functions.append",
+       "line": 32
+      },
+      {
+       "name": "http_sites.append",
+       "line": 35
+      },
+      {
+       "name": "match.group",
+       "line": 35
+      },
+      {
+       "name": "count_tests",
+       "line": 36
+      }
+     ]
+    },
+    {
+     "name": "main",
+     "qualname": "main",
+     "kind": "function",
+     "start": 41,
+     "end": 58,
+     "size": 18,
+     "decorators": [],
+     "branches": [
+      {
+       "kind": "loop",
+       "line": 43,
+       "detail": ""
+      },
+      {
+       "kind": "if",
+       "line": 44,
+       "detail": ""
+      }
+     ],
+     "calls": [
+      {
+       "name": "sorted",
+       "line": 43
+      },
+      {
+       "name": "iterdir",
+       "line": 43
+      },
+      {
+       "name": "d.is_dir",
+       "line": 44
+      },
+      {
+       "name": "scan",
+       "line": 45
+      },
+      {
+       "name": "d.name.startswith",
+       "line": 44
+      },
+      {
+       "name": "out.parent.mkdir",
+       "line": 56
+      },
+      {
+       "name": "out.write_text",
+       "line": 57
+      },
+      {
+       "name": "json.dumps",
+       "line": 57
+      },
+      {
+       "name": "print",
+       "line": 58
+      },
+      {
+       "name": "out.relative_to",
+       "line": 58
+      },
+      {
+       "name": "len",
+       "line": 58
+      }
+     ]
+    },
+    {
+     "name": "(imports)",
+     "qualname": "(imports)",
+     "kind": "imports",
+     "start": 0,
+     "end": 0,
+     "size": 0,
+     "decorators": [],
+     "imports": [
+      {
+       "module": "ast",
+       "name": null,
+       "as": "ast",
+       "line": 8
+      },
+      {
+       "module": "json",
+       "name": null,
+       "as": "json",
+       "line": 9
+      },
+      {
+       "module": "pathlib",
+       "name": null,
+       "as": "pathlib",
+       "line": 10
+      },
+      {
+       "module": "re",
+       "name": null,
+       "as": "re",
+       "line": 11
+      },
+      {
+       "module": "sys",
+       "name": null,
+       "as": "sys",
+       "line": 12
+      },
+      {
+       "module": "gate",
+       "name": "count_tests",
+       "as": "count_tests",
+       "line": 15
+      }
+     ]
+    }
+   ],
+   "routes": []
+  }
+ ]
+}
