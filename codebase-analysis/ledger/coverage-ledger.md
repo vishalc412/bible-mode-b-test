@@ -23,4 +23,4 @@ Depth: deep. Snapshot: 20 files, 2026-11-23. Inventory: ledger/inventory.json of
 
 ## Coverage from coverage.py
 
-Not run; the workflow is currently at Pass 1.
+Not run; the workflow is at Pass 2, before component analysis.
