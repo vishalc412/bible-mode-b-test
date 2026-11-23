@@ -38,6 +38,28 @@ Source file: `components/orders/test_catalog_client.py`
 | `CatalogClientTest.test_query_string_ignored_by_server` | 56-58 | Checks that a query on `/health` leaves the response at 200 with `{"status": "ok"}`, and that the `SKU-1` price request with a query returns a price of `24.0` (`components/orders/test_catalog_client.py:56-58`). |
 | `CatalogClientTest.test_percent_encoded_sku_decoded` | 60-62 | Checks that `/price/SKU%2D1` returns status 200 and a decoded SKU of `SKU-1` (`components/orders/test_catalog_client.py:60-62`). |
 
+## Call graph
+
+The graph shows test methods using the local HTTP helper; `setUpClass` also uses `os.environ.get`, not the test helper named `get`.
+
+```mermaid
+flowchart LR
+  setupClass["CatalogClientTest.setUpClass"]
+  environGet["os.environ.get"]
+  queryTest["CatalogClientTest.test_query_string_ignored_by_server"]
+  encodedTest["CatalogClientTest.test_percent_encoded_sku_decoded"]
+  getHelper["CatalogClientTest.get"]
+  setupClass -->|"os.environ.get"| environGet
+  queryTest -->|"self.get"| getHelper
+  encodedTest -->|"self.get"| getHelper
+```
+
+| Element | Evidence |
+| --- | --- |
+| `setUpClass` -> `os.environ.get` | `components/orders/test_catalog_client.py:14-19` |
+| `test_query_string_ignored_by_server` -> `get` | `components/orders/test_catalog_client.py:56-58` |
+| `test_percent_encoded_sku_decoded` -> `get` | `components/orders/test_catalog_client.py:60-62` |
+
 ## Module-level code
 
 When run as a script, the module invokes `unittest.main()` (`components/orders/test_catalog_client.py:65-66`).

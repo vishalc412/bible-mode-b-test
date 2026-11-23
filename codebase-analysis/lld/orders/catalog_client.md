@@ -35,13 +35,13 @@ The module resolves `CATALOG_URL` at call time, requests `/price/<quoted SKU>` f
 
 ```mermaid
 flowchart LR
-  catalog_url["catalog_url"]
-  remote_price["remote_price"]
-  remote_line_total["remote_line_total"]
+  catalogUrl["catalog_url"]
+  remotePrice["remote_price"]
+  remoteLineTotal["remote_line_total"]
   catalog_service["catalog service"]
-  remote_price -->|"resolve base URL"| catalog_url
-  remote_price -->|"GET /price/{quoted SKU}"| catalog_service
-  remote_line_total -->|"price lookup"| remote_price
+  remotePrice -->|"catalog_url"| catalogUrl
+  remotePrice -->|"GET /price/{quoted SKU}"| catalog_service
+  remoteLineTotal -->|"remote_price"| remotePrice
 ```
 
 ## Functions and methods
@@ -148,4 +148,4 @@ The module imports JSON, environment, URL parsing, and URL request libraries and
 
 ## Surprises
 
-This module's docstring says orders running as its own service reads catalog prices over the network instead of importing the catalog, while `orders.py` imports `components.catalog.catalog` directly (`components/orders/catalog_client.py:3`, `components/orders/orders.py:5`). The Python call-site search finds the `catalog_client` price functions used in its tests and within this client, but not from `orders.py` (search for `remote_price` and `remote_line_total` in `components/**/*.py`).
+This HTTP access path is intended for orders running as its own service; the direct catalog import in `orders.py` is intended when both modules run in one process (today's deployment) (answer to Q1; `components/orders/catalog_client.py:3`, `components/orders/orders.py:5`). The HTTP path's only callers found are the tests, and requests use plain HTTP to `CATALOG_URL`, defaulting to `http://127.0.0.1:8001` (answer to Q1; `components/orders/catalog_client.py:11,14-23`, `components/orders/test_catalog_client.py:37-62`).
