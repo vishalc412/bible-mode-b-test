@@ -70,8 +70,8 @@ Shapes: rounded = people, rectangle = repository units, cylinder = data store, h
 | Component | Kind | Technology | Responsibility | Pages | Size (files, lines, functions, routes) |
 | --- | --- | --- | --- | --- | --- |
 | `catalog` | Service and library | Python 3 standard library | Product data, price/stock lookups, optional HTTP API | [`catalog`](lld/catalog/README.md), [`endpoints`](lld/api/catalog/catalog.md) | 3 source files, 108 lines, 10 runtime functions, 2 routes |
-| `orders` | Library | Python 3 standard library | Totals, stock validation, settlement, optional remote catalog client | [`orders`](lld/orders/README.md) | 4 source files, 158 lines, 18 functions/methods, 0 routes |
-| `bible-mode-b` | CLI and workflow component | Python 3 and GitHub Actions | Starts and reconciles analysis runs, assigns sessions, gates work, tracks deltas | [`bible-mode-b`](lld/bible-mode-b/README.md) | 1 Python file and 4 workflow files, 1,130 lines, 93 functions/methods, 0 HTTP routes |
+| `orders` | Library | Python 3 standard library | Totals, stock validation, settlement, optional remote catalog client | [`orders`](lld/orders/README.md) | 4 source files, 158 lines, 7 functions/methods, 0 routes |
+| `bible-mode-b` | CLI and workflow component | Python 3 and GitHub Actions | Starts and reconciles analysis runs, assigns sessions, gates work, tracks deltas | [`bible-mode-b`](lld/bible-mode-b/README.md) | 1 Python file and 4 workflow files, 1,130 lines, 69 functions/methods, 0 HTTP routes |
 | `tools` | CLI and shell tools | Python 3 and Bash | Component planning, artifact gate, issue fanout | [`tools`](lld/tools/README.md) | 3 files, 210 lines, 7 Python functions, 0 routes |
 
 ## Reading paths

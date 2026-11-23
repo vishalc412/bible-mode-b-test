@@ -24,6 +24,8 @@ Applied from verification-report.md, fingerprint 26ea3631571ae969.
 | V-007 | `lld/bible-mode-b/bible_queue.md` | Added settings-validation refusal to `main` pseudo-code and made the component-name validation branch explicit. |
 | V-008 | `lld/bible-mode-b/bible_queue.md` | Replaced the placeholder callers for `settings_of` with `Queue.reconcile:555` and `main:1113`. |
 
+| V-009 | `README.md` | Corrected every component row to use its own deep component coverage count: catalog 10, orders 7, bible-mode-b 69, and tools 7 functions. |
+
 ## 2026-11-23
 
 Applied from verification-report.md, fingerprint dee0a05d04621400, of 2026-11-23, verdict PASS AFTER CORRECTIONS.
