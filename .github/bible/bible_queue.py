@@ -67,11 +67,14 @@ FINAL_STATES = ("NEW_CHAT", "COMPONENT_DONE", "WAITING_ANSWER", "STOP")
 NO_PR_AFTER = 30 * 60      # seconds after assignment with no pull request: the session did not start
 IDLE_AFTER = 20 * 60       # seconds without a push: the session has ended
 MAX_VERIFY_ROUNDS = 2
+MAX_TARBALL = 512 << 20    # bytes of a branch's tarball the queue downloads to run the check
+GATE_TIMEOUT = 900         # seconds for coverage.py / status.py on a branch
+MIN_SESSION_CAP = 4        # work sessions per component before a person decides: 2 x the estimate + 2, at least this
 MAX_CONTINUE = 3           # continuation comments for one assembly or whole verification before a person decides
 CONTINUE_MARK = "<!-- bible-continue -->"
 SETTINGS = re.compile(r"<!--\s*bible-settings\s*(\{.*?\})\s*-->", re.S)
 ATTEMPT = re.compile(r"^Attempt:\s*(\d+)", re.M)
-NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$")
+NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,39}\Z")
 LABELS = {
     "bible-tracker": "One analysis run: settings and progress",
     "bible-plan": "Copilot session: plan the components",
@@ -79,6 +82,8 @@ LABELS = {
     "bible-verify": "Copilot session: verify one component",
     "bible-assemble": "Copilot session: whole-system pages",
     "bible-verify-all": "Copilot session: verify the whole analysis",
+    "bible-revise-all": "Copilot session: apply the whole verification's corrections",
+    "bible-needs-revision": "A whole verification that asked for corrections: a revision follows",
     "bible-delta": "Copilot session: update after a code change",
     "bible-waiting-answer": "Copilot asked questions: answer on the pull request with @copilot",
     "bible-needs-human": "Failed twice: a person must look, then remove this label to retry",
@@ -208,15 +213,17 @@ class GitHub:
 
     def is_agent_pr(self, pr):
         """Copilot's pull request: by an agent login, or with Copilot's work recorded on its timeline by GitHub."""
-        if (pr.get("user") or {}).get("login", "") in AGENT_LOGINS:
-            return True
+        user = pr.get("user") or {}
+        if user.get("login", "") in AGENT_LOGINS and user.get("type", "Bot") == "Bot":
+            return True  # an agent login counts only on a Bot account: a person cannot take that name
         return any(ev == "copilot_work_started" for ev, _ in self.agent_events(pr["number"]))
 
     def start_error(self, issue):
         """Copilot's comment saying it could not start (a model not allowed, a policy) since the last assignment, or None."""
         since = self.assigned_at(issue)
         for e in self.timeline(issue["number"]):
-            who = ((e.get("actor") or e.get("user")) or {}).get("login", "")
+            actor = (e.get("actor") or e.get("user")) or {}
+            who = actor.get("login", "") if actor.get("type", "Bot") == "Bot" else ""
             if e.get("event") == "commented" and who in AGENT_LOGINS and (e.get("created_at") or "") >= since \
                     and START_ERROR.search(e.get("body") or ""):
                 return (e.get("body") or "").strip().splitlines()[0][:300]
@@ -228,9 +235,15 @@ class GitHub:
         return max(times) if times else issue["created_at"]
 
     def pr_files(self, number):
-        """Every path a pull request touches, the old name of a renamed file included."""
+        """Every path a pull request touches, the old name of a renamed file included. GitHub lists at most 3,000
+        files: a list shorter than the pull request's own count is refused, so no file escapes the scope checks."""
+        listed = self.paged("/pulls/%d/files" % number)
+        expected = as_int((self.call("GET", "/pulls/%d" % number) or {}).get("changed_files"))
+        if expected and len(listed) != expected:
+            raise RuntimeError("the file list of #%d is incomplete (%d of %d files): not checked, not merged"
+                               % (number, len(listed), expected))
         out = []
-        for f in self.paged("/pulls/%d/files" % number):
+        for f in listed:
             out.append(f["filename"])
             if f.get("previous_filename"):
                 out.append(f["previous_filename"])
@@ -246,7 +259,15 @@ class GitHub:
         with tempfile.TemporaryFile() as buf:
             try:
                 with self.request("GET", url, timeout=300) as resp:
-                    shutil.copyfileobj(resp, buf)
+                    total = 0
+                    while True:
+                        chunk = resp.read(1 << 20)
+                        if not chunk:
+                            break
+                        total += len(chunk)
+                        if total > MAX_TARBALL:
+                            raise RuntimeError("GitHub tarball %s: larger than %d MB, not unpacked" % (ref, MAX_TARBALL >> 20))
+                        buf.write(chunk)
             except (urllib.error.URLError, TimeoutError, OSError) as err:
                 raise RuntimeError("GitHub tarball %s: %s" % (ref, err))
             buf.seek(0)
@@ -301,7 +322,8 @@ class GitHub:
     def merge(self, pr, title):
         if pr.get("draft"):
             self.ready(pr)
-        self.call("PUT", "/pulls/%d/merge" % pr["number"], {"merge_method": "squash", "commit_title": title})
+        # The commit that was checked, and only that one: GitHub refuses the merge if anything was pushed since.
+        self.call("PUT", "/pulls/%d/merge" % pr["number"], {"merge_method": "squash", "commit_title": title, "sha": pr["head"]["sha"]})
 
     def close_pr(self, number):
         self.call("PATCH", "/pulls/%d" % number, {"state": "closed"})
@@ -321,8 +343,10 @@ def age(stamp):
     return (now() - datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00"))).total_seconds()
 
 
-SAFE_PATH = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)*$")
-SAFE_MODEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$")
+SAFE_PATH = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)*\Z")
+SAFE_FILE = re.compile(r"^[A-Za-z0-9_.@+-][A-Za-z0-9_.@+/ -]{0,250}\Z")   # a path quoted in an issue for Copilot
+MAX_DELTA_ISSUES = 10      # update sessions one push may start; more, and a person decides
+SAFE_MODEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}\Z")
 DEPTH_VALUES = ("deep", "standard", "survey")  # coverage.DEPTHS
 
 
@@ -457,24 +481,38 @@ class Queue:
         return ("finished" if asked or pushed > IDLE_AFTER else "running"), pr
 
     def held(self, issue):
-        """True: a session a person must look at. "released": a component session a person released, closed so the
-        next check decides the component's next step from fresh state. False: go on (a released plan or assembly
-        session is assigned to Copilot again)."""
+        """True: a session a person must look at. "released": a component session a person released (they removed the
+        label bible-needs-human), closed so the next check decides the component's next step from fresh state.
+        False: go on (a released plan or assembly session is assigned to Copilot again).
+
+        Released means the label was removed after it was last added: Copilot missing from the assignees alone is not
+        a release (unassigning Copilot by hand would otherwise start a new session every check, found in the audit).
+        Copilot itself must be on the issue: with a user token GitHub also lists the token owner (seen on github.com)."""
         if "bible-needs-human" in labels_of(issue):
             return True
-        # Copilot itself must be on the issue: with a user token GitHub also lists the token owner, so "no assignees"
-        # never happens after a hold (seen on github.com, 24 Nov 2026: a released session stayed unassigned).
-        if not any((a or {}).get("login") in AGENT_LOGINS for a in issue.get("assignees") or []):
-            if any(l.startswith("bible/") for l in labels_of(issue)):
-                self.gh.comment(issue["number"], "The label `bible-needs-human` was removed: this session is closed and the "
-                                "next check decides the component's next step from its current state.")
-                self.gh.close(issue["number"], "not_planned")
-                return "released"
-            body = ATTEMPT.sub("Attempt: 1", issue.get("body") or "")
-            self.gh.set_body(issue["number"], body)
-            base = re.search(r"^Base branch:\s*(\S+)", body, re.M)
-            self.gh.assign(issue["number"], assignment(self.gh, base.group(1) if base else self.default, self.model_for(issue)))
-            self.gh.comment(issue["number"], "The label `bible-needs-human` was removed: assigned to Copilot again (attempt 1).")
+        if any((a or {}).get("login") in AGENT_LOGINS for a in issue.get("assignees") or []):
+            return False
+        events = self.gh.timeline(issue["number"])
+        added = max([e.get("created_at") or "" for e in events if e.get("event") == "labeled"
+                     and (e.get("label") or {}).get("name") == "bible-needs-human"] + [""])
+        removed = max([e.get("created_at") or "" for e in events if e.get("event") == "unlabeled"
+                       and (e.get("label") or {}).get("name") == "bible-needs-human"] + [""])
+        if not (removed and removed > added):
+            # Copilot was taken off the session by hand, not released after a hold: stop for a person, once
+            self.gh.label(issue["number"], "bible-needs-human")
+            self.gh.comment(issue["number"], "Copilot is no longer assigned to this session and no person released it. "
+                            "A person must look; to continue, remove the label `bible-needs-human`.")
+            return True
+        if any(l.startswith("bible/") for l in labels_of(issue)):
+            self.gh.comment(issue["number"], "The label `bible-needs-human` was removed: this session is closed and the "
+                            "next check decides the component's next step from its current state.")
+            self.gh.close(issue["number"], "not_planned")
+            return "released"
+        body = ATTEMPT.sub("Attempt: 1", issue.get("body") or "")
+        self.gh.set_body(issue["number"], body)
+        base = re.search(r"^Base branch:\s*(\S+)", body, re.M)
+        self.gh.assign(issue["number"], assignment(self.gh, base.group(1) if base else self.default, self.model_for(issue)))
+        self.gh.comment(issue["number"], "The label `bible-needs-human` was removed: assigned to Copilot again (attempt 1).")
         return False
 
     def model_for(self, issue):
@@ -530,7 +568,15 @@ class Queue:
         catalog = json_file(gh, analysis + "/components.json", self.default)
         if not isinstance(catalog, dict) or catalog.get("proposed") or not isinstance(catalog.get("components"), list):
             return self.plan_phase(tracker, settings, analysis)
-        names = [c.get("name") for c in catalog["components"] if isinstance(c, dict) and c.get("name")]
+        # components.json is written by the plan session and merged by a person; its names still reach labels,
+        # branch names and issue text, so the plan's own name rule is applied again here
+        listed = [str(c.get("name") or "") for c in catalog["components"] if isinstance(c, dict)]
+        names = [n for n in listed if NAME.match(n)]
+        if len(names) != len(listed):
+            # never a silent skip: a run that left a component out could close as done without analysing it
+            return self.render(tracker, settings, {"(settings)": "stopped: components.json holds %d component name(s) that do not "
+                                                   "follow the plan's name rule. Fix the plan (pass 2), run discover.py again, "
+                                                   "then start a new run." % (len(listed) - len(names))})
         asked = settings.get("components", "all").strip()
         wanted = names if asked in ("all", "") else [n.strip() for n in asked.split(",") if n.strip()]
         unknown = [n for n in wanted if n not in names]
@@ -625,14 +671,6 @@ class Queue:
             return self.follow(analysis, name, issue)
         if not self.run_issues([comp_label(name)], state="all"):
             return "not started"
-        status = status_of(gh, "%s/ledger/components/%s/status.json" % (analysis, name), branch)
-        gate_ok, pages = (False, None)
-        if status.get("state") == "COMPONENT_DONE":
-            gate_ok, pages = self.check(analysis, name, branch)
-        if not gate_ok:
-            done = len(self.run_issues(["bible-chunk", comp_label(name)], state="closed"))
-            self.start_chunk(analysis, name, note="Session %d of about %s." % (done + 1, self.estimate.get(name, "?")))
-            return "session starting"
         holds = self.run_issues(["bible-hold", comp_label(name)], state="all")
         open_hold = [h for h in holds if h["state"] == "open"]
         if open_hold:
@@ -641,6 +679,30 @@ class Queue:
             gh.close(open_hold[0]["number"])  # the person removed the label: new rounds from here
             holds = self.run_issues(["bible-hold", comp_label(name)], state="all")
         after = max([h.get("closed_at") or "" for h in holds] + [""])
+        status = status_of(gh, "%s/ledger/components/%s/status.json" % (analysis, name), branch)
+        gate_ok, pages = (False, None)
+        if status.get("state") == "COMPONENT_DONE":
+            gate_ok, pages = self.check(analysis, name, branch)
+        if not gate_ok:
+            merged_into_default = max([p.get("merged_at") or "" for p in gh.branch_prs(branch, self.default)] + [""])
+            since = max(after, merged_into_default)  # a component merged earlier and now drifting starts a fresh count
+            sessions = [i for i in self.run_issues(["bible-chunk", comp_label(name)], state="closed")
+                        if (i.get("created_at") or "") >= since]
+            estimate = as_int(self.estimate.get(name)) or 2
+            cap = max(MIN_SESSION_CAP, 2 * estimate + 2)
+            if len(sessions) >= cap:
+                # Found in the audit: a session that reports COMPONENT_DONE while the queue's own check fails would
+                # otherwise get a new session at every check, with no limit.
+                hold = gh.create_issue("Codebase analysis - component %s needs a person" % name,
+                                       "Component: %s\nTracker: #%d\n\n%d work sessions and the component's check on %s still "
+                                       "does not pass (about %d were expected). Run coverage.py --component %s on the branch "
+                                       "to see why, fix the cause, then remove the label `bible-needs-human` from this issue."
+                                       % (name, self.tracker["number"], len(sessions), branch, estimate, name),
+                                       ["bible-hold", "bible-needs-human", comp_label(name), self.run_label])
+                return "needs a person: see #%d" % hold["number"]
+            done = len(self.run_issues(["bible-chunk", comp_label(name)], state="closed"))
+            self.start_chunk(analysis, name, note="Session %d of about %s." % (done + 1, self.estimate.get(name, "?")))
+            return "session starting"
         closed_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed")
                          if i.get("state_reason") == "completed" and i.get("created_at", "") >= after]
         any_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed") if i.get("state_reason") == "completed"]
@@ -703,6 +765,11 @@ class Queue:
         if state == "running":
             return "%s running" % kind
         base = "%s/ledger/components/%s/" % (analysis, name)
+        try:
+            gh.pr_files(pr["number"])
+        except RuntimeError as err:  # an incomplete file list cannot be checked: the session fails, it is never merged
+            retried = self.fail_or_retry(issue, pr, str(err))
+            return "session starting" if retried else "needs a person: see #%d" % issue["number"]
         if kind == "chunk":
             allowed = ("%s/lld/%s/" % (analysis, name), "%s/lld/api/%s/" % (analysis, name), base)
             bad = [f for f in gh.pr_files(pr["number"])
@@ -750,14 +817,22 @@ class Queue:
             return False, None
         work = tempfile.mkdtemp(prefix="bible-gate-")
         try:
-            self.gh.tarball(branch, work)
+            try:
+                self.gh.tarball(branch, work)
+            except RuntimeError as err:  # too large, unreadable: the check fails (the session cap then applies)
+                self.log("gate %s: %s" % (name, err))
+                return False, None
             run = subprocess.run([sys.executable, "-I", os.path.abspath(os.path.join(scripts, "coverage.py")), "--repo", work,
                                   "--analysis", analysis, "--depth", self.settings.get("depth", "deep"), "--component", name,
-                                  "--report", "-"], capture_output=True, text=True)
+                                  "--report", "-"], capture_output=True, text=True, timeout=GATE_TIMEOUT)
             self.log("gate %s: %s" % (name, (run.stdout.strip().splitlines() or ["no output"])[-1]))
             printed = subprocess.run([sys.executable, "-I", os.path.abspath(os.path.join(scripts, "status.py")), "--repo", work,
-                                      "--analysis", analysis, "--fingerprint", "--component", name], capture_output=True, text=True)
+                                      "--analysis", analysis, "--fingerprint", "--component", name], capture_output=True, text=True,
+                                     timeout=GATE_TIMEOUT)
             return run.returncode == 0, (printed.stdout.strip() or None)
+        except subprocess.TimeoutExpired:
+            self.log("gate %s: the check took longer than %d seconds: treated as failing" % (name, GATE_TIMEOUT))
+            return False, None
         finally:
             shutil.rmtree(work, ignore_errors=True)
 
@@ -766,8 +841,25 @@ class Queue:
         for kind, model, title, text in (
                 ("bible-assemble", settings.get("model"), "Codebase analysis - assemble the whole bible", "assemble.md"),
                 ("bible-verify-all", settings.get("verify_model"), "Codebase analysis - verify the whole analysis", None)):
-            if any(i.get("state_reason") == "completed" for i in self.run_issues([kind], state="closed")):
+            closed_done = [i for i in self.run_issues([kind], state="closed") if i.get("state_reason") == "completed"]
+            if kind == "bible-verify-all" and closed_done:
+                # GitHub closes the issue itself when the pull request that says "Fixes #N" is merged: a closed
+                # verification is done only when the report on the default branch is a clean PASS (seen in review).
+                facts = report_facts(gh.file("%s/verification-report.md" % analysis, self.default))
+                newest = max(closed_done, key=lambda i: i.get("closed_at") or "")
+                if facts and facts[0] == "PASS" and not facts[1]:
+                    continue
+                if "bible-needs-revision" not in labels_of(newest) and not self.run_issues([kind]):
+                    gh.label(newest["number"], "bible-needs-revision")
+                    gh.comment(newest["number"], "Verdict %s: a revision of the whole analysis follows, then a new "
+                               "verification." % (facts[0] if facts else "missing"))
+                    return "verify-all: corrections asked (verdict %s): revision next" % (facts[0] if facts else "missing")
+            elif closed_done:
                 continue
+            if kind == "bible-verify-all":
+                step = self.revise_all_step(tracker, analysis)
+                if step:
+                    return step
             open_ = self.run_issues([kind])
             if open_:
                 issue = open_[0]
@@ -777,8 +869,13 @@ class Queue:
                     if kind == "bible-verify-all":
                         facts = report_facts(gh.file("%s/verification-report.md" % analysis, self.default))
                         if not facts or facts[0] != "PASS" or facts[1]:
-                            return ("verify-all: needs a person: the whole verification's verdict is %s; apply its corrections "
-                                    "(revision mode) and have them re-checked, then close this tracker" % (facts[0] if facts else "missing"))
+                            # a record of corrections asked: not the end of the run; a revision of the whole analysis
+                            # follows, then a new verification (revise_all_step)
+                            gh.label(issue["number"], "bible-needs-revision")
+                            gh.comment(issue["number"], "Verdict %s: a revision of the whole analysis follows, then a new "
+                                       "verification." % (facts[0] if facts else "missing"))
+                            gh.close(issue["number"], "not_planned")
+                            return "verify-all: corrections asked (verdict %s): revision next" % (facts[0] if facts else "missing")
                     gh.close(issue["number"])
                     continue
                 if self.held(issue):
@@ -809,6 +906,78 @@ class Queue:
         gh.close(tracker["number"])
         return "done"
 
+    def revise_all_step(self, tracker, analysis):
+        """After a whole verification that asked for corrections: one revision session of the whole analysis, then a
+        new verification (the loop below opens it). Bounded like the components: after MAX_VERIFY_ROUNDS such
+        verifications since a person last released the run, a person decides. None when nothing is to be done here."""
+        gh = self.gh
+        holds = self.run_issues(["bible-hold", "bible-whole"], state="all")
+        open_hold = [h for h in holds if h["state"] == "open"]
+        if open_hold:
+            if "bible-needs-human" in labels_of(open_hold[0]):
+                return "verify-all: needs a person: see #%d" % open_hold[0]["number"]
+            gh.close(open_hold[0]["number"])  # the person removed the label: new rounds from here
+            holds = self.run_issues(["bible-hold", "bible-whole"], state="all")
+        after = max([h.get("closed_at") or "" for h in holds] + [""])
+        # What to do next comes from the newest verdict that asked for corrections; the rounds count only those since a
+        # person last released the run (a release gives new rounds, starting with a revision of that verdict).
+        asked_all = sorted(self.run_issues(["bible-verify-all", "bible-needs-revision"], state="closed"),
+                           key=lambda i: i.get("closed_at") or "")
+        if not asked_all:
+            return None
+        asked = [i for i in asked_all if (i.get("created_at") or "") >= after]
+        revisions = self.run_issues(["bible-revise-all"], state="all")
+        open_rev = [i for i in revisions if i["state"] == "open"]
+        if open_rev:
+            issue = open_rev[0]
+            merged = [p for p in gh.linked_prs(issue["number"]) if p.get("merged_at") and p["base"]["ref"] == self.default
+                      and ((p.get("head") or {}).get("repo") or {}).get("full_name") == gh.repo and gh.is_agent_pr(p)]
+            if merged:
+                gh.close(issue["number"])
+                return None  # revised: the loop opens the next whole verification
+            if self.held(issue):
+                return "revise-all: needs a person: see #%d" % issue["number"]
+            state, pr = self.session(issue, self.default, analysis)
+            if state == "start-error":
+                self.hold_start_error(issue)
+                return "revise-all: needs a person: see #%d" % issue["number"]
+            if state == "no-start":
+                self.fail_or_retry(issue, None, "no pull request after assignment")
+                return "revise-all: session starting"
+            if pr and state == "running":
+                return "revise-all: running (pull request #%d)" % pr["number"]
+            if pr and state == "finished":
+                unfinished = self.continue_if_unfinished(issue, pr, "bible-revise-all", analysis)
+                if unfinished:
+                    return unfinished
+                bad = [f for f in gh.pr_files(pr["number"]) if not f.startswith(analysis + "/")
+                       or os.path.basename(f).startswith("verification-")]
+                if bad:
+                    retried = self.fail_or_retry(issue, pr, "files a revision may not write (only %s/, never verification-*): %s"
+                                                 % (analysis, ", ".join(bad[:10])))
+                    return "revise-all: session starting" if retried else "revise-all: needs a person: see #%d" % issue["number"]
+            return "revise-all: %s" % ("review and merge pull request #%d" % pr["number"] if pr else state)
+        last_asked = asked_all[-1].get("closed_at") or ""
+        if any((i.get("closed_at") or "") > last_asked and i.get("state_reason") == "completed" for i in revisions):
+            return None  # this verdict's corrections are applied: the loop opens the next whole verification
+        if len(asked) >= MAX_VERIFY_ROUNDS:
+            hold = gh.create_issue("Codebase analysis - the whole analysis needs a person",
+                                   "Tracker: #%d\n\n%d whole verifications without a clean PASS. Read %s/verification-report.md "
+                                   "on %s, then remove the label `bible-needs-human` from this issue for new rounds."
+                                   % (tracker["number"], len(asked), analysis, self.default),
+                                   ["bible-hold", "bible-needs-human", "bible-whole", self.run_label])
+            return "verify-all: needs a person: see #%d" % hold["number"]
+        body = ("Tracker: #%d\nBase branch: %s\nAttempt: 1\n\nUse the analyzing-a-codebase skill (in %s) in revision mode "
+                "(references/revision.md) on the whole analysis in %s/: apply every correction in %s/verification-report.md. "
+                "Start with\n  python3 -I %s/analyzing-a-codebase/scripts/next.py --repo . --analysis %s --depth %s --new-session\n"
+                "and do exactly what it prints (when the code changed since the baseline it prints NEXT DELTA first), until it "
+                "prints DONE, then finish with status.py --write. Do not edit the verification report."
+                % (tracker["number"], self.default, self.skills, analysis, analysis, self.skills, analysis,
+                   self.settings.get("depth", "deep")))
+        gh.create_issue("Codebase analysis - revise the whole analysis", body, ["bible-revise-all", self.run_label],
+                        assignment(gh, self.default, self.settings.get("model")))
+        return "revise-all session assigned"
+
     def continue_if_unfinished(self, issue, pr, kind, analysis):
         """A session that ended before its work was done (seen on github.com, 24 Nov 2026: the assembly stopped at
         Copilot's session limit after 52 minutes). Done means this pull request wrote the end marker: the assembly's
@@ -817,7 +986,7 @@ class Queue:
         session, then a person. Only the queue's own marked comments count (anyone can post the marker text); a request
         Copilot has not picked up after NO_PR_AFTER counts as used. None when the work is done."""
         gh = self.gh
-        marker = "%s/status.json" % analysis if kind == "bible-assemble" else "%s/verification-report.md" % analysis
+        marker = "%s/verification-report.md" % analysis if kind == "bible-verify-all" else "%s/status.json" % analysis
         if marker in gh.pr_files(pr["number"]):
             return None
         me = gh.me()
@@ -842,8 +1011,11 @@ class Queue:
                    "--depth %s --new-session` and do exactly what it prints until it prints DONE%s. Then summarise in a "
                    "comment what you finished and the last line next.py printed.\n%s"
                    % (self.skills, analysis, self.settings.get("depth", "deep"),
-                      ", and finish its Finish order (the last step is status.py --write)" if kind == "bible-assemble"
-                      else ", or for the whole verification until verification-report.md is written", CONTINUE_MARK))
+                      {"bible-assemble": ", and finish its Finish order (the last step is status.py --write)",
+                       "bible-revise-all": ", applying every correction of verification-report.md (do not edit it), and end "
+                                           "with status.py --write",
+                       "bible-verify-all": ", or for the whole verification until verification-report.md is written"}[kind],
+                      CONTINUE_MARK))
         return "%s: continuing, session %d (pull request #%d)" % (kind[6:], len(asked) + 2, pr["number"])
 
     def render(self, tracker, settings, rows):
@@ -873,8 +1045,22 @@ class Queue:
         # under .github/ (workflows, scripts) can belong to a component.
         touched = sorted({c for c in components.component_map([{"path": p} for p in changed
                                                                 if not p.startswith((settings_analysis + "/", self.skills.rstrip("/") + "/"))], rows).values()})
+        touched = [n for n in touched if NAME.match(n)]  # names from components.json: the same rule as the plan
+        if len(touched) > MAX_DELTA_ISSUES:
+            # One push that touches many components would start as many Copilot sessions: a person decides instead.
+            if not gh.issues(["bible-delta", "bible-needs-human"]):
+                gh.create_issue("Codebase analysis - a change touches %d components" % len(touched),
+                                "One push changed the code of %d components (more than %d). No update session was started. "
+                                "Decide which to update first; for each, open an update issue as Bible - update after code "
+                                "changes does, or start a new analysis run." % (len(touched), MAX_DELTA_ISSUES),
+                                ["bible-delta", "bible-needs-human"])
+            self.log("%d components changed: more than %d, a person decides" % (len(touched), MAX_DELTA_ISSUES))
+            return
         for name in touched:
+            # File names come from a push and reach Copilot as text: only plain paths are quoted, the others counted.
             files = [p for p in changed if components.assign(p, rows)[0] == name]
+            shown = [p for p in files if SAFE_FILE.match(p)]
+            hidden = len(files) - len(shown)
             if gh.issues(["bible-delta", comp_label(name)]):
                 self.log("update issue for %s already open: its session covers every change since the baseline when it runs" % name)
                 continue
@@ -884,7 +1070,8 @@ class Queue:
                             "analysis's baseline (not only these files), then run analyzing-a-codebase's scripts/status.py --write: "
                             "it reports STALE until the changed parts are verified in a new session on a different model "
                             "(verifying-a-codebase-analysis, scope: component %s)." % (
-                                name, self.default, name, ", ".join("`%s`" % f for f in files[:20]), self.skills,
+                                name, self.default, name, ", ".join("`%s`" % f for f in shown[:20])
+                                + (" and %d file(s) with unusual characters in their names" % hidden if hidden else ""), self.skills,
                                 settings_analysis, name),
                             ["bible-delta", comp_label(name)], assignment(gh, self.default, None))
             self.log("update issue for %s (%d files)" % (name, len(files)))
