@@ -11,7 +11,7 @@ When the report is a component's (`ledger/components/<name>/verification-report.
 - Findings about shared files (`progress.md`, `ledger/coverage-ledger.md`, reference pages) go in the README's `## For the whole-system pages` section for the assemble run.
 - Number the report's corrections as it does (`V-001`), and your own items `N-01`, `N-02`, in the same log.
 - Start with `next.py --component <name>`: while the corrections are not applied it prints `NEXT REVISION <name>`, never `COMPONENT DONE`. A passing gate is not a revision: the report's corrections are.
-- Record every correction (`V-001`, ...) in the log, with what you changed or, when no page needs to change, why. `next.py` moves on once a page has changed since the verification, or once the log names every correction.
+- Start the round's section of the log with `Applied from verification-report.md, fingerprint <the report's fingerprint>`, then record every correction (`V-001`, ...) under it, with what you changed or, when no page needs to change, why. Correction numbers restart in every report, so only the section under this report's fingerprint counts. `next.py` moves on once a page has changed since the verification, or once that section names every correction.
 - Done when `next.py --component <name>` prints `COMPONENT DONE <name>` again. Only `major` corrections need a new verification.
 
 ## Work through every item

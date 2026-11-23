@@ -57,16 +57,22 @@ REPO_ABS = None  # set by main(); commands are printed relative to it
 def shown(name):
     """A script's path as printed and saved in ledger/next.md: relative to the repository when the skill sits
     inside it, under ~ when it sits in the home folder, so no machine-specific path lands in a committed file."""
-    path = os.path.join(HERE, name)
+    path = os.path.realpath(os.path.join(HERE, name))
     for base, prefix in ((REPO_ABS, ""), (os.path.expanduser("~"), "~/")):
-        if base and os.path.commonpath([path, base]) == base:
-            return prefix + os.path.relpath(path, base)
+        if not base:
+            continue
+        base = os.path.realpath(base)
+        try:
+            if os.path.commonpath([path, base]) == base:
+                return prefix + os.path.relpath(path, base)
+        except ValueError:  # another drive (Windows)
+            continue
     return path
 PACKET_LINES = 400
 PACKET_FUNCTIONS = 25
 NOT_CARDED = ("class", "table", "view", "paragraph", "imports")
 STOP_AFTER_REPEATS = 2  # the same job printed this many more times, nothing written in between: STOP
-JOB_HEADS = ("NEXT PACKET", "NEXT PASS", "NEXT DELTA")
+JOB_HEADS = ("NEXT PACKET", "NEXT PASS", "NEXT DELTA", "NEXT REVISION")
 CLOSING_HEADS = ("NEW CHAT", "DONE", "COMPONENT DONE", "WAITING FOR ANSWERS")
 OPEN_QUESTION = re.compile(r"^\s*[-*]\s+\[ \]\s+\S", re.M)
 # One chat's session, shared by main() and finish(): path, state, max_steps, note; and, in component
@@ -619,24 +625,28 @@ def revision_pending(analysis, analysis_abs, comp):
     changed since. Without this, a revision session sees the gate pass and stops with nothing applied."""
     rel = "%s/ledger/components/%s/verification-report.md" % (analysis, comp)
     facts = status.report_facts(os.path.join(analysis_abs, "ledger", "components", comp, "verification-report.md"))
-    if not facts or facts["verdict"] not in ("FAIL", "PASS AFTER CORRECTIONS"):
-        return None
-    recheck = facts.get("recheck")
-    if recheck and recheck[1] > 0 and recheck[0] == recheck[1]:
+    # the same rule as the queue (bible_queue.py): any verdict but PASS, or a PASS that lists a major correction
+    if not facts or not (facts["verdict"] in ("FAIL", "PASS AFTER CORRECTIONS") or (facts["verdict"] == "PASS" and facts["majors"])):
         return None
     if not facts["fingerprint"] or facts["fingerprint"] != status.fingerprint(analysis_abs, comp):
         return None  # the pages changed after the verification: applied, or under way; verify again
     report = status.read(os.path.join(analysis_abs, "ledger", "components", comp, "verification-report.md")) or ""
     ids = set(re.findall(r"^\|\s*(V-\d+)\s*\|", status.section(report, "Corrections"), re.M))
     log = status.read(os.path.join(analysis_abs, "ledger", "components", comp, "revision-log.md")) or ""
-    if ids and all(re.search(r"\b%s\b" % re.escape(i), log) for i in ids):
-        return None  # every correction is answered in the log (some need no page change, with the reason written there)
+    # Correction numbers restart in every report, so only the part of the log written for THIS report counts: from
+    # the line that names its fingerprint (references/revision.md, Component mode).
+    at = log.find(facts["fingerprint"])
+    this_round = log[at:] if at >= 0 else ""
+    if ids and all(re.search(r"\b%s\b" % re.escape(i), this_round) for i in ids):
+        return None  # every correction of this report is answered (some need no page change, with the reason written)
     return ["NEXT REVISION %s: apply the verification's corrections" % comp,
             "%s gives verdict %s (%d major) and its fingerprint %s equals the pages now: no correction is applied yet."
             % (rel, facts["verdict"], facts["majors"], facts["fingerprint"]),
             "Apply every row of its Corrections table, majors first (references/revision.md, Component mode): change the pages "
             "under %s/lld/%s/ and %s/lld/api/%s/, and record each item in %s/ledger/components/%s/revision-log.md."
             % (analysis, comp, analysis, comp, analysis, comp),
+            "Start this round's section of the log with: Applied from verification-report.md, fingerprint %s."
+            % facts["fingerprint"],
             "Do not edit the verification report. Then run next.py again."]
 
 
