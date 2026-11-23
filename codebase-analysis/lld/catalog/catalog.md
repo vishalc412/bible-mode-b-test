@@ -66,7 +66,7 @@ Source: `components/catalog/catalog.py:15-17` <!-- code: 9e5f194ac459 -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | `price_of` (`components/catalog/catalog.py:21`), `in_stock` (`components/catalog/catalog.py:28`), and the HTTP handler (`components/catalog/service.py:31`). |
+| Called by | `price_of` (`components/catalog/catalog.py:21`) and `in_stock` (`components/catalog/catalog.py:28`). |
 | Calls | `_PRODUCTS.get` |
 | Purpose | Looks up a product record by SKU. |
 
@@ -95,7 +95,7 @@ Source: `components/catalog/catalog.py:20-24` <!-- code: 9339c8a1a6d3 -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | The HTTP handler (`components/catalog/service.py:31`). |
+| Called by | `orders.line_total` (`components/orders/orders.py:20`); the HTTP handler calls `catalog.price_of` (`components/catalog/service.py:31`). |
 | Calls | `get_product`, `KeyError` |
 | Purpose | Returns a product's price or raises `KeyError` for a missing SKU. |
 
@@ -135,7 +135,7 @@ Source: `components/catalog/catalog.py:27-29` <!-- code: 9dfed2fca633 -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | Not established by this module. |
+| Called by | `orders.validate` (`components/orders/orders.py:40`). |
 | Calls | `get_product` |
 | Purpose | Checks that the SKU exists and its stock is at least the requested quantity. |
 
