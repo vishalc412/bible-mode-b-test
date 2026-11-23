@@ -18,7 +18,7 @@ calls:
 ---
 # System context
 
-The repository contains a small catalog/orders sample and a separate GitHub Actions workflow system that assigns agents to create and verify codebase analyses (`README.md:1-9`). The application modules and the analysis automation share a repository but are not one deployed service.
+The repository contains a small catalog/orders sample and a separate GitHub Actions workflow system that assigns agents to create and verify codebase analyses (`README.md:1-7`). The application modules and the analysis automation share a repository but are not one deployed service.
 
 The diagram shows the repository's modules and the external systems they contact. The Image CDN is listed below because code creates its URL, but it does not fetch images.
 
@@ -60,3 +60,13 @@ flowchart LR
 | Image CDN | Destination encoded into a returned image URL; catalog code does not make an HTTP request | HTTPS URL, port 443 implicit | Hard-coded `IMAGE_CDN` | Not applicable; no call is made | `components/catalog/catalog.py:6,32-33` |
 
 No separate shopper, customer interface, or production hosting environment is identified in the repository. The catalog HTTP API exists in code, but its only in-repository HTTP caller is the orders test; the separate-service use is documented as an intended deployment mode, not a deployed one (`components/catalog/service.py:40-49`; `components/orders/catalog_client.py:1-4,14-23`; `components/orders/test_catalog_client.py:37-62`).
+
+<!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
+
+<!-- cites .github/workflows/bible-queue.yml@d54080b12d039672f31f0d0924cc380ded069010 -->
+
+<!-- cites README.md@62b6ccb3c5858e5b699500d9253942283b61da60 -->
+
+<!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
+
+<!-- cites components/orders/test_catalog_client.py@1d32463e1cdc21bd3eee3bc1b6f31feb8ef40a2d -->

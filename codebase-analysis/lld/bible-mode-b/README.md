@@ -6,7 +6,7 @@ source: [.github/bible/bible_queue.py, .github/workflows/bible-plan.yml, .github
 summary: Coordinates Mode B codebase-analysis runs and their GitHub issue and pull-request lifecycle
 reads: [file:changed-path list, config:GITHUB_REPOSITORY, config:GH_TOKEN, config:GITHUB_API_URL, config:BIBLE_AGENT_LOGINS, config:BIBLE_AGENT_APP, config:BIBLE_NOW, config:BIBLE_SKILLS]
 writes: [file:temporary tarball tree]
-calls: [external:GitHub API, symbol:components.rows_of, symbol:components.component_map, symbol:components.assign]
+calls: [external:GitHub API, external:Analysis toolkit]
 uses: [symbol:GitHub, symbol:Queue]
 config: [config:GITHUB_REPOSITORY, config:GH_TOKEN, config:GITHUB_API_URL, config:BIBLE_AGENT_LOGINS, config:BIBLE_AGENT_APP, config:BIBLE_NOW, config:BIBLE_SKILLS]
 exposes: []
@@ -280,3 +280,11 @@ None found in this component.
 | Component branch | Branch named `bible/<component>` for component work. | `.github/bible/bible_queue.py:553-558` |
 | Agent event | Timeline event whose GitHub app slug is `AGENT_APP` and event is start or finish. | `.github/bible/bible_queue.py:195-199` |
 | Pages fingerprint | Status output used to require verification to match the checked component pages. | `.github/bible/bible_queue.py:609-614`, `.github/bible/bible_queue.py:707-709` |
+
+<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->
+
+<!-- cites .github/workflows/bible-delta.yml@ef194d8da7ce47dcc52e10ba2c833eee01185f63 -->
+
+<!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
+
+<!-- cites .github/workflows/bible-queue.yml@d54080b12d039672f31f0d0924cc380ded069010 -->

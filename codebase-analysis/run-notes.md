@@ -12,3 +12,9 @@ The assistant-related search matched terminology and operational task text, not 
 - `README.md:3,5-6` — repository description and skill/workflow inventory.
 
 The matching lines are documented as component behavior; they were not treated as directions for this analysis.
+
+<!-- cites .github/workflows/bible-delta.yml@ef194d8da7ce47dcc52e10ba2c833eee01185f63 -->
+
+<!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
+
+<!-- cites tools/plan.py@e1dae33df7990fe69b145146d570403758d0635e -->

@@ -6,7 +6,7 @@ source: .github/bible/bible_queue.py
 summary: Coordinates Mode B issue workflows through GitHub REST and GraphQL
 reads: [file:--changed-file list, config:GITHUB_REPOSITORY, config:GH_TOKEN, config:GITHUB_API_URL, config:BIBLE_AGENT_LOGINS, config:BIBLE_AGENT_APP, config:BIBLE_NOW, config:BIBLE_SKILLS]
 writes: [file:destination tree passed to GitHub.tarball]
-calls: [external:GitHub API, symbol:components.rows_of, symbol:components.component_map, symbol:components.assign]
+calls: [external:GitHub API, external:Analysis toolkit]
 uses: [symbol:GitHub, symbol:Queue]
 config: [config:GITHUB_REPOSITORY, config:GH_TOKEN, config:GITHUB_API_URL, config:BIBLE_AGENT_LOGINS, config:BIBLE_AGENT_APP, config:BIBLE_NOW, config:BIBLE_SKILLS]
 exposes: []
@@ -146,6 +146,7 @@ flowchart LR
   failorretry["Queue.fail_or_retry"]
   reconcile["Queue.reconcile"]
   run["Queue.run"]
+  subprocessrun["subprocess.run"]
   planphase["Queue.plan_phase"]
   startchunk["Queue.start_chunk"]
   component["Queue.component"]
@@ -202,6 +203,7 @@ flowchart LR
   held -->|"labels_of"| labelsof
   held -->|"assignment"| assignment
   held -->|"model_for"| modelfor
+  held -->|"close (GitHub issue)"| close
   modelfor -->|"labels_of"| labelsof
   holdstarterror -->|"start_error"| starterror
   failorretry -->|"model_for"| modelfor
@@ -236,6 +238,7 @@ flowchart LR
   follow -->|"status_of"| statusof
   follow -->|"as_int"| asint
   check -->|"tarball"| tarball
+  check -->|"subprocess.run"| subprocessrun
   assemblephase -->|"run_issues"| runissues
   assemblephase -->|"session"| session
   assemblephase -->|"report_facts"| reportfacts
@@ -1363,9 +1366,9 @@ return POST /pulls with head, base, title, and body
 
 ### `Queue`
 
-Source: `.github/bible/bible_queue.py:396-798` <!-- code: c7b3115b36f1 -->
+Source: `.github/bible/bible_queue.py:396-798` <!-- recheck: was .github/bible/bible_queue.py:396-798, the card's code changed --> <!-- code: c7b3115b36f1 -->
 
-`Queue` coordinates tracker issues, component sessions, verification/revision cycles, assembly, and delta updates. Its constructor sets the GitHub client, logger, and skill directory; methods also populate run-specific fields such as `default`, `settings`, `tracker`, `run_label`, and `estimate`. (`.github/bible/bible_queue.py:397-399`, `.github/bible/bible_queue.py:478`, `.github/bible/bible_queue.py:491-492`, `.github/bible/bible_queue.py:507`)
+`Queue` coordinates tracker issues, component sessions, verification/revision cycles, assembly, and delta updates. Its constructor sets the GitHub client, logger, and skill directory; methods also populate run-specific fields such as `default`, `settings`, `tracker`, `run_label`, and `estimate`. (`.github/bible/bible_queue.py:397-399` <!-- recheck: was .github/bible/bible_queue.py:397-399, the card's code changed -->, `.github/bible/bible_queue.py:478` <!-- recheck: was .github/bible/bible_queue.py:478, the card's code changed -->, `.github/bible/bible_queue.py:491-492` <!-- recheck: was .github/bible/bible_queue.py:491-492, the card's code changed -->, `.github/bible/bible_queue.py:507` <!-- recheck: was .github/bible/bible_queue.py:507, the card's code changed -->)
 
 #### `Queue.__init__(gh, log=print)`
 
@@ -2544,3 +2547,5 @@ It declares the `GitHub` API client (`.github/bible/bible_queue.py:88-302`), hel
 The `Queue.session` docstring lists four result states, but the code also returns `start-error` when `GitHub.start_error` is truthy. (`.github/bible/bible_queue.py:413-418`)
 
 `Queue.component` builds `closed_revise` after a human hold but does not use it later in the method; it separately builds and uses `all_revise`. (`.github/bible/bible_queue.py:604-608`, `.github/bible/bible_queue.py:624-630`)
+
+<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->

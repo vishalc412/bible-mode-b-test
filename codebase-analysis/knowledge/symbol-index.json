@@ -1,0 +1,2955 @@
+{
+ "symbols": {
+  "symbol:.github/bible/bible_queue.py#GitHub": {
+   "name": "GitHub",
+   "kind": "class",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    88,
+    302
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part3"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/README.md#main-types",
+    "lld/bible-mode-b/README.md#responsibility",
+    "lld/bible-mode-b/README.md#structure",
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#main",
+    "lld/bible-mode-b/bible_queue.md#module-level-code",
+    "lld/bible-mode-b/bible_queue.md#summary"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.__init__": {
+   "name": "GitHub.__init__",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    89,
+    92
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.request": {
+   "name": "GitHub.request",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    94,
+    103
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#github-part7",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/catalog/README.md#catalog",
+    "lld/catalog/catalog.md#catalog",
+    "lld/orders/catalog_client.md#catalog_client",
+    "lld/orders/orders.md#module-level-code",
+    "lld/orders/orders.md#summary"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.call": {
+   "name": "GitHub.call",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    105,
+    117
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "hld/03-integrations.md#outbound-calls",
+    "lld/bible-mode-b/README.md#errors-and-resilience",
+    "lld/bible-mode-b/README.md#modules",
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#github-part7",
+    "lld/bible-mode-b/bible_queue.md#index"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.paged": {
+   "name": "GitHub.paged",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    119,
+    127
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#index"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.issues": {
+   "name": "GitHub.issues",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    129,
+    131
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#main",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "progress.md#sweep"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.ensure_label": {
+   "name": "GitHub.ensure_label",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    133,
+    138
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#index"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.ensure_labels": {
+   "name": "GitHub.ensure_labels",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    140,
+    142
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#main"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.create_issue": {
+   "name": "GitHub.create_issue",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    144,
+    151
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "hld/04-data-architecture.md#github-issue",
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#main",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "progress.md#sweep"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.default_branch": {
+   "name": "GitHub.default_branch",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    153,
+    154
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/data-dictionary.md#github-api-entity-fields-used"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.branch_sha": {
+   "name": "GitHub.branch_sha",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    156,
+    158
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part5"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.create_branch": {
+   "name": "GitHub.create_branch",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    160,
+    161
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part5"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.reset_branch": {
+   "name": "GitHub.reset_branch",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    163,
+    164
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part5"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.file": {
+   "name": "GitHub.file",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    166,
+    170
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#issue_textgh-path-ref-fallback_title",
+    "lld/bible-mode-b/bible_queue.md#json_filegh-path-ref",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "progress.md#sweep"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.prs": {
+   "name": "GitHub.prs",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    172,
+    174
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/README.md#surprises",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#index"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.timeline": {
+   "name": "GitHub.timeline",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    176,
+    177
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#index"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.linked_prs": {
+   "name": "GitHub.linked_prs",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    179,
+    188
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part8"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.branch_prs": {
+   "name": "GitHub.branch_prs",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    190,
+    193
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part5"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.agent_events": {
+   "name": "GitHub.agent_events",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    195,
+    199
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.is_agent_pr": {
+   "name": "GitHub.is_agent_pr",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    201,
+    205
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part8"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.start_error": {
+   "name": "GitHub.start_error",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    207,
+    215
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/README.md#session-classification",
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#surprises"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.assigned_at": {
+   "name": "GitHub.assigned_at",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    217,
+    220
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.pr_files": {
+   "name": "GitHub.pr_files",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    222,
+    229
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.commit_time": {
+   "name": "GitHub.commit_time",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    231,
+    232
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.tarball": {
+   "name": "GitHub.tarball",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    234,
+    259
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#surprises"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.label": {
+   "name": "GitHub.label",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    261,
+    263
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.unlabel": {
+   "name": "GitHub.unlabel",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    265,
+    266
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.comment": {
+   "name": "GitHub.comment",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    268,
+    269
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part8"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.close": {
+   "name": "GitHub.close",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    271,
+    272
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/data-dictionary.md#queue-issues-and-component-status",
+    "lld/data-dictionary.md#status-and-enum-values"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.set_body": {
+   "name": "GitHub.set_body",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    274,
+    275
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part9"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.unassign": {
+   "name": "GitHub.unassign",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    277,
+    278
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part3"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.assign": {
+   "name": "GitHub.assign",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    280,
+    281
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part9"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.ready": {
+   "name": "GitHub.ready",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    283,
+    291
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/README.md#outbound-calls",
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#github-part7",
+    "lld/bible-mode-b/bible_queue.md#index"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.merge": {
+   "name": "GitHub.merge",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    293,
+    296
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part7",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.close_pr": {
+   "name": "GitHub.close_pr",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    298,
+    299
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part7",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part3"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#GitHub.create_pr": {
+   "name": "GitHub.create_pr",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    301,
+    302
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part7",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part5"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#now": {
+   "name": "now",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    307,
+    309
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#now"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#agestamp",
+    "lld/bible-mode-b/bible_queue.md#now",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/tools/gate.md#checkcomponent-n-plan-out"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#age": {
+   "name": "age",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    312,
+    313
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#agestamp"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#agestamp",
+    "lld/bible-mode-b/bible_queue.md#now",
+    "lld/bible-mode-b/bible_queue.md#queue-part1"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#settings_of": {
+   "name": "settings_of",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    316,
+    321
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#settings_oftracker"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#settings_oftracker"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#labels_of": {
+   "name": "labels_of",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    324,
+    325
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#labels_ofitem"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#labels_ofitem",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#comp_label": {
+   "name": "comp_label",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    328,
+    329
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#comp_labelname"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#comp_labelname",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part9"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#issue_text": {
+   "name": "issue_text",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    332,
+    338
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#issue_textgh-path-ref-fallback_title"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#issue_textgh-path-ref-fallback_title",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part8"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#assignment": {
+   "name": "assignment",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    341,
+    345
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#assignmentgh-base-model"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#assignmentgh-base-model",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#queue-part9"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#json_file": {
+   "name": "json_file",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    348,
+    353
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#json_filegh-path-ref"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#json_filegh-path-ref",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/bible-mode-b/bible_queue.md#status_ofgh-path-ref"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#section": {
+   "name": "section",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    356,
+    362
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#sectiontext-title"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#report_factstext",
+    "lld/bible-mode-b/bible_queue.md#sectiontext-title"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#report_facts": {
+   "name": "report_facts",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    365,
+    378
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#report_factstext"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#report_factstext",
+    "lld/bible-mode-b/bible_queue.md#sectiontext-title",
+    "lld/data-dictionary.md#queue-issues-and-component-status",
+    "lld/data-dictionary.md#status-and-enum-values"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#as_int": {
+   "name": "as_int",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    381,
+    385
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#as_intvalue"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#as_intvalue",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part7"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#status_of": {
+   "name": "status_of",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    388,
+    391
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#status_ofgh-path-ref"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#json_filegh-path-ref",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
+    "lld/bible-mode-b/bible_queue.md#status_ofgh-path-ref"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue": {
+   "name": "Queue",
+   "kind": "class",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    396,
+    817
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part3"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/README.md#main-types",
+    "lld/bible-mode-b/README.md#responsibility",
+    "lld/bible-mode-b/README.md#structure",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#main",
+    "lld/bible-mode-b/bible_queue.md#module-level-code",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#summary",
+    "reference/risks-and-surprises.md#risks-and-surprises"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.__init__": {
+   "name": "Queue.__init__",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    397,
+    399
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.run_issues": {
+   "name": "Queue.run_issues",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    401,
+    402
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part8"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.agent_pr": {
+   "name": "Queue.agent_pr",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    404,
+    410
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.session": {
+   "name": "Queue.session",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    413,
+    429
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "knowledge/AGENT-CONTEXT.md#hazards",
+    "lld/bible-mode-b/README.md#risks-and-surprises",
+    "lld/bible-mode-b/README.md#session-classification",
+    "lld/bible-mode-b/README.md#surprises",
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part6",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#surprises",
+    "lld/data-dictionary.md#queue-issues-and-component-status",
+    "lld/data-dictionary.md#status-and-enum-values"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.held": {
+   "name": "Queue.held",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    431,
+    450
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/data-dictionary.md#queue-issues-and-component-status"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.model_for": {
+   "name": "Queue.model_for",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    452,
+    454
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/data-dictionary.md#tracker-issue-settings"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.hold_start_error": {
+   "name": "Queue.hold_start_error",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    456,
+    462
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
+    "lld/bible-mode-b/bible_queue.md#queue-part8"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry": {
+   "name": "Queue.fail_or_retry",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    464,
+    483
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/README.md#business-rules",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#github-part7",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/data-dictionary.md#queue-issues-and-component-status"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.reconcile": {
+   "name": "Queue.reconcile",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    486,
+    496
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "hld/03-integrations.md#inbound-interfaces",
+    "hld/05-key-flows.md#2-queue-creates-and-assigns-the-planning-session",
+    "knowledge/AGENT-CONTEXT.md#components",
+    "lld/bible-mode-b/README.md#errors-and-resilience",
+    "lld/bible-mode-b/README.md#modules",
+    "lld/bible-mode-b/README.md#public-interface",
+    "lld/bible-mode-b/README.md#responsibility",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#main",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#summary",
+    "lld/data-dictionary.md#tracker-issue-settings",
+    "progress.md#components"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.run": {
+   "name": "Queue.run",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    498,
+    534
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "README.md#files",
+    "lld/bible-mode-b/README.md#errors-and-resilience",
+    "lld/bible-mode-b/README.md#modules",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/data-dictionary.md#queue-issues-and-component-status",
+    "lld/data-dictionary.md#tracker-issue-settings",
+    "lld/tools/gate.md#checkcomponent-n-plan-out",
+    "progress.md#sweep"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.plan_phase": {
+   "name": "Queue.plan_phase",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    536,
+    558
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/data-dictionary.md#queue-issues-and-component-status"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.start_chunk": {
+   "name": "Queue.start_chunk",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    560,
+    572
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/data-dictionary.md#queue-issues-and-component-status"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.component": {
+   "name": "Queue.component",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    574,
+    661
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "knowledge/AGENT-CONTEXT.md#hazards",
+    "lld/bible-mode-b/README.md#business-rules",
+    "lld/bible-mode-b/README.md#modules",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#github-part7",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#surprises",
+    "lld/data-dictionary.md#queue-issues-and-component-status",
+    "lld/data-dictionary.md#status-and-enum-values",
+    "lld/tools/README.md#outbound-calls",
+    "lld/tools/fanout.md#module-level-code",
+    "lld/tools/fanout.md#summary"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.follow": {
+   "name": "Queue.follow",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    663,
+    715
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/README.md#business-rules",
+    "lld/bible-mode-b/README.md#modules",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#github-part7",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part6",
+    "lld/data-dictionary.md#queue-issues-and-component-status",
+    "lld/data-dictionary.md#status-and-enum-values"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.check": {
+   "name": "Queue.check",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    717,
+    734
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/README.md#modules",
+    "lld/bible-mode-b/README.md#structure",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
+    "lld/data-dictionary.md#tracker-issue-settings",
+    "lld/tools/README.md#business-rules",
+    "lld/tools/README.md#modules",
+    "lld/tools/gate.md#checkcomponent-n-plan-out",
+    "lld/tools/gate.md#count_testspaths",
+    "lld/tools/gate.md#index",
+    "lld/tools/gate.md#main",
+    "lld/tools/gate.md#readpath",
+    "lld/tools/gate.md#summary"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.assemble_phase": {
+   "name": "Queue.assemble_phase",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    736,
+    776
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/data-dictionary.md#queue-issues-and-component-status",
+    "lld/data-dictionary.md#status-and-enum-values"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.render": {
+   "name": "Queue.render",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    778,
+    788
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#now",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part9"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#Queue.delta": {
+   "name": "Queue.delta",
+   "kind": "method",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    791,
+    817
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "hld/03-integrations.md#inbound-interfaces",
+    "hld/04-data-architecture.md#files-caches-and-other-state",
+    "hld/05-key-flows.md#5-changed-code-produces-component-delta-issues",
+    "knowledge/AGENT-CONTEXT.md#components",
+    "lld/bible-mode-b/README.md#modules",
+    "lld/bible-mode-b/README.md#outbound-calls",
+    "lld/bible-mode-b/README.md#public-interface",
+    "lld/bible-mode-b/README.md#responsibility",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#main",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/bible-mode-b/bible_queue.md#summary",
+    "lld/data-dictionary.md#files-read-and-written",
+    "lld/data-dictionary.md#tracker-issue-settings",
+    "progress.md#components"
+   ]
+  },
+  "symbol:.github/bible/bible_queue.py#main": {
+   "name": "main",
+   "kind": "function",
+   "file": ".github/bible/bible_queue.py",
+   "lines": [
+    820,
+    863
+   ],
+   "pages": [
+    "README.md",
+    "lld/bible-mode-b/README.md",
+    "lld/bible-mode-b/bible_queue.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/bible-mode-b/bible_queue.md#main"
+   ],
+   "chunks": [
+    "hld/05-key-flows.md#1-start-an-analysis-run",
+    "lld/bible-mode-b/README.md#business-rules",
+    "lld/bible-mode-b/README.md#errors-and-resilience",
+    "lld/bible-mode-b/README.md#modules",
+    "lld/bible-mode-b/README.md#structure",
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#main",
+    "lld/bible-mode-b/bible_queue.md#module-level-code",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/bible-mode-b/bible_queue.md#summary",
+    "lld/catalog/README.md#tests",
+    "lld/catalog/test_catalog.md#module-level-code",
+    "lld/catalog/test_catalog.md#summary",
+    "lld/data-dictionary.md#component-analysis-plan-json",
+    "lld/data-dictionary.md#files-read-and-written",
+    "lld/data-dictionary.md#queue-issues-and-component-status"
+   ]
+  },
+  "symbol:components/catalog/catalog.py#get_product": {
+   "name": "get_product",
+   "kind": "function",
+   "file": "components/catalog/catalog.py",
+   "lines": [
+    15,
+    17
+   ],
+   "pages": [
+    "README.md",
+    "lld/catalog/README.md",
+    "lld/catalog/catalog.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/catalog/catalog.md#get_productsku"
+   ],
+   "chunks": [
+    "lld/catalog/README.md#data",
+    "lld/catalog/README.md#modules",
+    "lld/catalog/catalog.md#get_productsku",
+    "lld/catalog/catalog.md#in_stocksku-qty1",
+    "lld/catalog/catalog.md#index",
+    "lld/catalog/catalog.md#price_ofsku"
+   ]
+  },
+  "symbol:components/catalog/catalog.py#price_of": {
+   "name": "price_of",
+   "kind": "function",
+   "file": "components/catalog/catalog.py",
+   "lines": [
+    20,
+    24
+   ],
+   "pages": [
+    "README.md",
+    "lld/catalog/README.md",
+    "lld/catalog/catalog.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/catalog/catalog.md#price_ofsku"
+   ],
+   "chunks": [
+    "hld/05-key-flows.md#6-order-total-and-stock-validation-use-the-in-process-catalog",
+    "hld/05-key-flows.md#7-remote-catalog-client-reads-a-price",
+    "hld/06-cross-cutting.md#error-handling-and-resilience",
+    "lld/api/catalog/catalog.md#get-pricesku",
+    "lld/catalog/README.md#business-rules",
+    "lld/catalog/README.md#data",
+    "lld/catalog/README.md#errors-and-resilience",
+    "lld/catalog/README.md#modules",
+    "lld/catalog/README.md#public-interface",
+    "lld/catalog/README.md#responsibility",
+    "lld/catalog/README.md#surprises",
+    "lld/catalog/catalog.md#get_productsku",
+    "lld/catalog/catalog.md#index",
+    "lld/catalog/catalog.md#price_ofsku",
+    "lld/catalog/service.md#cataloghandler",
+    "lld/catalog/test_catalog.md#tests",
+    "lld/data-dictionary.md#catalog-products",
+    "lld/orders/README.md#data",
+    "lld/orders/orders.md#line_totalsku-qty"
+   ]
+  },
+  "symbol:components/catalog/catalog.py#in_stock": {
+   "name": "in_stock",
+   "kind": "function",
+   "file": "components/catalog/catalog.py",
+   "lines": [
+    27,
+    29
+   ],
+   "pages": [
+    "README.md",
+    "lld/catalog/README.md",
+    "lld/catalog/catalog.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/catalog/catalog.md#in_stocksku-qty1"
+   ],
+   "chunks": [
+    "lld/catalog/README.md#business-rules",
+    "lld/catalog/README.md#data",
+    "lld/catalog/README.md#modules",
+    "lld/catalog/README.md#public-interface",
+    "lld/catalog/README.md#responsibility",
+    "lld/catalog/README.md#surprises",
+    "lld/catalog/catalog.md#get_productsku",
+    "lld/catalog/catalog.md#in_stocksku-qty1",
+    "lld/catalog/catalog.md#index",
+    "lld/data-dictionary.md#catalog-products",
+    "lld/orders/README.md#business-rules",
+    "lld/orders/README.md#data",
+    "lld/orders/orders.md#validatelines"
+   ]
+  },
+  "symbol:components/catalog/catalog.py#image_url": {
+   "name": "image_url",
+   "kind": "function",
+   "file": "components/catalog/catalog.py",
+   "lines": [
+    32,
+    33
+   ],
+   "pages": [
+    "README.md",
+    "lld/catalog/README.md",
+    "lld/catalog/catalog.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/catalog/catalog.md#image_urlsku"
+   ],
+   "chunks": [
+    "hld/03-integrations.md#outbound-calls",
+    "lld/catalog/README.md#modules",
+    "lld/catalog/catalog.md#image_urlsku",
+    "lld/catalog/catalog.md#index",
+    "reference/glossary.md#glossary"
+   ]
+  },
+  "symbol:components/catalog/catalog.py#fetch_supplier_feed": {
+   "name": "fetch_supplier_feed",
+   "kind": "function",
+   "file": "components/catalog/catalog.py",
+   "lines": [
+    36,
+    39
+   ],
+   "pages": [
+    "README.md",
+    "lld/catalog/README.md",
+    "lld/catalog/catalog.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/catalog/catalog.md#fetch_supplier_feedtimeout10"
+   ],
+   "chunks": [
+    "hld/01-system-context.md#system-context",
+    "hld/03-integrations.md#outbound-calls",
+    "knowledge/AGENT-CONTEXT.md#domain-vocabulary",
+    "lld/catalog/README.md#data",
+    "lld/catalog/README.md#for-the-whole-system-pages",
+    "lld/catalog/README.md#modules",
+    "lld/catalog/README.md#surprises",
+    "lld/catalog/catalog.md#fetch_supplier_feedtimeout10",
+    "lld/catalog/catalog.md#index",
+    "lld/catalog/catalog.md#surprises",
+    "reference/configuration.md#configuration-part2",
+    "reference/glossary.md#glossary"
+   ]
+  },
+  "symbol:components/catalog/catalog.py#apply_feed": {
+   "name": "apply_feed",
+   "kind": "function",
+   "file": "components/catalog/catalog.py",
+   "lines": [
+    42,
+    47
+   ],
+   "pages": [
+    "README.md",
+    "lld/catalog/README.md",
+    "lld/catalog/catalog.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/catalog/catalog.md#apply_feedfeed"
+   ],
+   "chunks": [
+    "knowledge/AGENT-CONTEXT.md#domain-vocabulary",
+    "knowledge/AGENT-CONTEXT.md#hazards",
+    "lld/catalog/README.md#business-rules",
+    "lld/catalog/README.md#data",
+    "lld/catalog/README.md#errors-and-resilience",
+    "lld/catalog/README.md#for-the-whole-system-pages",
+    "lld/catalog/README.md#modules",
+    "lld/catalog/catalog.md#apply_feedfeed",
+    "lld/catalog/catalog.md#index",
+    "lld/catalog/catalog.md#surprises",
+    "lld/data-dictionary.md#catalog-products",
+    "lld/data-dictionary.md#stores",
+    "reference/glossary.md#glossary"
+   ]
+  },
+  "symbol:components/catalog/service.py#CatalogHandler": {
+   "name": "CatalogHandler",
+   "kind": "class",
+   "file": "components/catalog/service.py",
+   "lines": [
+    15,
+    37
+   ],
+   "pages": [
+    "README.md",
+    "lld/catalog/README.md",
+    "lld/catalog/service.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/catalog/service.md#cataloghandler"
+   ],
+   "chunks": [
+    "lld/catalog/README.md#main-types",
+    "lld/catalog/service.md#cataloghandler",
+    "lld/catalog/service.md#index",
+    "lld/catalog/service.md#make_serverhostnone-portnone",
+    "lld/catalog/service.md#summary"
+   ]
+  },
+  "symbol:components/catalog/service.py#CatalogHandler._send": {
+   "name": "CatalogHandler._send",
+   "kind": "method",
+   "file": "components/catalog/service.py",
+   "lines": [
+    16,
+    22
+   ],
+   "pages": [
+    "README.md",
+    "lld/catalog/README.md",
+    "lld/catalog/service.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/catalog/service.md#cataloghandler",
+    "lld/catalog/service.md#index",
+    "lld/catalog/service.md#summary"
+   ]
+  },
+  "symbol:components/catalog/service.py#CatalogHandler.do_GET": {
+   "name": "CatalogHandler.do_GET",
+   "kind": "method",
+   "file": "components/catalog/service.py",
+   "lines": [
+    24,
+    34
+   ],
+   "pages": [
+    "README.md",
+    "lld/catalog/README.md",
+    "lld/catalog/service.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "knowledge/AGENT-CONTEXT.md#components",
+    "lld/api/catalog/catalog.md#endpoints-catalog",
+    "lld/api/catalog/catalog.md#get-health",
+    "lld/api/catalog/catalog.md#get-pricesku",
+    "lld/catalog/README.md#modules",
+    "lld/catalog/README.md#public-interface",
+    "lld/catalog/service.md#cataloghandler",
+    "lld/catalog/service.md#index",
+    "lld/data-dictionary.md#status-and-enum-values",
+    "progress.md#components"
+   ]
+  },
+  "symbol:components/catalog/service.py#CatalogHandler.log_message": {
+   "name": "CatalogHandler.log_message",
+   "kind": "method",
+   "file": "components/catalog/service.py",
+   "lines": [
+    36,
+    37
+   ],
+   "pages": [
+    "README.md",
+    "lld/catalog/README.md",
+    "lld/catalog/service.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [],
+   "chunks": [
+    "hld/06-cross-cutting.md#logging-metrics-and-tracing",
+    "lld/catalog/README.md#logging-and-monitoring",
+    "lld/catalog/service.md#cataloghandler",
+    "lld/catalog/service.md#index"
+   ]
+  },
+  "symbol:components/catalog/service.py#make_server": {
+   "name": "make_server",
+   "kind": "function",
+   "file": "components/catalog/service.py",
+   "lines": [
+    40,
+    43
+   ],
+   "pages": [
+    "README.md",
+    "lld/catalog/README.md",
+    "lld/catalog/service.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/catalog/service.md#make_serverhostnone-portnone"
+   ],
+   "chunks": [
+    "lld/catalog/README.md#main-types",
+    "lld/catalog/README.md#modules",
+    "lld/catalog/README.md#public-interface",
+    "lld/catalog/service.md#cataloghandler",
+    "lld/catalog/service.md#index",
+    "lld/catalog/service.md#make_serverhostnone-portnone",
+    "lld/catalog/service.md#summary",
+    "lld/orders/test_catalog_client.md#tests",
+    "progress.md#components",
+    "progress.md#sweep",
+    "reference/configuration.md#configuration-part2"
+   ]
+  },
+  "symbol:components/catalog/test_catalog.py#CatalogTest": {
+   "name": "CatalogTest",
+   "kind": "class",
+   "file": "components/catalog/test_catalog.py",
+   "lines": [
+    6,
+    8
+   ],
+   "pages": [
+    "lld/catalog/README.md",
+    "lld/catalog/test_catalog.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/catalog/test_catalog.md#index",
+    "lld/catalog/test_catalog.md#tests"
+   ]
+  },
+  "symbol:components/catalog/test_catalog.py#CatalogTest.test_price_of_known_sku": {
+   "name": "CatalogTest.test_price_of_known_sku",
+   "kind": "method",
+   "file": "components/catalog/test_catalog.py",
+   "lines": [
+    7,
+    8
+   ],
+   "pages": [
+    "lld/catalog/README.md",
+    "lld/catalog/test_catalog.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/catalog/README.md#modules",
+    "lld/catalog/README.md#tests",
+    "lld/catalog/test_catalog.md#index",
+    "lld/catalog/test_catalog.md#tests"
+   ]
+  },
+  "symbol:components/orders/catalog_client.py#catalog_url": {
+   "name": "catalog_url",
+   "kind": "function",
+   "file": "components/orders/catalog_client.py",
+   "lines": [
+    14,
+    16
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/catalog_client.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/orders/catalog_client.md#catalog_url"
+   ],
+   "chunks": [
+    "lld/orders/README.md#configuration-read",
+    "lld/orders/README.md#modules",
+    "lld/orders/README.md#public-interface",
+    "lld/orders/catalog_client.md#catalog_url",
+    "lld/orders/catalog_client.md#index",
+    "lld/orders/catalog_client.md#remote_pricesku-timeout5"
+   ]
+  },
+  "symbol:components/orders/catalog_client.py#remote_price": {
+   "name": "remote_price",
+   "kind": "function",
+   "file": "components/orders/catalog_client.py",
+   "lines": [
+    19,
+    23
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/catalog_client.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/orders/catalog_client.md#remote_pricesku-timeout5"
+   ],
+   "chunks": [
+    "hld/05-key-flows.md#7-remote-catalog-client-reads-a-price",
+    "lld/api/catalog/catalog.md#get-pricesku",
+    "lld/catalog/README.md#public-interface",
+    "lld/catalog/README.md#structure",
+    "lld/data-dictionary.md#external-json-payloads",
+    "lld/orders/README.md#errors-and-resilience",
+    "lld/orders/README.md#modules",
+    "lld/orders/README.md#outbound-calls",
+    "lld/orders/README.md#public-interface",
+    "lld/orders/catalog_client.md#catalog_url",
+    "lld/orders/catalog_client.md#index",
+    "lld/orders/catalog_client.md#remote_line_totalsku-qty",
+    "lld/orders/catalog_client.md#remote_pricesku-timeout5",
+    "reference/configuration.md#configuration-part2"
+   ]
+  },
+  "symbol:components/orders/catalog_client.py#remote_line_total": {
+   "name": "remote_line_total",
+   "kind": "function",
+   "file": "components/orders/catalog_client.py",
+   "lines": [
+    26,
+    29
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/catalog_client.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/orders/catalog_client.md#remote_line_totalsku-qty"
+   ],
+   "chunks": [
+    "hld/05-key-flows.md#7-remote-catalog-client-reads-a-price",
+    "knowledge/AGENT-CONTEXT.md#orders",
+    "lld/catalog/README.md#public-interface",
+    "lld/orders/README.md#business-rules",
+    "lld/orders/README.md#errors-and-resilience",
+    "lld/orders/README.md#modules",
+    "lld/orders/README.md#public-interface",
+    "lld/orders/catalog_client.md#index",
+    "lld/orders/catalog_client.md#remote_line_totalsku-qty",
+    "lld/orders/catalog_client.md#remote_pricesku-timeout5"
+   ]
+  },
+  "symbol:components/orders/orders.py#line_total": {
+   "name": "line_total",
+   "kind": "function",
+   "file": "components/orders/orders.py",
+   "lines": [
+    19,
+    20
+   ],
+   "pages": [
+    "README.md",
+    "lld/orders/README.md",
+    "lld/orders/orders.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/orders/orders.md#line_totalsku-qty"
+   ],
+   "chunks": [
+    "hld/03-integrations.md#inbound-interfaces",
+    "knowledge/AGENT-CONTEXT.md#components",
+    "lld/catalog/catalog.md#price_ofsku",
+    "lld/data-dictionary.md#catalog-products",
+    "lld/orders/README.md#modules",
+    "lld/orders/README.md#public-interface",
+    "lld/orders/README.md#tests",
+    "lld/orders/orders.md#index",
+    "lld/orders/orders.md#line_totalsku-qty",
+    "lld/orders/orders.md#order_totallines-loyalfalse",
+    "lld/orders/test_orders.md#test_orders",
+    "lld/orders/test_orders.md#tests",
+    "progress.md#components"
+   ]
+  },
+  "symbol:components/orders/orders.py#order_total": {
+   "name": "order_total",
+   "kind": "function",
+   "file": "components/orders/orders.py",
+   "lines": [
+    23,
+    32
+   ],
+   "pages": [
+    "README.md",
+    "lld/orders/README.md",
+    "lld/orders/orders.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/orders/orders.md#order_totallines-loyalfalse"
+   ],
+   "chunks": [
+    "hld/03-integrations.md#inbound-interfaces",
+    "hld/05-key-flows.md#6-order-total-and-stock-validation-use-the-in-process-catalog",
+    "knowledge/AGENT-CONTEXT.md#components",
+    "knowledge/AGENT-CONTEXT.md#hazards",
+    "lld/orders/README.md#business-rules",
+    "lld/orders/README.md#modules",
+    "lld/orders/README.md#public-interface",
+    "lld/orders/README.md#tests",
+    "lld/orders/orders.md#index",
+    "lld/orders/orders.md#line_totalsku-qty",
+    "lld/orders/orders.md#order_totallines-loyalfalse",
+    "progress.md#components"
+   ]
+  },
+  "symbol:components/orders/orders.py#validate": {
+   "name": "validate",
+   "kind": "function",
+   "file": "components/orders/orders.py",
+   "lines": [
+    35,
+    42
+   ],
+   "pages": [
+    "README.md",
+    "lld/orders/README.md",
+    "lld/orders/orders.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/orders/orders.md#validatelines"
+   ],
+   "chunks": [
+    "hld/03-integrations.md#inbound-interfaces",
+    "hld/05-key-flows.md#6-order-total-and-stock-validation-use-the-in-process-catalog",
+    "knowledge/AGENT-CONTEXT.md#components",
+    "knowledge/AGENT-CONTEXT.md#hazards",
+    "knowledge/AGENT-CONTEXT.md#orders",
+    "lld/catalog/README.md#public-interface",
+    "lld/catalog/catalog.md#in_stocksku-qty1",
+    "lld/data-dictionary.md#catalog-products",
+    "lld/orders/README.md#business-rules",
+    "lld/orders/README.md#errors-and-resilience",
+    "lld/orders/README.md#modules",
+    "lld/orders/README.md#public-interface",
+    "lld/orders/README.md#tests",
+    "lld/orders/orders.md#index",
+    "lld/orders/orders.md#validatelines",
+    "progress.md#components"
+   ]
+  },
+  "symbol:components/orders/orders.py#settle": {
+   "name": "settle",
+   "kind": "function",
+   "file": "components/orders/orders.py",
+   "lines": [
+    45,
+    51
+   ],
+   "pages": [
+    "README.md",
+    "lld/orders/README.md",
+    "lld/orders/orders.md",
+    "reference/configuration.md",
+    "reference/glossary.md",
+    "reference/risks-and-surprises.md"
+   ],
+   "card": [
+    "lld/orders/orders.md#settleorder_id-amount-devfalse-timeout15"
+   ],
+   "chunks": [
+    "hld/03-integrations.md#inbound-interfaces",
+    "hld/03-integrations.md#outbound-calls",
+    "hld/05-key-flows.md#8-settlement-sends-an-order-amount",
+    "hld/05-key-flows.md#key-flows",
+    "knowledge/AGENT-CONTEXT.md#components",
+    "knowledge/AGENT-CONTEXT.md#hazards",
+    "knowledge/AGENT-CONTEXT.md#orders",
+    "lld/data-dictionary.md#status-and-enum-values",
+    "lld/orders/README.md#business-rules",
+    "lld/orders/README.md#errors-and-resilience",
+    "lld/orders/README.md#modules",
+    "lld/orders/README.md#outbound-calls",
+    "lld/orders/README.md#public-interface",
+    "lld/orders/README.md#tests",
+    "lld/orders/orders.md#index",
+    "lld/orders/orders.md#settleorder_id-amount-devfalse-timeout15",
+    "progress.md#components",
+    "reference/configuration.md#configuration-part2"
+   ]
+  },
+  "symbol:components/orders/test_catalog_client.py#CatalogClientTest": {
+   "name": "CatalogClientTest",
+   "kind": "class",
+   "file": "components/orders/test_catalog_client.py",
+   "lines": [
+    12,
+    62
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_catalog_client.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/orders/README.md#main-types",
+    "lld/orders/README.md#modules",
+    "lld/orders/test_catalog_client.md#summary",
+    "lld/orders/test_catalog_client.md#tests"
+   ]
+  },
+  "symbol:components/orders/test_catalog_client.py#CatalogClientTest.setUpClass": {
+   "name": "CatalogClientTest.setUpClass",
+   "kind": "method",
+   "file": "components/orders/test_catalog_client.py",
+   "lines": [
+    13,
+    19
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_catalog_client.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/orders/test_catalog_client.md#call-graph",
+    "lld/orders/test_catalog_client.md#tests"
+   ]
+  },
+  "symbol:components/orders/test_catalog_client.py#CatalogClientTest.tearDownClass": {
+   "name": "CatalogClientTest.tearDownClass",
+   "kind": "method",
+   "file": "components/orders/test_catalog_client.py",
+   "lines": [
+    21,
+    28
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_catalog_client.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/orders/test_catalog_client.md#tests"
+   ]
+  },
+  "symbol:components/orders/test_catalog_client.py#CatalogClientTest.get": {
+   "name": "CatalogClientTest.get",
+   "kind": "method",
+   "file": "components/orders/test_catalog_client.py",
+   "lines": [
+    30,
+    35
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_catalog_client.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#github-part4",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#github-part6",
+    "lld/bible-mode-b/bible_queue.md#github-part7",
+    "lld/bible-mode-b/bible_queue.md#labels_ofitem",
+    "lld/bible-mode-b/bible_queue.md#main",
+    "lld/bible-mode-b/bible_queue.md#now",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part2",
+    "lld/bible-mode-b/bible_queue.md#queue-part4",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
+    "lld/bible-mode-b/bible_queue.md#queue-part8",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/bible-mode-b/bible_queue.md#settings_oftracker",
+    "lld/catalog/catalog.md#apply_feedfeed",
+    "lld/catalog/catalog.md#get_productsku",
+    "lld/catalog/service.md#make_serverhostnone-portnone"
+   ]
+  },
+  "symbol:components/orders/test_catalog_client.py#CatalogClientTest.test_remote_price": {
+   "name": "CatalogClientTest.test_remote_price",
+   "kind": "method",
+   "file": "components/orders/test_catalog_client.py",
+   "lines": [
+    37,
+    38
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_catalog_client.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/orders/catalog_client.md#remote_pricesku-timeout5",
+    "lld/orders/test_catalog_client.md#tests"
+   ]
+  },
+  "symbol:components/orders/test_catalog_client.py#CatalogClientTest.test_remote_line_total": {
+   "name": "CatalogClientTest.test_remote_line_total",
+   "kind": "method",
+   "file": "components/orders/test_catalog_client.py",
+   "lines": [
+    40,
+    41
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_catalog_client.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/orders/catalog_client.md#remote_line_totalsku-qty",
+    "lld/orders/test_catalog_client.md#tests"
+   ]
+  },
+  "symbol:components/orders/test_catalog_client.py#CatalogClientTest.test_quantity_must_be_positive": {
+   "name": "CatalogClientTest.test_quantity_must_be_positive",
+   "kind": "method",
+   "file": "components/orders/test_catalog_client.py",
+   "lines": [
+    43,
+    45
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_catalog_client.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/orders/catalog_client.md#remote_line_totalsku-qty",
+    "lld/orders/test_catalog_client.md#tests"
+   ]
+  },
+  "symbol:components/orders/test_catalog_client.py#CatalogClientTest.test_unknown_sku": {
+   "name": "CatalogClientTest.test_unknown_sku",
+   "kind": "method",
+   "file": "components/orders/test_catalog_client.py",
+   "lines": [
+    47,
+    49
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_catalog_client.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/orders/catalog_client.md#remote_pricesku-timeout5",
+    "lld/orders/test_catalog_client.md#tests"
+   ]
+  },
+  "symbol:components/orders/test_catalog_client.py#CatalogClientTest.test_odd_skus_are_quoted_not_misrouted": {
+   "name": "CatalogClientTest.test_odd_skus_are_quoted_not_misrouted",
+   "kind": "method",
+   "file": "components/orders/test_catalog_client.py",
+   "lines": [
+    51,
+    54
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_catalog_client.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/orders/test_catalog_client.md#tests"
+   ]
+  },
+  "symbol:components/orders/test_catalog_client.py#CatalogClientTest.test_query_string_ignored_by_server": {
+   "name": "CatalogClientTest.test_query_string_ignored_by_server",
+   "kind": "method",
+   "file": "components/orders/test_catalog_client.py",
+   "lines": [
+    56,
+    58
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_catalog_client.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/api/catalog/catalog.md#get-health",
+    "lld/orders/test_catalog_client.md#call-graph",
+    "lld/orders/test_catalog_client.md#tests"
+   ]
+  },
+  "symbol:components/orders/test_catalog_client.py#CatalogClientTest.test_percent_encoded_sku_decoded": {
+   "name": "CatalogClientTest.test_percent_encoded_sku_decoded",
+   "kind": "method",
+   "file": "components/orders/test_catalog_client.py",
+   "lines": [
+    60,
+    62
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_catalog_client.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/orders/test_catalog_client.md#call-graph",
+    "lld/orders/test_catalog_client.md#tests"
+   ]
+  },
+  "symbol:components/orders/test_orders.py#OrdersTest": {
+   "name": "OrdersTest",
+   "kind": "class",
+   "file": "components/orders/test_orders.py",
+   "lines": [
+    6,
+    8
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_orders.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/orders/README.md#main-types",
+    "lld/orders/README.md#modules",
+    "lld/orders/test_orders.md#summary",
+    "lld/orders/test_orders.md#tests"
+   ]
+  },
+  "symbol:components/orders/test_orders.py#OrdersTest.test_line_total": {
+   "name": "OrdersTest.test_line_total",
+   "kind": "method",
+   "file": "components/orders/test_orders.py",
+   "lines": [
+    7,
+    8
+   ],
+   "pages": [
+    "lld/orders/README.md",
+    "lld/orders/test_orders.md"
+   ],
+   "card": [],
+   "chunks": [
+    "lld/orders/README.md#public-interface",
+    "lld/orders/orders.md#line_totalsku-qty",
+    "lld/orders/test_orders.md#tests"
+   ]
+  },
+  "symbol:tools/gate.py#fail": {
+   "name": "fail",
+   "kind": "function",
+   "file": "tools/gate.py",
+   "lines": [
+    23,
+    26
+   ],
+   "pages": [
+    "README.md",
+    "lld/tools/README.md",
+    "lld/tools/gate.md",
+    "reference/glossary.md"
+   ],
+   "card": [
+    "lld/tools/gate.md#failmsgs"
+   ],
+   "chunks": [
+    "lld/tools/README.md#modules",
+    "lld/tools/gate.md#failmsgs",
+    "lld/tools/gate.md#index",
+    "lld/tools/gate.md#main",
+    "lld/tools/gate.md#summary"
+   ]
+  },
+  "symbol:tools/gate.py#read": {
+   "name": "read",
+   "kind": "function",
+   "file": "tools/gate.py",
+   "lines": [
+    29,
+    30
+   ],
+   "pages": [
+    "README.md",
+    "lld/tools/README.md",
+    "lld/tools/gate.md",
+    "reference/glossary.md"
+   ],
+   "card": [
+    "lld/tools/README.md#configuration-read",
+    "lld/tools/gate.md#readpath"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part7",
+    "lld/catalog/catalog.md#fetch_supplier_feedtimeout10",
+    "lld/orders/catalog_client.md#remote_pricesku-timeout5",
+    "lld/tools/README.md#modules",
+    "lld/tools/gate.md#checkcomponent-n-plan-out",
+    "lld/tools/gate.md#index",
+    "lld/tools/gate.md#main",
+    "lld/tools/gate.md#readpath",
+    "reference/configuration.md#configuration-part2"
+   ]
+  },
+  "symbol:tools/gate.py#count_tests": {
+   "name": "count_tests",
+   "kind": "function",
+   "file": "tools/gate.py",
+   "lines": [
+    33,
+    39
+   ],
+   "pages": [
+    "README.md",
+    "lld/tools/README.md",
+    "lld/tools/gate.md",
+    "reference/glossary.md"
+   ],
+   "card": [
+    "lld/tools/gate.md#count_testspaths"
+   ],
+   "chunks": [
+    "lld/tools/README.md#modules",
+    "lld/tools/README.md#public-interface",
+    "lld/tools/README.md#responsibility",
+    "lld/tools/README.md#structure",
+    "lld/tools/gate.md#checkcomponent-n-plan-out",
+    "lld/tools/gate.md#count_testspaths",
+    "lld/tools/gate.md#index",
+    "lld/tools/plan.md#module-level-code",
+    "lld/tools/plan.md#plan",
+    "lld/tools/plan.md#scancomponent_dir",
+    "lld/tools/plan.md#summary"
+   ]
+  },
+  "symbol:tools/gate.py#check": {
+   "name": "check",
+   "kind": "function",
+   "file": "tools/gate.py",
+   "lines": [
+    42,
+    78
+   ],
+   "pages": [
+    "README.md",
+    "lld/tools/README.md",
+    "lld/tools/gate.md",
+    "reference/glossary.md"
+   ],
+   "card": [
+    "lld/tools/gate.md#checkcomponent-n-plan-out"
+   ],
+   "chunks": [
+    "lld/bible-mode-b/README.md#modules",
+    "lld/bible-mode-b/README.md#structure",
+    "lld/bible-mode-b/bible_queue.md#github-part5",
+    "lld/bible-mode-b/bible_queue.md#index",
+    "lld/bible-mode-b/bible_queue.md#queue-part5",
+    "lld/bible-mode-b/bible_queue.md#queue-part7",
+    "lld/data-dictionary.md#tracker-issue-settings",
+    "lld/tools/README.md#business-rules",
+    "lld/tools/README.md#modules",
+    "lld/tools/gate.md#checkcomponent-n-plan-out",
+    "lld/tools/gate.md#count_testspaths",
+    "lld/tools/gate.md#index",
+    "lld/tools/gate.md#main",
+    "lld/tools/gate.md#readpath",
+    "lld/tools/gate.md#summary"
+   ]
+  },
+  "symbol:tools/gate.py#main": {
+   "name": "main",
+   "kind": "function",
+   "file": "tools/gate.py",
+   "lines": [
+    81,
+    113
+   ],
+   "pages": [
+    "README.md",
+    "lld/tools/README.md",
+    "lld/tools/gate.md",
+    "reference/glossary.md"
+   ],
+   "card": [
+    "lld/tools/gate.md#main"
+   ],
+   "chunks": [
+    "hld/05-key-flows.md#1-start-an-analysis-run",
+    "lld/bible-mode-b/README.md#business-rules",
+    "lld/bible-mode-b/README.md#errors-and-resilience",
+    "lld/bible-mode-b/README.md#modules",
+    "lld/bible-mode-b/README.md#structure",
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#main",
+    "lld/bible-mode-b/bible_queue.md#module-level-code",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/bible-mode-b/bible_queue.md#summary",
+    "lld/catalog/README.md#tests",
+    "lld/catalog/test_catalog.md#module-level-code",
+    "lld/catalog/test_catalog.md#summary",
+    "lld/data-dictionary.md#component-analysis-plan-json",
+    "lld/data-dictionary.md#files-read-and-written",
+    "lld/data-dictionary.md#queue-issues-and-component-status"
+   ]
+  },
+  "symbol:tools/plan.py#scan": {
+   "name": "scan",
+   "kind": "function",
+   "file": "tools/plan.py",
+   "lines": [
+    21,
+    38
+   ],
+   "pages": [
+    "README.md",
+    "lld/tools/README.md",
+    "lld/tools/plan.md",
+    "reference/glossary.md"
+   ],
+   "card": [
+    "lld/tools/plan.md#scancomponent_dir"
+   ],
+   "chunks": [
+    "lld/data-dictionary.md#component-analysis-plan-json",
+    "lld/tools/README.md#modules",
+    "lld/tools/README.md#public-interface",
+    "lld/tools/README.md#responsibility",
+    "lld/tools/plan.md#index",
+    "lld/tools/plan.md#main",
+    "lld/tools/plan.md#scancomponent_dir",
+    "lld/tools/plan.md#summary"
+   ]
+  },
+  "symbol:tools/plan.py#main": {
+   "name": "main",
+   "kind": "function",
+   "file": "tools/plan.py",
+   "lines": [
+    41,
+    58
+   ],
+   "pages": [
+    "README.md",
+    "lld/tools/README.md",
+    "lld/tools/plan.md",
+    "reference/glossary.md"
+   ],
+   "card": [
+    "lld/tools/plan.md#main"
+   ],
+   "chunks": [
+    "hld/05-key-flows.md#1-start-an-analysis-run",
+    "lld/bible-mode-b/README.md#business-rules",
+    "lld/bible-mode-b/README.md#errors-and-resilience",
+    "lld/bible-mode-b/README.md#modules",
+    "lld/bible-mode-b/README.md#structure",
+    "lld/bible-mode-b/bible_queue.md#github-part1",
+    "lld/bible-mode-b/bible_queue.md#github-part2",
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#main",
+    "lld/bible-mode-b/bible_queue.md#module-level-code",
+    "lld/bible-mode-b/bible_queue.md#queue-part1",
+    "lld/bible-mode-b/bible_queue.md#queue-part3",
+    "lld/bible-mode-b/bible_queue.md#queue-part9",
+    "lld/bible-mode-b/bible_queue.md#summary",
+    "lld/catalog/README.md#tests",
+    "lld/catalog/test_catalog.md#module-level-code",
+    "lld/catalog/test_catalog.md#summary",
+    "lld/data-dictionary.md#component-analysis-plan-json",
+    "lld/data-dictionary.md#files-read-and-written",
+    "lld/data-dictionary.md#queue-issues-and-component-status"
+   ]
+  }
+ },
+ "routes": {}
+}

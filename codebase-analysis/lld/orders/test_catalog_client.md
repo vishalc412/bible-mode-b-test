@@ -63,3 +63,5 @@ flowchart LR
 ## Module-level code
 
 When run as a script, the module invokes `unittest.main()` (`components/orders/test_catalog_client.py:65-66`).
+
+<!-- cites components/orders/test_catalog_client.py@1d32463e1cdc21bd3eee3bc1b6f31feb8ef40a2d -->

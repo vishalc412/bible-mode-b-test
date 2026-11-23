@@ -187,3 +187,19 @@ The queue writes workflow state through GitHub issue, label, comment, assignment
 | GitHub close reason | `completed`, `not_planned` | `GitHub.close` / retry and release paths | Normal completion or closed session not planned for completion | `.github/bible/bible_queue.py:272-273,441-448,472-483` |
 | Catalog HTTP health state | `ok` | `CatalogHandler.do_GET` | Successful health response | `components/catalog/service.py:26-27` |
 | HTTP success condition for settlement | status code `200` | Payment partner response, checked by `settle` | Returns `True` only for `200`; other returned statuses are `False`, while `urlopen` HTTP errors propagate | `components/orders/orders.py:50-51` |
+
+<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->
+
+<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+
+<!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
+
+<!-- cites components/orders/catalog_client.py@469f9d282aab983cdd85f364e46bcd02ef6d3635 -->
+
+<!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->
+
+<!-- cites tools/fanout.sh@9ad43aa70e042837954fea1faf483f6c08e07470 -->
+
+<!-- cites tools/gate.py@65eb0af527e554cfb2dadb9d0c8cd1ee6e975c99 -->
+
+<!-- cites tools/plan.py@e1dae33df7990fe69b145146d570403758d0635e -->

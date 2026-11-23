@@ -93,8 +93,8 @@ flowchart TB
 
 | Component | Packaged as | Built by | Started by | Port | Replicas, limits | Mounts and volumes | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `catalog` | Python source; no image or package artifact declared | No build step found | `python3 -m components.catalog.service` | Default bind `127.0.0.1:8001`; `CATALOG_HOST` and `CATALOG_PORT` can change it | `ThreadingHTTPServer`; deployment replica/resource limits not specified | None specified | `components/catalog/service.py:1-5,40-49` |
-| `orders` | Python library | No build step declared | Imported by Python callers; the HTTP test starts the catalog server in-process | No application port; test server uses `127.0.0.1:0` | Not specified | None | `components/orders/orders.py:1-51`; `components/orders/test_catalog_client.py:12-19` |
+| `catalog` | Python source; no image or package artifact declared | No build step found | `python3 -m components.catalog.service` | Default bind `127.0.0.1` (port 8001); `CATALOG_HOST` and `CATALOG_PORT` can change it | `ThreadingHTTPServer`; deployment replica/resource limits not specified | None specified | `components/catalog/service.py:1-5,40-49` |
+| `orders` | Python library | No build step declared | Imported by Python callers; the HTTP test starts the catalog server in-process | No application port; test server uses `127.0.0.1` (ephemeral port) | Not specified | None | `components/orders/orders.py:1-51`; `components/orders/test_catalog_client.py:12-19` |
 | `bible-mode-b` plan and queue | Repository Python script plus Actions YAML | GitHub Actions checks out the default branch; no application build | Manual `bible-plan`; `bible-queue` manual dispatch or 15-minute cron | No service port | `ubuntu-latest`; 15-minute plan, 20-minute queue timeout; workflow concurrency groups do not cancel in-progress jobs | Runner workspace; delta list in `$RUNNER_TEMP`; gate uses a temporary work directory | `.github/workflows/bible-plan.yml:24-54`; `.github/workflows/bible-queue.yml:7-37`; `.github/workflows/bible-delta.yml:18-36`; `.github/bible/bible_queue.py:723-735` |
 | `bible-delta` | Repository Python script plus Actions YAML | GitHub Actions checkout with `fetch-depth: 0` | Default-branch push excluding `.github/**` and `codebase-analysis/**` | No service port | `ubuntu-latest`; 15-minute timeout | `$RUNNER_TEMP/changed.txt` | `.github/workflows/bible-delta.yml:6-36` |
 | POC assignment workflow | Actions YAML and inline shell/`jq`/`gh` commands; no checkout | No build step; explicitly checks out no repository code | Manual `workflow_dispatch` | No service port | `ubuntu-latest`; 5-minute timeout | Runner-local `request.json` and `response.json` | `.github/workflows/poc-assign-copilot.yml:1-10,11-69` |
@@ -104,7 +104,7 @@ flowchart TB
 
 ## Module map
 
-No component has more than about ten modules: `bible-mode-b` has one Python module and workflow adapters, `catalog` and `orders` each have a few Python modules, and `tools` has two Python files and a Bash script. The component pages provide their module-level diagrams; no larger module map is needed (`codebase-analysis/components.json:9-75`; component module lists in `../lld/bible-mode-b/README.md`, `../lld/catalog/README.md`, `../lld/orders/README.md`, and `../lld/tools/README.md`).
+The `bible-mode-b` queue is a Python module with workflow adapters; catalog and orders are Python modules, and tools includes Python and Bash entry points (`.github/bible/bible_queue.py:1-10,820-867`; `components/catalog/catalog.py:1-47`; `components/catalog/service.py:1-49`; `components/orders/orders.py:1-51`; `tools/plan.py:1-62`; `tools/gate.py:1-117`; `tools/fanout.sh:1-31`).
 
 ## Technology
 
@@ -123,3 +123,29 @@ No component has more than about ten modules: `bible-mode-b` has one Python modu
 | `orders` | `CATALOG_URL` default `http://127.0.0.1:8001`; settlement URL, discounts, and bulk threshold are constants; `dev` selects the local fake endpoint | No profiles or environment-specific deployment files found | `components/orders/catalog_client.py:11,14-16`; `components/orders/orders.py:7-16,45-48` |
 | `bible-mode-b` | Workflow inputs and `BIBLE_ASSIGN_TOKEN` secret; `GITHUB_REPOSITORY`, `GH_TOKEN`, `GITHUB_API_URL`, `BIBLE_AGENT_LOGINS`, `BIBLE_AGENT_APP`, `BIBLE_NOW`, `BIBLE_SKILLS` | GitHub repository workflow environment; no application profiles | `.github/workflows/bible-plan.yml:9-23,44-49`; `.github/workflows/bible-queue.yml:31-36`; `.github/bible/bible_queue.py:34-36,60-64,91,307-309,397-399,836-838` |
 | `tools` | `ENGINE` environment variable, default `copilot`; repository is a positional argument; plan and gate data under `codebase-analysis/` | CLI invocation; no profiles | `tools/fanout.sh:7-12,24-29`; `tools/plan.py:41-58`; `tools/gate.py:81-108` |
+
+<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->
+
+<!-- cites .github/workflows/bible-delta.yml@ef194d8da7ce47dcc52e10ba2c833eee01185f63 -->
+
+<!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
+
+<!-- cites .github/workflows/bible-queue.yml@d54080b12d039672f31f0d0924cc380ded069010 -->
+
+<!-- cites .github/workflows/poc-assign-copilot.yml@dab60e0d846bfee50726dce662df48fc186ca3d3 -->
+
+<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+
+<!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
+
+<!-- cites components/orders/catalog_client.py@469f9d282aab983cdd85f364e46bcd02ef6d3635 -->
+
+<!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->
+
+<!-- cites components/orders/test_catalog_client.py@1d32463e1cdc21bd3eee3bc1b6f31feb8ef40a2d -->
+
+<!-- cites tools/fanout.sh@9ad43aa70e042837954fea1faf483f6c08e07470 -->
+
+<!-- cites tools/gate.py@65eb0af527e554cfb2dadb9d0c8cd1ee6e975c99 -->
+
+<!-- cites tools/plan.py@e1dae33df7990fe69b145146d570403758d0635e -->

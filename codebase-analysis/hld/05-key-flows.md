@@ -252,11 +252,13 @@ sequenceDiagram
 | Step | What happens | Evidence |
 | ---: | --- | --- |
 | 1 | Caller supplies `(sku, qty)` lines and a loyalty flag. | `components/orders/orders.py:23-24` |
-| 2 | `order_total` requests each line's price, and the catalog returns it for known SKUs. | `components/orders/orders.py:19-25`; `components/catalog/catalog.py:20-25` |
-| 3 | `order_total` selects the larger loyalty/bulk discount and rounds the total. | `components/orders/orders.py:14-16,26-32` |
-| 4 | Caller invokes `validate` on the lines. | `components/orders/orders.py:35` |
-| 5 | Validation checks each line's quantity and asks the catalog whether stock is sufficient. | `components/orders/orders.py:35-42`; `components/catalog/catalog.py:27-29` |
-| 6 | Validation returns one error string per invalid line; no stock is decremented or order record written. | `components/orders/orders.py:35-42` |
+| 2 | `order_total` requests each line's price from `catalog.price_of`. | `components/orders/orders.py:19-25` |
+| 3 | Catalog returns the price for a known SKU. | `components/catalog/catalog.py:20-25` |
+| 4 | `order_total` selects the larger loyalty/bulk discount and returns the rounded total. | `components/orders/orders.py:14-16,26-32` |
+| 5 | Caller invokes `validate` on the lines. | `components/orders/orders.py:35` |
+| 6 | Validation rejects nonpositive quantities or asks the catalog whether stock is sufficient. | `components/orders/orders.py:35-42` |
+| 7 | Catalog returns stock availability for the SKU. | `components/catalog/catalog.py:27-29` |
+| 8 | Validation returns one error string per invalid line; no stock is decremented or order record written. | `components/orders/orders.py:35-42` |
 
 **Failure paths:** Unknown SKU raises `KeyError` during total calculation. Validation accumulates `"quantity must be positive"` or `"not enough stock"` errors for invalid lines (`components/catalog/catalog.py:20-29`; `components/orders/orders.py:23-42`).
 
@@ -394,3 +396,27 @@ sequenceDiagram
 | 8 | GitHub assigns the issue to Copilot. | `.github/workflows/poc-assign-copilot.yml:65-72` |
 
 **Failure paths:** Missing `BIBLE_ASSIGN_TOKEN` exits before request creation; invalid input or API/CLI errors stop the job under `set -euo pipefail`. No retry or timeout is specified (`.github/workflows/poc-assign-copilot.yml:40-69`).
+
+<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->
+
+<!-- cites .github/workflows/bible-delta.yml@ef194d8da7ce47dcc52e10ba2c833eee01185f63 -->
+
+<!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
+
+<!-- cites .github/workflows/poc-assign-copilot.yml@dab60e0d846bfee50726dce662df48fc186ca3d3 -->
+
+<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+
+<!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
+
+<!-- cites components/orders/catalog_client.py@469f9d282aab983cdd85f364e46bcd02ef6d3635 -->
+
+<!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->
+
+<!-- cites components/orders/test_catalog_client.py@1d32463e1cdc21bd3eee3bc1b6f31feb8ef40a2d -->
+
+<!-- cites tools/fanout.sh@9ad43aa70e042837954fea1faf483f6c08e07470 -->
+
+<!-- cites tools/gate.py@65eb0af527e554cfb2dadb9d0c8cd1ee6e975c99 -->
+
+<!-- cites tools/plan.py@e1dae33df7990fe69b145146d570403758d0635e -->

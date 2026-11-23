@@ -7,7 +7,7 @@ summary: Scans component Python files and writes the analysis plan
 reads: [file:components/*/*.py]
 writes: [file:codebase-analysis/plan.json]
 calls: []
-uses: [symbol:ast, symbol:json, symbol:pathlib, symbol:re, symbol:sys, symbol:gate.count_tests]
+uses: [symbol:count_tests]
 config: []
 exposes: []
 publishes: []
@@ -158,3 +158,5 @@ The module appends the resolved `tools` directory to `sys.path` before importing
 ## Surprises
 
 None identified in this file.
+
+<!-- cites tools/plan.py@e1dae33df7990fe69b145146d570403758d0635e -->

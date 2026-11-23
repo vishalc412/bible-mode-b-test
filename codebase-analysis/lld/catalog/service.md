@@ -7,7 +7,7 @@ summary: Serves catalog prices and health status over HTTP
 reads: []
 writes: []
 calls: []
-uses: [symbol:catalog.price_of]
+uses: [symbol:price_of]
 config: [CATALOG_HOST, CATALOG_PORT]
 exposes: [route:GET /health, route:GET /price/{sku}]
 ---
@@ -210,3 +210,5 @@ The file imports `json`, `os`, `urllib.parse`, HTTP server classes, and the sibl
 ## Surprises
 
 The path for routing comes from `urlsplit(self.path).path`, so the query portion does not participate in the route match (`components/catalog/service.py:25-28`).
+
+<!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->

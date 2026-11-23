@@ -32,3 +32,5 @@ The `OrdersTest` test case checks the line total for two units of `SKU-3` (`comp
 ## Module-level code
 
 When run as a script, the module invokes `unittest.main()` (`components/orders/test_orders.py:11-12`).
+
+<!-- cites components/orders/test_orders.py@ca9144cf39abe39e988dc009863b036a7ee1a39f -->

@@ -4,7 +4,7 @@ kind: module
 component: orders
 source: components/orders/orders.py
 summary: Computes order totals, checks quantities against catalog stock, and sends settlements
-calls: [symbol:catalog.price_of, symbol:catalog.in_stock, external:partner-legacy.internal/settle, external:localhost:8099/settle]
+calls: [symbol:price_of, symbol:in_stock, external:partner-legacy.internal/settle, external:localhost:8099/settle]
 ---
 # orders
 
@@ -217,3 +217,9 @@ The module imports `json`, `urllib.request`, and `catalog`; defines the partner 
 ## Surprises
 
 The partner URL is plain HTTP (`components/orders/orders.py:9`). The adjacent comment says the partner's TLS support is “coming soon” but gives no date (inferred: per `components/orders/orders.py:7-8`).
+
+<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+
+<!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->
+
+<!-- cites components/orders/test_orders.py@ca9144cf39abe39e988dc009863b036a7ee1a39f -->

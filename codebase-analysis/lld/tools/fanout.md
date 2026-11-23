@@ -7,7 +7,7 @@ summary: Creates labeled GitHub issues for planned components
 reads: [file:codebase-analysis/plan.json]
 writes: []
 calls: [external:GitHub CLI]
-uses: [symbol:Bash, symbol:python3, symbol:gh]
+uses: []
 config: [config:ENGINE]
 exposes: []
 publishes: []
@@ -88,3 +88,5 @@ for each component:
 ## Surprises
 
 The generated issue body directs the recipient to `.github/skills/component-analysis/SKILL.md` (`tools/fanout.sh:13-15`), a stale reference left over from an earlier experiment; that skill does not exist in this repository and no external skill is intended (answer to Q1 in `ledger/components/tools/questions.md`). `tools/fanout.sh` is documented as written; its reference is not changed.
+
+<!-- cites tools/fanout.sh@9ad43aa70e042837954fea1faf483f6c08e07470 -->

@@ -7,7 +7,7 @@ summary: Command-line tools for component inventory, analysis gates, and issue f
 reads: [file:codebase-analysis/plan.json, file:codebase-analysis/components/*/status.json, file:codebase-analysis/components/*/inventory.md, file:codebase-analysis/components/*/risks.md, file:codebase-analysis/components/*/tests-report.md, file:components/*/*.py]
 writes: [file:codebase-analysis/plan.json]
 calls: [external:GitHub CLI]
-uses: [symbol:Python standard library, symbol:Bash, symbol:gh]
+uses: []
 config: [config:ENGINE]
 exposes: [job:component plan generation, job:component analysis gate, job:component issue fanout]
 publishes: []
@@ -126,3 +126,9 @@ The test-related behavior documented here is the gate itself: it counts function
 - Risks and surprises: the fanout-generated issue contains a stale skill path; see `tools/fanout.sh:13-15` and the answer to Q1 in `ledger/components/tools/questions.md`.
 - Open questions: none remain for this component.
 - Glossary terms: component plan (`tools/plan.py:46-54`), component gate (`tools/gate.py:42-78`), and issue fanout (`tools/fanout.sh:9-30`).
+
+<!-- cites tools/fanout.sh@9ad43aa70e042837954fea1faf483f6c08e07470 -->
+
+<!-- cites tools/gate.py@65eb0af527e554cfb2dadb9d0c8cd1ee6e975c99 -->
+
+<!-- cites tools/plan.py@e1dae33df7990fe69b145146d570403758d0635e -->

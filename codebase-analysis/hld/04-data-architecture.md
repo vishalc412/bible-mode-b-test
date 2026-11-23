@@ -159,3 +159,17 @@ The component status artifact also carries `NEW_CHAT`, `COMPONENT_DONE`, `WAITIN
 | POC `request.json`, `response.json` | `gh api` receives request file; `jq` reads response fields | POC job writes both in runner workspace | No checkout or repository commit; runner workspace is ephemeral | `.github/workflows/poc-assign-copilot.yml:55-69` |
 
 See [the data dictionary](../lld/data-dictionary.md) for field meanings and status values.
+
+<!-- cites .github/bible/bible_queue.py@3e8cd52b9987123aa99aaaf56def48469224f475 -->
+
+<!-- cites .github/workflows/bible-delta.yml@ef194d8da7ce47dcc52e10ba2c833eee01185f63 -->
+
+<!-- cites .github/workflows/poc-assign-copilot.yml@dab60e0d846bfee50726dce662df48fc186ca3d3 -->
+
+<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+
+<!-- cites tools/fanout.sh@9ad43aa70e042837954fea1faf483f6c08e07470 -->
+
+<!-- cites tools/gate.py@65eb0af527e554cfb2dadb9d0c8cd1ee6e975c99 -->
+
+<!-- cites tools/plan.py@e1dae33df7990fe69b145146d570403758d0635e -->

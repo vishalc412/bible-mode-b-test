@@ -1,8 +1,8 @@
 ```text
-NEXT PASS 9: mind map, front page, reference
-All 13 packets are done.
-Write: 00-mind-map.md, README.md, reference/glossary.md, reference/configuration.md, reference/risks-and-surprises.md, reference/open-questions.md
-Read that pass's section in references/passes.md first. Then run next.py again.
-
-Note: --new-session ran before the last chat reached NEW CHAT or DONE, so its count carries over (5 other jobs so far). In the same chat this keeps the loop bounded; in a new chat after a failure it only means NEW CHAT comes sooner. A person can delete ledger/session.json for a full budget.
+DONE
+coverage.py: result PASS at depth deep (pass 11, the gate, is done). Now, in this order:
+  1. the checks in references/quality-gate.md;
+  2. record the code this analysis describes, so later changes are a delta (it adds a cites line to each page): python3 -I .github/skills/analyzing-a-codebase/scripts/delta.py --repo . --analysis codebase-analysis --init --label NAME
+  3. knowledge.py, on the final pages: python3 -I .github/skills/analyzing-a-codebase/scripts/knowledge.py --repo . --analysis codebase-analysis
+  4. status.py --write, then finish as SKILL.md says (the bible stays unverified until verifying-a-codebase-analysis passes).
 ```
