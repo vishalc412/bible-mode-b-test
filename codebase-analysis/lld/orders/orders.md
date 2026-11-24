@@ -35,15 +35,17 @@ The module defines settlement URLs and discount constants, then provides helpers
 
 ```mermaid
 flowchart LR
-  lineTotal["line_total"]
-  orderTotal["order_total"]
+  linetotal["line_total"]
+  ordertotal["order_total"]
   validate["validate"]
   settle["settle"]
-  catalogPrice["catalog.price_of"]
-  catalogStock["catalog.in_stock"]
-  lineTotal -->|"catalog.price_of"| catalogPrice
-  orderTotal -->|"line_total"| lineTotal
-  validate -->|"catalog.in_stock"| catalogStock
+  catalogprice["catalog.price_of"]
+  catalogstock["catalog.in_stock"]
+  urlopen["urllib.request.urlopen"]
+  linetotal -->|"catalog.price_of"| catalogprice
+  ordertotal -->|"line_total"| linetotal
+  validate -->|"catalog.in_stock"| catalogstock
+  settle -->|"HTTP, JSON body to the partner or the local fake"| urlopen
 ```
 
 ## Functions and methods

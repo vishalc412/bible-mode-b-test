@@ -25,7 +25,7 @@ exposes: [route:GET /health, route:GET /price/{sku}]
 
 ## Responsibility
 
-The component stores three product records in the module-level `_PRODUCTS` dictionary and provides price and stock lookups (`components/catalog/catalog.py:8-12`, `components/catalog/catalog.py:15-29`). `orders` imports this module and calls `price_of` and `in_stock` directly (`components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`). The HTTP server also offers GET handling for health and price paths, with `price_of` supplying the price response (`components/catalog/service.py:24-34`). Catalog code includes functions to fetch and apply supplier data, but no feed scheduling or orchestration is defined in this component (`components/catalog/catalog.py:36-47`).
+The component stores three product records in the module-level `_PRODUCTS` dictionary and provides price and stock lookups (`components/catalog/catalog.py:8-12`, `components/catalog/catalog.py:15-29`). `orders` imports this module and calls `price_of` and `in_stock` directly (`components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`). The HTTP server also offers GET handling for health and price paths, with `price_of` supplying the price response (`components/catalog/service.py:24-34`). Catalog code includes functions to fetch and apply supplier data, but no feed scheduling or orchestration is defined in this component (inferred: nothing in the repository calls `fetch_supplier_feed` or `apply_feed`, and no schedule file exists) (`components/catalog/catalog.py:36-47`).
 
 ## Structure
 
@@ -118,8 +118,8 @@ The GET routes do not check authentication or authorization, and the server is c
 
 | Store or file | Reads | Writes | Data dictionary entry |
 | --- | --- | --- | --- |
-| `_PRODUCTS` (in-memory dictionary) | `get_product`, `price_of`, `in_stock`, and `apply_feed` read existing products (`components/catalog/catalog.py:8-12`, `components/catalog/catalog.py:15-29`, `components/catalog/catalog.py:44-45`). | `apply_feed` changes `price` and `stock` for matching products (`components/catalog/catalog.py:44-47`). | [Catalog module](catalog.md#module-level-code) |
-| Supplier JSON response | `fetch_supplier_feed` reads and JSON-decodes the response body (`components/catalog/catalog.py:36-39`). | Not written by this component. | [Catalog module](catalog.md#fetch_supplier_feedtimeout10) |
+| `_PRODUCTS` (in-memory dictionary) | `get_product`, `price_of`, `in_stock`, and `apply_feed` read existing products (`components/catalog/catalog.py:8-12`, `components/catalog/catalog.py:15-29`, `components/catalog/catalog.py:44-45`). | `apply_feed` changes `price` and `stock` for matching products (`components/catalog/catalog.py:44-47`). | [Data dictionary: `_PRODUCTS`](../data-dictionary.md#_products-the-catalog-products) |
+| Supplier JSON response | `fetch_supplier_feed` reads and JSON-decodes the response body (`components/catalog/catalog.py:36-39`). | Not written by this component. | [Data dictionary: external JSON payloads](../data-dictionary.md#external-json-payloads) |
 
 ## Outbound calls
 
@@ -154,7 +154,7 @@ The component and class diagrams were checked by reading their syntax; no Mermai
 
 ## For the whole-system pages
 
-- **Risk:** The catalog GET routes have no authentication or authorization checks and use plain HTTP without TLS; the known orders HTTP client also uses plain HTTP; the server listens on loopback unless a host is set (`components/catalog/service.py:24-34`, `components/catalog/service.py:40-43`, `components/catalog/service.py:48`; `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:19-23`).
+- **Risk:** The catalog GET routes have no authentication or authorization checks and use plain HTTP without TLS (inferred: as under Security, `do_GET` has no identity or permission checks and `make_server` builds a plain `ThreadingHTTPServer`); the known orders HTTP client also uses plain HTTP; the server listens on loopback unless a host is set (`components/catalog/service.py:24-34`, `components/catalog/service.py:40-43`, `components/catalog/service.py:48`; `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:19-23`).
 - **Risk:** Supplier-feed transport uses plain HTTP, and the URL is hard-coded (`components/catalog/catalog.py:5`, `components/catalog/catalog.py:36-39`).
 - **Surprise:** The supplier-fetch docstring claims a nightly cron run, but no invocation is shown by a search for `fetch_supplier_feed` outside the analysis folder (its only hit is the definition at `components/catalog/catalog.py:36`) or by the function body (`components/catalog/catalog.py:36-39`).
 - **Open questions:** No question requiring a person to answer was identified from the catalog component files.

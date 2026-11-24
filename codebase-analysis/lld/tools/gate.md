@@ -211,7 +211,7 @@ Source: `tools/gate.py:42-78` <!-- code: 705feaea6761 -->
 3. For pass 2, reads `risks.md`; if absent, returns `["risks.md missing"]`. For each planned HTTP site, it searches lines containing that site's `at` value, adds an error if no line is found, adds an unresolved-`ASK` error if any matching line says `ASK`, or adds a missing-decision error unless any matching line contains `CHANGE` or `KEEP` (`tools/gate.py:51-62`).
 4. For pass 3, adds an error if `tests-report.md` is absent, collects sorted `components/<component>/test_*.py` paths relative to `ROOT`, and chooses the baseline from `test_count` or, for older plans without it, counts the `test_` functions (not the paths) in the files listed in `spec["tests"]` (`tools/gate.py:63-70`).
 5. Adds an error when the current test-function count is not greater than the baseline (`tools/gate.py:70-72`).
-6. Runs unittest discovery from `ROOT` with `-m unittest discover -s . -p test_*.py -t .`, which finds every `test_*.py` file under `ROOT`, not only the selected component's; if it fails, appends the last 1,500 characters of stderr to the error (`tools/gate.py:73-77`).
+6. Runs unittest discovery from `ROOT` with `-m unittest discover -s . -p test_*.py -t .`, which finds every `test_*.py` file under `ROOT`, not only the selected component's (assumed: library behaviour of `unittest discover` with `-s .` and `-p test_*.py`); if it fails, appends the last 1,500 characters of stderr to the error (`tools/gate.py:73-77`).
 7. Returns the accumulated errors (`tools/gate.py:78`).
 
 **Pseudo-code**
@@ -231,7 +231,7 @@ elif pass 3:
     require tests-report.md
     list and count component test functions
     compare count with the planned baseline (or count test functions in the planned test files)
-    run unittest discovery over every test_*.py under ROOT
+    run unittest discovery over every test_*.py under ROOT (assumed: unittest behaviour)
     report failure with stderr tail when command fails
 return errors
 ```
@@ -254,7 +254,7 @@ return errors
 | `tools/gate.py:71` | `if` | `now <= before` | Appends an error that the component has no new test functions (`tools/gate.py:71-72`). |
 | `tools/gate.py:76` | `if` | `subprocess.run` returns a nonzero code | Appends a test-failure error with the final 1,500 stderr characters (`tools/gate.py:76-77`). |
 
-**Output and side effects**: Returns an error list; pass 3 launches unittest discovery as a subprocess with captured text output (`tools/gate.py:73-78`).
+**Output and side effects**: Returns an error list; pass 3 launches unittest discovery as a subprocess with captured text output (`tools/gate.py:73-78`). A plan entry that lacks `functions` (pass 1), `http_sites` (pass 2) or, when it has no `test_count`, `tests` (pass 3) raises `KeyError`, which `check` does not catch (`tools/gate.py:50`, `tools/gate.py:55`, `tools/gate.py:69`).
 
 ### `main()`
 
@@ -279,8 +279,8 @@ Source: `tools/gate.py:81-113` <!-- code: 4d59bf2d5380 -->
 1. Builds an argument parser with positional `component` and optional integer `--pass` stored in `args.n`, then parses the command line (`tools/gate.py:82-85`).
 2. Reads and JSON-decodes `codebase-analysis/plan.json`; errors from a missing file or invalid plan JSON are not caught here (`tools/gate.py:86`).
 3. If the component is absent from `plan["components"]`, reports `unknown component <name>` through `fail` and returns its status; otherwise sets `out` to `codebase-analysis/components/<component>` and initializes `errors` (`tools/gate.py:87-90`).
-4. If `args.n` is truthy, validates only that pass. Otherwise it reads `status.json`, uses an empty object if the file is absent, decodes JSON, rejects invalid JSON or a non-object, then reads `passes_done` and `open_questions` (`tools/gate.py:91-108`).
-5. If there are no passes, reports `status.json missing or no passes_done` and returns. Invalid `open_questions` adds an error; a positive count adds a blocked error (`tools/gate.py:101-108`).
+4. If `args.n` is truthy, validates only that pass. Otherwise it reads `status.json`, uses an empty object if the file is absent, decodes JSON, rejects invalid JSON or a non-object, then reads `passes_done` (`tools/gate.py:91-101`).
+5. If there are no passes, reports `status.json missing or no passes_done` and returns; only otherwise does it read `open_questions`: an invalid value adds an error and a positive count adds a blocked error (`tools/gate.py:101-108`).
 6. For each selected pass, calls `check`, prints `<component> pass <n>: PASS` or `FAIL`, and appends the returned errors (`tools/gate.py:109-112`).
 7. Calls `fail(errors)` and returns its result (`tools/gate.py:113`).
 

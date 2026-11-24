@@ -17,7 +17,7 @@ Sessions (est.) is the packets divided by the packets per session, rounded up, p
 flowchart LR
   catalog["catalog"]
   orders["orders"]
-  bible_mode_b["bible-mode-b"]
+  biblemodeb["bible-mode-b"]
   tools["tools"]
   orders -->|"in_stock, price_of"| catalog
 ```

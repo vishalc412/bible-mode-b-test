@@ -1,10 +1,10 @@
 {
- "generated": "2026-11-24T15:55:49",
+ "generated": "2026-11-24T16:54:03",
  "tool": "analyzing-a-codebase/scripts/knowledge.py 1.5.0",
  "stats": {
   "nodes": 211,
   "edges": 566,
-  "chunks": 336,
+  "chunks": 346,
   "calls_unresolved": 97,
   "by_node_type": {
    "File": 33,
@@ -342,9 +342,9 @@
    "lines": 12
   },
   {
-   "id": "file:temporary-gate-worktree",
+   "id": "file:temporary-gate-workspace",
    "type": "File",
-   "name": "temporary-gate-worktree"
+   "name": "temporary-gate-workspace"
   },
   {
    "id": "file:tls-migration/01-inventory.md",
@@ -4634,7 +4634,7 @@
   },
   {
    "source": "component:bible-mode-b",
-   "target": "file:temporary-gate-worktree",
+   "target": "file:temporary-gate-workspace",
    "type": "WRITES",
    "evidence": "lld/bible-mode-b/README.md",
    "resolution": "analysis"
@@ -4788,7 +4788,7 @@
   },
   {
    "source": "file:.github/bible/bible_queue.py",
-   "target": "file:temporary-gate-worktree",
+   "target": "file:temporary-gate-workspace",
    "type": "WRITES",
    "evidence": "lld/bible-mode-b/bible_queue.md",
    "resolution": "analysis"

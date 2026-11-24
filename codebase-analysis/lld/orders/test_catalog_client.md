@@ -44,14 +44,14 @@ The graph shows test methods using the local HTTP helper; `setUpClass` also uses
 
 ```mermaid
 flowchart LR
-  setupClass["CatalogClientTest.setUpClass"]
-  environGet["os.environ.get"]
-  queryTest["CatalogClientTest.test_query_string_ignored_by_server"]
-  encodedTest["CatalogClientTest.test_percent_encoded_sku_decoded"]
-  getHelper["CatalogClientTest.get"]
-  setupClass -->|"os.environ.get"| environGet
-  queryTest -->|"self.get"| getHelper
-  encodedTest -->|"self.get"| getHelper
+  setupclass["CatalogClientTest.setUpClass"]
+  environget["os.environ.get"]
+  querytest["CatalogClientTest.test_query_string_ignored_by_server"]
+  encodedtest["CatalogClientTest.test_percent_encoded_sku_decoded"]
+  gethelper["CatalogClientTest.get"]
+  setupclass -->|"os.environ.get"| environget
+  querytest -->|"self.get"| gethelper
+  encodedtest -->|"self.get"| gethelper
 ```
 
 | Element | Evidence |

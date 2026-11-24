@@ -22,6 +22,14 @@ The matching lines are documented as component behavior; they were not treated a
 - The queue file did not change, so there was no delta to apply and the line numbers of the report were valid; each cited line was still opened before it was used.
 - One command of this session created an empty file `/tmp/_unused` outside the analysis folder by mistake (a stray `cat >` redirect) and removed it in the next command. Nothing else was written outside the folder, and nothing was run, installed or fetched over a network.
 
+## Revision of the report of 2026-11-24, round 5: judgments made without the user
+
+- The report's closing words for the replay sentence, "or a person picks them up", were not written: no code line says so. The sentence says what the code shows, that the next update issue for the same component asks for every change since the baseline.
+- `(inferred: ...)` was used for absences and searches, `(assumed: ...)` for library or GitHub behaviour that the code only states in a comment or relies on. The counts of the marks on the front page are a search of the pages; the log and these notes are not counted.
+- The gate does not resolve paths under `.github/skills` (outside the inventory), so the `NEW_CHAT` row of the data dictionary names the toolkit's `next.py` in words instead of citing its lines.
+- Two diagrams were added in hld/04 (the component row on the tracker, and the data model of the hidden `bible-settings` and `bible-state` blocks) and two stores were drawn in the containers diagram, because the report names the omissions; their statements are new and are listed in `revision-log.md` (R5-V-015) for the re-check.
+- Two slips of this session against the instructions: one command ran `git diff --stat` (read-only, it changed nothing) and one command created an empty file `/tmp/NOPE` outside the analysis folder by mistake and removed it in the next command. Nothing else was written outside the folder, and nothing was installed or fetched over a network.
+
 <!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
 
 <!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->

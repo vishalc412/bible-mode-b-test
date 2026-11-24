@@ -45,13 +45,9 @@ Every response carries `Content-Type: application/json` and a `Content-Length` h
 sequenceDiagram
   autonumber
   participant Client as catalog HTTP client
-  participant Handler as CatalogHandler.do_GET
+  participant Handler as CatalogHandler.do-GET
   Client->>Handler: GET /health over HTTP
-  alt path is /health
-    Handler-->>Client: 200 with health JSON
-  else path is not a catalog route
-    Handler-->>Client: 404 with not-found JSON
-  end
+  Handler-->>Client: 200 with health JSON
 ```
 
 | Step | What happens | Evidence |
@@ -95,9 +91,9 @@ Every response carries `Content-Type: application/json` and a `Content-Length` h
 ```mermaid
 sequenceDiagram
   autonumber
-  participant Client as orders.catalog_client.remote_price
-  participant Handler as CatalogHandler.do_GET
-  participant Price as catalog.price_of
+  participant Client as orders.catalog-client.remote-price
+  participant Handler as CatalogHandler.do-GET
+  participant Price as catalog.price-of
   Client->>Handler: GET /price/sku over plain HTTP
   Handler->>Price: price_of decoded sku
   alt SKU exists
