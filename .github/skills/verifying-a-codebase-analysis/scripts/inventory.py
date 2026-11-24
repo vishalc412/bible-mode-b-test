@@ -33,6 +33,9 @@ EXCLUDED_DIRS = {
     ".idea", ".vscode", "coverage", ".next", ".nuxt", ".angular", ".gradle",
     ".terraform", "site-packages", ".remember", ".crib", ".migration-toolkit-backups",
 }
+# A git worktree or submodule has a FILE named .git (a pointer to the real repository), not a folder: version-control
+# metadata, never code (seen in the live run, 24 Nov 2026: a verification in a worktree listed it as a changed file).
+VCS_FILES = {".git"}
 TOOLKIT_FILES = {".DS_Store", ".migration-toolkit-version"}  # written by the OS and by this toolkit's installer
 
 # The toolkit's own skills, wherever an assistant installed them, are not the system.
@@ -475,7 +478,7 @@ def scan(repo: str, analysis_rel: str, extra_excludes):
         dirs[:] = keep
         for name in sorted(names):
             full = os.path.join(root, name)
-            if os.path.islink(full) or name in TOOLKIT_FILES:
+            if os.path.islink(full) or name in TOOLKIT_FILES or name in VCS_FILES:
                 continue
             rel = os.path.normpath(os.path.join(rel_root, name)).replace(os.sep, "/")
             files.append(file_entry(rel, read_text(full)))
@@ -506,7 +509,7 @@ def in_scope(rel: str, analysis_rel: str, extra_excludes) -> bool:
     """The rule scan() applies while walking, for a path known only by name (a file in an older commit)."""
     parts = rel.split("/")
     analysis_rel = analysis_rel.replace("\\", "/").strip("/")
-    if rel == analysis_rel or rel.startswith(analysis_rel + "/") or parts[-1] in TOOLKIT_FILES:
+    if rel == analysis_rel or rel.startswith(analysis_rel + "/") or parts[-1] in TOOLKIT_FILES or parts[-1] in VCS_FILES:
         return False
     for i, part in enumerate(parts[:-1]):
         if part in EXCLUDED_DIRS or (part in TOOLKIT_SKILLS and i > 0 and parts[i - 1] == "skills"):
