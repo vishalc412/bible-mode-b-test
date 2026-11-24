@@ -3,7 +3,7 @@ id: reference/open-questions
 kind: reference
 source: [codebase-analysis/ledger/components/orders/questions.md, codebase-analysis/ledger/components/tools/questions.md]
 summary: Lists the answered component questions and confirms that none remain open
-depends_on: [hld/02-architecture, lld/orders/README, lld/tools/README]
+depends_on: [page:hld/02-architecture.md, page:lld/orders/README.md, page:lld/tools/README.md]
 ---
 # Open questions
 

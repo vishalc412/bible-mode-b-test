@@ -8,7 +8,7 @@ reads: [store:_PRODUCTS, external:Supplier One]
 writes: [store:_PRODUCTS]
 calls: [external:Supplier One]
 uses: [symbol:price_of, symbol:in_stock]
-config: [CATALOG_HOST, CATALOG_PORT]
+config: [config:CATALOG_HOST, config:CATALOG_PORT]
 exposes: [route:GET /health, route:GET /price/{sku}]
 ---
 
@@ -140,7 +140,7 @@ The GET routes do not check authentication or authorization, and the server is c
 
 ## Logging and monitoring
 
-`CatalogHandler.log_message` discards the handler's log message by doing nothing (`components/catalog/service.py:36-37`). The three catalog source files define no metrics or tracing calls (`components/catalog/catalog.py:1-47`, `components/catalog/service.py:1-49`, `components/catalog/test_catalog.py:1-12`).
+`CatalogHandler.log_message` discards the handler's log message by doing nothing (`components/catalog/service.py:36-37`). The three catalog source files define no metrics or tracing calls (inferred: a search of the three files for `metric`, `trace`, `opentelemetry`, `statsd` and `logging` found nothing; `components/catalog/catalog.py:1-47`, `components/catalog/service.py:1-49`, `components/catalog/test_catalog.py:1-12`).
 
 ## Tests
 
@@ -148,7 +148,7 @@ The GET routes do not check authentication or authorization, and the server is c
 
 ## Surprises
 
-`orders` uses direct Python calls to `price_of` and `in_stock`; it also has an HTTP client for the price route, which is exercised by the orders tests (`components/orders/orders.py:5,19-20,35-42`; `components/orders/catalog_client.py:19-23`; `components/orders/test_catalog_client.py:37-54`). The supplier URL uses plain HTTP, and the fetch function's docstring says it runs nightly from cron, but a repository search for `fetch_supplier_feed` found four hits, with the only source-code hit being its definition (`components/catalog/catalog.py:36-39`; search: `fetch_supplier_feed` in the repository, 4 hits). This component does not show the claimed schedule.
+`orders` uses direct Python calls to `price_of` and `in_stock`; it also has an HTTP client for the price route, which is exercised by the orders tests (`components/orders/orders.py:5,19-20,35-42`; `components/orders/catalog_client.py:19-23`; `components/orders/test_catalog_client.py:37-54`). The supplier URL uses plain HTTP, and the fetch function's docstring says it runs nightly from cron, but a search for `fetch_supplier_feed` in the repository outside the analysis folder finds only its definition (`components/catalog/catalog.py:36-39`; search: `fetch_supplier_feed`, excluding `codebase-analysis/`). This component does not show the claimed schedule.
 
 The component and class diagrams were checked by reading their syntax; no Mermaid renderer was available.
 
@@ -156,7 +156,7 @@ The component and class diagrams were checked by reading their syntax; no Mermai
 
 - **Risk:** The catalog GET routes have no authentication or authorization checks and use plain HTTP without TLS; the known orders HTTP client also uses plain HTTP (`components/catalog/service.py:24-34,40-43,48`; `components/orders/catalog_client.py:1-4,11,19-23`).
 - **Risk:** Supplier-feed transport uses plain HTTP, and the URL is hard-coded (`components/catalog/catalog.py:5,36-39`).
-- **Surprise:** The supplier-fetch docstring claims a nightly cron run, but no invocation is shown by the repository search for `fetch_supplier_feed` (4 hits, with the only source-code hit at `components/catalog/catalog.py:36`) or by the function body (`components/catalog/catalog.py:36-39`).
+- **Surprise:** The supplier-fetch docstring claims a nightly cron run, but no invocation is shown by a search for `fetch_supplier_feed` outside the analysis folder (its only hit is the definition at `components/catalog/catalog.py:36`) or by the function body (`components/catalog/catalog.py:36-39`).
 - **Open questions:** No question requiring a person to answer was identified from the catalog component files.
 - **Glossary:** `SKU` is the key used to identify each product in `_PRODUCTS` (`components/catalog/catalog.py:8-12`); the supplier feed's `products` collection contains the entries consumed by `apply_feed` (`components/catalog/catalog.py:42-47`).
 

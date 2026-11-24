@@ -63,7 +63,7 @@ Source: `components/orders/orders.py:19-20` <!-- code: 878843ee3bcf -->
 
 | Name | Type | Meaning | Checked how |
 | --- | --- | --- | --- |
-| `sku` | not annotated | SKU passed to `catalog.price_of` | Catalog lookup; unknown SKUs raise `KeyError` (`components/catalog/catalog.py:17-22`). |
+| `sku` | not annotated | SKU passed to `catalog.price_of` | Catalog lookup; unknown SKUs raise `KeyError` (`components/catalog/catalog.py:20-24`). |
 | `qty` | not annotated | Multiplier for the catalog price | No validation in this function (`components/orders/orders.py:19-20`). |
 
 **Steps**
@@ -76,7 +76,7 @@ Source: `components/orders/orders.py:19-20` <!-- code: 878843ee3bcf -->
 return catalog.price_of(sku) * qty
 ```
 
-**Output and side effects**: Returns the product of the catalog price and quantity; the catalog lookup may raise `KeyError` for an unknown SKU (`components/orders/orders.py:19-20`, `components/catalog/catalog.py:17-22`).
+**Output and side effects**: Returns the product of the catalog price and quantity; the catalog lookup may raise `KeyError` for an unknown SKU (`components/orders/orders.py:19-20`, `components/catalog/catalog.py:20-24`).
 
 ### `order_total(lines, loyal=False)`
 
@@ -120,7 +120,7 @@ return round(subtotal * (1 - discount), 2)
 | `components/orders/orders.py:28` | `if loyal` | `loyal` is truthy | Sets the discount to `LOYALTY_DISCOUNT` (`components/orders/orders.py:28-29`). |
 | `components/orders/orders.py:30` | `if items >= BULK_THRESHOLD` | Total quantity is at least 10 | Uses the greater of the current discount and `BULK_DISCOUNT` (`components/orders/orders.py:30-31`). |
 
-**Output and side effects**: Returns the discounted subtotal rounded to two decimal places (`components/orders/orders.py:32`). A catalog lookup error from `line_total` propagates (`components/orders/orders.py:25`, `components/catalog/catalog.py:17-22`).
+**Output and side effects**: Returns the discounted subtotal rounded to two decimal places (`components/orders/orders.py:32`). A catalog lookup error from `line_total` propagates (`components/orders/orders.py:25`, `components/catalog/catalog.py:20-24`).
 
 ### `validate(lines)`
 

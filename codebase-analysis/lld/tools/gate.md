@@ -46,7 +46,7 @@ Source file: `tools/gate.py`
 flowchart LR
   fail["fail"]
   read["read"]
-  ct[count_tests]
+  ct["count_tests"]
   check["check"]
   main["main"]
   check -->|"read artifacts"| read
@@ -145,7 +145,7 @@ Source: `tools/gate.py:33-39` <!-- code: 6d0b09eb9140 -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | `check` (`tools/gate.py:69-70`) |
+| Called by | `check` (`tools/gate.py:69-70`), `scan` in `tools/plan.py` (`tools/plan.py:36`; imported at `tools/plan.py:15`) |
 | Calls | `ast.walk`, `ast.parse`, `read_text`, `isinstance`, `node.name.startswith` |
 | Purpose | Counts Python function definitions whose names start with `test_` across the supplied repository-relative paths. |
 
@@ -331,3 +331,5 @@ The module imports six standard-library modules, sets `ROOT` to the parent of th
 None identified in this file.
 
 <!-- cites tools/gate.py@65eb0af527e554cfb2dadb9d0c8cd1ee6e975c99 -->
+
+<!-- cites tools/plan.py@e1dae33df7990fe69b145146d570403758d0635e -->

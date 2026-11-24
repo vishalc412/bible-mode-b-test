@@ -1,6 +1,6 @@
 # Coverage ledger
 
-Depth: deep. Snapshot: 24 files, 2026-11-24. Inventory: `ledger/inventory.json` of 2026-11-24.
+Depth: deep. Snapshot: 24 files in scope, 2026-11-24 (the `.git` worktree pointer file is not part of the repository's content and is not in the inventory). Inventory: `ledger/inventory.json` of 2026-11-24.
 
 | Path | Status | Pages |
 | --- | --- | --- |
@@ -40,6 +40,6 @@ Depth: deep. Snapshot: 24 files, 2026-11-24. Inventory: `ledger/inventory.json` 
 
 ## Coverage from coverage.py
 
-The whole-analysis gate is being rerun after revision. The current source inventory includes 24 files and 14 source files; exact symbol, branch, call-graph and citation coverage is recorded below after the gate completes. `.github/bible/bible_queue.py` is 1,310 lines (`.github/bible/bible_queue.py:1-1310`). The separate catalog endpoint cards cover both manually matched GET paths; the static route counter detects none (`ledger/coverage-report.md`).
+The whole-analysis gate (`coverage.py --depth deep`, run on 24 Nov 2026 after this revision) counts 24 files in scope and 11 source files with a page: the inventory lists 14 source-language files, and the 3 empty `__init__.py` files hold no code. The figures are in `ledger/coverage-report.md`: result `PASS` at deep with 116/116 symbols, 98/98 functions with a full card, 320/320 branch lines, 232/232 call-graph edges, 2,213/2,213 citations, 17/17 front-matter pages, 2/2 calls into other components. `.github/bible/bible_queue.py` is 1,336 lines (`.github/bible/bible_queue.py:1-1336`). The separate catalog endpoint cards cover both manually matched GET paths; the static route counter detects none. The `.git` worktree pointer file that an earlier inventory listed as a 25th file is not part of the repository's content and is not in this inventory.
 
-<!-- cites .github/bible/bible_queue.py@161344dc7ddde551f4020972e6d61c782a86d480 -->
+<!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
