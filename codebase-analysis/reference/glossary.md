@@ -10,14 +10,14 @@ depends_on: [hld/01-system-context, hld/04-data-architecture, hld/05-key-flows, 
 | Term | Meaning in this system | Where it appears |
 | --- | --- | --- |
 | Analysis plan | Versioned JSON inventory of components, source files, tests, functions, HTTP sites, and test baselines. | [`plan.json`](../hld/04-data-architecture.md), [`plan.py`](../lld/tools/plan.md); `tools/plan.py:21-58` |
-| Analysis tracker | GitHub issue holding settings and progress for one analysis run. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:316-321,851-855` |
-| Agent session issue | Issue assigned to Copilot for a planning, component, assembly, or verification session. | [`bible-mode-b`](../lld/bible-mode-b/README.md); `.github/bible/bible_queue.py:144-151,538-546,771-773` |
-| Component branch | Branch named `bible/<component>` used for analysis work before a review PR targets the default branch. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:553-558,608-612` |
-| Session PR | Copilot's pull request for one assigned work session; the queue validates it and may merge it into the component branch. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:404-409,659-715` |
-| Component review PR | PR from a completed component branch to the default branch for a person to review and merge. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:608-624` |
-| Verification report | Markdown artifact carrying a verdict and, for component checks, a fingerprint of the pages reviewed. | [`data dictionary`](../lld/data-dictionary.md); `.github/bible/bible_queue.py:365-378,619-623,749-753` |
-| Pages fingerprint | Short hash used to confirm that a verification report concerns the pages currently being checked. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:609-623,707-709` |
-| Delta issue | Issue asking for an analysis component to be refreshed after code changes since the baseline. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:790-817` |
+| Analysis tracker | GitHub issue holding settings and progress for one analysis run. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:382-402,1183-1194` |
+| Agent session issue | Issue assigned to Copilot for a planning, component, assembly, or verification session. | [`bible-mode-b`](../lld/bible-mode-b/README.md); `.github/bible/bible_queue.py:164-171,422-426,512-545` |
+| Component branch | Branch named `bible/<component>` used for analysis work before a review PR targets the default branch. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:671-683` |
+| Session PR | Copilot's pull request for one assigned work session; the queue validates it and may merge it into the component branch. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:485-491,798-855` |
+| Component review PR | PR from a completed component branch to the default branch for a person to review and merge. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:755-759` |
+| Verification report | Markdown artifact carrying a verdict and, for component checks, a fingerprint of the pages reviewed. | [`data dictionary`](../lld/data-dictionary.md); `.github/bible/bible_queue.py:446-459,754-755,788-796` |
+| Pages fingerprint | Short hash used to confirm that a verification report concerns the pages currently being checked. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:874-877,755` |
+| Delta issue | Issue asking for an analysis component to be refreshed after code changes since the baseline. | [`bible_queue`](../lld/bible-mode-b/bible_queue.md); `.github/bible/bible_queue.py:1247-1257` |
 | SKU | Identifier used as the key for a product in the in-memory catalog. | [`catalog`](../lld/catalog/catalog.md); `components/catalog/catalog.py:8-12,15-17` |
 | Product feed | Supplier JSON response read by `fetch_supplier_feed`; `apply_feed` updates prices and stock for known SKUs. | [`catalog`](../lld/catalog/catalog.md); `components/catalog/catalog.py:36-47` |
 | In-process catalog access | Current order helper path, importing the catalog module and calling price and stock functions directly. | [`orders`](../lld/orders/orders.md); `components/orders/orders.py:5,19-20,35-42` |
@@ -30,7 +30,7 @@ depends_on: [hld/01-system-context, hld/04-data-architecture, hld/05-key-flows, 
 | Issue fanout | Bash command that creates labels and one component-analysis issue per component in the plan. | [`fanout`](../lld/tools/fanout.md); `tools/fanout.sh:7-30` |
 | Image CDN URL | A URL built by `image_url`; catalog code returns it but does not fetch the image. | [`catalog`](../lld/catalog/catalog.md), [`system context`](../hld/01-system-context.md); `components/catalog/catalog.py:6,32-33` |
 
-<!-- cites .github/bible/bible_queue.py@68e91ae09c53c283e7402334cfe2a715785b33ed -->
+<!-- cites .github/bible/bible_queue.py@161344dc7ddde551f4020972e6d61c782a86d480 -->
 
 <!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
 

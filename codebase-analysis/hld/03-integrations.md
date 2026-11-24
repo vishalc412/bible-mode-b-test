@@ -31,7 +31,7 @@ depends_on:
 | POC workflow | Manual dispatch with title, task, base branch and model | GitHub Actions event | Repository operators | GitHub workflow access; uses the repository secret for the API call | [Component design](../lld/bible-mode-b/README.md) | `.github/workflows/poc-assign-copilot.yml:11-29,34-69` |
 | `orders` | `line_total`, `order_total`, `validate`, `settle` | Python library functions | Importing Python code; no HTTP route is declared | None in these functions | [Orders module](../lld/orders/orders.md) | `components/orders/orders.py:19-51` |
 | `tools` | `python tools/plan.py`, `python tools/gate.py ...`, `tools/fanout.sh ...` | CLI commands | Local operator or automation invoking the commands | Shell/runner access; `gh` uses its configured auth | [Tools design](../lld/tools/README.md) | `tools/plan.py:41-62`; `tools/gate.py:81-117`; `tools/fanout.sh:2-5` |
-| `bible-mode-b` | `bible_queue.py start`, `reconcile`, `delta` | CLI commands invoked by workflows | GitHub Actions runner or a local operator | Requires `GITHUB_REPOSITORY` and `GH_TOKEN` | [Queue module](../lld/bible-mode-b/bible_queue.md#main) | `.github/bible/bible_queue.py:820-867` |
+| `bible-mode-b` | `bible_queue.py start`, `reconcile`, `delta` | CLI commands invoked by the start, queue and delta workflows | GitHub Actions runner or a local operator | Requires `GITHUB_REPOSITORY` and `GH_TOKEN` | [Queue module](../lld/bible-mode-b/bible_queue.md#main) | `.github/bible/bible_queue.py:1260-1310`; `.github/workflows/bible-plan.yml:44-54`; `.github/workflows/bible-queue.yml:31-37`; `.github/workflows/bible-delta.yml:25-38` |
 
 The catalog API binds to `127.0.0.1` on port 8001 by default, configurable with `CATALOG_HOST` and `CATALOG_PORT`; no TLS or authentication is configured in the handler (`components/catalog/service.py:1-5,24-43`).
 
@@ -44,10 +44,10 @@ The catalog API binds to `127.0.0.1` on port 8001 by default, configurable with 
 | `orders.catalog_client` | Catalog HTTP API | Reads one SKU price in separate-service mode | HTTP | HTTP | 8001 by default; URL may override | `CATALOG_URL`, default `http://127.0.0.1:8001` | None shown | Default 5 seconds; no retry or fallback | `components/orders/catalog_client.py:11,14-23`; `components/catalog/service.py:40-43` |
 | `orders.settle` | Payment partner | Sends JSON order settlement | HTTP | HTTP | 80 implicit | `PARTNER_SETTLE_URL` constant | None shown | Default 15 seconds; no retry or fallback | `components/orders/orders.py:7-9,45-51` |
 | `orders.settle(dev=True)` | Local development fake | Sends the same settlement payload for development | HTTP | HTTP | 8099 | `DEV_SETTLE_URL` constant | None shown | Default 15 seconds; no retry or fallback | `components/orders/orders.py:12,45-51` |
-| `bible-mode-b` | GitHub API | Issues, labels, branches, contents, PRs, timelines, commits, tarballs, GraphQL ready-for-review | REST and GraphQL | HTTPS by default | 443 by default | `GITHUB_API_URL`, default `https://api.github.com` | GitHub token from `GH_TOKEN` | Request timeout 60 seconds; tarball 300 seconds; no retry; optional 404 fallback in `GitHub.call` | `.github/bible/bible_queue.py:91-117,129-302` |
+| `bible-mode-b` | GitHub API | Issues, labels, branches, contents, PRs, timelines, commits, tarballs, GraphQL ready-for-review | REST and GraphQL | HTTPS by default | 443 by default | `GITHUB_API_URL`, default `https://api.github.com` | GitHub token from `GH_TOKEN` | Request timeout 60 seconds; tarball 300 seconds; no retry; optional 404 fallback in `GitHub.call` | `.github/bible/bible_queue.py:108-351` |
 | POC workflow | GitHub Issues API | Creates an issue and assigns Copilot | REST through `gh api` | GitHub API HTTPS | 443 by default | `REPO` and GitHub CLI API base | `BIBLE_ASSIGN_TOKEN` in `GH_TOKEN` | No timeout or retry specified in the workflow | `.github/workflows/poc-assign-copilot.yml:40-69` |
 | `tools/fanout.sh` | GitHub CLI (`gh`) | Creates engine/component labels and issues | CLI; network transport is not specified in the script | Not specified | Not specified | Supplied `owner/repo` argument | `gh` configuration; not specified in the script | No timeout or retry specified | `tools/fanout.sh:7-29` |
-| `bible-mode-b` | Analysis toolkit scripts and helpers under `BIBLE_SKILLS` | Maps changed files; checks component coverage and reads page fingerprint | In-process Python import and local subprocess | Local process | N/A | `BIBLE_SKILLS`, default `.github/skills` | Same runner filesystem | No subprocess timeout is passed | `.github/bible/bible_queue.py:397-399,698-735,794-802` |
+| `bible-mode-b` | Analysis toolkit scripts and helpers under `BIBLE_SKILLS` | Maps changed files; checks component coverage and reads page fingerprint | In-process Python import and local subprocess | Local process | N/A | `BIBLE_SKILLS`, default `.github/skills` | Same runner filesystem | Each coverage.py and status.py subprocess has a 300-second timeout (`GATE_TIMEOUT`); a timeout means the check could not run, not that it failed | `.github/bible/bible_queue.py:1221-1227,857-882,76` |
 
 `image_url` returns a URL under `IMAGE_CDN` but performs no network request, so it is not counted as an outbound connection (`components/catalog/catalog.py:6,32-33`).
 
@@ -58,12 +58,18 @@ The catalog API binds to `127.0.0.1` on port 8001 by default, configurable with 
 | `orders` | `catalog` | Direct in-process price/stock calls; optional HTTP price client is exercised by tests and intended for separate services | `components/orders/orders.py:5,19-20,35-42`; `components/orders/catalog_client.py:14-23`; `components/orders/test_catalog_client.py:37-62` |
 | `catalog` | Supplier One | Supplier JSON fetch when explicitly invoked; no in-repository schedule or caller is shown | `components/catalog/catalog.py:36-47`; `codebase-analysis/lld/catalog/README.md:149,157` |
 | `orders` | Payment partner | Settlement POST | `components/orders/orders.py:45-51` |
-| `bible-mode-b` | GitHub and Copilot | Stores run state and creates/assigns sessions; agent returns work through issue timelines and PRs | `.github/bible/bible_queue.py:129-151,195-220,538-571,738-774` |
-| `bible-mode-b` | Analysis toolkit | Imports component helpers and runs coverage/status scripts | `.github/bible/bible_queue.py:397-399,698-735,794-802` |
+| `bible-mode-b` | GitHub and Copilot | Stores run state and creates/assigns sessions; agent returns work through issue timelines and PRs | `.github/bible/bible_queue.py:125-151,164-171,202-232,512-578` |
+| `bible-mode-b` | Analysis toolkit | Imports component helpers and runs coverage/status scripts | `.github/bible/bible_queue.py:1221-1223,857-882` |
 | `tools` | GitHub CLI | Creates component labels and issues from `plan.json` | `tools/fanout.sh:7-29` |
 | `tools.plan` | `tools.gate` | Uses the same test counter while generating the plan baseline | `tools/plan.py:15,36-38`; `tools/gate.py:33-39` |
 
-<!-- cites .github/bible/bible_queue.py@68e91ae09c53c283e7402334cfe2a715785b33ed -->
+<!-- cites .github/bible/bible_queue.py@161344dc7ddde551f4020972e6d61c782a86d480 -->
+
+<!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
+
+<!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
+
+<!-- cites .github/workflows/bible-queue.yml@d54080b12d039672f31f0d0924cc380ded069010 -->
 
 <!-- cites .github/workflows/poc-assign-copilot.yml@dab60e0d846bfee50726dce662df48fc186ca3d3 -->
 

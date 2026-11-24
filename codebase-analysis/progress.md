@@ -103,7 +103,7 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 - `knowledge.py` reports 211 nodes, 508 edges, 298 chunks, and no unmatched front-matter names. The 72 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
 - The three knowledge-base reader questions are summarized after final graph generation.
 
-<!-- cites .github/bible/bible_queue.py@68e91ae09c53c283e7402334cfe2a715785b33ed -->
+<!-- cites .github/bible/bible_queue.py@161344dc7ddde551f4020972e6d61c782a86d480 -->
 
 <!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
 
