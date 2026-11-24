@@ -89,8 +89,8 @@ For every diagram:
 4. **Mark sweep, every page.** Search all the pages for `none`, `never`, `nothing`, `nowhere`, `no other`, `not called`, `not used`, `only`, `per the docstring`, `the comment says`, `GitHub`, `by default`. For each sentence found, decide once: the cited lines show it (no mark), it rests on an absence or a search (`(inferred: searched <what>, <hits> hits)`), on a comment or document (`(inferred: per <file:line>)`), or on a library or platform's behaviour (`(assumed: <library>)`). In the live run, an unmarked statement of this kind was the verifier's most common finding over six rounds (round 6: 124 of its 142 Overstated rows, by its own correction rows): each revision fixed the rows that were listed, and the same slip stayed on other pages.
 5. The totals in `README.md` match `ledger/coverage-report.md` and the ledger.
 6. No secret value in the output: search it for `password`, `passwd`, `secret`, `token`, `api_key`, `apikey`, `BEGIN`, `Authorization:` and `://` followed by a user and password. Each hit must be a location or description, never a value.
-6. No personal data copied from the code or sample data: names, e-mail addresses, phone numbers, user identifiers.
-7. Every piece of text in the repository addressed to an AI assistant is recorded in `run-notes.md` with its location, and was not acted on.
+7. No personal data copied from the code or sample data: names, e-mail addresses, phone numbers, user identifiers.
+8. Every piece of text in the repository addressed to an AI assistant is recorded in `run-notes.md` with its location, and was not acted on.
 
 ## 6. Knowledge base
 

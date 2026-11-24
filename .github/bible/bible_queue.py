@@ -91,6 +91,7 @@ ATTEMPT = re.compile(r"^Attempt:\s*(\d+)", re.M)
 NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,39}\Z")
 LABELS = {
     "bible-tracker": "One analysis run: settings and progress",
+    "bible-replayed": "Closed run: its recorded code changes are in update issues",
     "bible-plan": "Copilot session: plan the components",
     "bible-chunk": "Copilot session: part of one component",
     "bible-verify": "Copilot session: verify one component",
@@ -387,6 +388,7 @@ def age(stamp):
 
 SAFE_PATH = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)*\Z")
 SAFE_FILE = re.compile(r"^(?!.*(?:^|/)\.\.(?:/|$))[A-Za-z0-9_.][A-Za-z0-9_./-]{0,250}\Z")  # quoted to Copilot: no spaces, @, '..' or leading '-'
+REPLAYED_MARK = "<!-- bible-deferred-replayed -->"  # on a closed tracker: its recorded updates are in update issues
 DEFERRED_PER_COMMENT = 200 # paths per deferred-update comment (GitHub's comment limit is 65,536 characters)
 ABANDONED_AFTER = 14 * 24 * 3600  # a tracker untouched this long no longer holds back update issues
 MAX_DELTA_ISSUES = 10      # update sessions one push may start; more, and a person decides
@@ -466,20 +468,78 @@ def section(text, title):
     return rest[:nxt.start()] if nxt else rest
 
 
-def report_facts(text):
-    """(verdict, major corrections, fingerprint) of a verification report, by the same rules as status.py:
-    exactly one Verdict row, holding one verdict, outside comments and code blocks."""
+RECHECK_LINE = re.compile(r"After corrections:[^\n]*?(\d+)\s+of\s+(\d+)\s+confirmed", re.I)  # status.py's rule
+ACCURACY_ROW = re.compile(r"^\|\s*Accuracy[^|]*\|\s*(\d+(?:\.\d+)?)\s*%", re.M | re.I)    # status.py's rule
+RECHECK_MIN_ACCURACY = 95.0
+RECHECK_OF_ROW = re.compile(r"^\|\s*Re-check of\s*\|\s*`?([^|`]+?)`?\s*\|\s*$", re.M | re.I)              # status.py's rule
+REPORT_NAME = re.compile(r"^verification-report[\w.-]*\.md$")
+
+
+def report_facts(text, fetch=None, depth=0):
+    """(verdict, major corrections, fingerprint, (confirmed, flagged) or None, accuracy or None) of a verification report,
+    by the same rules as status.py: exactly one Verdict row, holding one verdict, outside comments and code blocks."""
     if not text:
         return None
     visible = re.sub(r"<!--.*?-->|^```.*?^```", "", text, flags=re.S | re.M)
-    found = re.findall(r"^\|\s*Verdict\s*\|\s*\**\s*(PASS AFTER CORRECTIONS|PASS|FAIL)\s*\**\s*\|\s*$", visible, re.M | re.I)
+    verdicts = re.findall(r"^\|\s*Verdict\s*\|\s*\**\s*(PASS AFTER CORRECTIONS|PASS|FAIL)\s*\**\s*\|\s*$", visible, re.M | re.I)
     rows = re.findall(r"^\|\s*Verdict\s*\|", visible, re.M | re.I)
-    if len(found) != 1 or len(rows) != 1:
-        return ("UNREADABLE", 0, None)
-    majors = sum(1 for line in section(visible, "Corrections").splitlines()
+    if len(verdicts) != 1 or len(rows) != 1:
+        return ("UNREADABLE", 0, None, None, None, False)
+    majors = sum(1 for line in section(text, "Corrections").splitlines()  # status.py counts in the raw text too
                  if line.lstrip().startswith("|") and re.search(r"\|\s*major\s*\|", line, re.I))
     printed = re.search(r"^\|\s*Analysis fingerprint\s*\|\s*`?([0-9a-f]{16})`?", visible, re.M | re.I)
-    return found[0].upper(), majors, printed.group(1) if printed else None
+    recheck = RECHECK_LINE.search(visible)
+    base = RECHECK_OF_ROW.search(visible)
+    found = [float(v) for v in ACCURACY_ROW.findall(section(visible, "Scores"))]
+    accuracy = min(found) if found else None  # every Accuracy row counts: the lowest one decides
+    if base and recheck:
+        # status.py's rule: the lowest Accuracy of this report and of every round its Re-check of row leads to (fetch
+        # gives a sibling report's text); a broken chain, or a base that is not a report, gives no accuracy
+        name = base.group(1).strip()
+        older = fetch(name) if fetch and REPORT_NAME.match(name) and depth < 20 else None
+        older_facts = report_facts(older, fetch, depth + 1) if older else None
+        older_acc = older_facts[4] if older_facts and older_facts[0] != "UNREADABLE" else None
+        accuracy = None if older_acc is None else (min(older_acc, accuracy) if accuracy is not None else older_acc)
+    noted = [l for l in section(visible, "Noticed outside the re-check").splitlines()
+             if l.lstrip().startswith("|") and not re.match(r"^\|\s*(#|-{3}|none\s*\|)", l.strip(), re.I)]
+    # [5]: a re-check (it names its round, or lists items noticed outside it): never a full round
+    return (verdicts[0].upper(), majors, printed.group(1) if printed else None,
+            (int(recheck.group(1)), int(recheck.group(2))) if recheck else None, accuracy, bool(base or noted))
+
+
+RECHECK_ASK = (" The last report's verdict is PASS AFTER CORRECTIONS and a revision has applied it: this is its re-check. "
+               "Follow the skill's \"Re-check after a revision\": judge every statement that report flagged and every "
+               "statement the revision changed, draw no new sample, and write the line \"After corrections: every flagged "
+               "statement re-checked: X of Y confirmed.\"")
+
+
+def recheck_due(facts):
+    """True when the next verification is the re-check of a PASS AFTER CORRECTIONS (a bounded list, not a new sample:
+    in the live run each full round drew a new sample and found new minor items, a target that kept moving)."""
+    return bool(facts and facts[0] == "PASS AFTER CORRECTIONS" and len(facts) > 4 and facts[4] is not None
+                and facts[4] >= RECHECK_MIN_ACCURACY)  # below a PASS's accuracy the next round is a full one
+
+
+def accepted(facts):
+    """True when a report counts as verified, by status.py's trusted() rule, step for step (the fingerprint apart):
+    a major correction needs a re-check with X = Y exactly; a re-check short of Y (X < Y, or Y = 0) is accepted only for
+    a full round's own PASS with no major, never for a re-check (it names its round or lists items noticed outside
+    it); a PASS AFTER CORRECTIONS needs a re-check; any report with a re-check needs 95% accuracy on its chain."""
+    if not facts or facts[0] not in ("PASS", "PASS AFTER CORRECTIONS"):
+        return False
+    verdict, majors = facts[0], facts[1]
+    recheck = facts[3] if len(facts) > 3 else None
+    is_recheck = bool(len(facts) > 5 and facts[5])
+    if majors and not (recheck and recheck[0] == recheck[1]):
+        return False
+    if recheck and (recheck[1] == 0 or recheck[0] < recheck[1]):
+        if verdict != "PASS" or majors or recheck[1] == 0 or is_recheck:
+            return False
+    if verdict == "PASS AFTER CORRECTIONS" and not recheck:
+        return False
+    if recheck and (len(facts) < 5 or facts[4] is None or facts[4] < RECHECK_MIN_ACCURACY):
+        return False
+    return True
 
 
 def as_int(value):
@@ -613,6 +673,34 @@ class Queue:
                 self.run(tracker, settings)
             except Exception as err:  # one bad tracker never stops the others
                 self.log("tracker #%d: %s: %s" % (tracker["number"], type(err).__name__, err))
+        try:
+            self.replay_closed_runs()
+        except Exception as err:
+            self.log("updates recorded on closed runs: %s: %s (tried again at the next check)" % (type(err).__name__, err))
+
+    def replay_closed_runs(self):
+        """Updates recorded on a run that ended without its Done step (a person closed the tracker, or an error after
+        closing): opened as update issues once, or recorded on the run open now, so none is lost (live run, 24 Nov 2026:
+        the round-4 verifier found that only the Done step replayed them)."""
+        for tracker in self.gh.issues(["bible-tracker"], state="closed"):
+            if "bible-replayed" in labels_of(tracker):
+                continue  # done before: no timeline calls, so the cost does not grow with every run (review of #124)
+            try:
+                if not self.replayed(tracker):
+                    paths = self.deferred_updates(tracker)
+                    if paths:
+                        self.delta(paths, (settings_of(tracker) or {}).get("analysis", "codebase-analysis"))
+                    self.gh.comment(tracker["number"], "The %d code change(s) recorded while this run was open are now in "
+                                    "update issues, or recorded on the run open now.\n%s" % (len(paths), REPLAYED_MARK))
+                self.gh.label(tracker["number"], "bible-replayed")
+            except Exception as err:  # one tracker that fails never blocks the others; it is tried again at the next check
+                self.log("tracker #%d: replaying its recorded updates: %s: %s" % (tracker["number"], type(err).__name__, err))
+
+    def replayed(self, tracker):
+        """True when the queue itself marked this closed tracker's recorded updates as replayed."""
+        me = self.gh.me()
+        return any(e.get("event") == "commented" and ((e.get("actor") or e.get("user")) or {}).get("login") == me
+                   and REPLAYED_MARK in (e.get("body") or "") for e in self.gh.timeline(tracker["number"]))
 
     def run(self, tracker, settings):
         gh, analysis = self.gh, settings.get("analysis", "codebase-analysis")
@@ -774,8 +862,9 @@ class Queue:
         closed_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed")
                          if i.get("state_reason") == "completed" and i.get("created_at", "") >= after]
         any_verify = [i for i in self.run_issues(["bible-verify", comp_label(name)], state="closed") if i.get("state_reason") == "completed"]
-        facts = report_facts(gh.file("%s/ledger/components/%s/verification-report.md" % (analysis, name), branch)) if any_verify else None
-        if facts and facts[0] == "PASS" and not facts[1] and facts[2] and facts[2] == pages:
+        facts = report_facts(gh.file("%s/ledger/components/%s/verification-report.md" % (analysis, name), branch),
+                             lambda n: gh.file("%s/ledger/components/%s/%s" % (analysis, name, n), branch)) if any_verify else None
+        if accepted(facts) and facts[2] and facts[2] == pages:
             pr = gh.create_pr(branch, self.default, "Codebase analysis: component %s" % name,
                               "Component `%s`, verified (PASS, pages fingerprint %s). Tracker: #%d. Review the pages under "
                               "`%s/lld/%s/`, then merge." % (name, pages, self.tracker["number"], analysis, name))
@@ -785,7 +874,7 @@ class Queue:
         # have changed since, so they are verified again. Issue titles are not used: on github.com a session started
         # for another reason also changed the pages (24 Nov 2026).
         about_these_pages = bool(facts and facts[2] and facts[2] == pages)
-        needs_revision = bool(facts and (facts[0] != "PASS" or facts[1]))
+        needs_revision = bool(facts and not accepted(facts))
         # After any chunk session merged since the last verification (a revision, or a session started for drift or
         # gaps) the pages are verified first: so no revision follows another, and every round ends in a verdict.
         last_verify = max([i.get("closed_at") or "" for i in any_verify] + [""])
@@ -813,8 +902,9 @@ class Queue:
                         "component %s, in this new session. Record the fingerprint of the pages you judge in the report's header "
                         "(analyzing-a-codebase's scripts/status.py --fingerprint --component %s). Write "
                         "%s/ledger/components/%s/verification-report.md and nothing outside %s/ledger/components/%s/. "
-                        "Summarise the verdict in the pull request description." % (
-                            name, branch, self.skills, name, name, analysis, name, analysis, name),
+                        "Summarise the verdict in the pull request description.%s" % (
+                            name, branch, self.skills, name, name, analysis, name, analysis, name,
+                            RECHECK_ASK if recheck_due(facts) else ""),
                         ["bible-verify", comp_label(name), self.run_label], assignment(gh, branch, self.settings.get("verify_model")))
         return "verify running"
 
@@ -947,7 +1037,8 @@ class Queue:
             if kind == "bible-verify-all" and closed_done:
                 # GitHub closes the issue itself when the pull request that says "Fixes #N" is merged: a closed
                 # verification is done only when the report on the default branch is a clean PASS (seen in review).
-                facts = report_facts(gh.file("%s/verification-report.md" % analysis, self.default))
+                facts = report_facts(gh.file("%s/verification-report.md" % analysis, self.default),
+                                     lambda n: gh.file("%s/%s" % (analysis, n), self.default))
                 newest = max(closed_done, key=lambda i: i.get("closed_at") or "")
                 # Done means: a clean PASS, about the pages on the default branch now (its fingerprint), written by this
                 # run's own verification pull request (found in the second audit: a PASS left by an earlier run, or an
@@ -959,7 +1050,7 @@ class Queue:
                                   and report_path in gh.pr_files(p["number"])
                                   and gh.file(report_path, p["head"]["sha"]) == on_default  # the report as the session wrote it
                                   for p in gh.linked_prs(newest["number"]))
-                clean = bool(facts and facts[0] == "PASS" and not facts[1])
+                clean = accepted(facts)
                 if clean and by_this_run and facts[2]:
                     if time.monotonic() + GATE_TIMEOUT + 300 > getattr(self, "deadline", float("inf")):
                         return "verify-all: waiting for the next check (not enough of this run's time left)"
@@ -996,8 +1087,9 @@ class Queue:
                           and ((p.get("head") or {}).get("repo") or {}).get("full_name") == gh.repo and gh.is_agent_pr(p)]
                 if merged:
                     if kind == "bible-verify-all":
-                        facts = report_facts(gh.file("%s/verification-report.md" % analysis, self.default))
-                        if not facts or facts[0] != "PASS" or facts[1]:
+                        facts = report_facts(gh.file("%s/verification-report.md" % analysis, self.default),
+                                     lambda n: gh.file("%s/%s" % (analysis, n), self.default))
+                        if not accepted(facts):
                             # a record of corrections asked: not the end of the run; a revision of the whole analysis
                             # follows, then a new verification (revise_all_step)
                             gh.label(issue["number"], "bible-needs-revision")
@@ -1030,6 +1122,9 @@ class Queue:
                 body = ("Use the verifying-a-codebase-analysis skill (in %s) on the whole analysis in %s/, in this new session. "
                         "Record the pages' fingerprint (analyzing-a-codebase's scripts/status.py --fingerprint) in the report's "
                         "header, write verification-report.md, then run status.py --write." % (self.skills, analysis))
+                if recheck_due(report_facts(gh.file("%s/verification-report.md" % analysis, self.default),
+                                     lambda n: gh.file("%s/%s" % (analysis, n), self.default))):
+                    body += RECHECK_ASK
             gh.create_issue(title, "Tracker: #%d\nBase branch: %s\nAttempt: 1\n\n%s" % (tracker["number"], self.default, body),
                             [kind, self.run_label], assignment(gh, self.default, model))
             return "%s session assigned" % kind[6:]
@@ -1044,9 +1139,12 @@ class Queue:
         if late:
             try:
                 self.delta(late, analysis, record=False)
-            except Exception as err:  # the tracker is closed: say so where a person reads it, never lose them silently
-                gh.comment(tracker["number"], "Code that changed at the end of this run could not get its update issues (%s: %s). "
-                           "Run the update for these files by hand: %s" % (type(err).__name__, str(err)[:160], shown_files(late)))
+            except Exception as err:  # the tracker is closed: say so where a person reads it; the next check tries again
+                gh.comment(tracker["number"], "Code that changed at the end of this run could not get its update issues yet "
+                           "(%s: %s); the next check tries again: %s" % (type(err).__name__, str(err)[:160], shown_files(late)))
+                return "done"
+        gh.comment(tracker["number"], "Recorded code changes: %d, in update issues.\n%s" % (len(deferred) + len(late), REPLAYED_MARK))
+        gh.label(tracker["number"], "bible-replayed")
         return "done"
 
     def deferred_updates(self, tracker):
