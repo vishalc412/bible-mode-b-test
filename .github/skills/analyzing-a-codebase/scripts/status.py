@@ -309,7 +309,8 @@ def main() -> None:
         return
     if args.pages_changed_since:
         name = args.pages_changed_since.replace("\\", "/")
-        if "/" in name.strip("/") and not name.startswith("ledger/components/") or ".." in name.split("/"):
+        if (os.path.isabs(args.pages_changed_since) or name.startswith("/") or ".." in name.split("/")
+                or ("/" in name and not name.startswith("ledger/components/")) or not name.endswith(".md")):
             inventory.fail("--pages-changed-since takes a report in the analysis folder, such as verification-report-2026-11-24.md")
         old = recorded_pages(read(os.path.join(analysis_abs, name)))
         if old is None:
