@@ -1,26 +1,26 @@
 ---
 id: README
 kind: reference
-source: [README.md, components/catalog/catalog.py, components/catalog/service.py, components/orders/orders.py, .github/bible/bible_queue.py, tools/plan.py, tools/gate.py, tools/fanout.sh]
+source: [README.md, components/catalog/catalog.py, components/catalog/service.py, components/orders/orders.py, .github/bible/bible_queue.py, tools/plan.py, tools/gate.py, tools/fanout.sh, tls-migration/01-inventory.md, tls-migration/02-certificate-plan.md, tls-migration/tls-services.yaml]
 summary: Entry point for the system analysis, its component pages, evidence, and operational references
 depends_on: [00-mind-map, hld/01-system-context, hld/02-architecture, reference/configuration]
 ---
 # bible-mode-b test: system reference
 
-Status: DRAFT, not yet verified.
+Status: CORRECTED AFTER VERIFICATION (report of 2026-11-23; 7 correction items applied since, not re-verified).
 
 | | |
 | --- | --- |
 | Depth | Deep for all four components |
 | Version given by the user | Not provided |
-| Snapshot | 24 in-scope files, 1,606 current source lines, 2026-11-23 |
-| Coverage | PASS at deep: 111/111 symbols, 274/274 branch lines, 1,886/1,886 citations |
+| Snapshot | 24 in-scope files, 1,770 current source lines, 2026-11-24 |
+| Coverage | PASS at deep: 116/116 symbols, 310/310 branch lines, 1,855/1,855 citations, 231/231 same-file calls |
 | Produced with | Copilot coding agent; model not recorded |
 | Diagrams | Checked by reading only; no Mermaid renderer was available |
 
 ## In two minutes
 
-The repository combines a sample catalog/orders application with a separate GitHub Actions workflow system for producing and maintaining codebase analyses; the modules share a repository but are not one deployed service (`README.md:1-7`; [`system context`](hld/01-system-context.md)). The catalog keeps product records in process memory, provides price and stock lookups, and includes an optional HTTP server (`components/catalog/catalog.py:8-29`; `components/catalog/service.py:15-49`). The current order helpers import the catalog directly, while the HTTP price client is intended for a separately deployed orders service and is called only by tests in this repository (`components/orders/orders.py:5,19-20,35-42`; `components/orders/catalog_client.py:1-4,19-23`; `components/orders/test_catalog_client.py:37-62`). Orders computes totals, validates stock, and sends settlement requests to a partner or local development endpoint (`components/orders/orders.py:19-51`). The `bible-mode-b` queue uses GitHub issues, branches, and pull requests to assign Copilot work, inspect artifacts, and coordinate human review (`.github/bible/bible_queue.py:129-151,396-429,600-624`). The `tools` commands generate a component plan, validate component artifacts, and create component issues (`tools/plan.py:21-58`; `tools/gate.py:42-78`; `tools/fanout.sh:7-30`). GitHub Actions runs the queue and related automation on hosted Ubuntu runners; no production deployment topology for catalog or orders is declared (`.github/workflows/bible-queue.yml:19-37`; [`architecture`](hld/02-architecture.md)). The main operational cautions are plain-HTTP supplier and payment calls, unauthenticated catalog routes, process-local product data, and no source evidence for the supplier feed's claimed nightly schedule (`components/catalog/catalog.py:5,36-47`; `components/catalog/service.py:24-43`; `components/orders/orders.py:7-12,45-50`).
+The repository combines a sample catalog/orders application with a separate GitHub Actions workflow system for producing and maintaining codebase analyses; the modules share a repository but are not one deployed service (`README.md:1-7`; [`system context`](hld/01-system-context.md)). The catalog keeps product records in process memory, provides price and stock lookups, and includes an optional HTTP server (`components/catalog/catalog.py:8-29`; `components/catalog/service.py:15-49`). The current order helpers import the catalog directly, while the HTTP price client is intended for a separately deployed orders service and is called only by tests in this repository (`components/orders/orders.py:5,19-20,35-42`; `components/orders/catalog_client.py:1-4,19-23`; `components/orders/test_catalog_client.py:37-62`). Orders computes totals, validates stock, and sends settlement requests to a partner or local development endpoint (`components/orders/orders.py:19-51`). The `bible-mode-b` queue uses GitHub issues, branches, and pull requests to assign Copilot work, inspect artifacts, and coordinate human review (`.github/bible/bible_queue.py:145-167,577-642,681-793`). The `tools` commands generate a component plan, validate component artifacts, and create component issues (`tools/plan.py:21-58`; `tools/gate.py:42-78`; `tools/fanout.sh:7-30`). GitHub Actions runs the queue and related automation on hosted Ubuntu runners; no production deployment topology for catalog or orders is declared (`.github/workflows/bible-queue.yml:19-37`; [`architecture`](hld/02-architecture.md)). The main operational cautions are plain-HTTP supplier and payment calls, unauthenticated catalog routes, process-local product data, and no source evidence for the supplier feed's claimed nightly schedule (`components/catalog/catalog.py:5,36-47`; `components/catalog/service.py:24-43`; `components/orders/orders.py:7-12,45-50`). A separate catalog–orders TLS migration is documented as planning only; its manifest remains at producer stage 0 (`tls-migration/tls-services.yaml:18-21`; [`cross-cutting concerns`](hld/06-cross-cutting.md#tls-migration-planning)).
 
 ## At a glance
 
@@ -71,7 +71,7 @@ Shapes: rounded = people, rectangle = repository units, cylinder = data store, h
 | --- | --- | --- | --- | --- | --- |
 | `catalog` | Service and library | Python 3 standard library | Product data, price/stock lookups, optional HTTP API | [`catalog`](lld/catalog/README.md), [`endpoints`](lld/api/catalog/catalog.md) | 3 source files, 108 lines, 10 runtime functions, 2 routes |
 | `orders` | Library | Python 3 standard library | Totals, stock validation, settlement, optional remote catalog client | [`orders`](lld/orders/README.md) | 4 source files, 158 lines, 7 functions/methods, 0 routes |
-| `bible-mode-b` | CLI and workflow component | Python 3 and GitHub Actions | Starts and reconciles analysis runs, assigns sessions, gates work, tracks deltas | [`bible-mode-b`](lld/bible-mode-b/README.md) | 1 Python file and 4 workflow files, 1,130 lines, 69 functions/methods, 0 HTTP routes |
+| `bible-mode-b` | CLI and workflow component | Python 3 and GitHub Actions | Starts and reconciles analysis runs, assigns sessions, gates work, tracks deltas | [`bible-mode-b`](lld/bible-mode-b/README.md) | 1 Python file and 4 workflow files, 1,294 lines, 74 functions/methods, 0 HTTP routes |
 | `tools` | CLI and shell tools | Python 3 and Bash | Component planning, artifact gate, issue fanout | [`tools`](lld/tools/README.md) | 3 files, 210 lines, 7 Python functions, 0 routes |
 
 ## Reading paths
@@ -128,6 +128,9 @@ One line per analysis file, in reading order. Generated inventory, coverage, and
 - [`ledger/issues/bible-mode-b.md`](ledger/issues/bible-mode-b.md)
 - [`ledger/issues/tools.md`](ledger/issues/tools.md)
 - [`ledger/issues/assemble.md`](ledger/issues/assemble.md)
+- [`revision-log.md`](revision-log.md)
+- [`verification-report.md`](verification-report.md)
+- [`verification-report-2026-11-23.md`](verification-report-2026-11-23.md)
 - [`ledger/components/catalog/status.json`](ledger/components/catalog/status.json)
 - [`ledger/components/catalog/verification-coverage.md`](ledger/components/catalog/verification-coverage.md)
 - [`ledger/components/catalog/verification-report.md`](ledger/components/catalog/verification-report.md)
@@ -170,15 +173,15 @@ One line per analysis file, in reading order. Generated inventory, coverage, and
 
 | Measure | Count |
 | --- | --- |
-| Components / source files / current source lines | 4 / 14 / 1,606 |
-| Symbols documented / functions with full cards | 111 / 93 |
+| Components / source files / current source lines | 4 / 14 / 1,770 |
+| Symbols documented / functions with full cards | 116 / 98 |
 | Routes documented | 2 catalog GET endpoints (the static scanner finds 0) |
 | External nodes / named graph stores | 6 / 1; the data dictionary describes 3 stores and no relational tables |
 | Flows / Mermaid diagrams | 10 end-to-end flows / 43 diagrams |
 | Business rules | 20 |
 | Statements marked inferred / assumed | 25 |
 | Risks and surprises / unanswered questions | 13 / 0 |
-| Knowledge graph nodes / edges / chunks | 218 / 541 / 301 |
+| Knowledge graph nodes / edges / chunks | pending regeneration |
 
 <!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
 
@@ -193,6 +196,8 @@ One line per analysis file, in reading order. Generated inventory, coverage, and
 <!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->
 
 <!-- cites components/orders/test_catalog_client.py@1d32463e1cdc21bd3eee3bc1b6f31feb8ef40a2d -->
+
+<!-- cites tls-migration/tls-services.yaml@b494ef963f852e6359ef12c79eed00a71427eaf0 -->
 
 <!-- cites tools/fanout.sh@9ad43aa70e042837954fea1faf483f6c08e07470 -->
 

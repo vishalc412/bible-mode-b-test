@@ -7,9 +7,9 @@ Version: not provided
 
 ## Pass 1 — Inventory
 
-- Current inventory: 20 in-scope files, 14 source files, 1,343 source lines, 108 symbols, 0 statically detected routes.
+- Current inventory: 24 in-scope files, 14 source files, 1,770 source lines, 116 symbols, 0 statically detected routes.
 - The generated file list and symbol checklist are in `ledger/inventory.json` and `ledger/symbol-checklist.md`.
-- The coverage ledger is `ledger/coverage-ledger.md`; all 20 in-scope files have a reading page.
+- The coverage ledger is `ledger/coverage-ledger.md`; all 24 in-scope files have a reading page.
 - Excluded: `.git`, `codebase-analysis`, and the repository's `.github/skills/*` toolkits, as listed in the inventory checklist.
 
 ## Work plan
@@ -32,12 +32,16 @@ Version: not provided
 | --- | --- | --- | --- | --- | ---: |
 | `catalog` | `components/catalog/` | Python 3; standard-library HTTP server (`components/catalog/service.py:7-12`) | `python3 -m components.catalog.service` (`components/catalog/service.py:40-48`) | `CatalogHandler.do_GET`, `make_server` (`components/catalog/service.py:24-43`) | 3 |
 | `orders` | `components/orders/` | Python 3; standard library (`components/orders/orders.py:1-5`) | Imported and called by Python code (`components/orders/test_orders.py:1-8`) | `line_total`, `order_total`, `validate`, `settle` (`components/orders/orders.py:19-51`) | 4 |
-| `bible-mode-b` | `.github/bible/`, `.github/workflows/` | Python 3 and GitHub Actions YAML (`.github/bible/bible_queue.py:1-10`) | Manual dispatch, 15-minute schedule, and default-branch push workflows (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10,16-18`, `.github/workflows/poc-assign-copilot.yml:11-13`) | `bible_queue.py start`, `reconcile`, `delta` (`.github/bible/bible_queue.py:1-10,797-844`) | 4 |
+| `bible-mode-b` | `.github/bible/`, `.github/workflows/` | Python 3 and GitHub Actions YAML (`.github/bible/bible_queue.py:1-10`) | Manual dispatch, 15-minute schedule, and default-branch push workflows (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10,16-18`, `.github/workflows/poc-assign-copilot.yml:11-13`) | `bible_queue.py start`, `reconcile`, `delta` (`.github/bible/bible_queue.py:1244-1294`) | 4 |
 | `tools` | `tools/` | Python 3 and Bash (`tools/plan.py:8-15`, `tools/fanout.sh:1-6`) | CLI and shell invocation (`tools/plan.py:41-61`, `tools/gate.py:81-116`, `tools/fanout.sh:1-6`) | `plan.py`, `gate.py`, `fanout.sh` (`tools/plan.py:41-61`, `tools/gate.py:81-116`, `tools/fanout.sh:1-6`) | 3 |
 
 Discovery succeeded and wrote `components.json`, `components.md`, and issue texts under `ledger/issues/`. The component analyses were completed in separate pull requests. The whole-system pass is now being assembled.
 
 At this session's start, `next.py` reported 11 of 13 packets done. Packet 2 refreshed the `bible-mode-b` cards for lines 307–662; packet 3 refreshed the cards for lines 663–867.
+
+The resumed revision completed packet 4 of 14 by adding the missing `Queue.delta` branch row and refreshing the queue size on the front page.
+
+The dated verification archive's four changed-source citations were rechecked and corrected without editing the active `verification-report.md`. The active report's findings were applied, including the TLS planning files, the queue data contract, and the remaining call-graph edges.
 
 ## Sweep
 
@@ -62,10 +66,10 @@ At this session's start, `next.py` reported 11 of 13 packets done. Packet 2 refr
 
 ## Whole-system assembly
 
-- Refreshed the generated inventory from the current source: 20 files, 14 source files, 1,343 source lines, 108 symbols, and 0 statically detected routes. The catalog GET paths are documented separately because its handler uses imperative path matching rather than route decorators.
-- Updated the coverage ledger to map all 20 in-scope files to analysis pages.
+- Refreshed the generated inventory from the current source: 24 files, 14 source files, 1,770 source lines, 116 symbols, and 0 statically detected routes. The catalog GET paths are documented separately because its handler uses imperative path matching rather than route decorators.
+- Updated the coverage ledger to map all 24 in-scope files to analysis pages.
 - Completed HLD pages, mind maps, front page, reference pages, and the knowledge base. The first knowledge graph build identified unmatched front-matter names and two spellings for Supplier One; these were corrected before regenerating the graph.
-- The final knowledge graph contains 211 nodes, 508 edges, and 298 chunks; all LLD front-matter names resolve. The primer is 1,693 words and documents 20 rules.
+- The final knowledge graph is regenerated after this revision; see `knowledge/README.md` for current node, edge and chunk counts.
 - The two component questions have answers and are recorded as resolved; no unanswered questions are open.
 
 ## Quality gate
@@ -74,8 +78,8 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 
 ### Coverage and depth
 
-- `inventory.py` refreshed the source inventory: 20 in-scope files, 14 source files, 1,343 lines, 108 symbols, and 0 statically detected routes.
-- `coverage.py --depth deep` passed: every symbol and function card is covered, all branch lines and all same-file call-graph edges are documented, all 17 LLD pages have front matter, and every cross-component call is cited. The exact citation-resolution and other measure totals are in `ledger/coverage-report.md`.
+- `inventory.py` refreshed the source inventory: 24 in-scope files, 14 source files, 1,770 lines, 116 symbols, and 0 statically detected routes.
+- `coverage.py --depth deep` passed: 116/116 symbols, 98/98 full cards, 310/310 branch lines, 231/231 same-file calls, 17/17 LLD pages with front matter, and 1,855/1,855 citations. The exact measures are in `ledger/coverage-report.md`.
 - The four component verification reports record `PASS`; the audits cover card depth, branches, endpoint cards, diagrams, citations, and component-specific behavior.
 
 ### Reader test
@@ -100,7 +104,7 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 
 - The 43 Mermaid blocks were checked against their evidence and required diagram types; no renderer was available, so they were not rendered. This limitation is recorded in `README.md`.
 - All sweep searches and assistant-directed repository text locations are recorded in this file and `run-notes.md`. No secret values were copied into the analysis.
-- `knowledge.py` reports 211 nodes, 508 edges, 298 chunks, and no unmatched front-matter names. The 72 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
+- `knowledge.py` is rerun after the revised pages; `knowledge/README.md` records current node, edge, chunk and front-matter results. Calls it cannot resolve remain graph limitations; source code and component cards are the source of truth.
 - The three knowledge-base reader questions are summarized after final graph generation.
 
 <!-- cites .github/bible/bible_queue.py@9084f4915d286441c5b3a9a29a8df059bf76dacc -->

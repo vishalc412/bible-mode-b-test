@@ -12,6 +12,9 @@ source:
   - components/orders/catalog_client.py
   - components/orders/orders.py
   - tools/gate.py
+  - tls-migration/01-inventory.md
+  - tls-migration/02-certificate-plan.md
+  - tls-migration/tls-services.yaml
 summary: Credentials, configuration, failures, observability, testing, and deployment practices vary by repository component
 depends_on:
   - hld/02-architecture
@@ -56,6 +59,12 @@ Configuration is split across workflow inputs, environment variables, and source
 | `tools` | Fanout reads `ENGINE` with default `copilot`; plan and gate paths are repository-local. | `tools/fanout.sh:2-12,24-29`; `tools/plan.py:41-58`; `tools/gate.py:81-108` |
 
 Consistency: varies (4 variants)
+
+## TLS migration planning
+
+The repository includes a local catalog–orders TLS migration plan, but it is planning-only: the manifest has `migrator_model: null` and `producer.stage: 0`, and the plan explicitly says that no migration artifacts or gate results have been created (`tls-migration/tls-services.yaml:1-4,18-26`; `tls-migration/02-certificate-plan.md:1-4,45-53`). The inventory identifies the catalog HTTP listener and separate-service orders client as intended migration targets while excluding the supplier and payment calls (`tls-migration/01-inventory.md:8-14,18-33`). This plan does not describe deployed TLS behavior; the current catalog handler and orders HTTP client remain the runtime source of truth (`components/catalog/service.py:24-43`; `components/orders/catalog_client.py:11-23`).
+
+Consistency: planning only; no runtime TLS implementation is evidenced.
 
 ## Error handling and resilience
 

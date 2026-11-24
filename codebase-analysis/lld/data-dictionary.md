@@ -10,6 +10,8 @@ source:
   - tools/plan.py
   - tools/gate.py
   - tools/fanout.sh
+  - tls-migration/tls-services.yaml
+  - tls-migration/evidence/inventory.json
 summary: In-memory product data, GitHub-backed workflow records, analysis artifacts, and transient files
 reads:
   - store:catalog-products
@@ -85,23 +87,16 @@ The `start` command serializes these fields as JSON inside a `<!-- bible-setting
 | `analysis` | string | `codebase-analysis` | Analysis output directory | `main`, `Queue.run`, `Queue.delta` | `.github/bible/bible_queue.py:827,501-502,794-799` |
 | `depth` | string | `deep` | Coverage depth passed to the component gate | `main`, `Queue.check` | `.github/bible/bible_queue.py:828,726-728` |
 
-### Component catalog JSON
+### Component catalog JSON consumed by the queue
 
-The whole-system queue reads `components.json` from the default branch and requires a non-proposed catalog with a `components` array (`.github/bible/bible_queue.py:502-510,794-796`). The planning tool emits the following top-level and per-component fields (`tools/plan.py:41-58`).
+The whole-system queue reads `components.json` from the default branch. It enters planning if the value is not an object, is marked proposed, or lacks a `components` array; it then reads component names and session estimates (`.github/bible/bible_queue.py:601-623`).
 
 | Field | Type | Meaning | Evidence |
 | --- | --- | --- | --- |
-| `schema` | integer | Catalog schema version | `tools/plan.py:41-46` |
-| `tool` | string | Generator identity and version | `tools/plan.py:41-46` |
-| `generated` | timestamp string | Generation time | `tools/plan.py:41-46` |
-| `proposed` | boolean | Whether the catalog still needs confirmation; the queue routes proposed catalogs to planning | `tools/plan.py:41-58`; `.github/bible/bible_queue.py:527-530` |
-| `analysis` | string | Analysis directory | `tools/plan.py:41-58` |
-| `budget`, `depth` | integer, string | Discovery budget and coverage depth | `tools/plan.py:41-58` |
-| `components` | array of objects | Component inventory | `tools/plan.py:42-54` |
-| `components[].name`, `paths` | string, array of strings | Component key and owned source paths | `tools/plan.py:21-27,42-54` |
-| `components[].files`, `lines`, `packets`, `est_sessions`, `routes` | integers | Inventory counts and work estimates | `tools/plan.py:21-38,42-54` |
-| `components[].calls_into`, `calls_detail`, `called_by` | arrays/object | Component dependency names and called symbols | `tools/plan.py:42-58` |
-| `cross_calls` | integer | Number of discovered cross-component calls | `tools/plan.py:42-58` |
+| `proposed` | boolean | Whether the catalog still needs confirmation; a truthy value routes the queue to planning | `.github/bible/bible_queue.py:601-603` |
+| `components` | array of objects | Selected component inventory; queue requires a list | `.github/bible/bible_queue.py:601-603` |
+| `components[].name` | string | Component name used for selection and queue operations | `.github/bible/bible_queue.py:606-620` |
+| `components[].est_sessions` | integer-like estimate | Clamped by the queue and used to set a bounded work-session cap | `.github/bible/bible_queue.py:723-726` |
 
 ### GitHub API entity fields used
 
@@ -137,8 +132,8 @@ These are the fields the queue reads or writes on GitHub-managed objects; other 
 | Session issue labels | `bible-plan`, `bible-chunk`, `bible-verify`, `bible-assemble`, `bible-verify-all`, `bible-delta`, `bible-waiting-answer`, `bible-needs-human`, `bible-hold`, and `bible/<component>` | Session kind, component, answer-wait, and human-hold markers | Queue issue creation, labeling, and follow-up | `.github/bible/bible_queue.py:73-83,449-474,538-571,640-660,688-713,739-774` |
 | Issue body fields | `Tracker`, `Component`, `Base branch`, `Attempt`; hidden settings JSON for tracker | Connects tasks and pull requests to a run and supports retry/model selection | `Queue.plan_phase`, `start_chunk`, `fail_or_retry`, `assemble_phase`, `main` | `.github/bible/bible_queue.py:70-72,481-487,538-571,473-485,739-774,828-854` |
 | `attempt` | positive integer text, initially `1`; retry changes to `2` | One retry is allowed before a human hold | `ATTEMPT`, `fail_or_retry`, `held` | `.github/bible/bible_queue.py:71,438-449,455-483` |
-| Component `status.json.state` | `NEW_CHAT`, `COMPONENT_DONE`, `WAITING_ANSWER`, `STOP` | Component-session terminal/waiting states consumed by the queue | Toolkit status artifact; `Queue.session`, `Queue.component`, `Queue.follow` read it | `.github/bible/bible_queue.py:65-66,425-428,600-603,688-708` |
-| Component `status.json` counters | `packets_done`, `packets_total` integers; `last_job_digest` string; `updated` timestamp | Progress, completion denominator, last job identity, and update time | Toolkit status artifact; queue reads `packets_done` | `.github/bible/bible_queue.py:831-833` |
+| Component `status.json.state` | `NEW_CHAT`, `COMPONENT_DONE`, `WAITING_ANSWER`, `STOP` | Component-session terminal/waiting states consumed by the queue | Queue reads the status artifact and branches on these values | `.github/bible/bible_queue.py:490-506,681-793` |
+| Component `status.json` counters | `packets_done` integer and other progress fields | Queue compares `packets_done` to detect progress | Queue reads progress counters | `.github/bible/bible_queue.py:831-844` |
 | `status.json` for `tools/gate.py` | `passes_done` array of pass numbers; `open_questions` non-negative integer | Gate selection and blocked-work check; distinct from the main analysis ledger status above | `tools.gate.main` | `tools/gate.py:94-108` |
 | `verification-report.md` | One `Verdict` row (`PASS`, `PASS AFTER CORRECTIONS`, or `FAIL`); `Corrections` rows may be `major`; optional 16-hex `Analysis fingerprint` | Verdict and page fingerprint decide whether a component PR is opened or revised | `report_facts`, `Queue.component`, `Queue.assemble_phase` | `.github/bible/bible_queue.py:365-379,619-627,749-753` |
 | GitHub issue `state` and `state_reason` | `open` / `closed`; queue closes with `completed` or `not_planned` | External lifecycle used to select sessions and retries | `GitHub.close`, queue methods | `.github/bible/bible_queue.py:272-273,441-448,472-483` |
@@ -148,14 +143,16 @@ These are the fields the queue reads or writes on GitHub-managed objects; other 
 | File or file set | Read / written | Format and contents | Evidence |
 | --- | --- | --- | --- |
 | `components/*/*.py` | Read by planning/gate tools | Python source; AST function definitions and test functions; no data file is written by these scans | `tools/plan.py:21-38`; `tools/gate.py:33-39,66-75` |
-| `codebase-analysis/plan.json` | Written by `plan.py`; read by `gate.py` and `fanout.sh` | JSON plan described above | `tools/plan.py:41-58`; `tools/gate.py:86`; `tools/fanout.sh:9` |
+| `codebase-analysis/plan.json` | Written by `tools/plan.py`; read by `gate.py` and `fanout.sh` | JSON plan described above | `tools/plan.py:41-58`; `tools/gate.py:86`; `tools/fanout.sh:9` |
 | `codebase-analysis/components/<name>/status.json` | Read by `gate.py` | JSON object with `passes_done` and `open_questions` used by the gate | `tools/gate.py:89-108` |
 | `codebase-analysis/components/<name>/inventory.md`, `risks.md`, `tests-report.md` | Read by `gate.py` | Markdown artifacts checked for function coverage, HTTP decisions, and test results; not written by the gate | `tools/gate.py:45-78` |
-| `codebase-analysis/components.json` | Read from GitHub by queue | Generated JSON component catalog described above | `.github/bible/bible_queue.py:502-510,794-796` |
+| `codebase-analysis/components.json` | Read from GitHub by queue | JSON component catalog; only the fields listed above are part of the queue's documented contract | `.github/bible/bible_queue.py:601-623` |
 | `codebase-analysis/ledger/issues/*.md` | Read from GitHub by queue | `Title:` first line optionally supplies the issue title; remaining text becomes the issue body | `.github/bible/bible_queue.py:332-339,538-545,568-571,739-774` |
-| `codebase-analysis/ledger/components/<name>/status.json` | Read from GitHub at a branch or PR head | Main analysis status and progress fields described above | `.github/bible/bible_queue.py:388-389,425-428,600-603,688-697` |
+| `codebase-analysis/ledger/components/<name>/status.json` | Read from GitHub at a branch or PR head | Main analysis status and progress fields described above | `.github/bible/bible_queue.py:490-506,681-793` |
 | `codebase-analysis/ledger/components/<name>/verification-report.md` and `codebase-analysis/verification-report.md` | Read from GitHub | Component or whole-analysis verdict, corrections, and fingerprint | `.github/bible/bible_queue.py:619-627,749-753` |
 | `codebase-analysis/ledger/baseline.json` | Existence checked on default branch before delta issues are created | Baseline marker; this queue path does not parse its contents | `.github/bible/bible_queue.py:1201-1205` |
+| `tls-migration/tls-services.yaml` | Read as repository planning data | YAML manifest for the local catalog–orders TLS migration; `migrator_model: null` and producer stage `0` mean no implementation stage is recorded | `tls-migration/tls-services.yaml:1-4,18-26,30-49` |
+| `tls-migration/evidence/inventory.json` | Read as repository planning data | Scanner output recording HTTP URL locations and host/port details; it is not live probe evidence | `tls-migration/evidence/inventory.json:1-16` |
 | `--changed-file` argument | Read by `main` | UTF-8 text with one changed repository path per line; blank lines are discarded before `Queue.delta` | `.github/bible/bible_queue.py:812-814,858-861` |
 | Gate tarball and extracted worktree | Written temporarily, then removed | GitHub tarball streams through a temporary file; regular files/directories are extracted under a temporary directory for coverage and fingerprint checks | `.github/bible/bible_queue.py:237-260,723-735` |
 
@@ -197,6 +194,8 @@ The queue writes workflow state through GitHub issue, label, comment, assignment
 <!-- cites components/orders/catalog_client.py@469f9d282aab983cdd85f364e46bcd02ef6d3635 -->
 
 <!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->
+
+<!-- cites tls-migration/evidence/inventory.json@2d46a3e849f9c1688bd72d8e4add3feeb368314e -->
 
 <!-- cites tools/fanout.sh@9ad43aa70e042837954fea1faf483f6c08e07470 -->
 

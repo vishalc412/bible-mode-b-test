@@ -279,6 +279,7 @@ flowchart LR
   assemblephase -->|"deferred_updates"| deferredupdates
   assemblephase -->|"delta"| delta
   assemblephase -->|"shown_files"| shownfiles
+  assemblephase -->|"pr_files"| prfiles
   held -->|"label"| label
   held -->|"timeline"| timeline
   continueunfinished -->|"age"| age
@@ -312,6 +313,8 @@ flowchart LR
   assemblephase -->|"fail_or_retry"| failorretry
   render -->|"now"| now
   delta -->|"json_file"| jsonfile
+  delta -->|"age"| age
+  delta -->|"comment"| comment
   delta -->|"comp_label"| complabel
   delta -->|"assignment"| assignment
   delta -->|"rows_of"| cmprows
@@ -2499,6 +2502,7 @@ for each touched component:
 | `.github/bible/bible_queue.py:1215` | if | No human-hold delta issue is already open | Creates the decision issue. |
 | `.github/bible/bible_queue.py:1223` | for | Each touched component | Finds its changed files and creates or skips an issue. |
 | `.github/bible/bible_queue.py:1228` | if | A delta issue for that component is already open | Logs and skips duplicate creation. |
+| `.github/bible/bible_queue.py:1238` | conditional expression | Some assigned file names are not safe to quote | Adds the count of unusual file names to the issue's changed-file list. |
 
 ## Functions and methods
 
