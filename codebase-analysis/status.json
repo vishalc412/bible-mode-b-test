@@ -5,7 +5,7 @@
  "verification": {
   "verdict": "PASS AFTER CORRECTIONS",
   "date": "2026-11-24",
-  "major_corrections": 2,
+  "major_corrections": 0,
   "report": "verification-report.md"
  },
  "baseline": {
@@ -40,9 +40,9 @@
   }
  },
  "reasons": [
-  "verdict PASS AFTER CORRECTIONS with 2 major corrections not re-checked: verify the corrected parts again",
+  "after corrections only 14 of 18 flagged statements confirmed: correct and re-check the rest",
   "0 of 4 components verified"
  ],
  "notes": [],
- "checked": "2026-11-24T15:55:55"
+ "checked": "2026-11-24T16:27:09"
 }
