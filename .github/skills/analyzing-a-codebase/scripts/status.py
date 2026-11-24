@@ -203,7 +203,8 @@ def trusted(facts, current):
         return "no", "verdict %s with %d major corrections not re-checked: verify the corrected parts again" % (verdict, facts["majors"])
     open_items = ""
     if facts["recheck"] and (facts["recheck"][1] == 0 or facts["recheck"][0] < facts["recheck"][1]):
-        if verdict != "PASS" or facts["majors"] or facts["recheck"][1] == 0:
+        if (verdict != "PASS" or facts["majors"] or facts["recheck"][1] == 0 or facts.get("chained")
+                or facts.get("noted")):  # a re-check (chained, or listing items noticed outside it) still needs X = Y
             return "no", "after corrections only %d of %d flagged statements confirmed: correct and re-check the rest" % facts["recheck"]
         # A full round's PASS whose re-check of the earlier round is incomplete: the verdict table lets minor corrections
         # remain, and a PASS has no major one, so the earlier items not confirmed are minor and listed in this report
@@ -225,8 +226,9 @@ def trusted(facts, current):
         return "stale", "pages changed since the verification (fingerprint %s then, %s now): verify the changed parts" % (facts["fingerprint"], current)
     recheck = ", after corrections %d of %d confirmed" % facts["recheck"] if facts["recheck"] else ""
     noted = "; %d minor item(s) noted outside the re-check, for the next full verification" % facts["noted"] if facts.get("noted") else ""
-    if facts["recheck"] and not facts.get("chained") and verdict != "PASS":  # a full round's PASS is judged by its own rows
-        noted += "; the re-check names no earlier round (no `Re-check of` row): judged by its own Accuracy rows"
+    if facts["recheck"] and not facts.get("chained"):
+        noted += ("; judged as a full round: it names no earlier round (no `Re-check of` row)" if verdict == "PASS" else
+                  "; the re-check names no earlier round (no `Re-check of` row): judged by its own Accuracy rows")
     return "ok", "verdict %s%s; the pages are the ones verified (fingerprint %s)%s%s" % (verdict, recheck if not open_items else "",
                                                                                      current, open_items, noted)
 
