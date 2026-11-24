@@ -225,7 +225,7 @@ def trusted(facts, current):
         return "stale", "pages changed since the verification (fingerprint %s then, %s now): verify the changed parts" % (facts["fingerprint"], current)
     recheck = ", after corrections %d of %d confirmed" % facts["recheck"] if facts["recheck"] else ""
     noted = "; %d minor item(s) noted outside the re-check, for the next full verification" % facts["noted"] if facts.get("noted") else ""
-    if facts["recheck"] and not facts.get("chained"):
+    if facts["recheck"] and not facts.get("chained") and verdict != "PASS":  # a full round's PASS is judged by its own rows
         noted += "; the re-check names no earlier round (no `Re-check of` row): judged by its own Accuracy rows"
     return "ok", "verdict %s%s; the pages are the ones verified (fingerprint %s)%s%s" % (verdict, recheck if not open_items else "",
                                                                                      current, open_items, noted)
