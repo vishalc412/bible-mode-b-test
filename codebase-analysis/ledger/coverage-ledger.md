@@ -1,6 +1,6 @@
 # Coverage ledger
 
-Depth: deep. Snapshot: 20 files, 2026-11-23. Inventory: `ledger/inventory.json` of 2026-11-23.
+Depth: deep. Snapshot: 24 files, 2026-11-24. Inventory: `ledger/inventory.json` of 2026-11-24.
 
 | Path | Status | Pages |
 | --- | --- | --- |
@@ -24,6 +24,10 @@ Depth: deep. Snapshot: 20 files, 2026-11-23. Inventory: `ledger/inventory.json` 
 | `tools/fanout.sh` | read in full | `lld/tools/fanout.md`, `hld/02-architecture.md`, `hld/03-integrations.md`, `hld/05-key-flows.md`, `hld/06-cross-cutting.md` |
 | `tools/gate.py` | read in full | `lld/tools/gate.md`, `hld/02-architecture.md`, `hld/05-key-flows.md`, `hld/06-cross-cutting.md` |
 | `tools/plan.py` | read in full | `lld/tools/plan.md`, `hld/02-architecture.md`, `hld/05-key-flows.md`, `hld/06-cross-cutting.md`, `lld/data-dictionary.md` |
+| `tls-migration/01-inventory.md` | read in full | `hld/02-architecture.md` |
+| `tls-migration/02-certificate-plan.md` | read in full | `hld/02-architecture.md` |
+| `tls-migration/tls-services.yaml` | read in full | `hld/02-architecture.md` |
+| `tls-migration/evidence/inventory.json` | read in full | `hld/02-architecture.md` |
 
 ## Totals
 
@@ -31,11 +35,11 @@ Depth: deep. Snapshot: 20 files, 2026-11-23. Inventory: `ledger/inventory.json` 
 | --- | ---: | ---: |
 | not read | 0 | 0 |
 | sampled | 0 | 0 |
-| read in full | 7 | 20 |
+| read in full | 8 | 24 |
 | excluded | 0 | 0 |
 
 ## Coverage from coverage.py
 
-The whole-analysis gate passes at deep: all 11 of 11 source files with symbols have pages, all 111 symbols and 93 full function cards are accounted for, all 274 branch lines are cited, all 210 same-file call-graph edges are drawn, 17 of 17 LLD pages have front matter, and 1,886 of 1,886 citations resolve (100%). The changed queue source file is 1,130 lines long (`.github/bible/bible_queue.py:1-1130` <!-- recheck: was .github/bible/bible_queue.py:1-1130 -->). The separate catalog endpoint cards cover both manually matched GET paths; the static route counter detects none (`ledger/coverage-report.md`).
+The whole-analysis gate is being rerun after revision. The current source inventory includes 24 files and 14 source files; exact symbol, branch, call-graph and citation coverage is recorded below after the gate completes. `.github/bible/bible_queue.py` is 1,294 lines (`.github/bible/bible_queue.py:1-1294`). The separate catalog endpoint cards cover both manually matched GET paths; the static route counter detects none (`ledger/coverage-report.md`).
 
 <!-- cites .github/bible/bible_queue.py@9084f4915d286441c5b3a9a29a8df059bf76dacc -->
