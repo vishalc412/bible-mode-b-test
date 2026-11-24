@@ -1,11 +1,11 @@
 {
  "schema": 1,
- "status": "STALE",
- "gate": "PASS",
+ "status": "DRAFT",
+ "gate": "NOT RUN",
  "verification": {
-  "verdict": "PASS",
-  "date": "2026-11-24",
-  "major_corrections": 0,
+  "verdict": "PASS AFTER CORRECTIONS",
+  "date": "2026-11-25",
+  "major_corrections": 2,
   "report": "verification-report.md",
   "noted_outside_recheck": 0
  },
@@ -41,8 +41,9 @@
   }
  },
  "reasons": [
-  "pages changed since the verification (fingerprint def1538e6a437c22 then, 71e3cf441e367765 now): verify the changed parts"
+  "verdict PASS AFTER CORRECTIONS with 2 major corrections not re-checked: verify the corrected parts again",
+  "0 of 4 components verified"
  ],
  "notes": [],
- "checked": "2026-11-24T20:24:58"
+ "checked": "2026-11-25T00:06:44"
 }
