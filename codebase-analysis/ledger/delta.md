@@ -1,93 +1,52 @@
 # Delta since the analysis last matched the code
 
-Baseline recorded 2026-11-24T13:41:48 (assembled-baseline). Applied on 2026-11-24T13:41:48.
+Baseline recorded 2026-11-24T14:34:00 (assembled-baseline). Report only, nothing changed on 2026-11-24T14:57:46.
 
 | Measure | Count |
 | --- | --- |
-| Files changed | 1 |
-| Files added | 1 |
+| Files changed | 0 |
+| Files added | 0 |
 | Files removed | 0 |
 | Files renamed | 0 |
-| Functions changed | 5 |
+| Functions changed | 0 |
 | Functions added | 0 |
 | Functions removed | 0 |
-| Functions only moved | 71 |
+| Functions only moved | 0 |
 | Routes added, removed | 0, 0 |
-| Citations moved to new lines | 351 |
-| Card citations moved with their code (found by stamp) | 493 |
-| Citations marked for a recheck | 42 |
-| Work items open | 3 |
-
-## Files added (next.py hands these out as packets)
-
-- `.git`
-
-## Changed files
-
-| File | Changed | Added | Removed | Only moved |
-| --- | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py` | `GitHub`, `GitHub.agent_events`, `Queue`, `Queue.session`, `Queue.continue_if_unfinished` | - | - | 71 |
+| Citations that will move to new lines | 0 |
+| Card citations that will move with their code (found by stamp) | 0 |
+| Citations that will be marked for a recheck | 0 |
+| Work items open | 0 |
 
 ## Work for the analysis
 
+Run `delta.py --apply` to move the citations and record this work; next.py then hands it out.
+
+- card `.github/bible/bible_queue.py` GitHub.is_agent_pr
+- card `.github/bible/bible_queue.py` GitHub.start_error
+- card `.github/bible/bible_queue.py` GitHub.pr_files
+- card `.github/bible/bible_queue.py` GitHub.tarball
+- card `.github/bible/bible_queue.py` GitHub.merge
+- card `.github/bible/bible_queue.py` settings_of
+- card `.github/bible/bible_queue.py` Queue.held
+- card `.github/bible/bible_queue.py` Queue.run
+- card `.github/bible/bible_queue.py` Queue.component
+- card `.github/bible/bible_queue.py` Queue.follow
+- card `.github/bible/bible_queue.py` Queue.check
+- card `.github/bible/bible_queue.py` Queue.assemble_phase
+- card `.github/bible/bible_queue.py` Queue.delta
+- card `.github/bible/bible_queue.py` main
+- card `.github/bible/bible_queue.py` GitHub.me
+- card `.github/bible/bible_queue.py` Queue.revise_all_step
 - card `.github/bible/bible_queue.py` Queue.continue_if_unfinished
+- card `.github/bible/bible_queue.py` as_int
+- card `.github/bible/bible_queue.py` Queue.reconcile
+- card `.github/bible/bible_queue.py` Queue.render
+- card `.github/bible/bible_queue.py` shown_files
+- card `.github/bible/bible_queue.py` Queue.could_not_check
+- card `.github/bible/bible_queue.py` Queue.whole_fingerprint
+- card `.github/bible/bible_queue.py` Queue.deferred_updates
+- card `.github/bible/bible_queue.py` Queue.whole_hold
 - card `.github/bible/bible_queue.py` GitHub.agent_events
 - card `.github/bible/bible_queue.py` Queue.session
-
-## Citations waiting for a recheck (55)
-
-- knowledge/AGENT-CONTEXT.md:9
-- knowledge/AGENT-CONTEXT.md:17
-- knowledge/AGENT-CONTEXT.md:76
-- knowledge/AGENT-CONTEXT.md:107
-- ledger/coverage-ledger.md:43
-- lld/bible-mode-b/README.md:23
-- lld/bible-mode-b/README.md:28
-- lld/bible-mode-b/README.md:34
-- lld/bible-mode-b/README.md:70
-- lld/bible-mode-b/README.md:106
-- lld/bible-mode-b/README.md:107
-- lld/bible-mode-b/README.md:132
-- lld/bible-mode-b/README.md:178
-- lld/bible-mode-b/README.md:210
-- lld/bible-mode-b/README.md:211
-- lld/bible-mode-b/README.md:220
-- lld/bible-mode-b/README.md:245
-- lld/bible-mode-b/README.md:247
-- lld/bible-mode-b/README.md:251
-- lld/bible-mode-b/README.md:281
-- lld/bible-mode-b/bible_queue.md:25
-- lld/bible-mode-b/bible_queue.md:29
-- lld/bible-mode-b/bible_queue.md:469
-- lld/bible-mode-b/bible_queue.md:995
-- lld/bible-mode-b/bible_queue.md:1006
-- lld/bible-mode-b/bible_queue.md:1007
-- lld/bible-mode-b/bible_queue.md:1473
-- lld/bible-mode-b/bible_queue.md:1557
-- lld/bible-mode-b/bible_queue.md:1568
-- lld/bible-mode-b/bible_queue.md:1569
-- lld/bible-mode-b/bible_queue.md:1570
-- lld/bible-mode-b/bible_queue.md:1571
-- lld/bible-mode-b/bible_queue.md:1572
-- lld/bible-mode-b/bible_queue.md:1596
-- lld/bible-mode-b/bible_queue.md:1597
-- lld/bible-mode-b/bible_queue.md:1598
-- lld/bible-mode-b/bible_queue.md:1599
-- lld/bible-mode-b/bible_queue.md:1600
-- lld/bible-mode-b/bible_queue.md:1601
-- lld/bible-mode-b/bible_queue.md:1602
-- lld/bible-mode-b/bible_queue.md:1603
-- lld/bible-mode-b/bible_queue.md:2349
-- lld/bible-mode-b/bible_queue.md:2360
-- lld/bible-mode-b/bible_queue.md:2361
-- lld/bible-mode-b/bible_queue.md:2362
-- lld/bible-mode-b/bible_queue.md:2378
-- lld/bible-mode-b/bible_queue.md:2379
-- lld/bible-mode-b/bible_queue.md:2380
-- lld/bible-mode-b/bible_queue.md:2381
-- lld/bible-mode-b/bible_queue.md:2382
-- lld/bible-mode-b/bible_queue.md:2941
-- lld/bible-mode-b/bible_queue.md:2943
-- lld/data-dictionary.md:114
-- lld/data-dictionary.md:182
-- reference/risks-and-surprises.md:23
+- remove-file `.git`  

@@ -266,7 +266,7 @@ The module defines the supplier feed URL, image CDN prefix, and three initial pr
 
 ## Surprises
 
-`fetch_supplier_feed` reads from the hard-coded URL, while `apply_feed` only updates SKUs already present in `_PRODUCTS` (`components/catalog/catalog.py:5,42-47`). The source docstring says the fetch runs nightly from cron, but this file defines no schedule (inferred: the function only opens and parses the feed at `components/catalog/catalog.py:36-39`).
+`fetch_supplier_feed` reads from the hard-coded URL, while `apply_feed` only updates SKUs already present in `_PRODUCTS` (`components/catalog/catalog.py:5`, `components/catalog/catalog.py:42-47`). The source docstring says the fetch runs nightly from cron, but this file defines no schedule (inferred: the function only opens and parses the feed at `components/catalog/catalog.py:36-39`).
 
 <!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
 

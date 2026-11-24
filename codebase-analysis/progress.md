@@ -32,7 +32,7 @@ Version: not provided
 | --- | --- | --- | --- | --- | ---: |
 | `catalog` | `components/catalog/` | Python 3; standard-library HTTP server (`components/catalog/service.py:7-12`) | `python3 -m components.catalog.service` (`components/catalog/service.py:40-48`) | `CatalogHandler.do_GET`, `make_server` (`components/catalog/service.py:24-43`) | 3 |
 | `orders` | `components/orders/` | Python 3; standard library (`components/orders/orders.py:1-5`) | Imported and called by Python code (`components/orders/test_orders.py:1-8`) | `line_total`, `order_total`, `validate`, `settle` (`components/orders/orders.py:19-51`) | 4 |
-| `bible-mode-b` | `.github/bible/`, `.github/workflows/` | Python 3 and GitHub Actions YAML (`.github/bible/bible_queue.py:1-10`) | Manual dispatch, 15-minute schedule, and default-branch push workflows (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10,16-18`, `.github/workflows/poc-assign-copilot.yml:11-13`) | `bible_queue.py start`, `reconcile`, `delta` (`.github/bible/bible_queue.py:1-10,797-844`) | 4 |
+| `bible-mode-b` | `.github/bible/`, `.github/workflows/` | Python 3 and GitHub Actions YAML (`.github/bible/bible_queue.py:1-10`) | Manual dispatch, 15-minute schedule, and default-branch push workflows (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10`, `.github/workflows/bible-delta.yml:16-18`, `.github/workflows/poc-assign-copilot.yml:11-13`) | `bible_queue.py start`, `reconcile`, `delta` (`.github/bible/bible_queue.py:9-11`, `.github/bible/bible_queue.py:1286-1332`) | 4 |
 | `tools` | `tools/` | Python 3 and Bash (`tools/plan.py:8-15`, `tools/fanout.sh:1-6`) | CLI and shell invocation (`tools/plan.py:41-61`, `tools/gate.py:81-116`, `tools/fanout.sh:1-6`) | `plan.py`, `gate.py`, `fanout.sh` (`tools/plan.py:41-61`, `tools/gate.py:81-116`, `tools/fanout.sh:1-6`) | 3 |
 
 Discovery succeeded and wrote `components.json`, `components.md`, and issue texts under `ledger/issues/`. The component analyses were completed in separate pull requests. The whole-system pass is now being assembled.
@@ -74,8 +74,8 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 
 ### Coverage and depth
 
-- `inventory.py` refreshed the source inventory: 20 in-scope files, 14 source files, 1,343 lines, 108 symbols, and 0 statically detected routes.
-- `coverage.py --depth deep` passed: every symbol and function card is covered, all branch lines and all same-file call-graph edges are documented, all 17 LLD pages have front matter, and every cross-component call is cited. The exact citation-resolution and other measure totals are in `ledger/coverage-report.md`.
+- `inventory.py` refreshed the source inventory on 24 Nov 2026 (after the delta and the revision of that day): 24 in-scope files, 14 source files, 1,812 source lines, 116 symbols, and 0 statically detected routes.
+- `coverage.py --depth deep` passed: every symbol and function card is covered, all branch lines and all same-file call-graph edges are documented, all 17 LLD pages have front matter, and every cross-component call is cited. On 24 Nov 2026, after the corrections of the report of that day, it printed PASS with 116/116 symbols, 98/98 cards, 320/320 branch lines, 232/232 call-graph edges, 2,213/2,213 citations and 17/17 front-matter pages; the totals are in `ledger/coverage-report.md`.
 - The four component verification reports record `PASS`; the audits cover card depth, branches, endpoint cards, diagrams, citations, and component-specific behavior.
 
 ### Reader test
@@ -92,18 +92,20 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 10. The catalog exposes `/health`; the queue prints messages and workflow results, but no metrics or tracing are implemented. See `lld/api/catalog/catalog.md`, “GET /health,” and `hld/06-cross-cutting.md`, “Observability.”
 11. There is no application build or production deployment declared; existing tests use `unittest`, and the tool gate runs discovery during pass 3. Several order methods are not covered by tests. See `hld/02-architecture.md`, “Build and deployment,” and `hld/06-cross-cutting.md`, “Testing.”
 12. `CatalogHandler.do_GET` returns 200 for `/health`, returns a looked-up price for a known `/price/` path followed by an SKU, and returns 404 for an unknown SKU or unmatched path. See `lld/api/catalog/catalog.md`, “GET /health” and the price endpoint card.
-13. `_PRODUCTS` is initialized from three records; `apply_feed` changes only each known SKU's `price` and `stock`, while lookup helpers read those values. See `lld/data-dictionary.md`, “Catalog products,” and `lld/catalog/catalog.md`, “Data.”
+13. `_PRODUCTS` is initialized from three records; `apply_feed` changes only each known SKU's `price` and `stock`, while lookup helpers read those values. See `lld/data-dictionary.md`, “`_PRODUCTS`: the catalog products,” and `lld/catalog/catalog.md`, “Data.”
 14. `fetch_supplier_feed` is the supplier HTTP caller; its network errors propagate and no automatic invocation is shown. See `hld/03-integrations.md`, “Outbound calls,” and `lld/catalog/catalog.md`, `fetch_supplier_feed`.
 15. The direct catalog import is the current orders path, while the HTTP client is for separate-service mode and has tests as its only callers; the feed's “nightly” docstring has no matching scheduler. See `lld/orders/README.md`, “Outbound calls,” and `reference/risks-and-surprises.md`.
 
 ### Diagrams, evidence, and knowledge base
 
-- The 43 Mermaid blocks were checked against their evidence and required diagram types; no renderer was available, so they were not rendered. This limitation is recorded in `README.md`.
+- The 44 Mermaid blocks (43 without the generated `components.md`) were checked against their evidence and required diagram types; no renderer was available, so they were not rendered. This limitation is recorded in `README.md`.
 - All sweep searches and assistant-directed repository text locations are recorded in this file and `run-notes.md`. No secret values were copied into the analysis.
-- `knowledge.py` reports 211 nodes, 508 edges, 298 chunks, and no unmatched front-matter names. The 72 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
+- `knowledge.py` reports 211 nodes, 566 edges, 323 chunks, and no unmatched front-matter names. The 72 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
 - The three knowledge-base reader questions are summarized after final graph generation.
 
-<!-- cites .github/bible/bible_queue.py@161344dc7ddde551f4020972e6d61c782a86d480 -->
+<!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
+
+<!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
 
 <!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
 

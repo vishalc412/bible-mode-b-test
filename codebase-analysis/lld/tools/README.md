@@ -44,7 +44,7 @@ flowchart LR
   plan -->|"counts tests via count_tests"| gate
   jsonplan -->|"plan input"| gate
   jsonplan -->|"component names"| fanout
-  fanout -->|"labels and issues via gh CLI; transport not stated"| gh
+  fanout -->|"labels and issues via gh CLI, transport not stated"| gh
 ```
 
 | Element | Evidence |
@@ -96,7 +96,7 @@ Not applicable: the three files declare functions and a shell script, but no cla
 
 | Target | Purpose | Protocol and scheme | Address from | Timeout, retry, fallback | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| GitHub CLI (`gh`) targeting the supplied repository | Creates `agent:claude` and `component:<name>` labels and component issues | Invoked as a CLI; network protocol and scheme are not stated | Positional `repo` argument, passed with `-R` | No timeout, retry, or fallback is specified in this script | `tools/fanout.sh:7`, `tools/fanout.sh:10-12`, `tools/fanout.sh:24-29` |
+| GitHub CLI (`gh`) targeting the supplied repository | Creates `agent:claude` and `component:<name>` labels and component issues | Invoked as a CLI; network protocol and scheme are not stated | Positional `repo` argument, passed with `-R` | No timeout, retry, or fallback is specified in this script (inferred: a search of `tools/fanout.sh` for `timeout`, `retry`, `trap` and `||` found none) | `tools/fanout.sh:7`, `tools/fanout.sh:10-12`, `tools/fanout.sh:24-29` |
 
 ## Configuration read
 
@@ -111,7 +111,7 @@ Not applicable: the three files declare functions and a shell script, but no cla
 
 ## Logging and monitoring
 
-The gate prints a result line for each selected pass and failure lines for accumulated errors (`tools/gate.py:109-113`). The fanout script redirects the shared `agent:claude` label command's standard output to `/dev/null` (`tools/fanout.sh:10`). No metrics or tracing behavior is declared in these files (`tools/gate.py:13-117`, `tools/plan.py:8-62`, `tools/fanout.sh:1-31`).
+The gate prints a result line for each selected pass and failure lines for accumulated errors (`tools/gate.py:109-113`). The fanout script redirects the shared `agent:claude` label command's standard output to `/dev/null` (`tools/fanout.sh:10`). No metrics or tracing behavior is declared in these files (inferred: a search of the three files for `metric`, `trace`, `opentelemetry`, `statsd` and `logging` found nothing; `tools/gate.py:13-117`, `tools/plan.py:8-62`, `tools/fanout.sh:1-31`).
 
 ## Tests
 

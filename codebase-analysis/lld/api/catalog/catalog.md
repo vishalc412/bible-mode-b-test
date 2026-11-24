@@ -37,7 +37,7 @@ Handler: [`CatalogHandler.do_GET`](../../catalog/service.md#cataloghandlerdo_get
 | Status | When | Body | Evidence |
 | --- | --- | --- | --- |
 | 200 | Path equals `/health` | `{"status": "ok"}` | `components/catalog/service.py:26-27` |
-| 404 | Path is neither `/health` nor a `/price/` path | `{"error": "not found"}` | `components/catalog/service.py:26-28,34` |
+| 404 | Path is neither `/health` nor a `/price/` path | `{"error": "not found"}` | `components/catalog/service.py:26-28`, `components/catalog/service.py:34` |
 
 ```mermaid
 sequenceDiagram
@@ -56,7 +56,7 @@ sequenceDiagram
 | --- | --- | --- |
 | 1 | The client sends `GET /health`; the handler extracts the URL path, excluding its query string. | `components/catalog/service.py:25-26` |
 | 2 | For `/health`, the handler sends status 200 with `{"status": "ok"}`. | `components/catalog/service.py:26-27` |
-| 3 | For any other path that is not `/price/`, the handler sends status 404 with `{"error": "not found"}`. | `components/catalog/service.py:28,34` |
+| 3 | For any other path that is not `/price/`, the handler sends status 404 with `{"error": "not found"}`. | `components/catalog/service.py:28`, `components/catalog/service.py:34` |
 
 ## GET `/price/<sku>`
 
@@ -86,7 +86,7 @@ Handler: [`CatalogHandler.do_GET`](../../catalog/service.md#cataloghandlerdo_get
 | --- | --- | --- | --- |
 | 200 | SKU exists | `{"sku": "<decoded sku>", "price": <price>}` | `components/catalog/service.py:30-31` |
 | 404 | SKU is unknown | `{"error": "unknown sku <sku>"}` | `components/catalog/service.py:32-33` |
-| 404 | Path does not match `/health` or `/price/` | `{"error": "not found"}` | `components/catalog/service.py:26-28,34` |
+| 404 | Path does not match `/health` or `/price/` | `{"error": "not found"}` | `components/catalog/service.py:26-28`, `components/catalog/service.py:34` |
 
 ```mermaid
 sequenceDiagram

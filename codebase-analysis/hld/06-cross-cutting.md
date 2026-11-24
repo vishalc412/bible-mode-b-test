@@ -14,8 +14,8 @@ source:
   - tools/gate.py
 summary: Credentials, configuration, failures, observability, testing, and deployment practices vary by repository component
 depends_on:
-  - hld/02-architecture
-  - hld/03-integrations
+  - page:hld/02-architecture.md
+  - page:hld/03-integrations.md
 ---
 # Cross-cutting concerns
 
@@ -25,10 +25,10 @@ The GitHub automation authenticates API requests with a bearer token; the catalo
 
 | Component | How | Evidence |
 | --- | --- | --- |
-| `bible-mode-b` | Uses `GH_TOKEN` in the GitHub API `Authorization` header. Plan, queue and delta workflows take it from `BIBLE_ASSIGN_TOKEN` and check out the default branch before running the queue code. | `.github/bible/bible_queue.py:114-123`; `.github/workflows/bible-plan.yml:26-45`; `.github/workflows/bible-queue.yml:12-36`; `.github/workflows/bible-delta.yml:14-33` |
-| POC assignment | Uses `BIBLE_ASSIGN_TOKEN` as `GH_TOKEN`; the workflow creates the issue through `gh api`. The workflow declares `contents: read` and performs no checkout. | `.github/workflows/poc-assign-copilot.yml:4-8,31-46,66-69` |
-| `catalog` | HTTP handlers do not authenticate requests. The server defaults to loopback, but `CATALOG_HOST` can change the bind address. | `components/catalog/service.py:15-34,40-43` |
-| `orders` | Settlement and remote catalog requests use plain HTTP; no client credentials or authorization headers are set. | `components/orders/orders.py:7-12,45-50`; `components/orders/catalog_client.py:19-23` |
+| `bible-mode-b` | Uses `GH_TOKEN` in the GitHub API `Authorization` header. Plan, queue and delta workflows take it from `BIBLE_ASSIGN_TOKEN` and check out the default branch before running the queue code. | `.github/bible/bible_queue.py:116-125`; `.github/workflows/bible-plan.yml:26-45`; `.github/workflows/bible-queue.yml:12-36`; `.github/workflows/bible-delta.yml:14-33` |
+| POC assignment | Uses `BIBLE_ASSIGN_TOKEN` as `GH_TOKEN`; the workflow creates the issue through `gh api`. The workflow declares `contents: read` and performs no checkout. | `.github/workflows/poc-assign-copilot.yml:4-8`, `.github/workflows/poc-assign-copilot.yml:31-46`, `.github/workflows/poc-assign-copilot.yml:66-69` |
+| `catalog` | HTTP handlers do not authenticate requests. The server defaults to loopback, but `CATALOG_HOST` can change the bind address. | `components/catalog/service.py:15-34`, `components/catalog/service.py:40-43` |
+| `orders` | Settlement and remote catalog requests use plain HTTP; no client credentials or authorization headers are set. | `components/orders/orders.py:7-12`, `components/orders/orders.py:45-50`; `components/orders/catalog_client.py:19-23` |
 
 Consistency: varies (4 variants)
 
@@ -38,7 +38,7 @@ The workflow token is passed to the process through an environment variable, not
 
 | Component | How | Evidence |
 | --- | --- | --- |
-| `bible-mode-b` | Workflows map `secrets.BIBLE_ASSIGN_TOKEN` to `GH_TOKEN`, check it before running, and the API client sends it as a bearer token. | `.github/workflows/bible-plan.yml:43-53`; `.github/workflows/bible-queue.yml:31-37`; `.github/workflows/bible-delta.yml:26-38`; `.github/bible/bible_queue.py:119-123` |
+| `bible-mode-b` | Workflows map `secrets.BIBLE_ASSIGN_TOKEN` to `GH_TOKEN`, check it before running, and the API client sends it as a bearer token. | `.github/workflows/bible-plan.yml:43-53`; `.github/workflows/bible-queue.yml:31-37`; `.github/workflows/bible-delta.yml:26-38`; `.github/bible/bible_queue.py:121-125` |
 | POC assignment | Shell checks the token; `jq` constructs `request.json` from input values and does not add the token to that JSON. | `.github/workflows/poc-assign-copilot.yml:40-63` |
 | Sample application | No application secrets or credential configuration are shown in the catalog or orders modules. | `components/catalog/catalog.py:1-47`; `components/catalog/service.py:1-49`; `components/orders/orders.py:1-51`; `components/orders/catalog_client.py:1-29` |
 
@@ -50,25 +50,25 @@ Configuration is split across workflow inputs, environment variables, and source
 
 | Component | How | Evidence |
 | --- | --- | --- |
-| `bible-mode-b` | Workflow inputs select components, models and concurrency; environment variables configure GitHub API access, toolkit location, and optional clock/test settings. | `.github/workflows/bible-plan.yml:9-24,44-49`; `.github/workflows/bible-queue.yml:31-37`; `.github/bible/bible_queue.py:34-36,61-65,111,357,478-480` |
+| `bible-mode-b` | Workflow inputs select components, models and concurrency; environment variables configure GitHub API access, toolkit location, and optional clock/test settings. | `.github/workflows/bible-plan.yml:9-24`, `.github/workflows/bible-plan.yml:44-49`; `.github/workflows/bible-queue.yml:31-37`; `.github/bible/bible_queue.py:34-36`, `.github/bible/bible_queue.py:61-66`, `.github/bible/bible_queue.py:113`, `.github/bible/bible_queue.py:380`, `.github/bible/bible_queue.py:501-503` |
 | `catalog` | Bind address and port use `CATALOG_HOST` and `CATALOG_PORT`; supplier and image URLs are constants. | `components/catalog/service.py:40-43`; `components/catalog/catalog.py:5-6` |
-| `orders` | Catalog base URL uses `CATALOG_URL`; settlement URLs, discounts, bulk threshold and request timeout are function defaults or constants. | `components/orders/catalog_client.py:11,14-23`; `components/orders/orders.py:7-16,45-50` |
-| `tools` | Fanout reads `ENGINE` with default `copilot`; plan and gate paths are repository-local. | `tools/fanout.sh:2-12,24-29`; `tools/plan.py:41-58`; `tools/gate.py:81-108` |
+| `orders` | Catalog base URL uses `CATALOG_URL`; settlement URLs, discounts, bulk threshold and request timeout are function defaults or constants. | `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`; `components/orders/orders.py:7-16`, `components/orders/orders.py:45-50` |
+| `tools` | Fanout reads `ENGINE` with default `copilot`; plan and gate paths are repository-local. | `tools/fanout.sh:2-12`, `tools/fanout.sh:24-29`; `tools/plan.py:41-58`; `tools/gate.py:81-108` |
 
 Consistency: varies (4 variants)
 
 ## Error handling and resilience
 
-The sample modules generally expose network and data errors to callers; the queue translates GitHub request failures and isolates reconciliation errors per tracker. Session failures get one retry before a human hold, but network requests have no general retry policy. An assembly or whole-analysis session that ends without its end marker is continued up to three times, and is held for a person at once when GitHub records that Copilot's work failed before it started (`.github/bible/bible_queue.py:1153-1162`, `.github/bible/bible_queue.py:1165-1171`).
+The sample modules generally expose network and data errors to callers; the queue translates GitHub request failures and isolates reconciliation errors per tracker. Session failures get one retry before a human hold, but network requests have no general retry policy. An assembly or whole-analysis session that ends without its end marker is continued up to three times, and is held for a person at once when GitHub records that Copilot's work failed before it started (`.github/bible/bible_queue.py:1179-1188`, `.github/bible/bible_queue.py:1191-1197`).
 
 | Component | How | Evidence |
 | --- | --- | --- |
-| `catalog` | Unknown products raise `KeyError` in `price_of`; the HTTP handler returns 404 for that error. Supplier-fetch errors and feed parsing errors are not caught here. | `components/catalog/catalog.py:20-24,36-39,42-47`; `components/catalog/service.py:28-34` |
-| `orders` | Validation returns per-line errors; unknown SKUs in totals and HTTP/transport errors from settlement or remote price lookup propagate to the caller. | `components/orders/orders.py:23-42,45-51`; `components/orders/catalog_client.py:19-23` |
-| `bible-mode-b` | GitHub HTTP and transport errors become `RuntimeError`; reconciliation catches an exception per tracker. Failed agent work is retried once, then labelled for human attention. | `.github/bible/bible_queue.py:130-136,589-592,559-578` |
-| `tools` | Gate reports missing or invalid artifacts and failing tests as failures; shell fanout stops on command errors. | `tools/gate.py:42-78,94-117`; `tools/fanout.sh:6,24-30` |
+| `catalog` | Unknown products raise `KeyError` in `price_of`; the HTTP handler returns 404 for that error. Supplier-fetch errors and feed parsing errors are not caught here. | `components/catalog/catalog.py:20-24`, `components/catalog/catalog.py:36-39`, `components/catalog/catalog.py:42-47`; `components/catalog/service.py:28-34` |
+| `orders` | Validation returns per-line errors; unknown SKUs in totals and HTTP/transport errors from settlement or remote price lookup propagate to the caller. | `components/orders/orders.py:23-42`, `components/orders/orders.py:45-51`; `components/orders/catalog_client.py:19-23` |
+| `bible-mode-b` | GitHub HTTP and transport errors become `RuntimeError`; reconciliation catches an exception per tracker. Failed agent work is retried once, then labelled for human attention. | `.github/bible/bible_queue.py:132-138`, `.github/bible/bible_queue.py:612-615`, `.github/bible/bible_queue.py:582-601` |
+| `tools` | Gate reports missing or invalid artifacts and failing tests as failures; shell fanout stops on command errors. | `tools/gate.py:42-78`, `tools/gate.py:94-117`; `tools/fanout.sh:6`, `tools/fanout.sh:24-30` |
 
-Request timeouts are explicit for GitHub API calls (60 seconds by default, with a 300-second tarball timeout), catalog price lookup (5 seconds), settlement (15 seconds), and supplier feed (10 seconds). There are no retries around these request calls; the queue's one retry is for failed agent sessions, not network requests (`.github/bible/bible_queue.py:114,274,559-578`; `components/orders/catalog_client.py:19-23`; `components/orders/orders.py:45-50`; `components/catalog/catalog.py:36-39`).
+Request timeouts are explicit for GitHub API calls (60 seconds by default, with a 300-second tarball timeout), catalog price lookup (5 seconds), settlement (15 seconds), and supplier feed (10 seconds). There are no retries around these request calls; the queue's one retry is for failed agent sessions, not network requests (`.github/bible/bible_queue.py:116`, `.github/bible/bible_queue.py:297`, `.github/bible/bible_queue.py:582-601`; `components/orders/catalog_client.py:19-23`; `components/orders/orders.py:45-50`; `components/catalog/catalog.py:36-39`).
 
 Consistency: varies (4 variants)
 
@@ -78,7 +78,7 @@ The queue writes progress and error messages to standard output; the catalog HTT
 
 | Component | How | Evidence |
 | --- | --- | --- |
-| `bible-mode-b` | Queue defaults its logging callback to `print` and emits tracker and gate status. | `.github/bible/bible_queue.py:478-480,587,592,868,873,879,1193-1194` |
+| `bible-mode-b` | Queue defaults its logging callback to `print` and emits tracker and gate status. | `.github/bible/bible_queue.py:501-503`, `.github/bible/bible_queue.py:610`, `.github/bible/bible_queue.py:615`, `.github/bible/bible_queue.py:891`, `.github/bible/bible_queue.py:896`, `.github/bible/bible_queue.py:902`, `.github/bible/bible_queue.py:1219-1220` |
 | `catalog` | `CatalogHandler.log_message` is a no-op. | `components/catalog/service.py:36-37` |
 | Sample application and tools | No logging framework, metrics, or tracing calls were found in the repository sweep. | `codebase-analysis/progress.md` (Sweep: Outbound Python, Entry points, and Security dispositions) |
 
@@ -90,8 +90,8 @@ The sample application and tools run from source without a declared package buil
 
 | Component | How | Evidence |
 | --- | --- | --- |
-| `catalog` and `orders` | Python source modules; the catalog server is started with `python3 -m components.catalog.service`. No application packaging or deployment manifest is identified in the component pages. | `components/catalog/service.py:1-12,40-49`; `components/orders/orders.py:1-5`; `codebase-analysis/lld/catalog/README.md`; `codebase-analysis/lld/orders/README.md` |
-| `bible-mode-b` | Python queue runs on `ubuntu-latest` after checkout; workflow job timeouts and concurrency are defined in YAML. | `.github/workflows/bible-plan.yml:29-40`; `.github/workflows/bible-queue.yml:15-30`; `.github/bible/bible_queue.py:1260-1278` |
+| `catalog` and `orders` | Python source modules; the catalog server is started with `python3 -m components.catalog.service`. No application packaging or deployment manifest is identified in the component pages. | `components/catalog/service.py:1-12`, `components/catalog/service.py:40-49`; `components/orders/orders.py:1-5`; `codebase-analysis/lld/catalog/README.md`; `codebase-analysis/lld/orders/README.md` |
+| `bible-mode-b` | Python queue runs on `ubuntu-latest` after checkout; workflow job timeouts and concurrency are defined in YAML. | `.github/workflows/bible-plan.yml:29-40`; `.github/workflows/bible-queue.yml:15-30`; `.github/bible/bible_queue.py:1286-1304` |
 | `tools` | Python scripts and Bash run from the repository; fanout invokes `gh`. | `tools/plan.py:41-62`; `tools/gate.py:81-117`; `tools/fanout.sh:1-31` |
 
 Consistency: varies (3 variants)
@@ -108,7 +108,7 @@ The sample components use Python's `unittest`; the tool gate runs discovery for 
 
 Consistency: varies (3 variants)
 
-<!-- cites .github/bible/bible_queue.py@161344dc7ddde551f4020972e6d61c782a86d480 -->
+<!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
 
 <!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
 

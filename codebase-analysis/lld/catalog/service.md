@@ -8,7 +8,7 @@ reads: []
 writes: []
 calls: []
 uses: [symbol:price_of]
-config: [CATALOG_HOST, CATALOG_PORT]
+config: [config:CATALOG_HOST, config:CATALOG_PORT]
 exposes: [route:GET /health, route:GET /price/{sku}]
 ---
 
@@ -135,6 +135,7 @@ otherwise: send 404 not-found JSON
 | `service.py:26` | if | `path == "/health"` | Sends status 200 and health JSON (`components/catalog/service.py:26-27`). |
 | `service.py:28` | if | `path.startswith("/price/")` | Extracts and decodes `sku`, then attempts a price response (`components/catalog/service.py:28-31`). |
 | `service.py:32` | except | A `KeyError` occurs while evaluating the success response | Sends status 404 with the unknown-SKU error (`components/catalog/service.py:30-33`). |
+| `service.py:34` | fall-through return | The path is neither `/health` nor under `/price/` | Sends status 404 with `{"error": "not found"}` (`components/catalog/service.py:34`). |
 
 **Output and side effects**: writes one JSON response through `_send`; response status and payload depend on the path and price lookup (`components/catalog/service.py:26-34`).
 
