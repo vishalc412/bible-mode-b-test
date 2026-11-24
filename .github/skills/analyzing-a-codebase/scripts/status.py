@@ -201,16 +201,24 @@ def trusted(facts, current):
         return "no", "verdict %s" % verdict
     if facts["majors"] and not (facts["recheck"] and facts["recheck"][0] == facts["recheck"][1]):
         return "no", "verdict %s with %d major corrections not re-checked: verify the corrected parts again" % (verdict, facts["majors"])
+    open_items = ""
     if facts["recheck"] and (facts["recheck"][1] == 0 or facts["recheck"][0] < facts["recheck"][1]):
-        return "no", "after corrections only %d of %d flagged statements confirmed: correct and re-check the rest" % facts["recheck"]
+        if verdict != "PASS" or facts["majors"] or facts["recheck"][1] == 0:
+            return "no", "after corrections only %d of %d flagged statements confirmed: correct and re-check the rest" % facts["recheck"]
+        # A full round's PASS whose re-check of the earlier round is incomplete: the verdict table lets minor corrections
+        # remain, and a PASS has no major one, so the earlier items not confirmed are minor and listed in this report
+        # (live run, L22: a 97.5% PASS was refused because 5 of 15 earlier minor items were re-listed)
+        open_items = "; %d of %d earlier corrections confirmed, the rest re-listed as minor corrections" % facts["recheck"]
     if verdict == "PASS AFTER CORRECTIONS" and not facts["recheck"]:
         return "no", "verdict PASS AFTER CORRECTIONS: apply the corrections, then have them re-checked"
     if facts["recheck"] and (facts.get("accuracy") is None or facts["accuracy"] < RECHECK_MIN_ACCURACY):
         # a re-check fixes the flagged statements, not the unsampled ones (independent review of the re-check rule):
         # it counts only after a round whose accuracy is a PASS's
-        return "no", ("a re-check counts only after a round with accuracy of at least %.0f%% (the report gives %s): "
-                      "verify in full" % (RECHECK_MIN_ACCURACY, "%.1f%%" % facts["accuracy"] if facts.get("accuracy") is not None
-                                          else "none in its Scores"))
+        given = ("%.1f%%" % facts["accuracy"] if facts.get("accuracy") is not None else
+                 "none: its `Re-check of` row does not lead to a verification report in this folder" if facts.get("chained")
+                 else "none in its Scores")
+        return "no", ("a re-check counts only after a round with accuracy of at least %.0f%% (the lowest on its chain: %s): "
+                      "verify in full" % (RECHECK_MIN_ACCURACY, given))
     if not facts["fingerprint"]:
         return "no", "the report records no analysis fingerprint (`| Analysis fingerprint | ... |`): verify again with this version"
     if facts["fingerprint"] != current:
@@ -219,7 +227,8 @@ def trusted(facts, current):
     noted = "; %d minor item(s) noted outside the re-check, for the next full verification" % facts["noted"] if facts.get("noted") else ""
     if facts["recheck"] and not facts.get("chained"):
         noted += "; the re-check names no earlier round (no `Re-check of` row): judged by its own Accuracy rows"
-    return "ok", "verdict %s%s; the pages are the ones verified (fingerprint %s)%s" % (verdict, recheck, current, noted)
+    return "ok", "verdict %s%s; the pages are the ones verified (fingerprint %s)%s%s" % (verdict, recheck if not open_items else "",
+                                                                                     current, open_items, noted)
 
 
 def deltas_after(analysis_abs, when):
