@@ -91,6 +91,7 @@ ATTEMPT = re.compile(r"^Attempt:\s*(\d+)", re.M)
 NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,39}\Z")
 LABELS = {
     "bible-tracker": "One analysis run: settings and progress",
+    "bible-replayed": "Closed run: its recorded code changes are in update issues",
     "bible-plan": "Copilot session: plan the components",
     "bible-chunk": "Copilot session: part of one component",
     "bible-verify": "Copilot session: verify one component",
@@ -484,7 +485,7 @@ def report_facts(text, fetch=None, depth=0):
     rows = re.findall(r"^\|\s*Verdict\s*\|", visible, re.M | re.I)
     if len(verdicts) != 1 or len(rows) != 1:
         return ("UNREADABLE", 0, None, None, None, False)
-    majors = sum(1 for line in section(visible, "Corrections").splitlines()
+    majors = sum(1 for line in section(text, "Corrections").splitlines()  # status.py counts in the raw text too
                  if line.lstrip().startswith("|") and re.search(r"\|\s*major\s*\|", line, re.I))
     printed = re.search(r"^\|\s*Analysis fingerprint\s*\|\s*`?([0-9a-f]{16})`?", visible, re.M | re.I)
     recheck = RECHECK_LINE.search(visible)
@@ -526,7 +527,7 @@ def accepted(facts):
     if not facts or facts[0] not in ("PASS", "PASS AFTER CORRECTIONS"):
         return False
     recheck = facts[3] if len(facts) > 3 else None
-    complete = bool(recheck and recheck[1] > 0 and recheck[0] == recheck[1])
+    complete = bool(recheck and recheck[1] > 0 and recheck[0] >= recheck[1])  # status.py refuses only X < Y
     if recheck and not complete and (facts[0] != "PASS" or facts[1] or not recheck[1] or (len(facts) > 5 and facts[5])):
         return False  # status.py's rule: only a full round's PASS (no major) may leave earlier minor items re-listed
     if recheck and (len(facts) < 5 or facts[4] is None or facts[4] < RECHECK_MIN_ACCURACY):
@@ -677,13 +678,18 @@ class Queue:
         closing): opened as update issues once, or recorded on the run open now, so none is lost (live run, 24 Nov 2026:
         the round-4 verifier found that only the Done step replayed them)."""
         for tracker in self.gh.issues(["bible-tracker"], state="closed"):
-            if self.replayed(tracker):
-                continue
-            paths = self.deferred_updates(tracker)
-            if paths:
-                self.delta(paths, (settings_of(tracker) or {}).get("analysis", "codebase-analysis"))
-            self.gh.comment(tracker["number"], "The %d code change(s) recorded while this run was open are now in update "
-                            "issues, or recorded on the run open now.\n%s" % (len(paths), REPLAYED_MARK))
+            if "bible-replayed" in labels_of(tracker):
+                continue  # done before: no timeline calls, so the cost does not grow with every run (review of #124)
+            try:
+                if not self.replayed(tracker):
+                    paths = self.deferred_updates(tracker)
+                    if paths:
+                        self.delta(paths, (settings_of(tracker) or {}).get("analysis", "codebase-analysis"))
+                    self.gh.comment(tracker["number"], "The %d code change(s) recorded while this run was open are now in "
+                                    "update issues, or recorded on the run open now.\n%s" % (len(paths), REPLAYED_MARK))
+                self.gh.label(tracker["number"], "bible-replayed")
+            except Exception as err:  # one tracker that fails never blocks the others; it is tried again at the next check
+                self.log("tracker #%d: replaying its recorded updates: %s: %s" % (tracker["number"], type(err).__name__, err))
 
     def replayed(self, tracker):
         """True when the queue itself marked this closed tracker's recorded updates as replayed."""
@@ -1133,6 +1139,7 @@ class Queue:
                            "(%s: %s); the next check tries again: %s" % (type(err).__name__, str(err)[:160], shown_files(late)))
                 return "done"
         gh.comment(tracker["number"], "Recorded code changes: %d, in update issues.\n%s" % (len(deferred) + len(late), REPLAYED_MARK))
+        gh.label(tracker["number"], "bible-replayed")
         return "done"
 
     def deferred_updates(self, tracker):
