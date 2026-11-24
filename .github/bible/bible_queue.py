@@ -359,7 +359,8 @@ def age(stamp):
 
 
 SAFE_PATH = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)*\Z")
-SAFE_FILE = re.compile(r"^[A-Za-z0-9_.-][A-Za-z0-9_./-]{0,250}\Z")   # a path quoted to Copilot: no spaces, no @, no prose
+SAFE_FILE = re.compile(r"^(?!.*(?:^|/)\.\.(?:/|$))[A-Za-z0-9_.][A-Za-z0-9_./-]{0,250}\Z")  # quoted to Copilot: no spaces, @, '..' or leading '-'
+DEFERRED_PER_COMMENT = 200 # paths per deferred-update comment (GitHub's comment limit is 65,536 characters)
 ABANDONED_AFTER = 14 * 24 * 3600  # a tracker untouched this long no longer holds back update issues
 MAX_DELTA_ISSUES = 10      # update sessions one push may start; more, and a person decides
 SAFE_MODEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}\Z")
@@ -457,7 +458,7 @@ def report_facts(text):
 def as_int(value):
     try:
         return int(value)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):  # 1e999 from a hand-edited block is not a number of sessions
         return 0
 
 
@@ -879,7 +880,7 @@ class Queue:
     def could_not_check(self, key, what, hold_labels, hold_title):
         """A check that could not run counts; after MAX_NOCHECK in a row a person decides (it could fail the same way
         forever: always too slow, too large, a missing script). Returns the tracker row, or None to just wait."""
-        self.state[key] = as_int(self.state.get(key)) + 1
+        self.state[key] = max(as_int(self.state.get(key)), 0) + 1  # a forged negative count cannot suppress the hold
         if self.state[key] < MAX_NOCHECK:
             return None
         self.state.pop(key, None)
@@ -1188,10 +1189,12 @@ class Queue:
             # Seen live (24 Nov 2026): an update session and the run's own revision edited the same pages at once. While
             # a run is open the change is recorded on its tracker, and replayed into update issues when the run ends.
             plain = [p for p in changed if SAFE_FILE.match(p)]
-            gh.comment(open_run[0]["number"], "Code changed while this run is open: the update follows when the run ends "
-                       "(%d file(s)%s).\n<!-- bible-deferred-update %s -->" % (
-                           len(plain), "; %d with unusual names not recorded: update those by hand" % (len(changed) - len(plain))
-                           if len(changed) != len(plain) else "", json.dumps(plain)))
+            for start in range(0, max(len(plain), 1), DEFERRED_PER_COMMENT):  # chunked: a large push fits GitHub's limit
+                part = plain[start:start + DEFERRED_PER_COMMENT]
+                gh.comment(open_run[0]["number"], "Code changed while this run is open: the update follows when the run ends "
+                           "(%d file(s)%s).\n<!-- bible-deferred-update %s -->" % (
+                               len(part), "; %d with unusual names not recorded: update those by hand" % (len(changed) - len(plain))
+                               if start == 0 and len(changed) != len(plain) else "", json.dumps(part)))
             self.log("an analysis run is open (#%d): the change is recorded there and replayed when it ends"
                      % open_run[0]["number"])
             return
