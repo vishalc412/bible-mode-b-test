@@ -89,6 +89,9 @@ PLACEHOLDER = re.compile(r"\bTODO\b|\bTBD\b|\bFIXME\b|<(?!br\b|br/)[a-z][a-z /-]
 
 FRONT_MATTER = re.compile(r"\A---[ \t]*\n(.*?)\n---[ \t]*(?:\n|\Z)", re.S)
 MERMAID_BLOCK = re.compile(r"```mermaid[ \t]*\n(.*?)```", re.S)
+# Several ranges in one citation (`a.py:5,19-20`): no check can read it (live run, 24 Nov 2026: 307 such citations were
+# never resolved, moved by an update or sampled by a verifier), so the gate fails it and asks for one citation per range.
+CITATION_LIST = re.compile(r"`([A-Za-z0-9_@+~./\\-]+\.[A-Za-z0-9_]+):(\d+(?:\s*-\s*\d+)?(?:\s*,\s*\d+(?:\s*-\s*\d+)?)+)`")
 CITE_IN_LINE = re.compile(r"`(?:[^`\n]*/)?([^`/\n]+):(\d+)(?:\s*-\s*(\d+))?`")
 STAMP = re.compile(r"<!--\s*code:\s*([0-9a-f]{12})\s*-->")        # the code a card was written from
 RECHECK = re.compile(r"<!--\s*recheck\b[^>]*-->")                  # set by delta.py on a citation it could not move
@@ -332,7 +335,7 @@ def main() -> None:
               and f["lang"] not in ("css", "html")]
     gaps = {k: [] for k in ("files", "symbols", "cards", "routes", "mentions", "citations",
                             "short", "opaque", "placeholders", "required", "mindmap", "stale", "recheck", "orphan",
-                            "crosscalls", "callers", "outside")}
+                            "crosscalls", "callers", "outside", "lists")}
     hash_cache = {}
 
     def stamp_of(path, start, end):
@@ -578,6 +581,12 @@ def main() -> None:
                 elif status != "ok":
                     gaps["citations"].append("%s:%d `%s:%d-%d`: %s" % (doc, line_no, cited, start, end, status))
                 citation_rows.append((len(citation_rows) + 1, doc, line_no, cited, start, end, status, label))
+            for match in CITATION_LIST.finditer(line):
+                counts["citations"][1] += 1
+                ranges = [r.strip().replace(" ", "") for r in match.group(2).split(",")]
+                gaps["lists"].append("%s:%d `%s:%s`: write one citation per range: %s"
+                                         % (doc, line_no, match.group(1), match.group(2),
+                                            ", ".join("`%s:%s`" % (match.group(1), r) for r in ranges)))
             for match in RECHECK.finditer(line):
                 gaps["recheck"].append("%s:%d `%s`" % (doc, line_no, match.group(0)))
             for match in OPAQUE.finditer(line):
@@ -636,6 +645,7 @@ def main() -> None:
                      ("placeholders", "template placeholders left"),
                      ("stale", "cards written from code that has changed since"),
                      ("recheck", "citations awaiting a recheck after a code change"),
+                     ("lists", "citations with several ranges, which no check can read"),
                      ("orphan", "cards for code that no longer exists"),
                      ("callers", "component READMEs that do not name their caller components"),
                      ("outside", "pages for this component written outside its folders")):
@@ -672,6 +682,7 @@ def main() -> None:
         ("Placeholders", "placeholders", "Fill in or remove."),
         ("Cards written from code that has changed since", "stale", "Re-read the lines, rewrite the card, and replace its stamp with the one given."),
         ("Cards for code that no longer exists", "orphan", "Delete the card, its call-graph edges and every row that names it."),
+        ("Citations with several ranges", "lists", "Write one citation per range, as each line shows: the gate, an update and a verifier read only `path:line` or `path:start-end`."),
         ("Citations awaiting a recheck after a code change", "recheck", "Open the cited code, correct the citation and the sentence it supports, then delete the marker."),
         ("Calls into other components not cited on the calling card", "crosscalls", "On the calling function's card, name the called function and cite its call line (a row in its Calls or Branches table). A wrong match: list it in `ledger/not-documented.md` as `calls:<name>` with a reason."),
         ("Component READMEs that do not name their callers", "callers", "In the called component's README, name each component that calls it and what it calls (components.md lists them)."),
