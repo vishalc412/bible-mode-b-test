@@ -24,7 +24,7 @@ From `coverage.py`, run by you: every measure in its table, and its result.
 
 A secret value in the analysis makes the verdict at most `PASS AFTER CORRECTIONS`, with its removal as the first correction.
 
-Whether the analysis counts as verified is decided by `status.py`, not by the front page: a `PASS` whose fingerprint matches the pages now. After `PASS AFTER CORRECTIONS` (or a `PASS` with corrections), the author applies them and a verifier re-checks every flagged statement and every changed one, fills "Earlier corrections re-confirmed", writes the line `After corrections: every flagged statement re-checked: X of Y confirmed.` under the header table, and replaces the fingerprint with the one of the pages it re-checked. `status.py` trusts it only when X equals Y.
+Whether the analysis counts as verified is decided by `status.py`, not by the front page: a `PASS` whose fingerprint matches the pages now. After `PASS AFTER CORRECTIONS` (or a `PASS` with corrections), the author applies them and a verifier re-checks every flagged statement and every changed one, fills "Earlier corrections re-confirmed", writes the line `After corrections: every flagged statement re-checked: X of Y confirmed.` under the header table, and replaces the fingerprint with the one of the pages it re-checked. `status.py` trusts it only when X equals Y, and only after a round with accuracy of at least 95% (read from the full round its `Re-check of` row leads to; a report without that row is judged by its lowest Accuracy row). The skill's "Re-check after a revision" gives the steps: a bounded list, no new sample.
 
 ## Report template
 
@@ -86,7 +86,15 @@ Only when this verification follows a revision: each earlier correction, whether
 ## Readability and prose findings
 ## Ledger findings
 ## Consistency findings
+## Noticed outside the re-check
+Only in a re-check: one row per minor item noticed outside its list, for the next full verification (`status.py` counts them).
+| # | Page and line | Note |
+| --- | --- | --- |
+
 ## Limits
+
+## Page fingerprints
+The output of `status.py --page-fingerprints` (component scope: `--component <name>`), pasted as it is.
 
 ## Everything checked
 Every citation not simply confirmed, one row each. Confirmed ones may be index ranges per
