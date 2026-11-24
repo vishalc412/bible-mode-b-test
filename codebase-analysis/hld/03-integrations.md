@@ -56,7 +56,7 @@ The catalog API binds to `127.0.0.1` on port 8001 by default, configurable with 
 | From | To | Dependency | Evidence |
 | --- | --- | --- | --- |
 | `orders` | `catalog` | Direct in-process price/stock calls; optional HTTP price client is exercised by tests and intended for separate services | `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`; `components/orders/catalog_client.py:14-23`; `components/orders/test_catalog_client.py:37-62` |
-| `catalog` | Supplier One | Supplier JSON fetch when explicitly invoked; its docstring says it runs nightly from cron, but no schedule or caller is in the repository (inferred: no file calls `fetch_supplier_feed`) | `components/catalog/catalog.py:34-47` |
+| `catalog` | Supplier One | Supplier JSON fetch when explicitly invoked; its docstring says it runs nightly from cron, but no schedule or caller is in the repository (inferred: no file calls `fetch_supplier_feed`) | `components/catalog/catalog.py:36-47` |
 | `orders` | Payment partner | Settlement POST | `components/orders/orders.py:45-51` |
 | `bible-mode-b` | GitHub and Copilot | Stores run state and creates/assigns sessions; agent returns work through issue timelines and PRs | `.github/bible/bible_queue.py:127-153`, `.github/bible/bible_queue.py:166-173`, `.github/bible/bible_queue.py:204-234`, `.github/bible/bible_queue.py:535-601` |
 | `bible-mode-b` | Analysis toolkit | Imports component helpers and runs coverage/status scripts | `.github/bible/bible_queue.py:1247-1249`, `.github/bible/bible_queue.py:880-905` |
