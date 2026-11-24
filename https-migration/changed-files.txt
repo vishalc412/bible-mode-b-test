@@ -1,0 +1,8 @@
+components/catalog/catalog.py
+components/catalog/test_catalog.py
+https-migration/https-allowlist.txt
+https-migration/https-inventory.md
+https-migration/tests-before.txt
+https-migration/tests-after.txt
+https-migration/https-migration-summary.md
+https-migration/changed-files.txt

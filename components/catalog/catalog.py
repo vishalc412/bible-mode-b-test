@@ -1,8 +1,11 @@
 """Product catalog: prices, stock and the nightly supplier feed."""
 import json
+import ssl
+import urllib.error
+import urllib.parse
 import urllib.request
 
-SUPPLIER_FEED_URL = "http://feeds.supplier-one.example.com/v2/products.json"
+SUPPLIER_FEED_URL = "https://feeds.supplier-one.example.com/v2/products.json"
 IMAGE_CDN = "https://cdn.example.com/img/"
 
 _PRODUCTS = {
@@ -10,6 +13,15 @@ _PRODUCTS = {
     "SKU-2": {"name": "Toaster", "price": 39.5, "stock": 0},
     "SKU-3": {"name": "Mug", "price": 6.0, "stock": 140},
 }
+
+
+class NoHTTPRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if urllib.parse.urlsplit(newurl).scheme.lower() == "http":
+            raise urllib.error.HTTPError(
+                newurl, code, "Refusing redirect from HTTPS to HTTP", headers, fp
+            )
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
 def get_product(sku):
@@ -35,7 +47,11 @@ def image_url(sku):
 
 def fetch_supplier_feed(timeout=10):
     """Pull the supplier's product feed. Runs nightly from cron."""
-    with urllib.request.urlopen(SUPPLIER_FEED_URL, timeout=timeout) as resp:
+    context = ssl.create_default_context()
+    opener = urllib.request.build_opener(
+        NoHTTPRedirectHandler(), urllib.request.HTTPSHandler(context=context)
+    )
+    with opener.open(SUPPLIER_FEED_URL, timeout=timeout) as resp:
         return json.loads(resp.read())
 
 
