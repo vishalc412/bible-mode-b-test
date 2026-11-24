@@ -148,7 +148,7 @@ The module imports JSON, environment, URL parsing, and URL request libraries and
 
 ## Surprises
 
-This HTTP access path is intended for orders running as its own service; the direct catalog import in `orders.py` is intended when both modules run in one process (today's deployment) (answer to Q1; `components/orders/catalog_client.py:3`, `components/orders/orders.py:5`). The HTTP path's only callers found are the tests, and requests use plain HTTP to `CATALOG_URL`, defaulting to `http://127.0.0.1:8001` (answer to Q1; `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`, `components/orders/test_catalog_client.py:37-62`).
+This HTTP access path is intended for orders running as its own service; the direct catalog import in `orders.py` is intended when both modules run in one process (today's deployment per the recorded answer to Q1, a user decision) (answer to Q1; `components/orders/catalog_client.py:3`, `components/orders/orders.py:5`). The HTTP path's only callers found are the tests (inferred: its docstring, `components/orders/catalog_client.py:1-4`, names the separate-service use, and a search of the repository finds `catalog_client` used only in `components/orders/test_catalog_client.py`, 6 hits), and requests use plain HTTP to `CATALOG_URL`, defaulting to `http://127.0.0.1:8001` (answer to Q1; `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`, `components/orders/test_catalog_client.py:37-62`).
 
 <!-- cites components/orders/catalog_client.py@469f9d282aab983cdd85f364e46bcd02ef6d3635 -->
 

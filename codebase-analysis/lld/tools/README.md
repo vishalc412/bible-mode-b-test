@@ -6,7 +6,7 @@ source: [tools/gate.py, tools/plan.py, tools/fanout.sh]
 summary: Command-line tools for component inventory, analysis gates, and issue fanout
 reads: [file:codebase-analysis/plan.json, file:codebase-analysis/components/*/status.json, file:codebase-analysis/components/*/inventory.md, file:codebase-analysis/components/*/risks.md, file:codebase-analysis/components/*/tests-report.md, file:components/*/*.py]
 writes: [file:codebase-analysis/plan.json]
-calls: [external:GitHub CLI]
+calls: [external:GitHub]
 uses: []
 config: [config:ENGINE]
 exposes: [job:component plan generation, job:component analysis gate, job:component issue fanout]
@@ -20,14 +20,14 @@ consumes: []
 | --- | --- |
 | Kind | tool |
 | Folders and files | `tools/gate.py`, `tools/plan.py`, `tools/fanout.sh` |
-| Technology | Python standard library and Bash; external `gh` command; versions are not stated in these files (`tools/gate.py:13-18`, `tools/plan.py:8-15`, `tools/fanout.sh:1-6`) |
-| Starts by | Invoking `python tools/plan.py` or `python tools/gate.py <component> [--pass N]` (`tools/plan.py:41-62`, `tools/gate.py:3-4`, `tools/gate.py:81-117`); issue fanout usage is `ENGINE=copilot|claude tools/fanout.sh <owner/repo>` (`tools/fanout.sh:2-5`) |
+| Technology | Python standard library and Bash; external `gh` command; versions are not stated in these files (inferred: a search of `tools/` for `version` finds 1 hit, the plan's own `"version": 1` at `tools/plan.py:47`, which is a schema version, not a tool version) (`tools/gate.py:13-18`, `tools/plan.py:8-15`, `tools/fanout.sh:1-6`) |
+| Starts by | Invoking `python tools/plan.py` or `python tools/gate.py <component> [--pass N]` (`tools/plan.py:41-62`, `tools/gate.py:3-4`, `tools/gate.py:81-117`); issue fanout usage is `ENGINE=copilot\|claude tools/fanout.sh <owner/repo>` (`tools/fanout.sh:2-5`) |
 | Size | 3 files, 210 source lines, 7 Python functions, 0 routes (`tools/gate.py:1-117`, `tools/plan.py:1-62`, `tools/fanout.sh:1-31`) |
 | Depth | deep |
 
 ## Responsibility
 
-The tools are command-line helpers for the component-analysis workflow: `plan.py` inventories component files and writes the JSON plan, `gate.py` validates a component’s artifacts and runs the test suite for pass 3, and `fanout.sh` creates component labels and issues through GitHub CLI (`tools/plan.py:21-58`, `tools/gate.py:42-78`, `tools/fanout.sh:9-30`). `plan.scan` uses `gate.count_tests` to record the test baseline (`tools/plan.py:15`, `tools/plan.py:36`). The modules expose command-line entry points; no HTTP routes are declared in these three files (`tools/gate.py:81-117`, `tools/plan.py:41-62`, `tools/fanout.sh:1-31`).
+The tools are command-line helpers for the component-analysis workflow: `plan.py` inventories component files and writes the JSON plan, `gate.py` validates a component’s artifacts and runs the test suite for pass 3, and `fanout.sh` creates component labels and issues through GitHub CLI (`tools/plan.py:21-58`, `tools/gate.py:42-78`, `tools/fanout.sh:9-30`). `plan.scan` uses `gate.count_tests` to record the test baseline (`tools/plan.py:15`, `tools/plan.py:36`). The modules expose command-line entry points; no HTTP routes are declared in these three files (inferred: a search of `tools/` for `do_GET`, `BaseHTTPRequestHandler`, `http.server`, `route` and `@app` finds 0 hits) (`tools/gate.py:81-117`, `tools/plan.py:41-62`, `tools/fanout.sh:1-31`).
 
 ## Structure
 
@@ -65,7 +65,7 @@ flowchart LR
 
 ## Main types
 
-Not applicable: the three files declare functions and a shell script, but no classes (`tools/gate.py:23-117`, `tools/plan.py:21-62`, `tools/fanout.sh:1-31`).
+Not applicable: the three files declare functions and a shell script, but no classes (inferred: a search of `tools/` for `class` at the start of a line finds 0 hits) (`tools/gate.py:23-117`, `tools/plan.py:21-62`, `tools/fanout.sh:1-31`).
 
 ## Public interface
 
@@ -73,7 +73,7 @@ Not applicable: the three files declare functions and a shell script, but no cla
 | --- | --- | --- | --- |
 | `python tools/plan.py` | command | [plan module](plan.md) | `tools/plan.py:41-62` |
 | `python tools/gate.py <component> [--pass N]` | command | [gate module](gate.md) | `tools/gate.py:3-4`, `tools/gate.py:81-117` |
-| `ENGINE=copilot|claude tools/fanout.sh <owner/repo>` | command | [fanout module](fanout.md) | `tools/fanout.sh:2-5` |
+| `ENGINE=copilot\|claude tools/fanout.sh <owner/repo>` | command | [fanout module](fanout.md) | `tools/fanout.sh:2-5` |
 | `gate.count_tests(paths)` | internal function used by `plan.scan` | [gate module](gate.md#count_testspaths) | `tools/gate.py:33-39`, `tools/plan.py:15`, `tools/plan.py:36` |
 
 ## Business rules
@@ -88,15 +88,15 @@ Not applicable: the three files declare functions and a shell script, but no cla
 
 | Store or file | Reads | Writes | Data dictionary entry |
 | --- | --- | --- | --- |
-| `codebase-analysis/plan.json` | `gate.py` loads the JSON plan; `fanout.sh` reads its `components` keys (`tools/gate.py:86`, `tools/fanout.sh:9`) | `plan.py` writes version `1`, pass descriptions, and component inventories (`tools/plan.py:46-57`) | No data-dictionary entry in this component scope; fields are constructed at `tools/plan.py:46-54` |
-| Component analysis artifacts | `gate.py` reads `status.json`, `inventory.md`, `risks.md`, and `tests-report.md` below its component output path (`tools/gate.py:46`, `tools/gate.py:52`, `tools/gate.py:64`, `tools/gate.py:89-96`) | Not written by these tools | Not applicable |
-| Component test sources | `plan.py` scans `components/<name>/*.py`; `gate.py` counts component `test_*.py` and runs repository unittest discovery (`tools/plan.py:21-36`, `tools/gate.py:66-75`) | Not written by these tools | Not applicable |
+| `codebase-analysis/plan.json` | `gate.py` loads the JSON plan; `fanout.sh` reads its `components` keys (`tools/gate.py:86`, `tools/fanout.sh:9`) | `plan.py` writes version `1`, pass descriptions, and component inventories (`tools/plan.py:46-57`) | [Data dictionary: Component-analysis plan JSON](../data-dictionary.md#component-analysis-plan-json); fields are constructed at `tools/plan.py:46-54` |
+| Component analysis artifacts | `gate.py` reads `status.json`, `inventory.md`, `risks.md`, and `tests-report.md` below its component output path (`tools/gate.py:46`, `tools/gate.py:52`, `tools/gate.py:64`, `tools/gate.py:89-96`) | Not written by these tools (inferred: a search of `tools/gate.py` and `tools/fanout.sh` for `write` and `open(` finds 1 hit, the read of `plan.json` at `tools/fanout.sh:9`, and `tools/plan.py` writes only `plan.json` at line 57) | [Data dictionary: Files read and written](../data-dictionary.md#files-read-and-written) |
+| Component test sources | `plan.py` scans `components/<name>/*.py`; `gate.py` counts component `test_*.py` and runs repository unittest discovery (`tools/plan.py:21-36`, `tools/gate.py:66-75`) | Not written by these tools (inferred: the same search) | Not applicable |
 
 ## Outbound calls
 
 | Target | Purpose | Protocol and scheme | Address from | Timeout, retry, fallback | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| GitHub CLI (`gh`) targeting the supplied repository | Creates `agent:claude` and `component:<name>` labels and component issues | Invoked as a CLI; network protocol and scheme are not stated | Positional `repo` argument, passed with `-R` | No timeout, retry, or fallback is specified in this script (inferred: a search of `tools/fanout.sh` for `timeout`, `retry`, `trap` and `||` found none) | `tools/fanout.sh:7`, `tools/fanout.sh:10-12`, `tools/fanout.sh:24-29` |
+| GitHub CLI (`gh`) targeting the supplied repository | Creates `agent:claude` and `component:<name>` labels and component issues | Invoked as a CLI; network protocol and scheme are not stated | Positional `repo` argument, passed with `-R` | No timeout, retry, or fallback is specified in this script (inferred: a search of `tools/fanout.sh` for `timeout`, `retry`, `trap` and `\|\|` finds 0 hits) | `tools/fanout.sh:7`, `tools/fanout.sh:10-12`, `tools/fanout.sh:24-29` |
 
 ## Configuration read
 
@@ -111,7 +111,7 @@ Not applicable: the three files declare functions and a shell script, but no cla
 
 ## Logging and monitoring
 
-The gate prints a result line for each selected pass and failure lines for accumulated errors (`tools/gate.py:109-113`). The fanout script redirects the shared `agent:claude` label command's standard output to `/dev/null` (`tools/fanout.sh:10`). No metrics or tracing behavior is declared in these files (inferred: a search of the three files for `metric`, `trace`, `opentelemetry`, `statsd` and `logging` found nothing; `tools/gate.py:13-117`, `tools/plan.py:8-62`, `tools/fanout.sh:1-31`).
+The gate prints a result line for each selected pass and failure lines for accumulated errors (`tools/gate.py:109-113`). The fanout script redirects the shared `agent:claude` label command's standard output to `/dev/null` (`tools/fanout.sh:10`). No metrics or tracing behavior is declared in these files (inferred: a search of the three files for `metric`, `trace`, `opentelemetry`, `statsd` and `logging` finds 0 hits; `tools/gate.py:13-117`, `tools/plan.py:8-62`, `tools/fanout.sh:1-31`).
 
 ## Tests
 
@@ -119,7 +119,7 @@ The test-related behavior documented here is the gate itself: it counts function
 
 ## Surprises
 
-`fanout.sh` generates issue text pointing to `.github/skills/component-analysis/SKILL.md`, a stale reference from an earlier experiment; no external skill is intended. `fanout.sh` is described as written and is not changed (`tools/fanout.sh:13-15`; answer to Q1 in `ledger/components/tools/questions.md`).
+`fanout.sh` generates issue text pointing to `.github/skills/component-analysis/SKILL.md`, a stale reference from an earlier experiment; no external skill is intended (inferred: the recorded answer to Q1, a user decision, not a fact the code states; a listing of `.github/skills/` shows 7 folders, none named `component-analysis`). `fanout.sh` is described as written and is not changed (`tools/fanout.sh:13-15`; answer to Q1 in `ledger/components/tools/questions.md`).
 
 ## For the whole-system pages
 

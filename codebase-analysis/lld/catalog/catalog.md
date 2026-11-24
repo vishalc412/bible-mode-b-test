@@ -95,7 +95,7 @@ Source: `components/catalog/catalog.py:20-24` <!-- code: 9339c8a1a6d3 -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | `orders.line_total` (`components/orders/orders.py:20`); the HTTP handler calls `catalog.price_of` (`components/catalog/service.py:31`). |
+| Called by | `orders.line_total` (`components/orders/orders.py:20`); the HTTP handler calls `catalog.price_of` (`components/catalog/service.py:31`); `CatalogTest.test_price_of_known_sku` (`components/catalog/test_catalog.py:8`). |
 | Calls | `get_product`, `KeyError` |
 | Purpose | Returns a product's price or raises `KeyError` for a missing SKU. |
 
@@ -167,7 +167,7 @@ Source: `components/catalog/catalog.py:32-33` <!-- code: ba322139b301 -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | Not established by this module. |
+| Called by | Not established by this module (inferred: a search of the repository outside the analysis folder and the skills for `image_url` finds 1 hit, its definition). |
 | Calls | `sku.lower` |
 | Purpose | Builds a product image URL from the configured CDN prefix and SKU. |
 
@@ -196,7 +196,7 @@ Source: `components/catalog/catalog.py:36-39` <!-- code: d1d97f4f1787 -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | Not established by this module. |
+| Called by | Not established by this module (inferred: a search of the repository outside the analysis folder and the skills for `fetch_supplier_feed` finds 1 hit, its definition). |
 | Calls | `urllib.request.urlopen`, `resp.read`, `json.loads` |
 | Purpose | Opens the configured supplier-feed URL and parses its response as JSON. |
 
@@ -227,7 +227,7 @@ Source: `components/catalog/catalog.py:42-47` <!-- code: 8a9129d98a7c -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | Not established by this module. |
+| Called by | Not established by this module (inferred: a search of the repository outside the analysis folder and the skills for `apply_feed` finds 1 hit, its definition). |
 | Calls | `feed.get`, `float`, `int` |
 | Purpose | Applies price and stock values from feed entries for SKUs already in `_PRODUCTS`. |
 
@@ -258,7 +258,7 @@ for item in feed.get("products", []):
 | `catalog.py:44` | for | For each entry in `feed.get("products", [])` | Processes entries one by one; an empty or missing list has no iterations (`components/catalog/catalog.py:44`). |
 | `catalog.py:45` | if | `item["sku"]` is a key in `_PRODUCTS` | Updates that product; otherwise makes no update for the item (`components/catalog/catalog.py:45-47`). |
 
-**Output and side effects**: mutates matching records in `_PRODUCTS`; no explicit value is returned (`components/catalog/catalog.py:42-47`). Missing fields or invalid numeric values can raise during direct indexing or conversion (`components/catalog/catalog.py:45-47`).
+**Output and side effects**: mutates matching records in `_PRODUCTS`; no explicit value is returned (`components/catalog/catalog.py:42-47`). Missing fields or invalid numeric values can raise during direct indexing or conversion (assumed: Python builtin behaviour of key lookup, `float` and `int`) (`components/catalog/catalog.py:45-47`).
 
 ## Module-level code
 
@@ -271,5 +271,7 @@ The module defines the supplier feed URL, image CDN prefix, and three initial pr
 <!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
 
 <!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
+
+<!-- cites components/catalog/test_catalog.py@9be40d147e425d178067c8b34f19b28b9b374d1f -->
 
 <!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->

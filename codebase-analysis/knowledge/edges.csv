@@ -393,7 +393,7 @@ component:bible-mode-b,config:BIBLE_AGENT_APP,READS,analysis,lld/bible-mode-b/RE
 component:bible-mode-b,config:BIBLE_NOW,READS,analysis,lld/bible-mode-b/README.md
 component:bible-mode-b,config:BIBLE_SKILLS,READS,analysis,lld/bible-mode-b/README.md
 component:bible-mode-b,file:temporary-gate-workspace,WRITES,analysis,lld/bible-mode-b/README.md
-component:bible-mode-b,external:GitHub API,CALLS,analysis,lld/bible-mode-b/README.md
+component:bible-mode-b,external:GitHub,CALLS,analysis,lld/bible-mode-b/README.md
 component:bible-mode-b,external:Analysis toolkit,CALLS,analysis,lld/bible-mode-b/README.md
 component:bible-mode-b,symbol:.github/bible/bible_queue.py#GitHub,USES,analysis,lld/bible-mode-b/README.md
 component:bible-mode-b,symbol:.github/bible/bible_queue.py#Queue,USES,analysis,lld/bible-mode-b/README.md
@@ -415,7 +415,7 @@ file:.github/bible/bible_queue.py,config:BIBLE_AGENT_APP,READS,analysis,lld/bibl
 file:.github/bible/bible_queue.py,config:BIBLE_NOW,READS,analysis,lld/bible-mode-b/bible_queue.md
 file:.github/bible/bible_queue.py,config:BIBLE_SKILLS,READS,analysis,lld/bible-mode-b/bible_queue.md
 file:.github/bible/bible_queue.py,file:temporary-gate-workspace,WRITES,analysis,lld/bible-mode-b/bible_queue.md
-file:.github/bible/bible_queue.py,external:GitHub API,CALLS,analysis,lld/bible-mode-b/bible_queue.md
+file:.github/bible/bible_queue.py,external:GitHub,CALLS,analysis,lld/bible-mode-b/bible_queue.md
 file:.github/bible/bible_queue.py,external:Analysis toolkit,CALLS,analysis,lld/bible-mode-b/bible_queue.md
 file:.github/bible/bible_queue.py,symbol:.github/bible/bible_queue.py#GitHub,USES,analysis,lld/bible-mode-b/bible_queue.md
 file:.github/bible/bible_queue.py,symbol:.github/bible/bible_queue.py#Queue,USES,analysis,lld/bible-mode-b/bible_queue.md
@@ -469,7 +469,7 @@ component:orders,file:components/orders/test_orders.py,CONTAINS,analysis,lld/ord
 page:lld/orders/README.md,file:components/orders/test_catalog_client.py,DOCUMENTS,exact,lld/orders/README.md
 component:orders,file:components/orders/test_catalog_client.py,CONTAINS,analysis,lld/orders/README.md
 component:orders,component:catalog,CALLS,analysis,lld/orders/README.md
-component:orders,external:partner-legacy.internal/settle,CALLS,analysis,lld/orders/README.md
+component:orders,external:Payment partner,CALLS,analysis,lld/orders/README.md
 component:orders,config:CATALOG_URL,CONFIG,analysis,lld/orders/README.md
 component:orders,page:lld/orders/catalog_client.md,HAS_PAGE,analysis,lld/orders/catalog_client.md
 page:lld/orders/catalog_client.md,file:components/orders/catalog_client.py,DOCUMENTS,exact,lld/orders/catalog_client.md
@@ -479,8 +479,8 @@ component:orders,page:lld/orders/orders.md,HAS_PAGE,analysis,lld/orders/orders.m
 page:lld/orders/orders.md,file:components/orders/orders.py,DOCUMENTS,exact,lld/orders/orders.md
 file:components/orders/orders.py,symbol:components/catalog/catalog.py#price_of,CALLS,analysis,lld/orders/orders.md
 file:components/orders/orders.py,symbol:components/catalog/catalog.py#in_stock,CALLS,analysis,lld/orders/orders.md
-file:components/orders/orders.py,external:partner-legacy.internal/settle,CALLS,analysis,lld/orders/orders.md
-file:components/orders/orders.py,external:localhost:8099/settle,CALLS,analysis,lld/orders/orders.md
+file:components/orders/orders.py,external:Payment partner,CALLS,analysis,lld/orders/orders.md
+file:components/orders/orders.py,external:Local settle fake,CALLS,analysis,lld/orders/orders.md
 component:orders,page:lld/orders/test_catalog_client.md,HAS_PAGE,analysis,lld/orders/test_catalog_client.md
 page:lld/orders/test_catalog_client.md,file:components/orders/test_catalog_client.py,DOCUMENTS,exact,lld/orders/test_catalog_client.md
 file:components/orders/test_catalog_client.py,symbol:components/orders/test_catalog_client.py#CatalogClientTest,USES,analysis,lld/orders/test_catalog_client.md
@@ -502,7 +502,7 @@ component:tools,file:codebase-analysis/components/*/risks.md,READS,analysis,lld/
 component:tools,file:codebase-analysis/components/*/tests-report.md,READS,analysis,lld/tools/README.md
 component:tools,file:components/*/*.py,READS,analysis,lld/tools/README.md
 component:tools,file:codebase-analysis/plan.json,WRITES,analysis,lld/tools/README.md
-component:tools,external:GitHub CLI,CALLS,analysis,lld/tools/README.md
+component:tools,external:GitHub,CALLS,analysis,lld/tools/README.md
 component:tools,config:ENGINE,CONFIG,analysis,lld/tools/README.md
 component:tools,job:component plan generation,EXPOSES,analysis,lld/tools/README.md
 component:tools,job:component analysis gate,EXPOSES,analysis,lld/tools/README.md
@@ -510,7 +510,7 @@ component:tools,job:component issue fanout,EXPOSES,analysis,lld/tools/README.md
 component:tools,page:lld/tools/fanout.md,HAS_PAGE,analysis,lld/tools/fanout.md
 page:lld/tools/fanout.md,file:tools/fanout.sh,DOCUMENTS,exact,lld/tools/fanout.md
 file:tools/fanout.sh,file:codebase-analysis/plan.json,READS,analysis,lld/tools/fanout.md
-file:tools/fanout.sh,external:GitHub CLI,CALLS,analysis,lld/tools/fanout.md
+file:tools/fanout.sh,external:GitHub,CALLS,analysis,lld/tools/fanout.md
 file:tools/fanout.sh,config:ENGINE,CONFIG,analysis,lld/tools/fanout.md
 component:tools,page:lld/tools/gate.md,HAS_PAGE,analysis,lld/tools/gate.md
 page:lld/tools/gate.md,file:tools/gate.py,DOCUMENTS,exact,lld/tools/gate.md

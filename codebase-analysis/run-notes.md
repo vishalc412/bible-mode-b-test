@@ -30,6 +30,17 @@ The matching lines are documented as component behavior; they were not treated a
 - Two diagrams were added in hld/04 (the component row on the tracker, and the data model of the hidden `bible-settings` and `bible-state` blocks) and two stores were drawn in the containers diagram, because the report names the omissions; their statements are new and are listed in `revision-log.md` (R5-V-015) for the re-check.
 - Two slips of this session against the instructions: one command ran `git diff --stat` (read-only, it changed nothing) and one command created an empty file `/tmp/NOPE` outside the analysis folder by mistake and removed it in the next command. Nothing else was written outside the folder, and nothing was installed or fetched over a network.
 
+## Revision of the report of 2026-11-24, round 6: judgments made without the user
+
+- The sweep (R6-S-01) counts sentences, table cells and list items, not search hits. A sentence that only reports what a docstring or comment says, and cites that line ("its docstring says it runs nightly from cron"), was left; one that states the behaviour the comment describes got a mark. The `revision-log.md`, `run-notes.md`, `delta-log.md` and `progress.md` pages, the reports and the ledger were not swept; the generated pages (`components.md`, `knowledge/README.md`, the knowledge tables) were read, not edited.
+- The hit counts in the marks are from searches run in this session over the files outside `codebase-analysis/` and `.github/skills/` (24 files), or over the directories the mark names. A search of a word list counts lines that match, as `grep` prints them.
+- Where one sentence rests on a search and on platform behaviour, one parenthesis holds both (`inferred: ...; assumed: ...`), the form the report accepted for `bible_queue.md`, line 1092 and `plan.md`, line 154.
+- The user's answer to Q1 and Q-002 is named in the sentence as "the recorded answer ... a user decision" where the sentence says what is "intentional" or "today's deployment"; it is not stated as a fact the code shows.
+- Names of outside systems in the front matter were merged to `external:GitHub`, `external:Payment partner` and `external:Local settle fake` so that the graph has one node per system (5 external nodes, was 6).
+- A diagram nit not asked for (the hidden-block ER diagram had no key column) was fixed because the quality gate's D5 names it.
+- The report's V-013 item 11 names flow 9 among the diagrams with renamed aliases; its aliases are the real file names, so only flow 7 and `lld/api/catalog/catalog.md` were changed.
+- Two commands of this session redirected output to `/dev/null` (no file was created). No other file was written outside `codebase-analysis/`; git, `gh` and every network command were not run; nothing was installed. Python ran as `python3 -I -B`.
+
 <!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
 
 <!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->

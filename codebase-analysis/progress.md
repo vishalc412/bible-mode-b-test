@@ -65,7 +65,7 @@ At this session's start, `next.py` reported 11 of 13 packets done. Packet 2 refr
 - Refreshed the generated inventory from the current source (figures of 24 Nov 2026, after the later revisions): 24 files, 14 source files, 1,812 source lines, 116 symbols, and 0 statically detected routes. The catalog GET paths are documented separately because its handler uses imperative path matching rather than route decorators.
 - Updated the coverage ledger to map all 24 in-scope files to analysis pages.
 - Completed HLD pages, mind maps, front page, reference pages, and the knowledge base. The first knowledge graph build identified unmatched front-matter names and two spellings for Supplier One; these were corrected before regenerating the graph.
-- The knowledge graph contains 211 nodes, 566 edges, and 346 chunks (after the round-5 revision of 24 Nov 2026); all LLD front-matter names resolve. The primer is 1,936 words and documents 20 rules.
+- The knowledge graph contains 210 nodes, 566 edges, and 354 chunks (after the round-6 revision of 24 Nov 2026); all LLD front-matter names resolve. The primer is 2,288 words by `wc -w` and documents 20 rules.
 - The two component questions have answers and are recorded as resolved; no unanswered questions are open.
 
 ## Quality gate
@@ -75,7 +75,7 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 ### Coverage and depth
 
 - `inventory.py` refreshed the source inventory on 24 Nov 2026 (after the delta and the revision of that day): 24 in-scope files, 14 source files, 1,812 source lines, 116 symbols, and 0 statically detected routes.
-- `coverage.py --depth deep` passed: every symbol and function card is covered, all branch lines and all same-file call-graph edges are documented, all 17 LLD pages have front matter, and every cross-component call is cited. On 24 Nov 2026, after the corrections of the report of that day, it printed PASS with 116/116 symbols, 98/98 cards, 320/320 branch lines, 232/232 call-graph edges, 3,225/3,225 citations (after the round-5 corrections) and 17/17 front-matter pages; the totals are in `ledger/coverage-report.md`.
+- `coverage.py --depth deep` passed: every symbol and function card is covered, all branch lines and all same-file call-graph edges are documented, all 17 LLD pages have front matter, and every cross-component call is cited. On 24 Nov 2026, after the corrections of the report of that day, it printed PASS with 116/116 symbols, 98/98 cards, 320/320 branch lines, 232/232 call-graph edges, 3,345/3,345 citations (after the round-6 corrections) and 17/17 front-matter pages; the totals are in `ledger/coverage-report.md`.
 - The four component verification reports record `PASS`; the audits cover card depth, branches, endpoint cards, diagrams, citations, and component-specific behavior.
 
 ### Reader test
@@ -101,7 +101,7 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 - The 46 Mermaid blocks (45 without the generated `components.md`) were checked against their evidence and required diagram types; no renderer was available, so they were not rendered. This limitation is recorded in `README.md`.
 - After the round-5 revision a script read all 46 blocks against the syntax rules of `references/mermaid-syntax.md` (flowchart ids, labelled edges, shapes, sequence aliases, quoted ER labels) and found no departure; the two blocks added in `hld/04-data-architecture.md` were read against their evidence rows. Nothing was rendered.
 - All sweep searches and assistant-directed repository text locations are recorded in this file and `run-notes.md`. No secret values were copied into the analysis.
-- `knowledge.py` reports 211 nodes, 566 edges, 346 chunks, and no unmatched front-matter names. The 97 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
+- `knowledge.py` reports 210 nodes, 566 edges, 354 chunks, and no unmatched front-matter names. The 97 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
 - The three knowledge-base reader questions are summarized after final graph generation.
 
 <!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->

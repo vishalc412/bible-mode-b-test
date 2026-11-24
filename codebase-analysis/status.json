@@ -22,22 +22,22 @@
   "catalog": {
    "state": "STALE",
    "verdict": "PASS",
-   "why": "pages changed since the verification (fingerprint 96716433d8828161 then, bd04f7085509d1ef now): verify the changed parts"
+   "why": "pages changed since the verification (fingerprint 96716433d8828161 then, 2c579088ba8ce054 now): verify the changed parts"
   },
   "orders": {
    "state": "STALE",
    "verdict": "PASS",
-   "why": "pages changed since the verification (fingerprint 2328b6c86811f8a8 then, bd554688f58177b6 now): verify the changed parts"
+   "why": "pages changed since the verification (fingerprint 2328b6c86811f8a8 then, bfa7e2fcdbd078ae now): verify the changed parts"
   },
   "bible-mode-b": {
    "state": "STALE",
    "verdict": "PASS",
-   "why": "pages changed since the verification (fingerprint 8d9c4cbe0922bf75 then, 389016252a09f81f now): verify the changed parts"
+   "why": "pages changed since the verification (fingerprint 8d9c4cbe0922bf75 then, 8e27783a15529a19 now): verify the changed parts"
   },
   "tools": {
    "state": "STALE",
    "verdict": "PASS",
-   "why": "pages changed since the verification (fingerprint 381f98a228eed7a1 then, 9c16c4b66f9812aa now): verify the changed parts"
+   "why": "pages changed since the verification (fingerprint 381f98a228eed7a1 then, d003d2c1f2974b64 now): verify the changed parts"
   }
  },
  "reasons": [
@@ -45,5 +45,5 @@
   "0 of 4 components verified"
  ],
  "notes": [],
- "checked": "2026-11-24T17:16:55"
+ "checked": "2026-11-24T17:46:13"
 }

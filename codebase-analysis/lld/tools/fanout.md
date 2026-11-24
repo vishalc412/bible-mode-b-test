@@ -6,7 +6,7 @@ source: tools/fanout.sh
 summary: Creates labeled GitHub issues for planned components
 reads: [file:codebase-analysis/plan.json]
 writes: []
-calls: [external:GitHub CLI]
+calls: [external:GitHub]
 uses: []
 config: [config:ENGINE]
 exposes: []
@@ -83,10 +83,10 @@ for each component:
 | `tools/fanout.sh:24` | `case` | `engine` equals `claude` | Replaces `@copilot` with `@claude` in the body and creates the issue with component and agent labels (`tools/fanout.sh:27-28`). |
 | `tools/fanout.sh:29` | default case | `engine` is neither `copilot` nor `claude` | Prints the unknown-engine message to standard error and exits `2` (`tools/fanout.sh:29`). |
 
-**Output and side effects**: Invokes GitHub CLI commands targeting the supplied repository to create labels and component issues; the `agent:claude` label command's standard output is discarded (`tools/fanout.sh:10-12`, `tools/fanout.sh:25-29`). When there are no component keys, it still attempts the shared label creation and the loop body runs zero times (`tools/fanout.sh:9-11`).
+**Output and side effects**: Invokes GitHub CLI commands targeting the supplied repository to create labels and component issues; the `agent:claude` label command's standard output is discarded (`tools/fanout.sh:10-12`, `tools/fanout.sh:25-29`). When there are no component keys, it still attempts the shared label creation and the loop body runs zero times (assumed: shell behaviour of a `for` loop over an empty list) (`tools/fanout.sh:9-11`).
 
 ## Surprises
 
-The generated issue body directs the recipient to `.github/skills/component-analysis/SKILL.md` (`tools/fanout.sh:13-15`), a stale reference left over from an earlier experiment; that skill does not exist in this repository and no external skill is intended (answer to Q1 in `ledger/components/tools/questions.md`). `tools/fanout.sh` is documented as written; its reference is not changed.
+The generated issue body directs the recipient to `.github/skills/component-analysis/SKILL.md` (`tools/fanout.sh:13-15`), a stale reference left over from an earlier experiment; that skill does not exist in this repository (inferred: a listing of `.github/skills/` shows 7 folders, none named `component-analysis`) and no external skill is intended (inferred: the recorded answer to Q1 in `ledger/components/tools/questions.md`, a user decision). `tools/fanout.sh` is documented as written; its reference is not changed.
 
 <!-- cites tools/fanout.sh@9ad43aa70e042837954fea1faf483f6c08e07470 -->

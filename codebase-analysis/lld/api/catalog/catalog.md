@@ -11,6 +11,8 @@ exposes: [route:GET /health, route:GET /price/{sku}]
 | GET | `/health` | `CatalogHandler.do_GET` (`components/catalog/service.py:24-27`) | None | [GET `/health`](#get-health) |
 | GET | `/price/<sku>` | `CatalogHandler.do_GET` (`components/catalog/service.py:28-34`) | None | [GET `/price/<sku>`](#get-pricesku) |
 
+Any other path never reaches either route: the handler answers it with the catch-all 404 `{"error": "not found"}` (`components/catalog/service.py:34`), which belongs to [`CatalogHandler.do_GET`](../../catalog/service.md#cataloghandlerdo_get), not to a route card.
+
 ## GET `/health`
 
 Handler: [`CatalogHandler.do_GET`](../../catalog/service.md#cataloghandlerdo_get). Source: `components/catalog/service.py:24-27`.
@@ -37,7 +39,6 @@ Handler: [`CatalogHandler.do_GET`](../../catalog/service.md#cataloghandlerdo_get
 | Status | When | Body | Evidence |
 | --- | --- | --- | --- |
 | 200 | Path equals `/health` | `{"status": "ok"}` | `components/catalog/service.py:26-27` |
-| 404 | Path is neither `/health` nor a `/price/` path | `{"error": "not found"}` | `components/catalog/service.py:26-28`, `components/catalog/service.py:34` |
 
 Every response carries `Content-Type: application/json` and a `Content-Length` header (`components/catalog/service.py:16-22`). The handler defines `do_GET` only, so a request with another method is answered by the library's default handler with status 501 (assumed: `BaseHTTPRequestHandler` behaviour for a method without a `do_` handler).
 
@@ -45,7 +46,7 @@ Every response carries `Content-Type: application/json` and a `Content-Length` h
 sequenceDiagram
   autonumber
   participant Client as catalog HTTP client
-  participant Handler as CatalogHandler.do-GET
+  participant Handler as catalog handler
   Client->>Handler: GET /health over HTTP
   Handler-->>Client: 200 with health JSON
 ```
@@ -54,7 +55,6 @@ sequenceDiagram
 | --- | --- | --- |
 | 1 | The client sends `GET /health`; the handler extracts the URL path, excluding its query string. | `components/catalog/service.py:25-26` |
 | 2 | For `/health`, the handler sends status 200 with `{"status": "ok"}`. | `components/catalog/service.py:26-27` |
-| 3 | For any other path that is not `/price/`, the handler sends status 404 with `{"error": "not found"}`. | `components/catalog/service.py:28`, `components/catalog/service.py:34` |
 
 ## GET `/price/<sku>`
 
@@ -84,16 +84,15 @@ Handler: [`CatalogHandler.do_GET`](../../catalog/service.md#cataloghandlerdo_get
 | --- | --- | --- | --- |
 | 200 | SKU exists | `{"sku": "<decoded sku>", "price": <price>}` | `components/catalog/service.py:30-31` |
 | 404 | SKU is unknown | `{"error": "unknown sku <sku>"}` | `components/catalog/service.py:32-33` |
-| 404 | Path does not match `/health` or `/price/` | `{"error": "not found"}` | `components/catalog/service.py:26-28`, `components/catalog/service.py:34` |
 
 Every response carries `Content-Type: application/json` and a `Content-Length` header (`components/catalog/service.py:16-22`). The handler defines `do_GET` only, so a request with another method is answered by the library's default handler with status 501 (assumed: `BaseHTTPRequestHandler` behaviour for a method without a `do_` handler).
 
 ```mermaid
 sequenceDiagram
   autonumber
-  participant Client as orders.catalog-client.remote-price
-  participant Handler as CatalogHandler.do-GET
-  participant Price as catalog.price-of
+  participant Client as price client
+  participant Handler as catalog handler
+  participant Price as price lookup
   Client->>Handler: GET /price/sku over plain HTTP
   Handler->>Price: price_of decoded sku
   alt SKU exists
