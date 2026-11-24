@@ -1,10 +1,10 @@
 {
- "generated": "2026-11-24T16:54:03",
+ "generated": "2026-11-24T17:46:12",
  "tool": "analyzing-a-codebase/scripts/knowledge.py 1.5.0",
  "stats": {
-  "nodes": 211,
+  "nodes": 210,
   "edges": 566,
-  "chunks": 346,
+  "chunks": 354,
   "calls_unresolved": 97,
   "by_node_type": {
    "File": 33,
@@ -15,7 +15,7 @@
    "Component": 4,
    "Route": 2,
    "Config": 11,
-   "External": 6,
+   "External": 5,
    "Store": 1,
    "Job": 3
   },
@@ -124,29 +124,24 @@
    "name": "Analysis toolkit"
   },
   {
-   "id": "external:GitHub API",
+   "id": "external:GitHub",
    "type": "External",
-   "name": "GitHub API"
+   "name": "GitHub"
   },
   {
-   "id": "external:GitHub CLI",
+   "id": "external:Local settle fake",
    "type": "External",
-   "name": "GitHub CLI"
+   "name": "Local settle fake"
+  },
+  {
+   "id": "external:Payment partner",
+   "type": "External",
+   "name": "Payment partner"
   },
   {
    "id": "external:Supplier One",
    "type": "External",
    "name": "Supplier One"
-  },
-  {
-   "id": "external:localhost:8099/settle",
-   "type": "External",
-   "name": "localhost:8099/settle"
-  },
-  {
-   "id": "external:partner-legacy.internal/settle",
-   "type": "External",
-   "name": "partner-legacy.internal/settle"
   },
   {
    "id": "file:.github/bible/bible_queue.py",
@@ -4641,7 +4636,7 @@
   },
   {
    "source": "component:bible-mode-b",
-   "target": "external:GitHub API",
+   "target": "external:GitHub",
    "type": "CALLS",
    "evidence": "lld/bible-mode-b/README.md",
    "resolution": "analysis"
@@ -4795,7 +4790,7 @@
   },
   {
    "source": "file:.github/bible/bible_queue.py",
-   "target": "external:GitHub API",
+   "target": "external:GitHub",
    "type": "CALLS",
    "evidence": "lld/bible-mode-b/bible_queue.md",
    "resolution": "analysis"
@@ -5173,7 +5168,7 @@
   },
   {
    "source": "component:orders",
-   "target": "external:partner-legacy.internal/settle",
+   "target": "external:Payment partner",
    "type": "CALLS",
    "evidence": "lld/orders/README.md",
    "resolution": "analysis"
@@ -5243,14 +5238,14 @@
   },
   {
    "source": "file:components/orders/orders.py",
-   "target": "external:partner-legacy.internal/settle",
+   "target": "external:Payment partner",
    "type": "CALLS",
    "evidence": "lld/orders/orders.md",
    "resolution": "analysis"
   },
   {
    "source": "file:components/orders/orders.py",
-   "target": "external:localhost:8099/settle",
+   "target": "external:Local settle fake",
    "type": "CALLS",
    "evidence": "lld/orders/orders.md",
    "resolution": "analysis"
@@ -5404,7 +5399,7 @@
   },
   {
    "source": "component:tools",
-   "target": "external:GitHub CLI",
+   "target": "external:GitHub",
    "type": "CALLS",
    "evidence": "lld/tools/README.md",
    "resolution": "analysis"
@@ -5460,7 +5455,7 @@
   },
   {
    "source": "file:tools/fanout.sh",
-   "target": "external:GitHub CLI",
+   "target": "external:GitHub",
    "type": "CALLS",
    "evidence": "lld/tools/fanout.md",
    "resolution": "analysis"

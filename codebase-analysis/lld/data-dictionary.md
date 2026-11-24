@@ -56,7 +56,7 @@ config:
 | Temporary gate workspace | Local temporary file and directory; tarball content is extracted, checked, and deleted | `tempfile.TemporaryFile`, `tempfile.mkdtemp(prefix="bible-gate-")`; the whole analysis's fingerprint uses a `bible-whole-` directory of the same kind | `bible-mode-b` | Archive extraction and cleanup (`.github/bible/bible_queue.py:291-330`, `.github/bible/bible_queue.py:886-905`, `.github/bible/bible_queue.py:920-935`). |
 | Tools' analysis artifacts | Local repository files; JSON and Markdown, not a database | `codebase-analysis/` | `tools` and the analysis workflow | `plan.py` writes the plan; `gate.py` reads it and component artifacts (`tools/plan.py:41-58`, `tools/gate.py:42-78`, `tools/gate.py:81-108`). |
 
-No relational database, schema, cache, object bucket, or durable local application store is declared in the in-scope source.
+No relational database, schema, cache, object bucket, or durable local application store is declared in the in-scope source (inferred: a search of `components/` for `sqlite`, `redis`, `shelve`, `pickle`, `write_text` and `cache` finds 0 hits, and one for `open(` finds 4 hits, all `urlopen(` calls).
 
 ## `_PRODUCTS`: the catalog products
 
@@ -86,7 +86,7 @@ The `start` command serializes these fields as JSON inside a `<!-- bible-setting
 
 ### Component catalog JSON
 
-The whole-system queue reads `components.json` from the default branch and requires a non-proposed catalog with a `components` array (`.github/bible/bible_queue.py:628-630`). Of its fields the queue itself uses `proposed`, `components`, each component's `name` and `est_sessions` (`.github/bible/bible_queue.py:629`, `.github/bible/bible_queue.py:633`, `.github/bible/bible_queue.py:650`); `delta` also reads each component's `paths` through the toolkit's `components.rows_of` (`.github/bible/bible_queue.py:1243-1253`). The file is written by the analysis toolkit's discover step, not by `tools/plan.py` (which writes `plan.json`, below): its `tool` field names `analyzing-a-codebase/scripts/discover.py 1.10.0` (`codebase-analysis/components.json`, field `tool`). The fields below are those the file holds.
+The whole-system queue reads `components.json` from the default branch and requires a non-proposed catalog with a `components` array (`.github/bible/bible_queue.py:628-630`). Of its fields the queue itself uses `proposed`, `components`, each component's `name` and `est_sessions` (`.github/bible/bible_queue.py:629`, `.github/bible/bible_queue.py:633`, `.github/bible/bible_queue.py:650`); `delta` also reads each component's `paths` through the toolkit's `components.rows_of` (inferred: the toolkit's `rows_of`, outside the inventory; the queue only calls `rows_of(catalog)`, `.github/bible/bible_queue.py:1249`) (`.github/bible/bible_queue.py:1243-1253`). The file is written by the analysis toolkit's discover step, not by `tools/plan.py` (which writes `plan.json`, below) (inferred: `tools/plan.py:55-57` writes only `plan.json`, and the file's `tool` field names `discover.py`): its `tool` field names `analyzing-a-codebase/scripts/discover.py 1.10.0` (`codebase-analysis/components.json`, field `tool`). The fields below are those the file holds.
 
 | Field | Type | Meaning | Evidence |
 | --- | --- | --- | --- |
@@ -104,7 +104,7 @@ The whole-system queue reads `components.json` from the default branch and requi
 
 ### GitHub API entity fields used
 
-These are the fields the queue reads or writes on GitHub-managed objects; other response fields belong to GitHub and are not persisted by this repository code.
+These are the fields the queue reads or writes on GitHub-managed objects; other response fields belong to GitHub and are not persisted by this repository code (inferred: the queue's only file operations are the tarball extraction at `.github/bible/bible_queue.py:329` and the `--changed-file` read at `.github/bible/bible_queue.py:1328`).
 
 | Resource | Fields used | Meaning | Evidence |
 | --- | --- | --- | --- |
@@ -154,16 +154,16 @@ These are the fields the queue reads or writes on GitHub-managed objects; other 
 | `codebase-analysis/plan.json` | Written by `plan.py`; read by `gate.py` and `fanout.sh` | JSON plan described above | `tools/plan.py:41-58`; `tools/gate.py:86`; `tools/fanout.sh:9` |
 | `request.json` and `response.json` in the POC workflow's runner workspace | Written by the POC job; `gh api` reads `request.json` and `jq` reads `response.json` | `request.json` holds `title`, `body`, `assignees` (`copilot-swe-agent[bot]`) and `agent_assignment` (`target_repo`, `base_branch`, and `model` only when one is given); `response.json` holds GitHub's issue response, of which the job prints `number`, `html_url` and the assignee logins | `.github/workflows/poc-assign-copilot.yml:53-71` |
 | `codebase-analysis/components/<name>/status.json` | Read by `gate.py` | JSON object with `passes_done` and `open_questions` used by the gate | `tools/gate.py:89-108` |
-| `codebase-analysis/components/<name>/inventory.md`, `risks.md`, `tests-report.md` | Read by `gate.py` | Markdown artifacts: `inventory.md` is searched for the name of each planned function, `risks.md` for a line per HTTP site with `CHANGE` or `KEEP` and no `ASK`, and `tests-report.md` is only checked to exist; the gate writes none of them | `tools/gate.py:45-62`, `tools/gate.py:64-65` |
-| `codebase-analysis/components.json` | Read from GitHub by queue; written by the analysis toolkit's discover step (not by `tools/plan.py`) | Generated JSON component catalog described above | `.github/bible/bible_queue.py:628-630`; `codebase-analysis/components.json` |
+| `codebase-analysis/components/<name>/inventory.md`, `risks.md`, `tests-report.md` | Read by `gate.py` | Markdown artifacts: `inventory.md` is searched for the name of each planned function, `risks.md` for a line per HTTP site with `CHANGE` or `KEEP` and no `ASK`, and `tests-report.md` is only checked to exist; the gate writes none of them (inferred: a search of `tools/gate.py` for `write` and `open(` finds 0 hits) | `tools/gate.py:45-62`, `tools/gate.py:64-65` |
+| `codebase-analysis/components.json` | Read from GitHub by queue; written by the analysis toolkit's discover step (not by `tools/plan.py`) | Generated JSON component catalog described above (inferred: `tools/plan.py:55-57` writes only `plan.json`) | `.github/bible/bible_queue.py:628-630`; `codebase-analysis/components.json` |
 | `codebase-analysis/ledger/issues/*.md` | Read from GitHub by queue | `Title:` first line optionally supplies the issue title; remaining text becomes the issue body | `.github/bible/bible_queue.py:436-442`, `.github/bible/bible_queue.py:674`, `.github/bible/bible_queue.py:702`, `.github/bible/bible_queue.py:1028` |
 | `codebase-analysis/ledger/components/<name>/status.json` | Read from GitHub at a branch or PR head | Main analysis status and progress fields described above | `.github/bible/bible_queue.py:492-495`, `.github/bible/bible_queue.py:742`, `.github/bible/bible_queue.py:851` |
 | `codebase-analysis/ledger/components/<name>/verification-report.md` and `codebase-analysis/verification-report.md` | Read from GitHub | Component or whole-analysis verdict, corrections, and fingerprint | `.github/bible/bible_queue.py:469-482`, `.github/bible/bible_queue.py:777`, `.github/bible/bible_queue.py:950` |
 | `codebase-analysis/ledger/baseline.json` | Existence checked on default branch before delta issues are created | Baseline marker; this queue path does not parse its contents | `.github/bible/bible_queue.py:1243-1246` |
 | `--changed-file` argument | Read by `main` | UTF-8 text with one changed repository path per line; blank lines are discarded before `Queue.delta` | `.github/bible/bible_queue.py:1298`, `.github/bible/bible_queue.py:1328-1330` |
-| Gate tarball and extracted worktree | Written temporarily, then removed | GitHub tarball streams through a temporary file; regular files/directories are extracted under a temporary directory for coverage and fingerprint checks | `.github/bible/bible_queue.py:291-330`, `.github/bible/bible_queue.py:886-905` |
+| Temporary gate workspace | Written temporarily, then removed | GitHub tarball streams through a temporary file; regular files/directories are extracted under a temporary directory for coverage and fingerprint checks | `.github/bible/bible_queue.py:291-330`, `.github/bible/bible_queue.py:886-905` |
 
-The queue writes workflow state through GitHub issue, label, comment, assignment, branch, pull-request, and repository-content APIs; it does not persist that state to a local database or application file (inferred: the only file operations in `bible_queue.py` are the tarball extraction and the read of the `--changed-file` input, and it opens no database) (`.github/bible/bible_queue.py:116-153`, `.github/bible/bible_queue.py:252-330`, `.github/bible/bible_queue.py:332-352`, `.github/bible/bible_queue.py:582-601`, `.github/bible/bible_queue.py:886-905`).
+The queue writes workflow state through GitHub issue, label, comment, assignment, branch, pull-request, and repository-content APIs; it does not persist that state to a local database or application file (inferred: a search of `bible_queue.py` for `open(`, `write_text` and `.write(` finds 5 hits, `urlopen`, the tarball buffer write, `tarfile.open`, the unpacked-file write and the `--changed-file` read, and none opens a database) (`.github/bible/bible_queue.py:116-153`, `.github/bible/bible_queue.py:252-330`, `.github/bible/bible_queue.py:332-352`, `.github/bible/bible_queue.py:582-601`, `.github/bible/bible_queue.py:886-905`).
 
 ## External JSON payloads
 
@@ -190,7 +190,7 @@ The queue writes workflow state through GitHub issue, label, comment, assignment
 | GitHub issue state | `open`, `closed` | GitHub lifecycle, requested by queue | Selects active issues and completed/failed sessions | `.github/bible/bible_queue.py:151-153`, `.github/bible/bible_queue.py:342-343` |
 | GitHub close reason | `completed`, `not_planned` | `GitHub.close` / retry and release paths | Normal completion or closed session not planned for completion | `.github/bible/bible_queue.py:342-343`, `.github/bible/bible_queue.py:595`, `.github/bible/bible_queue.py:1006` |
 | Catalog HTTP health state | `ok` | `CatalogHandler.do_GET` | Successful health response | `components/catalog/service.py:26-27` |
-| HTTP success condition for settlement | status code `200` | Payment partner response, checked by `settle` | Returns `True` only for `200`; other returned statuses are `False`, while `urlopen` HTTP errors propagate | `components/orders/orders.py:50-51` |
+| HTTP success condition for settlement | status code `200` | Payment partner response, checked by `settle` | Returns `True` only for `200`; other returned statuses are `False`, while `urlopen` HTTP errors propagate (assumed: library behaviour, `urlopen` raises `HTTPError` for an error status) | `components/orders/orders.py:50-51` |
 
 <!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
 

@@ -4,7 +4,7 @@ kind: module
 component: orders
 source: components/orders/orders.py
 summary: Computes order totals, checks quantities against catalog stock, and sends settlements
-calls: [symbol:price_of, symbol:in_stock, external:partner-legacy.internal/settle, external:localhost:8099/settle]
+calls: [symbol:price_of, symbol:in_stock, external:Payment partner, external:Local settle fake]
 ---
 # orders
 
@@ -14,7 +14,7 @@ Source file: `components/orders/orders.py`
 | --- | --- |
 | Component | `orders` (its design page is `README.md` in this folder) |
 | Lines | 51 |
-| Role | Calculates line and order totals, validates stock quantities, and posts order settlements. |
+| Role | Calculates line and order totals, validates stock quantities, and sends order settlements. |
 | Imports that matter | `components.catalog.catalog` (`components/orders/orders.py:5`) |
 | Module-level state | `PARTNER_SETTLE_URL`, `DEV_SETTLE_URL`, `LOYALTY_DISCOUNT`, `BULK_DISCOUNT`, and `BULK_THRESHOLD` (`components/orders/orders.py:9-16`) |
 
@@ -87,7 +87,7 @@ Source: `components/orders/orders.py:23-32` <!-- code: d96746cc95d2 -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | No other Python call site found (search for `order_total` in `*.py`: definition only). |
+| Called by | No other Python call site found (inferred: a search for `order_total` in `*.py` finds 1 hit, its definition). |
 | Calls | `sum`, `line_total`, `max`, `round` |
 | Purpose | Adds line totals and applies the larger of the loyalty or bulk discount. |
 
@@ -95,7 +95,7 @@ Source: `components/orders/orders.py:23-32` <!-- code: d96746cc95d2 -->
 
 | Name | Type | Meaning | Checked how |
 | --- | --- | --- | --- |
-| `lines` | list of `(sku, qty)` pairs (per docstring) | Order lines used for the subtotal and item count | Unpacked while summing; no explicit validation (`components/orders/orders.py:24-26`). |
+| `lines` | list of `(sku, qty)` pairs (inferred: per the docstring at `components/orders/orders.py:24`) | Order lines used for the subtotal and item count | Unpacked while summing; no explicit validation (`components/orders/orders.py:24-26`). |
 | `loyal` | boolean-like, default `False` (inferred: tested for truthiness) | Enables the loyalty discount | Truthy values select the 5% loyalty discount (`components/orders/orders.py:28-29`). |
 
 **Steps**
@@ -131,7 +131,7 @@ Source: `components/orders/orders.py:35-42` <!-- code: c72f2cd2ce78 -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | No other Python call site found (search for `validate` call sites in `*.py`: none in the orders component). |
+| Called by | No other Python call site found (inferred: a search for `validate` as a word in `*.py` finds 1 hit, its definition). |
 | Calls | `errors.append`, `catalog.in_stock` |
 | Purpose | Collects quantity and stock errors for each order line. |
 
@@ -175,9 +175,9 @@ Source: `components/orders/orders.py:45-51` <!-- code: 32a9ae9ec0b6 -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | No other Python call site found (search for `settle` in `*.py`: definition only). |
+| Called by | No other Python call site found (inferred: a search for `settle` as a word in `*.py` finds 3 hits, the definition and the two URL strings `/settle` at `components/orders/orders.py:9` and `components/orders/orders.py:12`). |
 | Calls | `json.dumps`, `.encode`, `urllib.request.Request`, `urllib.request.urlopen` |
-| Purpose | Posts an order and amount as JSON to the selected settlement URL. |
+| Purpose | Sends an order and amount as a JSON body to the selected settlement URL (the request sets no method in the code, `components/orders/orders.py:49`; assumed: library behaviour, `urllib` then sends a POST). |
 
 **Inputs**
 

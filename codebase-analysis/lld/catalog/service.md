@@ -146,9 +146,9 @@ Source: `components/catalog/service.py:36-37` <!-- code: 98f39d7eebc6 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | Not established by this module. |
+| Called by | Not established by this module (assumed: `BaseHTTPRequestHandler` calls `log_message` for each request it logs). |
 | Calls | None |
-| Purpose | Suppresses the standard handler's request-log message by doing nothing. |
+| Purpose | Suppresses the standard handler's request-log message by doing nothing (assumed: library behaviour, `log_message` is the standard handler's logging hook). |
 
 **Steps**
 
@@ -203,6 +203,7 @@ return ThreadingHTTPServer((host, port), CatalogHandler)
 | `service.py:41` | `or` expression | `host` is falsey | Reads `CATALOG_HOST` with default `"127.0.0.1"` (`components/catalog/service.py:41`). |
 | `service.py:42` | conditional expression | `port is not None` | Uses the explicit port; otherwise reads `CATALOG_PORT` with default `"8001"` (`components/catalog/service.py:42`). |
 | `service.py:42` | call | The port or `CATALOG_PORT` is not a number | `int` raises `ValueError` (assumed: builtin behaviour for a non-numeric string); nothing in `make_server` catches it (`components/catalog/service.py:42`). |
+| `service.py:43` | call | The address cannot be bound (for example, the port is already in use) | `ThreadingHTTPServer` raises `OSError` from its constructor (assumed: library behaviour of a socket bind); nothing in `make_server` catches it (`components/catalog/service.py:43`). |
 
 **Output and side effects**: returns a `ThreadingHTTPServer` bound to `(host, port)` with `CatalogHandler` as its request handler (`components/catalog/service.py:40-43`).
 

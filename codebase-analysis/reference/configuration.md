@@ -7,14 +7,14 @@ depends_on: [page:hld/02-architecture.md, page:hld/06-cross-cutting.md]
 ---
 # Configuration
 
-Secret values are not recorded here. `BIBLE_ASSIGN_TOKEN` is configured as a repository secret; the workflows expose it to their processes as `GH_TOKEN` (`.github/workflows/bible-plan.yml:43-53`; `.github/workflows/bible-queue.yml:31-37`; `.github/workflows/bible-delta.yml:26-38`; `.github/workflows/poc-assign-copilot.yml:40-52`).
+Secret values are not recorded here. `BIBLE_ASSIGN_TOKEN` is configured as a repository secret (inferred: the comment at `.github/workflows/poc-assign-copilot.yml:4-6`, and the workflows read it as `secrets.BIBLE_ASSIGN_TOKEN`); the workflows expose it to their processes as `GH_TOKEN` (`.github/workflows/bible-plan.yml:43-53`; `.github/workflows/bible-queue.yml:31-37`; `.github/workflows/bible-delta.yml:26-38`; `.github/workflows/poc-assign-copilot.yml:40-52`).
 
 | Key or variable | Purpose | Default | Read in | Set in | Secret? |
 | --- | --- | --- | --- | --- | --- |
 | `CATALOG_HOST` | Catalog HTTP server bind host | `127.0.0.1`; the `host` argument of `make_server` comes first, and a variable set to an empty string is used as it is and binds all interfaces (assumed: library behaviour of an empty host string in a socket address) | `components/catalog/service.py:40-43` | Environment or `make_server` argument | No |
 | `CATALOG_PORT` | Catalog HTTP server bind port | `8001` | `components/catalog/service.py:40-43` | Environment or `make_server` argument | No |
 | `SUPPLIER_FEED_URL` | Supplier product JSON endpoint | `http://feeds.supplier-one.example.com/v2/products.json` | `components/catalog/catalog.py:5`, `components/catalog/catalog.py:36-39` | Source constant | No |
-| `IMAGE_CDN` | Prefix used to construct product image URLs; not fetched | `https://cdn.example.com/img/` | `components/catalog/catalog.py:6`, `components/catalog/catalog.py:32-33` | Source constant | No |
+| `IMAGE_CDN` | Prefix used to construct product image URLs; not fetched (inferred: a search of the repository outside the analysis folder and the skills for `image_url` and `IMAGE_CDN` finds 3 hits, all in `components/catalog/catalog.py`) | `https://cdn.example.com/img/` | `components/catalog/catalog.py:6`, `components/catalog/catalog.py:32-33` | Source constant | No |
 | `CATALOG_URL` | Catalog HTTP API base URL | `http://127.0.0.1:8001` | `components/orders/catalog_client.py:14-23` | Environment; tests set it for the local server | No |
 | `PARTNER_SETTLE_URL` | Settlement partner endpoint | `http://partner-legacy.internal/settle` | `components/orders/orders.py:7-9`, `components/orders/orders.py:45-50` | Source constant | No |
 | `DEV_SETTLE_URL` | Local development settlement endpoint | `http://localhost:8099/settle` | `components/orders/orders.py:11-12`, `components/orders/orders.py:45-50` | Source constant | No |
@@ -29,7 +29,7 @@ Secret values are not recorded here. `BIBLE_ASSIGN_TOKEN` is configured as a rep
 | GitHub API `timeout` | Queue request timeout in seconds | `60`; tarball request uses `300` | `.github/bible/bible_queue.py:116`, `.github/bible/bible_queue.py:297` | Function argument | No |
 | `GITHUB_REPOSITORY` | Repository owner and name for queue operations | Required; none | `.github/bible/bible_queue.py:1302-1304` | GitHub Actions environment | No |
 | `BIBLE_ASSIGN_TOKEN` | Credential used to assign Copilot and make queue API calls | Required repository secret; value not documented | Workflow job environments | Repository secret settings | Yes |
-| `GH_TOKEN` | GitHub API bearer-token environment variable used by `gh` or the queue client | Required; supplied from `BIBLE_ASSIGN_TOKEN` in workflows | `.github/bible/bible_queue.py:1302-1304`, `.github/bible/bible_queue.py:121-122`; POC workflow shell | Workflow environment | Yes |
+| `GH_TOKEN` | GitHub API bearer-token environment variable used by `gh` (assumed: `gh` reads `GH_TOKEN` from its environment) or the queue client | Required; supplied from `BIBLE_ASSIGN_TOKEN` in workflows | `.github/bible/bible_queue.py:1302-1304`, `.github/bible/bible_queue.py:121-122`; POC workflow shell | Workflow environment | Yes |
 | `BIBLE_AGENT_LOGINS` | Agent logins recognized by the queue | `Copilot,copilot-swe-agent[bot],copilot-swe-agent` | `.github/bible/bible_queue.py:61` | Environment | No |
 | `BIBLE_AGENT_APP` | GitHub app slug used to identify agent events (`copilot_work_started`, `copilot_work_finished`, `copilot_work_finished_failure`) | `copilot-swe-agent` | `.github/bible/bible_queue.py:66`, `.github/bible/bible_queue.py:70` | Environment | No |
 | `BIBLE_NOW` | Test clock override | Current UTC time when unset | `.github/bible/bible_queue.py:379-381` | Environment | No |
@@ -52,7 +52,7 @@ Secret values are not recorded here. `BIBLE_ASSIGN_TOKEN` is configured as a rep
 | `ENGINE` | Fanout issue-assignment engine | `copilot` | `tools/fanout.sh:7-8`, `tools/fanout.sh:24-29` | Environment | No |
 | `repo` | GitHub repository targeted by fanout | Required positional `owner/repo` | `tools/fanout.sh:2-8`, `tools/fanout.sh:10-12` | Command-line argument | No |
 | `BEFORE`, `AFTER` | Push commit range for delta processing | GitHub event values | `.github/workflows/bible-delta.yml:27-38` | Workflow event environment | No |
-| `RUNNER_TEMP` | Temporary file location for changed paths | GitHub-hosted runner value | `.github/workflows/bible-delta.yml:31-38` | GitHub Actions runner | No |
+| `RUNNER_TEMP` | Temporary file location for changed paths | GitHub-hosted runner value (assumed: GitHub Actions sets `RUNNER_TEMP`) | `.github/workflows/bible-delta.yml:31-38` | GitHub Actions runner | No |
 | `TITLE` | POC issue title passed to `jq` | `inputs.title` | `.github/workflows/poc-assign-copilot.yml:40-44`, `.github/workflows/poc-assign-copilot.yml:53-63` | POC workflow step environment | No |
 | `TASK` | POC issue body passed to `jq` | `inputs.task` | `.github/workflows/poc-assign-copilot.yml:40-44`, `.github/workflows/poc-assign-copilot.yml:53-63` | POC workflow step environment | No |
 | `BASE` | Target branch supplied in the POC assignment payload | `inputs.base_branch` | `.github/workflows/poc-assign-copilot.yml:40-45`, `.github/workflows/poc-assign-copilot.yml:53-63` | POC workflow step environment | No |
@@ -60,7 +60,7 @@ Secret values are not recorded here. `BIBLE_ASSIGN_TOKEN` is configured as a rep
 | `permissions.contents` | GitHub Actions token permission declared by the workflows | `read` | Workflow permissions blocks | `.github/workflows/bible-plan.yml:26-27`; `.github/workflows/bible-queue.yml:12-13`; `.github/workflows/bible-delta.yml:14-15`; `.github/workflows/poc-assign-copilot.yml:31-32` | No |
 | `runs-on` | GitHub Actions runner image | `ubuntu-latest` | Workflow job declarations | `.github/workflows/bible-plan.yml:34-38`; `.github/workflows/bible-queue.yml:19-24`; `.github/workflows/bible-delta.yml:17-21`; `.github/workflows/poc-assign-copilot.yml:34-37` | No |
 | `timeout-minutes` | Maximum job duration | `15` plan/delta, `20` queue, `5` POC | Workflow job declarations | Same workflow job declarations above | No |
-| `concurrency.group` | Prevents overlapping plan or queue workflow runs | `bible-plan`, `bible-queue`; cancellation disabled | Workflow concurrency blocks | `.github/workflows/bible-plan.yml:29-32`; `.github/workflows/bible-queue.yml:15-18` | No |
+| `concurrency.group` | Prevents overlapping plan or queue workflow runs (assumed: GitHub's concurrency-group behaviour) | `bible-plan`, `bible-queue`; cancellation disabled | Workflow concurrency blocks | `.github/workflows/bible-plan.yml:29-32`; `.github/workflows/bible-queue.yml:15-18` | No |
 
 <!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
 

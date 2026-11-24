@@ -32,7 +32,8 @@
     "lld/bible-mode-b/bible_queue.md#summary",
     "revision-log.md#round-2-report-of-2026-11-23-fingerprint-c2be3c0916a66a73",
     "revision-log.md#round-3-report-of-2026-11-24-fingerprint-12739e08a174be01-part2",
-    "revision-log.md#round-4-report-of-2026-11-24-fingerprint-24b18d98abe659bc-part2"
+    "revision-log.md#round-4-report-of-2026-11-24-fingerprint-24b18d98abe659bc-part2",
+    "revision-log.md#round-6-report-of-2026-11-24-fingerprint-6d2968d3765eaeee-part2"
    ]
   },
   "symbol:.github/bible/bible_queue.py#GitHub.__init__": {
@@ -122,7 +123,7 @@
     "lld/bible-mode-b/bible_queue.md#github-part8",
     "lld/bible-mode-b/bible_queue.md#github-part9",
     "lld/bible-mode-b/bible_queue.md#index",
-    "reference/risks-and-surprises.md#risks-and-surprises-part1",
+    "reference/risks-and-surprises.md#risks-and-surprises-part2",
     "revision-log.md#round-4-report-of-2026-11-24-fingerprint-24b18d98abe659bc-part2",
     "revision-log.md#round-5-report-of-2026-11-24-fingerprint-70ed8b41d4d54c72-part2"
    ]
@@ -172,7 +173,7 @@
    ],
    "card": [],
    "chunks": [
-    "hld/02-architecture.md#deployment",
+    "hld/02-architecture.md#deployment-part1",
     "lld/bible-mode-b/bible_queue.md#github-part2",
     "lld/bible-mode-b/bible_queue.md#index",
     "lld/bible-mode-b/bible_queue.md#main",
@@ -449,7 +450,8 @@
     "lld/bible-mode-b/bible_queue.md#github-part2",
     "lld/bible-mode-b/bible_queue.md#github-part4",
     "lld/bible-mode-b/bible_queue.md#index",
-    "revision-log.md#round-3-report-of-2026-11-24-fingerprint-12739e08a174be01-part2"
+    "revision-log.md#round-3-report-of-2026-11-24-fingerprint-12739e08a174be01-part2",
+    "revision-log.md#round-6-report-of-2026-11-24-fingerprint-6d2968d3765eaeee-part2"
    ]
   },
   "symbol:.github/bible/bible_queue.py#GitHub.timeline": {
@@ -675,7 +677,7 @@
     "revision-log.md#round-3-report-of-2026-11-24-fingerprint-12739e08a174be01-part2",
     "revision-log.md#round-4-report-of-2026-11-24-fingerprint-24b18d98abe659bc-part2",
     "revision-log.md#round-5-report-of-2026-11-24-fingerprint-70ed8b41d4d54c72-part2",
-    "revision-log.md#statements-added-1"
+    "revision-log.md#round-6-report-of-2026-11-24-fingerprint-6d2968d3765eaeee-part2"
    ]
   },
   "symbol:.github/bible/bible_queue.py#GitHub.commit_time": {
@@ -829,6 +831,8 @@
    ],
    "card": [],
    "chunks": [
+    "lld/bible-mode-b/README.md#business-rules-part2",
+    "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part1",
     "lld/bible-mode-b/bible_queue.md#github-part1",
     "lld/bible-mode-b/bible_queue.md#github-part9",
     "lld/bible-mode-b/bible_queue.md#index",
@@ -963,7 +967,12 @@
    "card": [],
    "chunks": [
     "hld/04-data-architecture.md#agent-session-pull-request",
+    "hld/04-data-architecture.md#component-review-pull-request",
+    "hld/04-data-architecture.md#component-row-on-the-tracker",
+    "hld/05-key-flows.md#3-component-session-passes-the-gate-and-reaches-human-review",
+    "hld/05-key-flows.md#4-whole-analysis-assembly-and-verification-part2",
     "lld/bible-mode-b/README.md#business-rules-part2",
+    "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part2",
     "lld/bible-mode-b/bible_queue.md#github-part1",
     "lld/bible-mode-b/bible_queue.md#github-part10",
     "lld/bible-mode-b/bible_queue.md#github-part9",
@@ -1125,7 +1134,7 @@
     "lld/bible-mode-b/bible_queue.md#settings_oftracker"
    ],
    "chunks": [
-    "hld/04-data-architecture.md#files-caches-and-other-state",
+    "hld/04-data-architecture.md#files-caches-and-other-state-part2",
     "hld/04-data-architecture.md#tracker-hidden-blocks",
     "lld/bible-mode-b/bible_queue.md#main",
     "lld/bible-mode-b/bible_queue.md#queue-part4",
@@ -1421,7 +1430,7 @@
     "lld/bible-mode-b/bible_queue.md#module-level-code",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
     "lld/bible-mode-b/bible_queue.md#summary",
-    "reference/risks-and-surprises.md#risks-and-surprises-part1",
+    "reference/risks-and-surprises.md#risks-and-surprises-part2",
     "revision-log.md#round-3-report-of-2026-11-24-fingerprint-12739e08a174be01-part2",
     "revision-log.md#round-4-report-of-2026-11-24-fingerprint-24b18d98abe659bc-part2",
     "revision-log.md#statements-added"
@@ -1522,6 +1531,7 @@
    ],
    "card": [],
    "chunks": [
+    "hld/04-data-architecture.md#component-row-on-the-tracker",
     "knowledge/AGENT-CONTEXT.md#hazards",
     "lld/bible-mode-b/README.md#risks-and-surprises",
     "lld/bible-mode-b/README.md#session-classification",
@@ -1540,8 +1550,7 @@
     "lld/bible-mode-b/bible_queue.md#status_ofgh-path-ref",
     "lld/bible-mode-b/bible_queue.md#surprises",
     "lld/data-dictionary.md#queue-issues-and-component-status-part2",
-    "lld/data-dictionary.md#status-and-enum-values",
-    "reference/risks-and-surprises.md#risks-and-surprises-part1"
+    "lld/data-dictionary.md#status-and-enum-values"
    ]
   },
   "symbol:.github/bible/bible_queue.py#Queue.held": {
@@ -1575,7 +1584,8 @@
     "lld/bible-mode-b/bible_queue.md#queue-part6",
     "lld/bible-mode-b/bible_queue.md#queue-part7",
     "lld/data-dictionary.md#queue-issues-and-component-status-part2",
-    "revision-log.md#round-3-report-of-2026-11-24-fingerprint-12739e08a174be01-part2"
+    "revision-log.md#round-3-report-of-2026-11-24-fingerprint-12739e08a174be01-part2",
+    "revision-log.md#round-6-report-of-2026-11-24-fingerprint-6d2968d3765eaeee-part2"
    ]
   },
   "symbol:.github/bible/bible_queue.py#Queue.model_for": {
@@ -1649,6 +1659,9 @@
    ],
    "card": [],
    "chunks": [
+    "hld/06-cross-cutting.md#error-handling-and-resilience",
+    "knowledge/AGENT-CONTEXT.md#conventions",
+    "knowledge/AGENT-CONTEXT.md#hazards",
     "lld/bible-mode-b/README.md#business-rules-part2",
     "lld/bible-mode-b/bible_queue.md#assignmentgh-base-model",
     "lld/bible-mode-b/bible_queue.md#github-part10",
@@ -1662,6 +1675,7 @@
     "lld/bible-mode-b/bible_queue.md#queue-part5",
     "lld/bible-mode-b/bible_queue.md#queue-part7",
     "lld/data-dictionary.md#queue-issues-and-component-status-part2",
+    "reference/risks-and-surprises.md#risks-and-surprises-part2",
     "revision-log.md#round-2-report-of-2026-11-23-fingerprint-c2be3c0916a66a73"
    ]
   },
@@ -1684,7 +1698,7 @@
    "card": [],
    "chunks": [
     "hld/03-integrations.md#inbound-interfaces",
-    "hld/04-data-architecture.md#files-caches-and-other-state",
+    "hld/04-data-architecture.md#files-caches-and-other-state-part2",
     "hld/05-key-flows.md#2-queue-creates-and-assigns-the-planning-session",
     "hld/05-key-flows.md#5-changed-code-produces-component-delta-issues-part1",
     "hld/05-key-flows.md#5-changed-code-produces-component-delta-issues-part2",
@@ -1695,14 +1709,14 @@
     "lld/bible-mode-b/README.md#modules",
     "lld/bible-mode-b/README.md#public-interface",
     "lld/bible-mode-b/README.md#responsibility",
-    "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part1",
     "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part2",
     "lld/bible-mode-b/bible_queue.md#github-part2",
     "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#github-part8",
     "lld/bible-mode-b/bible_queue.md#main",
     "lld/bible-mode-b/bible_queue.md#queue-part1",
-    "lld/bible-mode-b/bible_queue.md#queue-part10"
+    "lld/bible-mode-b/bible_queue.md#queue-part10",
+    "lld/bible-mode-b/bible_queue.md#queue-part16"
    ]
   },
   "symbol:.github/bible/bible_queue.py#Queue.run": {
@@ -1726,7 +1740,7 @@
     "README.md#files",
     "hld/03-integrations.md#outbound-calls",
     "hld/04-data-architecture.md#component-row-on-the-tracker",
-    "hld/04-data-architecture.md#files-caches-and-other-state",
+    "hld/04-data-architecture.md#files-caches-and-other-state-part2",
     "lld/bible-mode-b/README.md#business-rules-part2",
     "lld/bible-mode-b/README.md#errors-and-resilience",
     "lld/bible-mode-b/README.md#modules",
@@ -1922,7 +1936,8 @@
     "lld/tools/gate.md#summary",
     "revision-log.md#round-2-report-of-2026-11-23-fingerprint-c2be3c0916a66a73",
     "revision-log.md#round-4-report-of-2026-11-24-fingerprint-24b18d98abe659bc-part2",
-    "revision-log.md#round-5-report-of-2026-11-24-fingerprint-70ed8b41d4d54c72-part2"
+    "revision-log.md#round-5-report-of-2026-11-24-fingerprint-70ed8b41d4d54c72-part2",
+    "revision-log.md#round-6-report-of-2026-11-24-fingerprint-6d2968d3765eaeee-part2"
    ]
   },
   "symbol:.github/bible/bible_queue.py#Queue.could_not_check": {
@@ -2001,6 +2016,7 @@
    ],
    "card": [],
    "chunks": [
+    "hld/05-key-flows.md#4-whole-analysis-assembly-and-verification-part3",
     "lld/bible-mode-b/README.md#business-rules-part2",
     "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part1",
     "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part2",
@@ -2019,8 +2035,7 @@
     "lld/bible-mode-b/bible_queue.md#queue-part13",
     "lld/bible-mode-b/bible_queue.md#queue-part14",
     "lld/bible-mode-b/bible_queue.md#queue-part16",
-    "lld/bible-mode-b/bible_queue.md#queue-part2",
-    "lld/bible-mode-b/bible_queue.md#queue-part3"
+    "lld/bible-mode-b/bible_queue.md#queue-part2"
    ]
   },
   "symbol:.github/bible/bible_queue.py#Queue.deferred_updates": {
@@ -2041,11 +2056,11 @@
    ],
    "card": [],
    "chunks": [
-    "hld/04-data-architecture.md#files-caches-and-other-state",
+    "hld/04-data-architecture.md#files-caches-and-other-state-part2",
+    "hld/05-key-flows.md#4-whole-analysis-assembly-and-verification-part2",
     "hld/05-key-flows.md#5-changed-code-produces-component-delta-issues-part1",
     "hld/05-key-flows.md#5-changed-code-produces-component-delta-issues-part2",
     "lld/bible-mode-b/README.md#business-rules-part2",
-    "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part1",
     "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part2",
     "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#github-part4",
@@ -2108,8 +2123,9 @@
    "card": [],
    "chunks": [
     "hld/05-key-flows.md#4-whole-analysis-assembly-and-verification-part2",
+    "hld/05-key-flows.md#4-whole-analysis-assembly-and-verification-part3",
     "lld/bible-mode-b/README.md#business-rules-part2",
-    "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part1",
+    "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part2",
     "lld/bible-mode-b/bible_queue.md#assignmentgh-base-model",
     "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#github-part4",
@@ -2125,8 +2141,7 @@
     "lld/bible-mode-b/bible_queue.md#queue-part2",
     "lld/bible-mode-b/bible_queue.md#queue-part3",
     "lld/bible-mode-b/bible_queue.md#shown_filespaths-limit10",
-    "lld/data-dictionary.md#queue-issues-and-component-status-part2",
-    "revision-log.md#round-3-report-of-2026-11-24-fingerprint-12739e08a174be01-part2"
+    "lld/data-dictionary.md#queue-issues-and-component-status-part2"
    ]
   },
   "symbol:.github/bible/bible_queue.py#Queue.continue_if_unfinished": {
@@ -2147,9 +2162,9 @@
    ],
    "card": [],
    "chunks": [
-    "hld/04-data-architecture.md#files-caches-and-other-state",
+    "hld/04-data-architecture.md#files-caches-and-other-state-part2",
     "lld/bible-mode-b/README.md#business-rules-part2",
-    "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part1",
+    "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part2",
     "lld/bible-mode-b/bible_queue.md#agestamp",
     "lld/bible-mode-b/bible_queue.md#github-part3",
     "lld/bible-mode-b/bible_queue.md#github-part4",
@@ -2187,7 +2202,7 @@
    ],
    "card": [],
    "chunks": [
-    "hld/04-data-architecture.md#files-caches-and-other-state",
+    "hld/04-data-architecture.md#files-caches-and-other-state-part2",
     "hld/04-data-architecture.md#tracker-hidden-blocks",
     "lld/bible-mode-b/bible_queue.md#github-part9",
     "lld/bible-mode-b/bible_queue.md#now",
@@ -2219,7 +2234,7 @@
    "chunks": [
     "README.md#components",
     "hld/03-integrations.md#inbound-interfaces",
-    "hld/04-data-architecture.md#files-caches-and-other-state",
+    "hld/04-data-architecture.md#files-caches-and-other-state-part2",
     "hld/05-key-flows.md#5-changed-code-produces-component-delta-issues-part1",
     "hld/06-cross-cutting.md#testing",
     "knowledge/AGENT-CONTEXT.md#components",
@@ -2230,13 +2245,13 @@
     "lld/bible-mode-b/README.md#public-interface",
     "lld/bible-mode-b/README.md#responsibility",
     "lld/bible-mode-b/README.md#structure",
-    "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part1",
     "lld/bible-mode-b/README.md#whole-analysis-phase-and-deferred-updates-part2",
     "lld/bible-mode-b/bible_queue.md#agestamp",
     "lld/bible-mode-b/bible_queue.md#assignmentgh-base-model",
     "lld/bible-mode-b/bible_queue.md#comp_labelname",
     "lld/bible-mode-b/bible_queue.md#github-part2",
-    "lld/bible-mode-b/bible_queue.md#github-part3"
+    "lld/bible-mode-b/bible_queue.md#github-part3",
+    "lld/bible-mode-b/bible_queue.md#github-part4"
    ]
   },
   "symbol:.github/bible/bible_queue.py#main": {
@@ -2408,11 +2423,16 @@
     "lld/catalog/catalog.md#image_urlsku"
    ],
    "chunks": [
+    "README.md#at-a-glance",
+    "hld/01-system-context.md#system-context-part1",
+    "hld/01-system-context.md#system-context-part2",
     "hld/03-integrations.md#outbound-calls",
     "lld/catalog/README.md#modules",
     "lld/catalog/catalog.md#image_urlsku",
     "lld/catalog/catalog.md#index",
-    "reference/glossary.md#glossary"
+    "reference/configuration.md#configuration-part2",
+    "reference/glossary.md#glossary",
+    "revision-log.md#round-6-report-of-2026-11-24-fingerprint-6d2968d3765eaeee-part2"
    ]
   },
   "symbol:components/catalog/catalog.py#fetch_supplier_feed": {
@@ -2435,7 +2455,8 @@
     "lld/catalog/catalog.md#fetch_supplier_feedtimeout10"
    ],
    "chunks": [
-    "hld/01-system-context.md#system-context-part1",
+    "README.md#in-two-minutes",
+    "hld/01-system-context.md#system-context-part2",
     "hld/03-integrations.md#dependency-matrix",
     "hld/03-integrations.md#outbound-calls",
     "knowledge/AGENT-CONTEXT.md#conventions",
@@ -2452,9 +2473,8 @@
     "progress.md#reader-test",
     "reference/configuration.md#configuration-part2",
     "reference/glossary.md#glossary",
-    "reference/risks-and-surprises.md#risks-and-surprises-part1",
-    "revision-log.md#round-3-report-of-2026-11-24-fingerprint-12739e08a174be01-part2",
-    "revision-log.md#round-5-report-of-2026-11-24-fingerprint-70ed8b41d4d54c72-part2"
+    "reference/risks-and-surprises.md#risks-and-surprises-part2",
+    "revision-log.md#round-3-report-of-2026-11-24-fingerprint-12739e08a174be01-part2"
    ]
   },
   "symbol:components/catalog/catalog.py#apply_feed": {
@@ -2491,7 +2511,8 @@
     "lld/data-dictionary.md#_products-the-catalog-products",
     "lld/data-dictionary.md#stores",
     "progress.md#reader-test",
-    "reference/glossary.md#glossary"
+    "reference/glossary.md#glossary",
+    "revision-log.md#round-6-report-of-2026-11-24-fingerprint-6d2968d3765eaeee-part2"
    ]
   },
   "symbol:components/catalog/service.py#CatalogHandler": {
@@ -2562,6 +2583,7 @@
    ],
    "card": [],
    "chunks": [
+    "hld/03-integrations.md#inbound-interfaces",
     "knowledge/AGENT-CONTEXT.md#components",
     "lld/api/catalog/catalog.md#endpoints-catalog",
     "lld/api/catalog/catalog.md#get-health",
@@ -2573,6 +2595,8 @@
     "lld/catalog/service.md#cataloghandler",
     "lld/catalog/service.md#index",
     "lld/data-dictionary.md#status-and-enum-values",
+    "lld/orders/README.md#responsibility",
+    "lld/tools/README.md#responsibility",
     "progress.md#components",
     "progress.md#reader-test",
     "revision-log.md#round-3-report-of-2026-11-24-fingerprint-12739e08a174be01-part2",
@@ -2636,8 +2660,10 @@
     "progress.md#components",
     "progress.md#sweep",
     "reference/configuration.md#configuration-part2",
+    "reference/risks-and-surprises.md#risks-and-surprises-part2",
     "revision-log.md#round-4-report-of-2026-11-24-fingerprint-24b18d98abe659bc-part2",
     "revision-log.md#round-5-report-of-2026-11-24-fingerprint-70ed8b41d4d54c72-part2",
+    "revision-log.md#round-6-report-of-2026-11-24-fingerprint-6d2968d3765eaeee-part2",
     "revision-log.md#statements-added",
     "run-notes.md#revision-of-the-report-of-2026-11-24-round-4-judgments-made-without-the-user"
    ]
@@ -2676,8 +2702,10 @@
    "chunks": [
     "lld/catalog/README.md#modules",
     "lld/catalog/README.md#tests",
+    "lld/catalog/catalog.md#price_ofsku",
     "lld/catalog/test_catalog.md#index",
-    "lld/catalog/test_catalog.md#tests"
+    "lld/catalog/test_catalog.md#tests",
+    "revision-log.md#round-6-report-of-2026-11-24-fingerprint-6d2968d3765eaeee-part2"
    ]
   },
   "symbol:components/orders/catalog_client.py#catalog_url": {
@@ -2841,7 +2869,8 @@
     "lld/orders/orders.md#index",
     "lld/orders/orders.md#line_totalsku-qty",
     "lld/orders/orders.md#order_totallines-loyalfalse",
-    "progress.md#components"
+    "progress.md#components",
+    "reference/risks-and-surprises.md#risks-and-surprises-part2"
    ]
   },
   "symbol:components/orders/orders.py#validate": {
@@ -2879,7 +2908,8 @@
     "lld/orders/README.md#tests",
     "lld/orders/orders.md#index",
     "lld/orders/orders.md#validatelines",
-    "progress.md#components"
+    "progress.md#components",
+    "reference/risks-and-surprises.md#risks-and-surprises-part2"
    ]
   },
   "symbol:components/orders/orders.py#settle": {
@@ -2902,7 +2932,7 @@
     "lld/orders/orders.md#settleorder_id-amount-devfalse-timeout15"
    ],
    "chunks": [
-    "hld/01-system-context.md#system-context-part1",
+    "hld/01-system-context.md#system-context-part2",
     "hld/02-architecture.md#containers",
     "hld/03-integrations.md#inbound-interfaces",
     "hld/03-integrations.md#outbound-calls",
@@ -3307,7 +3337,8 @@
     "lld/tools/gate.md#summary",
     "revision-log.md#round-2-report-of-2026-11-23-fingerprint-c2be3c0916a66a73",
     "revision-log.md#round-4-report-of-2026-11-24-fingerprint-24b18d98abe659bc-part2",
-    "revision-log.md#round-5-report-of-2026-11-24-fingerprint-70ed8b41d4d54c72-part2"
+    "revision-log.md#round-5-report-of-2026-11-24-fingerprint-70ed8b41d4d54c72-part2",
+    "revision-log.md#round-6-report-of-2026-11-24-fingerprint-6d2968d3765eaeee-part2"
    ]
   },
   "symbol:tools/gate.py#main": {

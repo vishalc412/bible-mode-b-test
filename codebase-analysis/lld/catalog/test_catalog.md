@@ -48,6 +48,6 @@ When run as the main module, the `__main__` guard calls `unittest.main()` (`comp
 
 ## Surprises
 
-The file contains only a known-SKU price assertion; it has no tests here for unknown SKUs, stock, image URLs, feed parsing, or HTTP behavior (`components/catalog/test_catalog.py:6-8`).
+The file contains only a known-SKU price assertion; it has no tests here for unknown SKUs, stock, image URLs, feed parsing, or HTTP behavior (inferred: the whole file, `components/catalog/test_catalog.py:1-12`, holds one test method).
 
 <!-- cites components/catalog/test_catalog.py@9be40d147e425d178067c8b34f19b28b9b374d1f -->

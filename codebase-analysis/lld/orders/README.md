@@ -4,7 +4,7 @@ kind: component
 component: orders
 source: [components/orders/orders.py, components/orders/catalog_client.py, components/orders/test_orders.py, components/orders/test_catalog_client.py]
 summary: Computes order totals, checks catalog stock, and submits payment settlements
-calls: [component:catalog, external:partner-legacy.internal/settle]
+calls: [component:catalog, external:Payment partner]
 config: [config:CATALOG_URL]
 ---
 # orders
@@ -20,7 +20,7 @@ config: [config:CATALOG_URL]
 
 ## Responsibility
 
-The component provides order line and discounted-total calculations, validates requested quantities against catalog stock, and submits order settlements (`components/orders/orders.py:19-51`). Its `catalog_client` module also resolves a catalog service URL and requests prices over HTTP (`components/orders/catalog_client.py:14-29`). Both catalog access paths are intentional: `orders.py` imports `components.catalog.catalog` directly when catalog and orders run in one process (today's deployment), while `catalog_client.py` is the path for orders running as its own service and reading prices from the catalog HTTP API (answer to Q1; code paths at `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-41` and `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:14-23`). The HTTP path's only callers found are its tests, and it uses plain HTTP to `CATALOG_URL`, defaulting to `http://127.0.0.1:8001` (answer to Q1; `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`, `components/orders/test_catalog_client.py:37-62`). The component does not declare routes or a service entry point in these modules; the test files run through `unittest` (`components/orders/test_orders.py:1-12`, `components/orders/test_catalog_client.py:1-66`).
+The component provides order line and discounted-total calculations, validates requested quantities against catalog stock, and submits order settlements (`components/orders/orders.py:19-51`). Its `catalog_client` module also resolves a catalog service URL and requests prices over HTTP (`components/orders/catalog_client.py:14-29`). Both catalog access paths are intentional: `orders.py` imports `components.catalog.catalog` directly when catalog and orders run in one process (today's deployment per the recorded answer to Q1, a user decision), while `catalog_client.py` is the path for orders running as its own service and reading prices from the catalog HTTP API (inferred: its docstring, `components/orders/catalog_client.py:1-4`, names the separate-service use, and a search of the repository finds `catalog_client` used only in `components/orders/test_catalog_client.py`, 6 hits) (answer to Q1; code paths at `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-41` and `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:14-23`). The HTTP path's only callers found are its tests (inferred: its docstring, `components/orders/catalog_client.py:1-4`, names the separate-service use, and a search of the repository finds `catalog_client` used only in `components/orders/test_catalog_client.py`, 6 hits), and it uses plain HTTP to `CATALOG_URL`, defaulting to `http://127.0.0.1:8001` (answer to Q1; `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`, `components/orders/test_catalog_client.py:37-62`). The component does not declare routes or a service entry point in these modules (inferred: a search of `components/orders` for `do_GET`, `BaseHTTPRequestHandler`, `http.server`, `@app`, `route` and `__main__` finds 3 hits, the two `unittest` guards at `components/orders/test_catalog_client.py:65` and `components/orders/test_orders.py:11` and a test name containing `misrouted`); the test files run through `unittest` (`components/orders/test_orders.py:1-12`, `components/orders/test_catalog_client.py:1-66`).
 
 ## Structure
 
@@ -60,17 +60,17 @@ flowchart TB
 
 ## Main types
 
-No application classes are defined; `CatalogClientTest` and `OrdersTest` are unittest fixtures (`components/orders/test_catalog_client.py:12-62`, `components/orders/test_orders.py:6-8`).
+No application classes are defined (inferred: a search of `components/orders` for `class` at the start of a line finds 2 hits, `CatalogClientTest` and `OrdersTest`); `CatalogClientTest` and `OrdersTest` are unittest fixtures (`components/orders/test_catalog_client.py:12-62`, `components/orders/test_orders.py:6-8`).
 
 ## Public interface
 
 | Interface | Kind (route, function, event, job, command) | Card or page | Components that call it |
 | --- | --- | --- | --- |
-| `line_total(sku, qty)` | function | [orders card](orders.md#line_totalsku-qty) | No external component caller found; `OrdersTest.test_line_total` calls it (`components/orders/test_orders.py:6-8`). |
-| `order_total(lines, loyal=False)` | function | [orders card](orders.md#order_totallines-loyalfalse) | No external component caller found (search for `order_total` in `*.py`: definition only). |
-| `validate(lines)` | function | [orders card](orders.md#validatelines) | No external component caller found (search for `validate` call sites in `components/**/*.py`: none in the orders component). |
-| `settle(order_id, amount, dev=False, timeout=15)` | function | [orders card](orders.md#settleorder_id-amount-devfalse-timeout15) | No external component caller found (search for `settle` in `*.py`: definition only). |
-| `catalog_url()`, `remote_price(sku, timeout=5)`, `remote_line_total(sku, qty)` | functions | [catalog client cards](catalog_client.md#functions-and-methods) | No external component caller found; `test_catalog_client.py` calls the client functions (`components/orders/test_catalog_client.py:37-62`; search for `remote_price` and `remote_line_total` in `components/**/*.py`). |
+| `line_total(sku, qty)` | function | [orders card](orders.md#line_totalsku-qty) | No external component caller found; `OrdersTest.test_line_total` calls it (`components/orders/test_orders.py:6-8`) (inferred: a search for `line_total` as a word in `*.py` finds 3 hits, its definition, the call in `order_total` at `components/orders/orders.py:25` and that test). |
+| `order_total(lines, loyal=False)` | function | [orders card](orders.md#order_totallines-loyalfalse) | No external component caller found (inferred: a search for `order_total` in `*.py` finds 1 hit, its definition). |
+| `validate(lines)` | function | [orders card](orders.md#validatelines) | No external component caller found (inferred: a search for `validate` as a word in `*.py` finds 1 hit, its definition). |
+| `settle(order_id, amount, dev=False, timeout=15)` | function | [orders card](orders.md#settleorder_id-amount-devfalse-timeout15) | No external component caller found (inferred: a search for `settle` as a word in `*.py` finds 3 hits, the definition and the two URL strings `/settle` at `components/orders/orders.py:9` and `components/orders/orders.py:12`). |
+| `catalog_url()`, `remote_price(sku, timeout=5)`, `remote_line_total(sku, qty)` | functions | [catalog client cards](catalog_client.md#functions-and-methods) | No external component caller found; `test_catalog_client.py` calls the client functions (`components/orders/test_catalog_client.py:37-62`; inferred: a search for `remote_price` and `remote_line_total` in `*.py` finds 10 hits in 2 files, the definitions, the call at `components/orders/catalog_client.py:29` and the test calls). |
 
 ## Business rules
 
@@ -87,7 +87,7 @@ No application classes are defined; `CatalogClientTest` and `OrdersTest` are uni
 | Store or file | Reads | Writes | Data dictionary entry |
 | --- | --- | --- | --- |
 | Catalog product data, owned by `catalog` | `price_of(sku)` for line totals and `in_stock(sku, qty)` for validation (`components/orders/orders.py:19-20`, `components/orders/orders.py:35-41`; `components/catalog/catalog.py:20-29`) | None by orders (`components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`) | Not owned by orders; in-memory `_PRODUCTS` is defined by catalog (`components/catalog/catalog.py:8-12`). |
-| Settlement request body | `order_id`, `amount` as values for JSON fields `order`, `amount` (`components/orders/orders.py:45-49`) | Sent to the selected URL; no local persistence shown (`components/orders/orders.py:47-51`) | No local store. |
+| Settlement request body | `order_id`, `amount` as values for JSON fields `order`, `amount` (`components/orders/orders.py:45-49`) | Sent to the selected URL; no local persistence shown (`components/orders/orders.py:47-51`) | No local store (inferred: a search of `components/orders` for `write`, `sqlite`, `pickle` and `shelve` finds 0 hits, and one for `open(` finds 3 hits, all `urlopen(`). |
 
 ## Outbound calls
 
@@ -121,17 +121,17 @@ No application logging or metrics calls are present in the four orders files (in
 | [test_orders](test_orders.md#tests) | Checks `line_total("SKU-3", 2) == 12.0` (`components/orders/test_orders.py:6-8`). |
 | [test_catalog_client](test_catalog_client.md#tests) | Checks HTTP price and line-total calls, zero quantity, unknown and unusual SKUs, query handling, and percent-encoded SKU decoding (`components/orders/test_catalog_client.py:37-62`). |
 
-The listed tests do not exercise `order_total`, `validate`, or `settle` (inferred: the complete test method listings are `components/orders/test_orders.py:6-8` and `components/orders/test_catalog_client.py:37-62`).
+The listed tests do not exercise `order_total`, `validate`, or `settle` (inferred: the complete test method listings are `components/orders/test_orders.py:6-8` and `components/orders/test_catalog_client.py:37-62`, and a search of the three test files for `order_total`, `validate` and `settle` finds 0 hits).
 
 ## Surprises
 
 - Settlement uses plain HTTP to the partner URL; the adjacent source comment says TLS support is “coming soon” but gives no date (inferred: per `components/orders/orders.py:7-9`).
-- The direct catalog import and HTTP client are intentional for different deployment modes: in-process catalog access today and HTTP access when orders runs separately (answer to Q1; code paths at `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-41` and `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:19-23`). The HTTP path's only callers found are its tests, and its URL is plain HTTP to `CATALOG_URL` (default `http://127.0.0.1:8001`) (answer to Q1; `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`, `components/orders/test_catalog_client.py:37-62`).
+- The direct catalog import and HTTP client are intentional for different deployment modes: in-process catalog access today and HTTP access when orders runs separately (answer to Q1; code paths at `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-41` and `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:19-23`). The HTTP path's only callers found are its tests (inferred: its docstring, `components/orders/catalog_client.py:1-4`, names the separate-service use, and a search of the repository finds `catalog_client` used only in `components/orders/test_catalog_client.py`, 6 hits), and its URL is plain HTTP to `CATALOG_URL` (default `http://127.0.0.1:8001`) (answer to Q1; `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`, `components/orders/test_catalog_client.py:37-62`).
 
 ## For the whole-system pages
 
 - **Risk:** Settlement requests use plain HTTP to `partner-legacy.internal`; the comment says TLS is forthcoming but supplies no date (inferred: comment at `components/orders/orders.py:7-9`).
-- **Deployment detail:** The direct-import path serves today's in-process deployment, and the HTTP client is intended for orders running separately (answer to Q1). Only tests call the HTTP path today, which uses plain HTTP to `CATALOG_URL` with default `http://127.0.0.1:8001` (`components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`; `components/orders/test_catalog_client.py:37-62`).
+- **Deployment detail:** The direct-import path serves today's in-process deployment, and the HTTP client is intended for orders running separately (answer to Q1). Only tests call the HTTP path today (inferred: its docstring, `components/orders/catalog_client.py:1-4`, names the separate-service use, and a search of the repository finds `catalog_client` used only in `components/orders/test_catalog_client.py`, 6 hits), which uses plain HTTP to `CATALOG_URL` with default `http://127.0.0.1:8001` (`components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`; `components/orders/test_catalog_client.py:37-62`).
 - **Glossary:** `loyalty discount` is `LOYALTY_DISCOUNT` (`components/orders/orders.py:14`, `components/orders/orders.py:28-29`); `bulk discount` is `BULK_DISCOUNT` at `BULK_THRESHOLD` (`components/orders/orders.py:15-16`, `components/orders/orders.py:30-31`); `CATALOG_URL` selects the catalog HTTP API base URL (`components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-16`).
 
 <!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->

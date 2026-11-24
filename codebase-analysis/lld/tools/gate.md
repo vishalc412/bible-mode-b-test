@@ -254,7 +254,7 @@ return errors
 | `tools/gate.py:71` | `if` | `now <= before` | Appends an error that the component has no new test functions (`tools/gate.py:71-72`). |
 | `tools/gate.py:76` | `if` | `subprocess.run` returns a nonzero code | Appends a test-failure error with the final 1,500 stderr characters (`tools/gate.py:76-77`). |
 
-**Output and side effects**: Returns an error list; pass 3 launches unittest discovery as a subprocess with captured text output (`tools/gate.py:73-78`). A plan entry that lacks `functions` (pass 1), `http_sites` (pass 2) or, when it has no `test_count`, `tests` (pass 3) raises `KeyError`, which `check` does not catch (`tools/gate.py:50`, `tools/gate.py:55`, `tools/gate.py:69`).
+**Output and side effects**: Returns an error list; pass 3 launches unittest discovery as a subprocess with captured text output (`tools/gate.py:73-78`). A plan entry that lacks `functions` (pass 1), `http_sites` (pass 2) or, when it has no `test_count`, `tests` (pass 3) raises `KeyError` (assumed: Python builtin behaviour of a missing dictionary key), which `check` does not catch (`tools/gate.py:50`, `tools/gate.py:55`, `tools/gate.py:69`).
 
 ### `main()`
 
@@ -320,7 +320,7 @@ return failure if errors exist, otherwise success
 | `tools/gate.py:109` | `for` | For each selected pass | Calls `check`, prints that pass's result, and accumulates its errors (`tools/gate.py:109-112`). |
 | `tools/gate.py:111` | conditional expression | The returned error list is empty | Prints `PASS`; otherwise prints `FAIL` (`tools/gate.py:110-111`). |
 
-**Output and side effects**: Prints per-pass results and any final `FAIL:` messages; returns `0` for no errors or `1` when errors are reported (`tools/gate.py:109-113`). The module invokes `main()` through `sys.exit` when run as a script (`tools/gate.py:116-117`).
+**Output and side effects**: Prints per-pass results and any final `FAIL:` messages; returns `0` for no errors or `1` when errors are reported (`tools/gate.py:109-113`). A truthy `passes_done` that is not iterable (for example an integer) makes the loop at line 109 raise `TypeError` (assumed: Python builtin behaviour of iterating a non-iterable) (`tools/gate.py:101`, `tools/gate.py:109`). The module invokes `main()` through `sys.exit` when run as a script (`tools/gate.py:116-117`).
 
 ## Module-level code
 
