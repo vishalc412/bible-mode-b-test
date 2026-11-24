@@ -5,7 +5,7 @@
  "verification": {
   "verdict": "PASS AFTER CORRECTIONS",
   "date": "2026-11-23",
-  "major_corrections": 5,
+  "major_corrections": 4,
   "report": "verification-report.md"
  },
  "baseline": {
@@ -13,9 +13,14 @@
   "files": 24
  },
  "drift": {
-  "changed_files": 0,
-  "files": [],
-  "components": []
+  "changed_files": 1,
+  "files": [
+   ".github/bible/bible_queue.py"
+  ],
+  "components": [
+   "bible-mode-b"
+  ],
+  "open_delta_work": 22
  },
  "components": {
   "catalog": {
@@ -40,9 +45,9 @@
   }
  },
  "reasons": [
-  "verdict PASS AFTER CORRECTIONS with 5 major corrections not re-checked: verify the corrected parts again",
+  "verdict PASS AFTER CORRECTIONS with 4 major corrections not re-checked: verify the corrected parts again",
   "0 of 4 components verified"
  ],
  "notes": [],
- "checked": "2026-11-23T23:55:18"
+ "checked": "2026-11-23T23:59:57"
 }
