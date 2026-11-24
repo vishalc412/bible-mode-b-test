@@ -13,7 +13,7 @@ The analysis has two readers. An engineer reads it to understand the system, so 
 
 ## Citations
 
-- Write `` `path:line` `` or `` `path:start-end` ``, the path from the repository root, in backticks: `` `app-migrate-x-service/cloud_migration_service.py:678-702` ``. `coverage.py` resolves every one and fails those whose file or lines do not exist.
+- Write `` `path:line` `` or `` `path:start-end` ``, the path from the repository root, in backticks: `` `app-migrate-x-service/cloud_migration_service.py:678-702` ``. `coverage.py` resolves every one and fails those whose file or lines do not exist. One range per citation: two ranges are two citations, `` `orders.py:5` `` and `` `orders.py:19-20` ``. A list such as `orders.py:5,19-20` fails the gate, because no check (the gate, an update, a verifier's sample) can read it.
 - Inside one page, after the file has been cited in full once, a step may cite with the file name only (`` `cloud_migration_service.py:690` ``) when no other file has that name. Everywhere else, the full path.
 - Open the file and confirm the lines before writing them. A citation from memory is a defect.
 - Cite code, never the analysis's own pages: the analysis folder is not scanned, so `components.md:9` does not resolve. Point to another page with a link instead.
