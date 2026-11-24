@@ -9,5 +9,5 @@ Each line below cites code that changed. Open the code, correct the citation and
 
 Then run next.py again.
 
-Note: --new-session ran before the last chat reached NEW CHAT or DONE, so its count carries over (4 other jobs so far). In the same chat this keeps the loop bounded; in a new chat after a failure it only means NEW CHAT comes sooner. A person can delete ledger/session.json for a full budget.
+Note: --new-session ran before the last chat reached NEW CHAT or DONE, so its count carries over (5 other jobs so far). In the same chat this keeps the loop bounded; in a new chat after a failure it only means NEW CHAT comes sooner. A person can delete ledger/session.json for a full budget.
 ```
