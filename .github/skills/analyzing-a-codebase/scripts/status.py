@@ -55,6 +55,7 @@ FINGERPRINT_ROW = re.compile(r"^\|\s*Analysis fingerprint\s*\|\s*`?([0-9a-f]{16}
 RECHECK_LINE = re.compile(r"After corrections:[^\n]*?(\d+)\s+of\s+(\d+)\s+confirmed", re.I)
 ACCURACY_ROW = re.compile(r"^\|\s*Accuracy[^|]*\|\s*(\d+(?:\.\d+)?)\s*%", re.M | re.I)
 RECHECK_MIN_ACCURACY = 95.0  # a re-check judges a bounded list: only after a round as accurate as a PASS needs
+RECHECK_OF_ROW = re.compile(r"^\|\s*Re-check of\s*\|\s*`?([^|`]+?)`?\s*\|\s*$", re.M | re.I)
 PAGE_ROW = re.compile(r"^\|\s*`?([^|`]+?)`?\s*\|\s*`?([0-9a-f]{12})`?\s*\|\s*$", re.M)
 CITES_LINE = re.compile(r"^<!--\s*cites\s+\S+@[0-9a-f]{40}\s*-->\s*$")
 # Lines that change on every regeneration without changing any claim (knowledge.py's time stamps).
@@ -117,10 +118,39 @@ def page_bodies(analysis_abs, component=None):
 
 
 def recorded_pages(report_text):
-    """{page: hash} from a report's "## Page fingerprints" table, or None when it has none."""
+    """{page: hash} from a report's "## Page fingerprints" table (the (fingerprint) and (scope) rows included), or
+    None when it has none."""
     table = section(report_text or "", "Page fingerprints")
     rows = dict(PAGE_ROW.findall(table)) if table else {}
-    return {k.strip(): v for k, v in rows.items() if k.strip().lower() != "page"} or None
+    rows.update({"(%s)" % k: v for k, v in re.findall(r"^\|\s*\((fingerprint|scope)\)\s*\|\s*`?([^|`]+?)`?\s*\|\s*$", table, re.M)})
+    return {k.strip(): v.strip() for k, v in rows.items() if k.strip().lower() != "page"} or None
+
+
+def safe_report(analysis_abs, name):
+    """The path of a report inside the analysis folder (its root or ledger/components/<name>/), or None."""
+    clean = name.replace("\\", "/")
+    if (os.path.isabs(name) or clean.startswith("/") or ":" in clean or ".." in clean.split("/") or not clean.endswith(".md")
+            or ("/" in clean and not clean.startswith("ledger/components/"))):
+        return None
+    full = os.path.realpath(os.path.join(analysis_abs, clean))
+    root = os.path.realpath(analysis_abs)
+    return full if os.path.commonpath([full, root]) == root and os.path.isfile(full) else None
+
+
+def base_accuracy(report_path, depth=0):
+    """The lowest accuracy of the full round a re-check report builds on: its "Re-check of" row is followed (through
+    earlier re-checks) to a report without one. Read there, not from the figures the re-check repeats (independent
+    review: a row typed at 100% above the real one passed the bar). None when the chain is broken."""
+    text = read(report_path)
+    if text is None or depth > 20:
+        return None
+    visible = HIDDEN.sub("", text)
+    base = RECHECK_OF_ROW.search(visible)
+    if base and RECHECK_LINE.search(visible):
+        nxt = safe_report(os.path.dirname(report_path), base.group(1).strip())
+        return base_accuracy(nxt, depth + 1) if nxt else None
+    found = [float(v) for v in ACCURACY_ROW.findall(section(visible, "Scores"))]
+    return min(found) if found else None
 
 
 def report_facts(path):
@@ -136,10 +166,14 @@ def report_facts(path):
     majors = sum(1 for line in corrections.splitlines() if line.lstrip().startswith("|") and re.search(r"\|\s*major\s*\|", line, re.I))
     printed = FINGERPRINT_ROW.search(visible)
     recheck = RECHECK_LINE.search(visible)
-    accuracy = ACCURACY_ROW.search(section(visible, "Scores"))
+    if RECHECK_OF_ROW.search(visible) and recheck:
+        accuracy = base_accuracy(path)  # the full round's own figure, never the copy
+    else:
+        found = [float(v) for v in ACCURACY_ROW.findall(section(visible, "Scores"))]
+        accuracy = min(found) if found else None  # every Accuracy row counts: the lowest one decides
     noted = sum(1 for line in section(visible, "Noticed outside the re-check").splitlines()
-                if line.lstrip().startswith("|") and not re.match(r"^\|\s*(#|-{3})", line.strip()))
-    return {"accuracy": float(accuracy.group(1)) if accuracy else None, "noted": noted, "verdict": verdict.upper() if verdict else "UNREADABLE (the report needs exactly one Verdict row, holding one verdict)", "date": date.group(1) if date else "", "majors": majors,
+                if line.lstrip().startswith("|") and not re.match(r"^\|\s*(#|-{3}|none\s*\|)", line.strip(), re.I))
+    return {"accuracy": accuracy, "noted": noted, "verdict": verdict.upper() if verdict else "UNREADABLE (the report needs exactly one Verdict row, holding one verdict)", "date": date.group(1) if date else "", "majors": majors,
             "fingerprint": printed.group(1) if printed else None,
             "recheck": (int(recheck.group(1)), int(recheck.group(2))) if recheck else None, "report": path}
 
@@ -306,15 +340,27 @@ def main() -> None:
         print("| Page | Fingerprint |\n| --- | --- |")
         for page, digest in sorted(page_fingerprints(analysis_abs, args.component).items()):
             print("| `%s` | `%s` |" % (page, digest))
+        # ties the table to the moment it was printed: --pages-changed-since refuses a table whose fingerprint is not
+        # the report's own "Analysis fingerprint", or one recorded in another scope
+        print("| (fingerprint) | `%s` |\n| (scope) | `%s` |" % (fingerprint(analysis_abs, args.component),
+                                                            "component:" + args.component if args.component else "whole"))
         return
     if args.pages_changed_since:
-        name = args.pages_changed_since.replace("\\", "/")
-        if (os.path.isabs(args.pages_changed_since) or name.startswith("/") or ".." in name.split("/")
-                or ("/" in name and not name.startswith("ledger/components/")) or not name.endswith(".md")):
-            inventory.fail("--pages-changed-since takes a report in the analysis folder, such as verification-report-2026-11-24.md")
-        old = recorded_pages(read(os.path.join(analysis_abs, name)))
+        name = args.pages_changed_since
+        path = safe_report(analysis_abs, name)
+        if path is None:
+            inventory.fail("--pages-changed-since takes a report file in the analysis folder, such as verification-report-2026-11-24.md")
+        text = read(path)
+        old = recorded_pages(text)
         if old is None:
             inventory.fail("%s has no \"## Page fingerprints\" table: the re-check cannot tell what changed; verify in full" % name)
+        header = FINGERPRINT_ROW.search(HIDDEN.sub("", text or ""))
+        scope = "component:" + args.component if args.component else "whole"
+        if old.pop("(scope)", None) != scope:
+            inventory.fail("%s's page table was not recorded for this scope (%s): verify in full" % (name, scope))
+        if not header or old.pop("(fingerprint)", None) != header.group(1):
+            inventory.fail("%s's page table does not belong to its Analysis fingerprint: it was printed at another time "
+                           "or edited; verify in full" % name)
         now = page_fingerprints(analysis_abs, args.component)
         for page in sorted(set(old) | set(now)):
             if old.get(page) != now.get(page):
