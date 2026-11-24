@@ -18,14 +18,14 @@ exposes: [route:GET /health, route:GET /price/{sku}]
 | --- | --- |
 | Kind | service and Python library |
 | Folders and files | `components/catalog/` |
-| Technology | Python 3, standard-library `http.server`, `urllib.request`, `json`, and `unittest` (`components/catalog/service.py:7-12`, `components/catalog/catalog.py:2-3`, `components/catalog/test_catalog.py:1-3`) |
+| Technology | Python 3, standard-library `http.server`, `urllib.request`, `urllib.error`, `urllib.parse`, `ssl`, `json`, and `unittest` (`components/catalog/service.py:7-12`, `components/catalog/catalog.py:2-6`, `components/catalog/test_catalog.py:1-5`) |
 | Starts by | `python3 -m components.catalog.service` (inferred: per the module docstring, `components/catalog/service.py:1-5`); the main guard starts the server (`components/catalog/service.py:46-49`). |
-| Size | 3 source files, 108 lines, 10 runtime functions, 2 GET path matches (`components/catalog/catalog.py:15-47`, `components/catalog/service.py:15-43`) |
+| Size | 3 source files, 160 lines, 11 runtime functions and methods (6 functions and 1 redirect-handler method in `catalog.py`, 4 in `service.py`), 2 GET path matches (`components/catalog/catalog.py:18-63`, `components/catalog/service.py:15-43`) |
 | Depth | deep |
 
 ## Responsibility
 
-The component stores three product records in the module-level `_PRODUCTS` dictionary and provides price and stock lookups (`components/catalog/catalog.py:8-12`, `components/catalog/catalog.py:15-29`). `orders` imports this module and calls `price_of` and `in_stock` directly (`components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`). The HTTP server also offers GET handling for health and price paths, with `price_of` supplying the price response (`components/catalog/service.py:24-34`). Catalog code includes functions to fetch and apply supplier data, but no feed scheduling or orchestration is defined in this component (inferred: a search of the repository outside the analysis folder and the skills for `fetch_supplier_feed` and `apply_feed` finds 2 hits, the two definitions, and a search for `cron` and `schedul` finds 3 hits, the docstring and the queue's own schedule at `.github/workflows/bible-queue.yml:8-9`) (`components/catalog/catalog.py:36-47`).
+The component stores three product records in the module-level `_PRODUCTS` dictionary and provides price and stock lookups (`components/catalog/catalog.py:11-15`, `components/catalog/catalog.py:27-41`). `orders` imports this module and calls `price_of` and `in_stock` directly (`components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`). The HTTP server also offers GET handling for health and price paths, with `price_of` supplying the price response (`components/catalog/service.py:24-34`). Catalog code includes functions to fetch and apply supplier data; the fetch uses HTTPS with a certificate-verifying context and refuses a redirect to `http://` (`components/catalog/catalog.py:8`, `components/catalog/catalog.py:18-24`, `components/catalog/catalog.py:48-55`). No feed scheduling or orchestration is defined in this component (inferred: a search of the repository outside the analysis folder and the skills for `fetch_supplier_feed` and `apply_feed` finds 3 hits, the two definitions and one test call of the fetch at `components/catalog/test_catalog.py:19`, and a search for `cron` and `schedul` finds 3 hits, the docstring and the queue's own schedule at `.github/workflows/bible-queue.yml:8-9`).
 
 ## Structure
 
@@ -40,7 +40,7 @@ flowchart TB
     service["service.py<br/>HTTP GET handler"]
     catalogmod["catalog.py<br/>lookups and feed updates"]
     records[("_PRODUCTS<br/>in-memory product records")]
-    testmod["test_catalog.py<br/>known-price test"]
+    testmod["test_catalog.py<br/>price and verified-HTTPS tests"]
   end
   supplier{{"Supplier One feed<br/>external"}}
   orders -->|"price_of and in_stock"| catalogmod
@@ -48,8 +48,8 @@ flowchart TB
   ordershttp -->|"GET /price/{sku}<br/>HTTP, default :8001<br/>tests only in repository"| service
   service -->|"catalog.price_of"| catalogmod
   catalogmod -->|"reads and updates"| records
-  testmod -->|"catalog.price_of"| catalogmod
-  catalogmod -->|"urlopen, HTTP"| supplier
+  testmod -->|"price_of, fetch_supplier_feed, NoHTTPRedirectHandler"| catalogmod
+  catalogmod -->|"opener.open, HTTPS, verified"| supplier
 ```
 
 | Element | Evidence |
@@ -58,17 +58,17 @@ flowchart TB
 | `ordershttptests` -> `ordershttp` | `components/orders/test_catalog_client.py:37-54` |
 | `ordershttp` -> `service` | `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:16`, `components/orders/catalog_client.py:19-23`; search `remote_price\|remote_line_total` in `*.py`: 10 hits in 2 files, calls occur in `test_catalog_client.py` and the client's internal call at `components/orders/catalog_client.py:29` |
 | `service` -> `catalogmod` | `components/catalog/service.py:12`, `components/catalog/service.py:24-34` |
-| `catalogmod` -> `_PRODUCTS` | `components/catalog/catalog.py:8-12`, `components/catalog/catalog.py:15-17`, `components/catalog/catalog.py:42-47` |
-| `testmod` -> `catalogmod` | `components/catalog/test_catalog.py:3`, `components/catalog/test_catalog.py:7-8` |
-| `catalogmod` -> supplier feed | `components/catalog/catalog.py:5`, `components/catalog/catalog.py:36-39` |
+| `catalogmod` -> `_PRODUCTS` | `components/catalog/catalog.py:11-15`, `components/catalog/catalog.py:27-29`, `components/catalog/catalog.py:58-63` |
+| `testmod` -> `catalogmod` | `components/catalog/test_catalog.py:7`, `components/catalog/test_catalog.py:11-12`, `components/catalog/test_catalog.py:19`, `components/catalog/test_catalog.py:33` |
+| `catalogmod` -> supplier feed | `components/catalog/catalog.py:8`, `components/catalog/catalog.py:48-55` |
 
 ## Modules
 
 | Module page | Source file | Lines | Role | Main functions |
 | --- | --- | ---: | --- | --- |
-| [catalog](catalog.md) | `components/catalog/catalog.py` | 47 | Stores products and provides price, stock, image, and feed functions. | `get_product`, `price_of`, `in_stock`, `image_url`, `fetch_supplier_feed`, `apply_feed` (`components/catalog/catalog.py:15-47`) |
+| [catalog](catalog.md) | `components/catalog/catalog.py` | 63 | Stores products and provides price, stock, image, and feed functions; refuses a feed redirect to `http://`. | `NoHTTPRedirectHandler.redirect_request`, `get_product`, `price_of`, `in_stock`, `image_url`, `fetch_supplier_feed`, `apply_feed` (`components/catalog/catalog.py:18-63`) |
 | [service](service.md) | `components/catalog/service.py` | 49 | Implements JSON GET responses and constructs the threaded server. | `CatalogHandler.do_GET`, `make_server` (`components/catalog/service.py:24-43`) |
-| [test_catalog](test_catalog.md) | `components/catalog/test_catalog.py` | 12 | Checks a known-SKU price lookup. | `CatalogTest.test_price_of_known_sku` (`components/catalog/test_catalog.py:6-8`) |
+| [test_catalog](test_catalog.md) | `components/catalog/test_catalog.py` | 48 | Checks a known-SKU price lookup, the verified-HTTPS supplier fetch, and the refusal of a redirect to `http://`. | `CatalogTest.test_price_of_known_sku`, `CatalogTest.test_supplier_feed_uses_verified_https`, `CatalogTest.test_supplier_feed_rejects_redirect_to_http` (`components/catalog/test_catalog.py:10-44`) |
 
 ## Main types
 
@@ -108,24 +108,25 @@ The GET routes do not check authentication or authorization, and the server is c
 
 | # | Rule, in plain words | Enforced in | Triggered by | Evidence |
 | --- | --- | --- | --- | --- |
-| C-01 | A missing SKU has no price and causes `price_of` to raise `KeyError` with the SKU in its message. | `price_of` | Price lookup | `components/catalog/catalog.py:20-24` |
-| C-02 | Stock is sufficient only when a product exists and its stock is at least the requested quantity. | `in_stock` | Stock lookup | `components/catalog/catalog.py:27-29` |
-| C-03 | Supplier-feed entries update only SKUs already present in `_PRODUCTS`; absent product lists produce no updates. | `apply_feed` | Feed application | `components/catalog/catalog.py:44-47` |
+| C-01 | A missing SKU has no price and causes `price_of` to raise `KeyError` with the SKU in its message. | `price_of` | Price lookup | `components/catalog/catalog.py:32-36` |
+| C-02 | Stock is sufficient only when a product exists and its stock is at least the requested quantity. | `in_stock` | Stock lookup | `components/catalog/catalog.py:39-41` |
+| C-03 | Supplier-feed entries update only SKUs already present in `_PRODUCTS`; absent product lists produce no updates. | `apply_feed` | Feed application | `components/catalog/catalog.py:60-63` |
 | C-04 | `GET /health` returns the health response with status 200. | `CatalogHandler.do_GET` | `/health` path | `components/catalog/service.py:24-27` |
 | C-05 | An unrecognized catalog GET path returns status 404. | `CatalogHandler.do_GET` | Any unmatched path | `components/catalog/service.py:33-34` |
+| C-06 | A redirect of the supplier-feed request to an `http://` target is refused: it raises `HTTPError` instead of being followed. | `NoHTTPRedirectHandler.redirect_request` | A redirect response to the feed request | `components/catalog/catalog.py:19-24` |
 
 ## Data
 
 | Store or file | Reads | Writes | Data dictionary entry |
 | --- | --- | --- | --- |
-| `_PRODUCTS` (in-memory dictionary) | `get_product`, `price_of`, `in_stock`, and `apply_feed` read existing products (`components/catalog/catalog.py:8-12`, `components/catalog/catalog.py:15-29`, `components/catalog/catalog.py:44-45`). | `apply_feed` changes `price` and `stock` for matching products (`components/catalog/catalog.py:44-47`). | [Data dictionary: `_PRODUCTS`](../data-dictionary.md#_products-the-catalog-products) |
-| Supplier JSON response | `fetch_supplier_feed` reads and JSON-decodes the response body (`components/catalog/catalog.py:36-39`). | Not written by this component (inferred: a search of `components/catalog` for `write` finds 1 hit, `self.wfile.write(body)` at `components/catalog/service.py:22`, which sends a response body, not the supplier JSON). | [Data dictionary: external JSON payloads](../data-dictionary.md#external-json-payloads) |
+| `_PRODUCTS` (in-memory dictionary) | `get_product`, `price_of`, `in_stock`, and `apply_feed` read existing products (`components/catalog/catalog.py:11-15`, `components/catalog/catalog.py:27-41`, `components/catalog/catalog.py:60-61`). | `apply_feed` changes `price` and `stock` for matching products (`components/catalog/catalog.py:60-63`). | [Data dictionary: `_PRODUCTS`](../data-dictionary.md#_products-the-catalog-products) |
+| Supplier JSON response | `fetch_supplier_feed` reads and JSON-decodes the response body (`components/catalog/catalog.py:54-55`). | Not written by this component (inferred: a search of `components/catalog` for `write` finds 1 hit, `self.wfile.write(body)` at `components/catalog/service.py:22`, which sends a response body, not the supplier JSON). | [Data dictionary: external JSON payloads](../data-dictionary.md#external-json-payloads) |
 
 ## Outbound calls
 
 | Target | Purpose | Protocol and scheme | Address from | Timeout, retry, fallback | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| Supplier One feed (`feeds.supplier-one.example.com`) | Fetch product JSON | HTTP | Hard-coded `SUPPLIER_FEED_URL` | `timeout=10` by default; no retry or fallback in the function | `components/catalog/catalog.py:5`, `components/catalog/catalog.py:36-39` |
+| Supplier One feed (`feeds.supplier-one.example.com`) | Fetch product JSON | HTTPS (`https://` URL; `ssl.create_default_context()`; a redirect to `http://` raises `HTTPError`) | Hard-coded `SUPPLIER_FEED_URL` | `timeout=10` by default; no retry or fallback in the function | `components/catalog/catalog.py:8`, `components/catalog/catalog.py:18-24`, `components/catalog/catalog.py:48-55` |
 
 ## Configuration read
 
@@ -136,40 +137,44 @@ The GET routes do not check authentication or authorization, and the server is c
 
 ## Errors and resilience
 
-`price_of` raises `KeyError` for a missing SKU; the `/price/` handler catches `KeyError` from its success response expression and returns 404 (`components/catalog/catalog.py:20-24`, `components/catalog/service.py:30-33`). The supplier fetch has a timeout argument but does not catch errors or retry (`components/catalog/catalog.py:36-39`). `apply_feed` directly indexes item fields and converts price and stock, so missing fields or invalid conversions can raise (assumed: Python builtin behaviour of key lookup, `float` and `int`) (`components/catalog/catalog.py:44-47`).
+`price_of` raises `KeyError` for a missing SKU; the `/price/` handler catches `KeyError` from its success response expression and returns 404 (`components/catalog/catalog.py:32-36`, `components/catalog/service.py:30-33`). The supplier fetch has a timeout argument but does not catch errors or retry; a redirect to `http://` surfaces as an uncaught `HTTPError` (`components/catalog/catalog.py:18-24`, `components/catalog/catalog.py:48-55`). `apply_feed` directly indexes item fields and converts price and stock, so missing fields or invalid conversions can raise (assumed: Python builtin behaviour of key lookup, `float` and `int`) (`components/catalog/catalog.py:60-63`).
 
 ## Logging and monitoring
 
-`CatalogHandler.log_message` discards the handler's log message by doing nothing (`components/catalog/service.py:36-37`). The three catalog source files define no metrics or tracing calls (inferred: a search of the three files for `metric`, `trace`, `opentelemetry`, `statsd` and `logging` found 0 hits; `components/catalog/catalog.py:1-47`, `components/catalog/service.py:1-49`, `components/catalog/test_catalog.py:1-12`).
+`CatalogHandler.log_message` discards the handler's log message by doing nothing (`components/catalog/service.py:36-37`). The three catalog source files define no metrics or tracing calls (inferred: a search of the three files for `metric`, `trace`, `opentelemetry`, `statsd` and `logging` found 0 hits; `components/catalog/catalog.py:1-63`, `components/catalog/service.py:1-49`, `components/catalog/test_catalog.py:1-48`).
 
 ## Tests
 
-`CatalogTest.test_price_of_known_sku` asserts that `SKU-1` has price `24.0`; direct execution invokes `unittest.main()` (`components/catalog/test_catalog.py:6-12`). The test file contains no checks for missing SKUs, stock, images, feed processing, or HTTP behavior (inferred: the whole file holds one test method, `components/catalog/test_catalog.py:1-12`).
+`CatalogTest.test_price_of_known_sku` asserts that `SKU-1` has price `24.0` (`components/catalog/test_catalog.py:11-12`). `test_supplier_feed_uses_verified_https` replaces `build_opener` with a mock and asserts the returned feed, the handler types, `check_hostname`, `CERT_REQUIRED`, the `https://` URL and `timeout=10` (`components/catalog/test_catalog.py:14-30`); `test_supplier_feed_rejects_redirect_to_http` asserts that `redirect_request` raises `HTTPError` for an `http://` target (`components/catalog/test_catalog.py:32-44`). Direct execution invokes `unittest.main()` (`components/catalog/test_catalog.py:47-48`). The test file contains no checks for missing SKUs, stock, images, `apply_feed`, or the HTTP server, and no test contacts the supplier (inferred: the whole file, `components/catalog/test_catalog.py:1-48`, holds three test methods that call only `price_of`, `fetch_supplier_feed` and `NoHTTPRedirectHandler`, the second with `build_opener` mocked).
 
 ## Surprises
 
-`orders` uses direct Python calls to `price_of` and `in_stock`; it also has an HTTP client for the price route, which is exercised by the orders tests (`components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`; `components/orders/catalog_client.py:19-23`; `components/orders/test_catalog_client.py:37-54`). The supplier URL uses plain HTTP, and the fetch function's docstring says it runs nightly from cron, but (inferred: a search for `fetch_supplier_feed` in the repository outside the analysis folder and the skills finds 1 hit, its definition, and a search for `cron` and `schedul` finds 3 hits, the docstring and the queue's own schedule) (`components/catalog/catalog.py:36-39`). This component does not show the claimed schedule.
+`orders` uses direct Python calls to `price_of` and `in_stock`; it also has an HTTP client for the price route, which is exercised by the orders tests (`components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`; `components/orders/catalog_client.py:19-23`; `components/orders/test_catalog_client.py:37-54`). The supplier URL now uses HTTPS (`components/catalog/catalog.py:8`). The fetch function's docstring says it runs nightly from cron (`components/catalog/catalog.py:49`), but this component does not show the claimed schedule (inferred: a search for `fetch_supplier_feed` in the repository outside the analysis folder and the skills finds 2 hits, its definition and the test call, and a search for `cron` and `schedul` finds 3 hits, the docstring and the queue's own schedule).
 
 The component and class diagrams were checked by reading their syntax; no Mermaid renderer was available.
 
 ## For the whole-system pages
 
 - **Risk:** The catalog GET routes have no authentication or authorization checks and use plain HTTP without TLS (inferred: as under Security, `do_GET` has no identity or permission checks and `make_server` builds a plain `ThreadingHTTPServer`); the known orders HTTP client also uses plain HTTP by default (`DEFAULT_CATALOG_URL`, `components/orders/catalog_client.py:11`); the server listens on loopback unless a host is set (`components/catalog/service.py:24-34`, `components/catalog/service.py:40-43`, `components/catalog/service.py:48`; `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:19-23`).
-- **Risk:** Supplier-feed transport uses plain HTTP, and the URL is hard-coded (`components/catalog/catalog.py:5`, `components/catalog/catalog.py:36-39`).
-- **Surprise:** The supplier-fetch docstring claims a nightly cron run, but no invocation is shown (inferred: a search for `fetch_supplier_feed` outside the analysis folder and the skills finds 1 hit, its definition at `components/catalog/catalog.py:36`) or by the function body (`components/catalog/catalog.py:36-39`).
+- **Risk:** The supplier-feed URL is hard-coded (`components/catalog/catalog.py:8`). It is HTTPS with a verifying context, but the live endpoint's certificate was not checked when the URL was switched (inferred: per `https-migration/https-migration-summary.md:29`); the switch rests on the supplier's confirmation of HTTPS on the same host and path (inferred: per `https-migration/https-inventory.md:13`).
+- **Surprise:** The supplier-fetch docstring claims a nightly cron run, but no invocation is shown (inferred: a search for `fetch_supplier_feed` outside the analysis folder and the skills finds 2 hits, its definition at `components/catalog/catalog.py:48` and the test call at `components/catalog/test_catalog.py:19`) or by the function body (`components/catalog/catalog.py:48-55`).
 - **Open questions:** No question requiring a person to answer was identified from the catalog component files.
-- **Glossary:** `SKU` is the key used to identify each product in `_PRODUCTS` (`components/catalog/catalog.py:8-12`); the supplier feed's `products` collection contains the entries consumed by `apply_feed` (`components/catalog/catalog.py:42-47`).
+- **Glossary:** `SKU` is the key used to identify each product in `_PRODUCTS` (`components/catalog/catalog.py:11-15`); the supplier feed's `products` collection contains the entries consumed by `apply_feed` (`components/catalog/catalog.py:58-63`).
 
 <!-- cites .github/workflows/bible-queue.yml@d54080b12d039672f31f0d0924cc380ded069010 -->
 
-<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+<!-- cites components/catalog/catalog.py@75bb1dc767dc16cad9a5ed5555a7293bc004275b -->
 
 <!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
 
-<!-- cites components/catalog/test_catalog.py@9be40d147e425d178067c8b34f19b28b9b374d1f -->
+<!-- cites components/catalog/test_catalog.py@29eeea56df47ceb3c96481a327851eee696ec67d -->
 
 <!-- cites components/orders/catalog_client.py@469f9d282aab983cdd85f364e46bcd02ef6d3635 -->
 
 <!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->
 
 <!-- cites components/orders/test_catalog_client.py@1d32463e1cdc21bd3eee3bc1b6f31feb8ef40a2d -->
+
+<!-- cites https-migration/https-inventory.md@67f184b87fafa019446005a50dc9d98b96256544 -->
+
+<!-- cites https-migration/https-migration-summary.md@8af6a247647debc371a600624b95b7c94326da9c -->

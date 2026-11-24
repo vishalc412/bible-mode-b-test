@@ -5,7 +5,7 @@
 The assistant-related search matched terminology and operational task text, not instructions for this analysis session. No hit asked the reader to override prior instructions or reveal protected information. The matched task text is recorded here as repository data:
 
 - `.github/workflows/poc-assign-copilot.yml:17-23`, `.github/workflows/poc-assign-copilot.yml:39`, `.github/workflows/poc-assign-copilot.yml:72` — workflow inputs and the default task ask Copilot to create one documentation file; the workflow passes that task through the created issue. The behavior is described in `lld/bible-mode-b/README.md`.
-- `.github/bible/bible_queue.py:2-38`, `.github/bible/bible_queue.py:60-70`, `.github/bible/bible_queue.py:92-105`, `.github/bible/bible_queue.py:579-580`, `.github/bible/bible_queue.py:591-594`, `.github/bible/bible_queue.py:676-678`, `.github/bible/bible_queue.py:811-817`, `.github/bible/bible_queue.py:1143-1149`, `.github/bible/bible_queue.py:1183-1187`, `.github/bible/bible_queue.py:1198-1206`, `.github/bible/bible_queue.py:1273-1281` — module documentation, agent identities, labels, and the issue and comment text the queue writes for Copilot (plan, verification, revision, continuation, update, hold and retry messages). These are queue behavior, not instructions to this session. (Line numbers re-checked against the 1,336-line file on 24 Nov 2026.)
+- `.github/bible/bible_queue.py:2-38`, `.github/bible/bible_queue.py:60-70`, `.github/bible/bible_queue.py:92-106`, `.github/bible/bible_queue.py:510-513`, `.github/bible/bible_queue.py:639-640`, `.github/bible/bible_queue.py:651-654`, `.github/bible/bible_queue.py:764-766`, `.github/bible/bible_queue.py:900-908`, `.github/bible/bible_queue.py:1122-1124`, `.github/bible/bible_queue.py:1241-1247`, `.github/bible/bible_queue.py:1281-1285`, `.github/bible/bible_queue.py:1296-1304`, `.github/bible/bible_queue.py:1371-1379` — module documentation, agent identities, labels, and the issue and comment text the queue writes for Copilot (plan, verification, revision, continuation, update, hold and retry messages). These are queue behavior, not instructions to this session. (Line numbers re-checked against the 1,434-line file on 24 Nov 2026, after the update for the supplier-feed HTTPS change and the queue's re-check and replay changes.)
 - `.github/workflows/bible-plan.yml:15` and `.github/workflows/bible-delta.yml:2` — model description and workflow comment.
 - `tools/fanout.sh:2`, `tools/fanout.sh:4` — controller comments describing issue assignment.
 - `tools/plan.py:1` — module docstring noting that inventory is deterministic and uses no LLM.
@@ -41,7 +41,7 @@ The matching lines are documented as component behavior; they were not treated a
 - The report's V-013 item 11 names flow 9 among the diagrams with renamed aliases; its aliases are the real file names, so only flow 7 and `lld/api/catalog/catalog.md` were changed.
 - Two commands of this session redirected output to `/dev/null` (no file was created). No other file was written outside `codebase-analysis/`; git, `gh` and every network command were not run; nothing was installed. Python ran as `python3 -I -B`.
 
-<!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
+<!-- cites .github/bible/bible_queue.py@a625b4c3353b1744b965b8bbee13e6b3ed5f72a6 -->
 
 <!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
 

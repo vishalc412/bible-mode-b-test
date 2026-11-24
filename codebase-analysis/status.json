@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "status": "VERIFIED",
+ "status": "STALE",
  "gate": "PASS",
  "verification": {
   "verdict": "PASS",
@@ -10,8 +10,8 @@
   "noted_outside_recheck": 0
  },
  "baseline": {
-  "recorded": "2026-11-24T14:34:00",
-  "files": 24
+  "recorded": "2026-11-24T20:00:32",
+  "files": 30
  },
  "drift": {
   "changed_files": 0,
@@ -22,17 +22,17 @@
   "catalog": {
    "state": "STALE",
    "verdict": "PASS",
-   "why": "pages changed since the verification (fingerprint 96716433d8828161 then, 2c579088ba8ce054 now): verify the changed parts"
+   "why": "pages changed since the verification (fingerprint 96716433d8828161 then, c20d9136a76914c5 now): verify the changed parts"
   },
   "orders": {
    "state": "STALE",
    "verdict": "PASS",
-   "why": "pages changed since the verification (fingerprint 2328b6c86811f8a8 then, bfa7e2fcdbd078ae now): verify the changed parts"
+   "why": "pages changed since the verification (fingerprint 2328b6c86811f8a8 then, fec31b7534de6404 now): verify the changed parts"
   },
   "bible-mode-b": {
    "state": "STALE",
    "verdict": "PASS",
-   "why": "pages changed since the verification (fingerprint 8d9c4cbe0922bf75 then, 8e27783a15529a19 now): verify the changed parts"
+   "why": "pages changed since the verification (fingerprint 8d9c4cbe0922bf75 then, 466eebd835ab529c now): verify the changed parts"
   },
   "tools": {
    "state": "STALE",
@@ -41,9 +41,8 @@
   }
  },
  "reasons": [
-  "verdict PASS; the pages are the ones verified (fingerprint def1538e6a437c22); 10 of 15 earlier corrections confirmed, the rest re-listed as minor corrections; judged as a full round: it names no earlier round (no `Re-check of` row)",
-  "coverage gate PASS at depth deep now; code matches the baseline of 2026-11-24T14:34:00"
+  "pages changed since the verification (fingerprint def1538e6a437c22 then, 71e3cf441e367765 now): verify the changed parts"
  ],
  "notes": [],
- "checked": "2026-11-24T19:52:35"
+ "checked": "2026-11-24T20:24:58"
 }
