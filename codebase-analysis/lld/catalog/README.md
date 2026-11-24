@@ -102,7 +102,7 @@ classDiagram
 
 `orders.catalog_client.remote_price` constructs `GET /price/<sku>` using `CATALOG_URL` (default `http://127.0.0.1:8001`) and plain HTTP. A search for `remote_price|remote_line_total` in Python files found 10 hits in 2 files: the test call sites and `remote_line_total`'s internal call to `remote_price`; no other in-repository caller was found (`components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:16`, `components/orders/catalog_client.py:19-23`, `components/orders/catalog_client.py:26-29`; `components/orders/test_catalog_client.py:37-54`; search `remote_price|remote_line_total` in `*.py`).
 
-The GET routes do not check authentication or authorization, and the server is created with `ThreadingHTTPServer` without TLS configuration (inferred: `CatalogHandler.do_GET` has no identity or permission checks and `make_server` constructs the server that the module identifies as HTTP; `components/catalog/service.py:24-34`, `components/catalog/service.py:40-43`, `components/catalog/service.py:48`).
+The GET routes do not check authentication or authorization, and the server is created with `ThreadingHTTPServer` without TLS configuration (inferred: `CatalogHandler.do_GET` has no identity or permission checks and `make_server` constructs the server that the module identifies as HTTP; `components/catalog/service.py:24-34`, `components/catalog/service.py:40-43`, `components/catalog/service.py:48`). By default the server listens on the loopback address only: it binds the `host` argument of `make_server`, else `CATALOG_HOST`, else `127.0.0.1`, so another machine can reach it only when a host is set explicitly (`components/catalog/service.py:40-43`).
 
 ## Business rules
 
@@ -131,7 +131,7 @@ The GET routes do not check authentication or authorization, and the server is c
 
 | Key | Purpose | Default | Source | Evidence |
 | --- | --- | --- | --- | --- |
-| `CATALOG_HOST` | HTTP server bind host | `127.0.0.1` when the `host` argument is falsey | Environment, unless a truthy function argument is provided | `components/catalog/service.py:40-41` |
+| `CATALOG_HOST` | HTTP server bind host | `127.0.0.1` when the `host` argument is falsey and the variable is unset; a variable set to an empty string is used as it is and binds all interfaces (assumed: library behaviour of an empty host string in a socket address) | Environment, unless a truthy function argument is provided | `components/catalog/service.py:40-43` |
 | `CATALOG_PORT` | HTTP server bind port | `8001` when `port` is `None` and the variable is unset | Environment, unless `port` is not `None` | `components/catalog/service.py:40`, `components/catalog/service.py:42` |
 
 ## Errors and resilience
@@ -154,7 +154,7 @@ The component and class diagrams were checked by reading their syntax; no Mermai
 
 ## For the whole-system pages
 
-- **Risk:** The catalog GET routes have no authentication or authorization checks and use plain HTTP without TLS; the known orders HTTP client also uses plain HTTP (`components/catalog/service.py:24-34`, `components/catalog/service.py:40-43`, `components/catalog/service.py:48`; `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:19-23`).
+- **Risk:** The catalog GET routes have no authentication or authorization checks and use plain HTTP without TLS; the known orders HTTP client also uses plain HTTP; the server listens on loopback unless a host is set (`components/catalog/service.py:24-34`, `components/catalog/service.py:40-43`, `components/catalog/service.py:48`; `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:19-23`).
 - **Risk:** Supplier-feed transport uses plain HTTP, and the URL is hard-coded (`components/catalog/catalog.py:5`, `components/catalog/catalog.py:36-39`).
 - **Surprise:** The supplier-fetch docstring claims a nightly cron run, but no invocation is shown by a search for `fetch_supplier_feed` outside the analysis folder (its only hit is the definition at `components/catalog/catalog.py:36`) or by the function body (`components/catalog/catalog.py:36-39`).
 - **Open questions:** No question requiring a person to answer was identified from the catalog component files.

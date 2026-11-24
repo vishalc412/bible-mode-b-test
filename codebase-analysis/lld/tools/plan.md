@@ -108,7 +108,7 @@ return sources, tests, test_count, functions, and http_sites
 | `tools/plan.py:33` | `for` | For each line of a non-test file | Searches that line for the HTTP pattern (`tools/plan.py:33-35`). |
 | `tools/plan.py:34` | `for` | For each match found in the line | Appends its URL and source location (`tools/plan.py:34-35`). |
 
-**Output and side effects**: Returns a dictionary with `sources`, `tests`, `test_count`, `functions`, and `http_sites`; reads component files and delegates test counting to `gate.count_tests` (`tools/plan.py:28-38`).
+**Output and side effects**: Returns a dictionary with `sources`, `tests`, `test_count`, `functions`, and `http_sites`; reads component files and delegates test counting to `gate.count_tests` (`tools/plan.py:28-38`). Nothing in `scan` catches an error: a file that cannot be read or a syntax error in a source or test file raises to `main`, which has no handler either, so the run ends without writing `plan.json` (`tools/plan.py:28`, `tools/plan.py:30`, `tools/plan.py:36`, `tools/plan.py:45`; `tools/gate.py:36`).
 
 ### `main()`
 
@@ -158,5 +158,7 @@ The module appends the resolved `tools` directory to `sys.path` before importing
 ## Surprises
 
 None identified in this file.
+
+<!-- cites tools/gate.py@65eb0af527e554cfb2dadb9d0c8cd1ee6e975c99 -->
 
 <!-- cites tools/plan.py@e1dae33df7990fe69b145146d570403758d0635e -->

@@ -22,7 +22,7 @@ Source file: `.github/bible/bible_queue.py`
 | Lines | 1336 |
 | Role | Runs the Mode B analysis queue and its GitHub API client. |
 | Imports that matter | Python standard-library JSON, URL, base64, temporary-file, archive, subprocess, and filesystem modules used by the API client, queue, and CLI. (`.github/bible/bible_queue.py:42-56`) |
-| Module-level state | Constants and labels are initialized at import; environment-backed values include `BIBLE_AGENT_LOGINS` and `BIBLE_AGENT_APP`; `WORK_EVENTS` names the three Copilot timeline events the queue reads (`copilot_work_started`, `copilot_work_finished`, `copilot_work_finished_failure`). `COMPARE_MAX` (300) is the most files the queue accepts from GitHub's comparison of two commits. (`.github/bible/bible_queue.py:60-105`, `.github/bible/bible_queue.py:61`, `.github/bible/bible_queue.py:66`, `.github/bible/bible_queue.py:70`, `.github/bible/bible_queue.py:71`) |
+| Module-level state | Constants and labels are initialized at import; environment-backed values include `BIBLE_AGENT_LOGINS` and `BIBLE_AGENT_APP`; `WORK_EVENTS` names the three Copilot timeline events the queue reads (`copilot_work_started`, `copilot_work_finished`, `copilot_work_finished_failure`). `COMPARE_MAX` (300) is the number of files GitHub's comparison of two commits lists at most (line 71's comment); the queue refuses a comparison that lists 300 files or more, so it accepts fewer than 300. (`.github/bible/bible_queue.py:60-105`, `.github/bible/bible_queue.py:61`, `.github/bible/bible_queue.py:66`, `.github/bible/bible_queue.py:70`, `.github/bible/bible_queue.py:71`) |
 
 ## Summary
 
@@ -474,7 +474,7 @@ flowchart LR
 
 Source: `.github/bible/bible_queue.py:110-374`
 
-`GitHub` is a client for repository-scoped GitHub REST operations and the GraphQL ready-for-review mutation. Its instance fields are `repo`, `token`, normalized `api`, and `known_labels`; the last begins as `None` and is populated by `ensure_label`. (`.github/bible/bible_queue.py:111-114`, `.github/bible/bible_queue.py:155-160`) Since 24 Nov 2026 `pr_files` also uses the comparison endpoint (`/compare/<base tip>...<head>`) for an open pull request whose base branch has moved, and `is_agent_pr` accepts any of the three `WORK_EVENTS` as proof that a pull request is Copilot's. (`.github/bible/bible_queue.py:229-234`, `.github/bible/bible_queue.py:252-286`)
+`GitHub` is a client for repository-scoped GitHub REST operations and the GraphQL ready-for-review mutation. Its instance fields are `repo`, `token`, normalized `api`, and `known_labels`; the last begins as `None` and is populated by `ensure_label`. A fifth field, `_me`, is not set in the constructor: `me` creates it on its first call (`getattr(self, "_me", None)`) and caches the login of the token's owner. (`.github/bible/bible_queue.py:111-114`, `.github/bible/bible_queue.py:155-160`, `.github/bible/bible_queue.py:175-179`) Since 24 Nov 2026 `pr_files` also uses the comparison endpoint (`/compare/<base tip>...<head>`) for an open pull request whose base branch has moved, and `is_agent_pr` accepts any of the three `WORK_EVENTS` as proof that a pull request is Copilot's. (`.github/bible/bible_queue.py:229-234`, `.github/bible/bible_queue.py:252-286`)
 
 No type annotations or factory are declared for the class; callers provide its constructor values. (inferred: `.github/bible/bible_queue.py:110-114`)
 
@@ -555,7 +555,7 @@ Source: `.github/bible/bible_queue.py:127-139` <!-- code: 753c5f1a3922 -->
 
 1. Uses an absolute `path` beginning with `http` as-is; otherwise joins the API base, `/repos/`, repository, and path. (`.github/bible/bible_queue.py:128`)
 2. Opens the request and reads its response bytes. (`.github/bible/bible_queue.py:129-131`)
-3. On HTTP 404 with `ok404`, returns `None`; otherwise reads at most 300 decoded characters and raises a method/path/status/detail `RuntimeError`. (`.github/bible/bible_queue.py:132-136`)
+3. On HTTP 404 with `ok404`, returns `None`; otherwise reads the whole error body, decodes it, keeps its first 300 characters and raises a method/path/status/detail `RuntimeError`. (`.github/bible/bible_queue.py:132-136`)
 4. Converts `URLError`, `TimeoutError`, and `OSError` to a `RuntimeError` containing the method, query-stripped path, and error. (`.github/bible/bible_queue.py:137-138`)
 5. Decodes a nonempty payload as JSON; returns `{}` for an empty payload. (`.github/bible/bible_queue.py:139`)
 
@@ -1142,12 +1142,12 @@ Source: `.github/bible/bible_queue.py:252-286` <!-- code: a075ee350785 -->
 **Steps**
 
 1. GETs `/pulls/<number>` (an empty dictionary when the body is empty), then reads `base` and the head commit's `sha`. (`.github/bible/bible_queue.py:255-256`)
-2. Looks up the tip of the base branch only for an open pull request whose base has a `ref` and a recorded `sha` and whose head has a `sha`: `tip = branch_sha(base["ref"])`; for any other pull request (merged or closed, where the tip already contains it and a comparison would be empty) `tip` is `None`. (`.github/bible/bible_queue.py:257-259`)
+2. Looks up the tip of the base branch only for an open pull request whose base has a `ref` and a recorded `sha` and whose head has a `sha`: `tip = branch_sha(base["ref"])`; for any other pull request `tip` is `None`: a merged one (the tip already contains it, so a comparison would be empty) and also one closed without merging (the check then uses the pull request's own file list). (`.github/bible/bible_queue.py:257-259`)
 3. When `tip` exists and differs from the base commit the pull request recorded, GitHub's own file list is against that stale base (seen on github.com on 24 Nov 2026: `main` moved, the revision merged it, and the list then held `main`'s own changes). The method then GETs `/compare/<tip>...<head>` (the base branch as it is now, the merge base as a merge would see it) and takes its `files` list when the response is a dictionary. (`.github/bible/bible_queue.py:260-266`)
 4. Fails closed: it raises `RuntimeError("the comparison of #<n> with <base ref> gave no file list: not checked, not merged")` when `files` is not a list, or is empty while the pull request's own `changed_files` is nonzero (`as_int`). (`.github/bible/bible_queue.py:267-270`)
 5. Raises `RuntimeError("the file list of #<n> is incomplete (300 files or more against <base ref>): not checked, not merged")` when the list holds `COMPARE_MAX` (300) files or more, because GitHub's comparison lists at most that many. In this branch `expected` is `None`, so the pull request's own `changed_files` count is not compared with the list. (`.github/bible/bible_queue.py:271-274`, `.github/bible/bible_queue.py:71`)
 6. In every other case (not open, no tip, or the tip equals the recorded base) it pages `/pulls/<number>/files` and sets `expected` to `as_int(pr["changed_files"])`. (`.github/bible/bible_queue.py:275-277`)
-7. When `expected` is nonzero and differs from the list's length, raises `RuntimeError("the file list of #<n> is incomplete (<listed> of <expected> files): not checked, not merged")`. GitHub lists at most 3,000 files, so a larger pull request is refused here. (`.github/bible/bible_queue.py:278-280`)
+7. When `expected` is nonzero and differs from the list's length, raises `RuntimeError("the file list of #<n> is incomplete (<listed> of <expected> files): not checked, not merged")`. The 3,000-file limit of GitHub's own list is stated only in the method's docstring (lines 253-254); no constant in the code holds it, and the effect is the same check: a list shorter than the pull request's own count is refused. (`.github/bible/bible_queue.py:253-254`, `.github/bible/bible_queue.py:278-280`)
 8. For each listed file appends `filename`, then `previous_filename` when truthy, and returns the list. (`.github/bible/bible_queue.py:281-286`)
 
 **Pseudo-code**
@@ -1187,7 +1187,7 @@ return out
 | `.github/bible/bible_queue.py:282` | for | For each listed file | Appends its current `filename`. |
 | `.github/bible/bible_queue.py:284` | if | `previous_filename` is truthy | Appends the previous filename too. |
 
-**Output and side effects**: returns a list of paths (renamed files appear twice, under both names); no writes. Callers react to the errors differently: `Queue.follow` catches `RuntimeError` and fails or retries the session, with the error text as the reason (`.github/bible/bible_queue.py:836-840`); `assemble_phase`, `revise_all_step` and `continue_if_unfinished` do not catch it, so it ends that tracker's run, and `Queue.reconcile` logs it and tries again at the next check (`.github/bible/bible_queue.py:612-615`).
+**Output and side effects**: returns a list of paths (renamed files appear twice, under both names); no writes. Callers react to the errors differently: in `Queue.follow` only the first call, at line 837, is inside the `try` that catches `RuntimeError` and fails or retries the session with the error text as the reason (`.github/bible/bible_queue.py:836-840`); its later calls (lines 843, 846 and 865, reached only after the first succeeded) are not inside it, and `assemble_phase`, `revise_all_step` and `continue_if_unfinished` do not catch the error either, so it ends that tracker's run, and `Queue.reconcile` logs it and tries again at the next check (`.github/bible/bible_queue.py:612-615`).
 
 #### `GitHub.commit_time(sha)`
 
@@ -1518,7 +1518,7 @@ return POST /pulls with head, base, title, and body
 
 Source: `.github/bible/bible_queue.py:500-1283`
 
-`Queue` coordinates tracker issues, component sessions, verification/revision cycles, assembly, and delta updates; since 24 Nov 2026 it also continues an assembly or whole-analysis session that ended before its end marker, and holds one whose Copilot session failed before starting (`Queue.continue_if_unfinished`, `.github/bible/bible_queue.py:1154-1207`). Its constructor sets the GitHub client, logger, and skill directory (`.github/bible/bible_queue.py:501-503`); methods also populate run-specific fields: `deadline` and `default` in `reconcile` (`.github/bible/bible_queue.py:605-606`), `settings`, `tracker`, `run_label` and `state` in `run` (`.github/bible/bible_queue.py:619-627`), and `estimate` (`.github/bible/bible_queue.py:650`).
+`Queue` coordinates tracker issues, component sessions, verification/revision cycles, assembly, and delta updates; since 24 Nov 2026 it also continues an assembly or whole-analysis session that ended before its end marker, and holds one whose Copilot session failed before starting (`Queue.continue_if_unfinished`, `.github/bible/bible_queue.py:1154-1207`). Its constructor sets the GitHub client, logger, and skill directory (`.github/bible/bible_queue.py:501-503`); methods also populate run-specific fields: `deadline` and `default` in `reconcile` (`.github/bible/bible_queue.py:605-606`), `settings`, `tracker`, `run_label` and `state` in `run` (`.github/bible/bible_queue.py:619-627`), and `estimate` (`.github/bible/bible_queue.py:650`); `delta` also sets `default` (`.github/bible/bible_queue.py:1225`), and `could_not_check`, `component` and `assemble_phase` change the `state` counters (`.github/bible/bible_queue.py:910-913`, `.github/bible/bible_queue.py:752`, `.github/bible/bible_queue.py:972`).
 
 #### `Queue.__init__(gh, log=print)`
 
@@ -1982,9 +1982,9 @@ Source: `.github/bible/bible_queue.py:708-819` <!-- code: c0d9266497e6 -->
 **Steps**
 
 1. Scans PRs from `bible/<name>` to the default branch, skipping PRs from another repository, predating the tracker, or lacking its tracker reference. Returns `merged`, a review status for an open PR, or, for a matching PR that was closed without merging, the status `needs a person: its pull request #<n> was closed without merging; reopen it, or start a new run`. (`.github/bible/bible_queue.py:711-719`)
-2. Finds open chunk/verify issues. For the first, returns a released status, a human-needed status, or delegates to `follow`; with no open issue, returns `not started` if no component issue exists in any state. (`.github/bible/bible_queue.py:720-733`)
-3. Reads the component status. For `COMPONENT_DONE`, waits for the next check if the run deadline cannot accommodate two gate timeouts plus 300 seconds; otherwise runs the gate. An un-runnable check increments its no-check count and may create a human hold; a runnable check clears that count. (`.github/bible/bible_queue.py:742-752`)
-4. If the gate did not pass, counts closed chunks since the latest hold release or merge. Clamps the estimated sessions to 1–10, derives a bounded retry cap, creates a human hold when that cap is reached, otherwise starts the next chunk. (`.github/bible/bible_queue.py:753-773`)
+2. Finds open chunk/verify issues. For the first, returns a released status, a human-needed status, or delegates to `follow`; with no open issue, returns `not started` if no component issue exists in any state. (`.github/bible/bible_queue.py:720-733`) It then reads the component's hold issues in any state: an open hold that still carries `bible-needs-human` returns the needs-person row; an open hold whose label a person removed is closed, and `after`, the latest `closed_at` among the holds, starts new rounds. (`.github/bible/bible_queue.py:734-741`)
+3. Reads the component status. `gate_ok` starts as `False` and `pages` as `None`, so any state other than `COMPONENT_DONE` skips the check and goes straight to step 4. For `COMPONENT_DONE`, waits for the next check if the run deadline cannot accommodate two gate timeouts plus 300 seconds; otherwise runs the gate. An un-runnable check increments its no-check count and may create a human hold; a runnable check clears that count. (`.github/bible/bible_queue.py:742-752`)
+4. If the gate did not pass (or was not run, see step 3), counts the closed chunk issues created since the later of the latest hold release and the latest merge into the default branch. The estimate is `est_sessions` from `components.json`; a missing, zero or non-numeric value counts as 2, and the result is clamped to 1-10. The cap is 2 x estimate + 2, at least `MIN_SESSION_CAP` (4) and at most `MAX_SESSION_CAP` (22). When the count reaches the cap it creates a human hold (`bible-hold`, `bible-needs-human`); otherwise it starts the next chunk, whose note says "Session `done` + 1 of about `estimate`", where `done` counts every closed chunk issue of the component, not only those since the reset point. (`.github/bible/bible_queue.py:82-83`, `.github/bible/bible_queue.py:753-773`)
 5. After a passing gate, selects completed verifications since the last hold release and reads the report when any completed verification exists. A `PASS` with no major corrections and a matching nonempty page fingerprint creates a component-to-default PR. (`.github/bible/bible_queue.py:774-782`)
 6. When a report exists, no chunk completed after the latest verification and the completed verifications since the last hold release reach `MAX_VERIFY_ROUNDS` (2), opens a human hold (a hold needs a report to have been read: with no report the next step is always a verification). If the verdict is about these pages (its fingerprint equals the pages' now) and is not a clean `PASS`, starts a revision chunk; otherwise creates a verification issue and assigns it on the verification model, `settings["verify_model"]`, not on `model`, and returns `verify running`. (`.github/bible/bible_queue.py:783-819`, `.github/bible/bible_queue.py:818`)
 
@@ -1994,13 +1994,16 @@ Source: `.github/bible/bible_queue.py:708-819` <!-- code: c0d9266497e6 -->
 for matching tracker PR: return merged, review, or needs-person status
 if open chunk/verify issue: return released, needs-person, or follow(issue)
 if no component issue ever existed: return not started
+if a hold issue is open: return needs-person, or close it (label removed) and restart the round count
 status = component status
+gate_ok, pages = False, None
 if status is COMPONENT_DONE:
     if insufficient run time: wait for next check
     gate_ok, pages = check(...)
     if check could not run: count toward human hold; return/wait
-if gate failed:
-    if bounded chunk cap reached: create human hold
+if not gate_ok (a failed check, or any state other than COMPONENT_DONE):
+    cap = min(max(4, 2 * min(max(est_sessions or 2, 1), 10) + 2), 22)
+    if closed chunks since the reset point >= cap: create human hold; return
     else start next chunk; return
 load completed verification/report facts after hold release
 if clean matching PASS: create component PR; return review status
@@ -2034,6 +2037,8 @@ else create verification issue; return verify running
 | `.github/bible/bible_queue.py:797` | if | A report was read (`facts` is not `None`), no chunk completed after the latest verification, and the completed verifications since the last hold release reach `MAX_VERIFY_ROUNDS` | Creates a human hold. |
 | `.github/bible/bible_queue.py:806` | if | The report's fingerprint equals the pages now, its verdict is not a clean `PASS`, and no chunk completed since the verification | Starts a revision chunk and returns `session starting`. |
 | `.github/bible/bible_queue.py:811-818` | call | Otherwise (no report, an old fingerprint, or a revision just merged) | Creates the verification issue and assigns it on `settings["verify_model"]`, then returns `verify running`. |
+
+**Errors**: `component` has no handler of its own. An exception from it (a failed GitHub call, or the `RuntimeError` of an incomplete pull-request file list) goes to the per-component handler in `Queue.run`, which records `error this run (retried next run): <type>: <first 160 characters>` as that component's row and carries on with the others (`.github/bible/bible_queue.py:654-656`).
 
 #### `Queue.follow(analysis, name, issue)`
 
@@ -2217,24 +2222,42 @@ Source: `.github/bible/bible_queue.py:937-1050` <!-- code: 935f3bc6544e -->
 
 **Steps**
 
-1. Processes `bible-assemble` then `bible-verify-all`, using the corresponding model, title and optional issue-text file. Completed assembly issues skip assembly. In verify-all, first checks for a whole-run human hold. (`.github/bible/bible_queue.py:939-942`, `.github/bible/bible_queue.py:943-946`, `.github/bible/bible_queue.py:986-987`)
-2. For closed verify-all issues, reads report facts from the default branch and picks the newest completed issue. A clean PASS is accepted only when a merged, same-repository, agent-authored PR linked to that issue wrote the identical report and its fingerprint matches the current pages fingerprint. If fingerprint computation cannot run, counts it toward a hold and waits or returns needs-person. (`.github/bible/bible_queue.py:950-974`)
-3. If the closed verdict is a stale PASS or not a clean PASS, labels and comments the issue as stale or needing revision when no such label or open verifier issue exists; returns the corresponding status. A completed verify-all phase otherwise advances. (`.github/bible/bible_queue.py:975-987`)
-4. Calls `revise_all_step` before opening another verify-all issue. For an open phase issue, searches its linked PRs for a merged same-repository agent PR into the default branch. An unclean verify-all report is labeled for revision and the issue is closed `not_planned`; otherwise it closes and advances (or asks for the next fingerprint check). (`.github/bible/bible_queue.py:988-1011`)
-5. Without a qualifying merged PR, returns needs-person for a held issue; classifies its session, holds start errors, retries no-start, reports running PRs, and asks `continue_if_unfinished` for unfinished completed sessions. It then returns review instructions or the session state. (`.github/bible/bible_queue.py:1012-1026`)
-6. With no open issue, loads `assemble.md` or constructs whole-analysis verification instructions, creates and assigns the issue, and returns its assigned status. Once both phases are complete, replays deferred updates before and after closing the tracker; failures on the late replay are commented on the closed tracker with safe filenames, then the method returns `done`. (`.github/bible/bible_queue.py:1027-1050`)
+1. Processes the phases `bible-assemble` (model `settings["model"]`, issue text `assemble.md`) and `bible-verify-all` (model `settings["verify_model"]`, no text file) in that order; `closed_done` holds the phase's closed issues whose reason is `completed`. For verify-all it first returns the row of a whole-analysis hold that waits for a person (`whole_hold`), before any check of the whole analysis. (`.github/bible/bible_queue.py:939-946`)
+2. When verify-all has closed completed issues, it reads the report on the default branch and takes the newest closed issue. `by_this_run` is true when a merged, same-repository, agent-authored pull request into the default branch, linked to that issue, touched the report and has the same report text at its head; `clean` is a `PASS` with no major correction. (`.github/bible/bible_queue.py:947-962`)
+3. A clean report that is by this run and carries a fingerprint is checked against the pages now. It waits for the next check when too little of the run's time is left; a fingerprint that cannot be computed is counted toward a hold (`could_not_check`, key `nofp`, a person after 3 in a row) or waits for the next check; otherwise the `nofp` count is cleared, and when the report's fingerprint equals the pages' fingerprint the phase is done (`continue`). (`.github/bible/bible_queue.py:963-974`)
+4. If the phase was not accepted in step 3 and no verify-all issue is open: a clean report (a stale `PASS`, or one not by this run) on a newest issue that has neither the `bible-needs-revision` nor the `bible-stale-verdict` label gets `bible-stale-verdict` and a comment, and the row says the whole analysis is verified again; a report that is not clean, on a newest issue without `bible-needs-revision`, gets that label and a comment, and the row says corrections are asked. In every other case (the newest issue already carries the label, or a verify-all issue is open) the method returns nothing here and falls through to step 5; a completed verify-all phase never advances except through step 3. For the assembly phase, a closed completed issue skips the phase. (`.github/bible/bible_queue.py:975-987`)
+5. For verify-all it calls `revise_all_step` and returns its row when it gives one. For an open phase issue it searches the linked pull requests for a merged, same-repository, agent-authored one into the default branch. A merged verify-all report that is not a clean `PASS` gets `bible-needs-revision`, a comment, and the issue is closed as `not_planned`; otherwise the issue is closed, and verify-all returns that its fingerprint is checked at the next check while assembly moves on. (`.github/bible/bible_queue.py:988-1011`)
+6. Without a merged pull request, it returns needs-person for a held issue; classifies the session, holds start errors, retries a session that did not start, reports a running pull request, and asks `continue_if_unfinished` about a finished one. It then returns review instructions or the session state. (`.github/bible/bible_queue.py:1012-1026`)
+7. With no open issue, it loads `assemble.md` or builds the whole-verification instructions, creates and assigns the issue, and returns its assigned row. (`.github/bible/bible_queue.py:1027-1035`)
+8. When both phases are done, it reads the paths recorded on the tracker (`deferred_updates`) and, if there are any, hands them to `delta` with `record=False`, which creates their update issues (or one hold issue when more than 10 components are touched). An exception here is not caught in this method: the tracker stays open, `reconcile` logs it and the next check tries again. Then it comments "Done" and closes the tracker, reads the recorded paths once more and runs `delta` for those that were not in the first read; an error in that late step is commented on the closed tracker with the safe file names, and the method returns `done`. This is the only place that reads the recorded paths: a tracker a person closes, or a run that never gets here, is never replayed. (`.github/bible/bible_queue.py:1036-1050`, `.github/bible/bible_queue.py:607`, `.github/bible/bible_queue.py:612-615`)
 
 **Pseudo-code**
 
 ```text
-for assemble and verify-all phase:
-    skip completed phases
-    before verify-all, handle whole-run human holds and closed verdicts
-    accept a report only if clean, written by this run, and current-fingerprint
-    request stale verification or revision as appropriate
-    call revise_all_step; follow merged/open issue PRs and session states
-    if no open issue: load phase text or build verify instructions; assign issue; return
-replay deferred updates; comment done; close tracker; replay late changes safely
+for phase in (assemble, verify-all):
+    closed_done = the phase's closed issues with reason completed
+    if verify-all:
+        if a whole-run hold waits for a person: return it
+        if closed_done:
+            newest, facts = latest closed issue, the report on the default branch
+            clean, by_this_run = PASS without majors, written by this run's merged pull request
+            if clean and by_this_run and the report has a fingerprint:
+                if too little run time: return wait
+                pages_now = fingerprint of the default branch
+                if pages_now is None: count it (hold at 3) or wait; return
+                if report fingerprint == pages_now: next phase
+            if clean and newest has neither label and no verify-all issue is open: label stale-verdict; return "verifying again"
+            if not clean and newest lacks the revision label and no verify-all issue is open: label needs-revision; return "corrections asked"
+            (any other case falls through)
+    elif closed_done: next phase
+    if verify-all: step = revise_all_step(); if step: return step
+    if an issue of this phase is open: follow its pull request or session; return
+    create the phase issue; return "session assigned"
+deferred = deferred_updates(tracker)
+if deferred: delta(deferred, record=False)        # an error is not caught: the tracker stays open
+comment Done; close the tracker
+late = deferred_updates(tracker) - deferred
+if late: try delta(late) except: comment the files to update by hand
 return done
 ```
 
@@ -2273,7 +2296,7 @@ return done
 | `.github/bible/bible_queue.py:1024` | if | Continuation helper returns a status | Returns that status. |
 | `.github/bible/bible_queue.py:1026` | conditional expression | PR exists | Returns PR review instruction; otherwise returns session state. |
 | `.github/bible/bible_queue.py:1027` | if | Phase has an issue-text filename | Loads its title and body; otherwise builds verification instructions. |
-| `.github/bible/bible_queue.py:1039` | if | Deferred changed paths exist | Creates delta issues before closing the tracker. |
+| `.github/bible/bible_queue.py:1039` | if | Deferred changed paths exist | Creates delta issues before closing the tracker; an exception from `delta` here is not caught and leaves the tracker open. |
 | `.github/bible/bible_queue.py:1044` | if | New deferred paths arrived after the first replay | Attempts late replay after closing the tracker. |
 | `.github/bible/bible_queue.py:1047` | except | Late replay raises `Exception` | Comments a manual-update notice with bounded error and safe path list. |
 
@@ -2359,17 +2382,21 @@ Source: `.github/bible/bible_queue.py:1074-1152` <!-- code: 86a6e2d30283 -->
 1. Loads all whole-run holds and identifies open ones. Returns needs-person when the first still has `bible-needs-human`; otherwise closes it and reloads holds. Uses the latest hold close time as the start of the current round. (`.github/bible/bible_queue.py:1079-1086`)
 2. Finds closed whole-verification issues labeled needs-revision and stale-verdict. If there are no correction verdicts and stale rounds remain below `MAX_VERIFY_ROUNDS`, returns `None`; otherwise counts correction/stale rounds since the last release and finds revision issues. (`.github/bible/bible_queue.py:1089-1098`)
 3. For an open revision issue, closes and returns when a qualifying linked agent PR is already merged. Otherwise a held issue returns needs-person; start-error is held, no-start requests retry, running returns its PR status, and a finished PR is passed to `continue_if_unfinished`, which may ask Copilot to continue or hold the issue for a person (also at once when Copilot's work failed before it started). (`.github/bible/bible_queue.py:1099-1120`)
-4. A finished revision PR may change only files under `analysis/` whose basename does not start `verification-`; disallowed files are summarized and retried/held. If no revision is open, it decides whether corrections are already applied, creates a human hold at `MAX_VERIFY_ROUNDS`, or creates and assigns a revision issue carrying the verification-report instructions. (`.github/bible/bible_queue.py:1121-1152`)
+4. A finished revision PR may change only files under `analysis/` whose basename does not start `verification-`; disallowed files are summarized and retried/held. If no revision is open, it first computes `last_asked` (the `closed_at` of the newest closed correction verdict), `newest_stale` and `corrections_applied`, which is true when a correction verdict exists and any `bible-revise-all` issue of the run, in any state, was closed as `completed` after `last_asked`. Then, in this order: when `rounds` has reached `MAX_VERIFY_ROUNDS` it creates the whole-analysis human hold and returns the needs-person row, whether or not corrections were applied; otherwise it returns `None` when there is no correction verdict, or `corrections_applied`, or a stale verdict is newer than `last_asked` (the loop then opens the next verification); otherwise it creates and assigns a revision issue carrying the verification-report instructions. (`.github/bible/bible_queue.py:1121-1152`)
 
 **Pseudo-code**
 
 ```text
 close released hold or return human-needed
-find correction/stale verdicts since latest release and count rounds
+asked_all = closed verify-all issues labelled needs-revision; stale = those labelled stale-verdict since the latest release
+if no correction verdict and fewer than MAX_VERIFY_ROUNDS stale ones: return None
+rounds = correction verdicts since the latest release + stale ones
 if open revision: follow merged, held, start-error, no-start, running and finished session states
     require finished PR files under analysis, excluding verification-*; retry/hold if invalid
-if revision followed latest verdict or no correction remains: return None
-if rounds exhausted: create human hold
+    return its row (a merged revision closes it and returns None)
+if rounds >= MAX_VERIFY_ROUNDS: create human hold; return needs-person     # whether or not corrections were applied
+corrections_applied = a correction verdict exists and a revise-all issue closed as completed after the newest one
+if no correction verdict, or corrections_applied, or a stale verdict is newer: return None   # verify again
 otherwise create and assign revision issue
 ```
 
@@ -2392,9 +2419,9 @@ otherwise create and assign revision issue
 | `.github/bible/bible_queue.py:1126` | conditional expression | Retry succeeds | Returns session starting; otherwise needs-person. |
 | `.github/bible/bible_queue.py:1127` | conditional expression | PR exists | Returns review/merge instruction; otherwise the session state. |
 | `.github/bible/bible_queue.py:1128` | conditional expression | A correction verdict exists | Uses the latest correction close time; otherwise uses an empty string. |
-| `.github/bible/bible_queue.py:1132` | if | Round limit is reached and revision work is already complete or stale verdict is newer | Proceeds to human-hold handling. |
-| `.github/bible/bible_queue.py:1134` | elif | No correction remains, a revision completed, or stale verdict is newer | Returns `None` so verification can proceed. |
-| `.github/bible/bible_queue.py:1136` | if | Verification rounds reached `MAX_VERIFY_ROUNDS` | Creates and returns a whole-analysis human hold. |
+| `.github/bible/bible_queue.py:1132` | if | `rounds` has reached `MAX_VERIFY_ROUNDS` and (there is no correction verdict, or corrections are applied, or a stale verdict is newer) | Only `pass`: control goes on to the hold at line 1136. |
+| `.github/bible/bible_queue.py:1134` | elif | The same three conditions hold with `rounds` below the limit | Returns `None` so verification can proceed. |
+| `.github/bible/bible_queue.py:1136` | if | `rounds` has reached `MAX_VERIFY_ROUNDS` (also when corrections are still pending) | Creates and returns a whole-analysis human hold. |
 
 #### `Queue.continue_if_unfinished(issue, pr, kind, analysis)`
 
@@ -2506,7 +2533,7 @@ Source: `.github/bible/bible_queue.py:1223-1283` <!-- code: 48ca17e0332c -->
 **Steps**
 
 1. Sets the default branch and defines `last_activity` from the tracker body's `Updated` marker or its creation time. With `record=True`, finds active tracker issues updated within `ABANDONED_AFTER`; with `record=False`, does not search for one. (`.github/bible/bible_queue.py:1224-1229`)
-2. If a tracker is active, filters changed paths through `SAFE_FILE`, splits safe paths into `DEFERRED_PER_COMMENT` chunks (at least one loop iteration), posts a marker comment for each chunk, notes omitted unusual names, logs the deferral, and returns. (`.github/bible/bible_queue.py:1230-1242`)
+2. If a tracker is active, filters changed paths through `SAFE_FILE`, splits safe paths into `DEFERRED_PER_COMMENT` chunks (at least one loop iteration), posts a marker comment for each chunk, notes omitted unusual names, logs the deferral, and returns. The recorded paths become update issues only when `assemble_phase` reaches its Done step and calls `delta` again with `record=False` (`.github/bible/bible_queue.py:1038-1046`); `reconcile` visits open trackers only, so a tracker that a person closes is never replayed (`.github/bible/bible_queue.py:607`). (`.github/bible/bible_queue.py:1230-1242`)
 3. Otherwise loads `components.json` and requires `ledger/baseline.json`; if either is absent, logs and returns. Adds the analysis toolkit scripts to `sys.path`, imports `components`, maps changed paths outside the analysis and skills directories to sorted touched component names, and filters them through `NAME`. (`.github/bible/bible_queue.py:1243-1254`)
 4. If the number of touched components exceeds `MAX_DELTA_ISSUES`, creates one human-needed issue only when none is already open, logs and returns. For each touched component, gets the assigned files and safe display names; an existing component delta issue is logged and skipped. Otherwise creates an assigned issue with up to 20 shown file paths and the update instructions, then logs the file count. (`.github/bible/bible_queue.py:1255-1283`)
 

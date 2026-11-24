@@ -7,9 +7,9 @@ Version: not provided
 
 ## Pass 1 — Inventory
 
-- Current inventory: 20 in-scope files, 14 source files, 1,343 source lines, 108 symbols, 0 statically detected routes.
+- Current inventory (24 Nov 2026): 24 in-scope files, 14 source files (11 hold code), 1,812 source lines, 116 symbols, 0 statically detected routes.
 - The generated file list and symbol checklist are in `ledger/inventory.json` and `ledger/symbol-checklist.md`.
-- The coverage ledger is `ledger/coverage-ledger.md`; all 20 in-scope files have a reading page.
+- The coverage ledger is `ledger/coverage-ledger.md`; all 24 in-scope files have a reading page.
 - Excluded: `.git`, `codebase-analysis`, and the repository's `.github/skills/*` toolkits, as listed in the inventory checklist.
 
 ## Work plan
@@ -62,10 +62,10 @@ At this session's start, `next.py` reported 11 of 13 packets done. Packet 2 refr
 
 ## Whole-system assembly
 
-- Refreshed the generated inventory from the current source: 20 files, 14 source files, 1,343 source lines, 108 symbols, and 0 statically detected routes. The catalog GET paths are documented separately because its handler uses imperative path matching rather than route decorators.
-- Updated the coverage ledger to map all 20 in-scope files to analysis pages.
+- Refreshed the generated inventory from the current source (figures of 24 Nov 2026, after the later revisions): 24 files, 14 source files, 1,812 source lines, 116 symbols, and 0 statically detected routes. The catalog GET paths are documented separately because its handler uses imperative path matching rather than route decorators.
+- Updated the coverage ledger to map all 24 in-scope files to analysis pages.
 - Completed HLD pages, mind maps, front page, reference pages, and the knowledge base. The first knowledge graph build identified unmatched front-matter names and two spellings for Supplier One; these were corrected before regenerating the graph.
-- The final knowledge graph contains 211 nodes, 508 edges, and 298 chunks; all LLD front-matter names resolve. The primer is 1,693 words and documents 20 rules.
+- The knowledge graph contains 211 nodes, 566 edges, and 336 chunks (after the round-4 revision of 24 Nov 2026); all LLD front-matter names resolve. The primer is 1,936 words and documents 20 rules.
 - The two component questions have answers and are recorded as resolved; no unanswered questions are open.
 
 ## Quality gate
@@ -75,7 +75,7 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 ### Coverage and depth
 
 - `inventory.py` refreshed the source inventory on 24 Nov 2026 (after the delta and the revision of that day): 24 in-scope files, 14 source files, 1,812 source lines, 116 symbols, and 0 statically detected routes.
-- `coverage.py --depth deep` passed: every symbol and function card is covered, all branch lines and all same-file call-graph edges are documented, all 17 LLD pages have front matter, and every cross-component call is cited. On 24 Nov 2026, after the corrections of the report of that day, it printed PASS with 116/116 symbols, 98/98 cards, 320/320 branch lines, 232/232 call-graph edges, 2,213/2,213 citations and 17/17 front-matter pages; the totals are in `ledger/coverage-report.md`.
+- `coverage.py --depth deep` passed: every symbol and function card is covered, all branch lines and all same-file call-graph edges are documented, all 17 LLD pages have front matter, and every cross-component call is cited. On 24 Nov 2026, after the corrections of the report of that day, it printed PASS with 116/116 symbols, 98/98 cards, 320/320 branch lines, 232/232 call-graph edges, 3,059/3,059 citations (after the round-4 corrections) and 17/17 front-matter pages; the totals are in `ledger/coverage-report.md`.
 - The four component verification reports record `PASS`; the audits cover card depth, branches, endpoint cards, diagrams, citations, and component-specific behavior.
 
 ### Reader test
@@ -100,7 +100,7 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 
 - The 44 Mermaid blocks (43 without the generated `components.md`) were checked against their evidence and required diagram types; no renderer was available, so they were not rendered. This limitation is recorded in `README.md`.
 - All sweep searches and assistant-directed repository text locations are recorded in this file and `run-notes.md`. No secret values were copied into the analysis.
-- `knowledge.py` reports 211 nodes, 566 edges, 323 chunks, and no unmatched front-matter names. The 72 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
+- `knowledge.py` reports 211 nodes, 566 edges, 336 chunks, and no unmatched front-matter names. The 97 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
 - The three knowledge-base reader questions are summarized after final graph generation.
 
 <!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
