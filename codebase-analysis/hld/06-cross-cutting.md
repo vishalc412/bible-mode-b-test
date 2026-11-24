@@ -25,7 +25,7 @@ The GitHub automation authenticates API requests with a bearer token; the catalo
 
 | Component | How | Evidence |
 | --- | --- | --- |
-| `bible-mode-b` | Uses `GH_TOKEN` in the GitHub API `Authorization` header. Plan, queue and delta workflows take it from `BIBLE_ASSIGN_TOKEN` and check out the default branch before running the queue code. | `.github/bible/bible_queue.py:105-119`; `.github/workflows/bible-plan.yml:26-45`; `.github/workflows/bible-queue.yml:12-36`; `.github/workflows/bible-delta.yml:14-33` |
+| `bible-mode-b` | Uses `GH_TOKEN` in the GitHub API `Authorization` header. Plan, queue and delta workflows take it from `BIBLE_ASSIGN_TOKEN` and check out the default branch before running the queue code. | `.github/bible/bible_queue.py:109-123`; `.github/workflows/bible-plan.yml:26-45`; `.github/workflows/bible-queue.yml:12-36`; `.github/workflows/bible-delta.yml:14-33` |
 | POC assignment | Uses `BIBLE_ASSIGN_TOKEN` as `GH_TOKEN`; the workflow creates the issue through `gh api`. The workflow declares `contents: read` and performs no checkout. | `.github/workflows/poc-assign-copilot.yml:4-8,31-46,66-69` |
 | `catalog` | HTTP handlers do not authenticate requests. The server defaults to loopback, but `CATALOG_HOST` can change the bind address. | `components/catalog/service.py:15-34,40-43` |
 | `orders` | Settlement and remote catalog requests use plain HTTP; no client credentials or authorization headers are set. | `components/orders/orders.py:7-12,45-50`; `components/orders/catalog_client.py:19-23` |
@@ -38,7 +38,7 @@ The workflow token is passed to the process through an environment variable, not
 
 | Component | How | Evidence |
 | --- | --- | --- |
-| `bible-mode-b` | Workflows map `secrets.BIBLE_ASSIGN_TOKEN` to `GH_TOKEN`, check it before running, and the API client sends it as a bearer token. | `.github/workflows/bible-plan.yml:43-53`; `.github/workflows/bible-queue.yml:31-37`; `.github/workflows/bible-delta.yml:26-38`; `.github/bible/bible_queue.py:115-119` |
+| `bible-mode-b` | Workflows map `secrets.BIBLE_ASSIGN_TOKEN` to `GH_TOKEN`, check it before running, and the API client sends it as a bearer token. | `.github/workflows/bible-plan.yml:43-53`; `.github/workflows/bible-queue.yml:31-37`; `.github/workflows/bible-delta.yml:26-38`; `.github/bible/bible_queue.py:119-123` |
 | POC assignment | Shell checks the token; `jq` constructs `request.json` from input values and does not add the token to that JSON. | `.github/workflows/poc-assign-copilot.yml:40-63` |
 | Sample application | No application secrets or credential configuration are shown in the catalog or orders modules. | `components/catalog/catalog.py:1-47`; `components/catalog/service.py:1-49`; `components/orders/orders.py:1-51`; `components/orders/catalog_client.py:1-29` |
 
@@ -91,7 +91,7 @@ The sample application and tools run from source without a declared package buil
 | Component | How | Evidence |
 | --- | --- | --- |
 | `catalog` and `orders` | Python source modules; the catalog server is started with `python3 -m components.catalog.service`. No application packaging or deployment manifest is identified in the component pages. | `components/catalog/service.py:1-12,40-49`; `components/orders/orders.py:1-5`; `codebase-analysis/lld/catalog/README.md`; `codebase-analysis/lld/orders/README.md` |
-| `bible-mode-b` | Python queue runs on `ubuntu-latest` after checkout; workflow job timeouts and concurrency are defined in YAML. | `.github/workflows/bible-plan.yml:29-40`; `.github/workflows/bible-queue.yml:15-30`; `.github/bible/bible_queue.py:1244-1262` |
+| `bible-mode-b` | Python queue runs on `ubuntu-latest` after checkout; workflow job timeouts and concurrency are defined in YAML. | `.github/workflows/bible-plan.yml:29-40`; `.github/workflows/bible-queue.yml:15-30`; `.github/bible/bible_queue.py:1260-1278` |
 | `tools` | Python scripts and Bash run from the repository; fanout invokes `gh`. | `tools/plan.py:41-62`; `tools/gate.py:81-117`; `tools/fanout.sh:1-31` |
 
 Consistency: varies (3 variants)
@@ -108,7 +108,7 @@ The sample components use Python's `unittest`; the tool gate runs discovery for 
 
 Consistency: varies (3 variants)
 
-<!-- cites .github/bible/bible_queue.py@9084f4915d286441c5b3a9a29a8df059bf76dacc -->
+<!-- cites .github/bible/bible_queue.py@161344dc7ddde551f4020972e6d61c782a86d480 -->
 
 <!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
 
