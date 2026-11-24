@@ -262,7 +262,12 @@ class GitHub:
             # 2026: main moved, the revision merged main, and its file list then held main's own changes, so the scope
             # check failed a clean pull request. Compare against the base branch as it is now (the merge base, as a
             # merge would see it). GitHub's comparison lists at most COMPARE_MAX files: a full list is refused.
-            listed = (self.call("GET", "/compare/%s...%s" % (tip, head)) or {}).get("files") or []
+            compared = self.call("GET", "/compare/%s...%s" % (tip, head))
+            listed = compared.get("files") if isinstance(compared, dict) else None
+            # fail closed: no file list, or none while GitHub counts changed files, is never read as "nothing changed"
+            if not isinstance(listed, list) or (not listed and as_int(pr.get("changed_files"))):
+                raise RuntimeError("the comparison of #%d with %s gave no file list: not checked, not merged"
+                                   % (number, base["ref"]))
             if len(listed) >= COMPARE_MAX:
                 raise RuntimeError("the file list of #%d is incomplete (%d files or more against %s): not checked, not merged"
                                    % (number, COMPARE_MAX, base["ref"]))
