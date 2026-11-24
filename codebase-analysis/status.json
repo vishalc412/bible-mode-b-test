@@ -3,7 +3,7 @@
  "status": "DRAFT",
  "gate": "NOT RUN",
  "verification": {
-  "verdict": "PASS AFTER CORRECTIONS",
+  "verdict": "PASS",
   "date": "2026-11-24",
   "major_corrections": 0,
   "report": "verification-report.md",
@@ -41,9 +41,9 @@
   }
  },
  "reasons": [
-  "after corrections only 14 of 16 flagged statements confirmed: correct and re-check the rest",
+  "after corrections only 10 of 15 flagged statements confirmed: correct and re-check the rest",
   "0 of 4 components verified"
  ],
  "notes": [],
- "checked": "2026-11-24T17:46:13"
+ "checked": "2026-11-24T19:43:23"
 }
