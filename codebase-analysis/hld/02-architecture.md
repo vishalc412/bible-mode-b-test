@@ -42,20 +42,20 @@ flowchart LR
     products[("_PRODUCTS<br/>In-memory catalog dictionary")]
   end
   actions{{"GitHub Actions<br/>ubuntu-latest hosted runners"}}
-  github{{"GitHub API and repository state<br/>external"}}
+  github{{"GitHub API and repository state<br/>REST/GraphQL, external"}}
   copilot{{"Copilot coding agent<br/>external"}}
-  supplier{{"Supplier One feed<br/>external"}}
-  payment{{"Payment partner<br/>external"}}
+  supplier{{"Supplier One feed<br/>product JSON over HTTP, external"}}
+  payment{{"Payment partner<br/>settlement over HTTP, external"}}
   operator -->|"workflow dispatch"| actions
   workflows -->|"starts Python entry point"| actions
   actions -->|"checks out default branch and runs"| queue
-  queue -->|"issues, refs, files, PRs"| github
+  queue -->|"issues, refs, files, PRs<br/>REST/GraphQL, HTTPS :443 by default"| github
   github -->|"assigns issues"| copilot
   queue -->|"imports helpers / runs gate scripts"| analysiskit
   orders -->|"price_of, in_stock"| catalog
-  client -.->|"HTTP price API; test caller and intended separate-service mode"| catalog
-  catalog -->|"reads JSON feed"| supplier
-  orders -->|"settlement request"| payment
+  client -.->|"GET price, HTTP :8001 by default, test caller and intended separate-service mode"| catalog
+  catalog -->|"product JSON, HTTP :80 implicit"| supplier
+  orders -->|"settlement JSON, HTTP :80 implicit"| payment
   catalog -->|"reads and updates"| products
 ```
 
@@ -89,7 +89,7 @@ flowchart TB
   copilot{{"Copilot coding agent<br/>external"}}
   operator -->|"dispatch or review"| github
   repo -->|"workflow definitions and checked-out code"| runner
-  runner -->|"GitHub API"| issues
+  runner -->|"GitHub API, HTTPS :443 by default"| issues
   runner -->|"assigns work"| copilot
 ```
 

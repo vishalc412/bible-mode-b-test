@@ -44,7 +44,7 @@ sequenceDiagram
   autonumber
   participant Client as catalog HTTP client
   participant Handler as CatalogHandler.do_GET
-  Client->>Handler: GET /health over HTTP
+  Client->>Handler: GET /health over HTTP on test server's ephemeral port
   alt path is /health
     Handler-->>Client: 200 with health JSON
   else path is not a catalog route
@@ -94,7 +94,7 @@ sequenceDiagram
   participant Client as orders.catalog_client.remote_price
   participant Handler as CatalogHandler.do_GET
   participant Price as catalog.price_of
-  Client->>Handler: GET /price/sku over plain HTTP
+  Client->>Handler: GET /price/sku over HTTP port 8001 by default or ephemeral in test
   Handler->>Price: price_of decoded sku
   alt SKU exists
     Price-->>Handler: product price

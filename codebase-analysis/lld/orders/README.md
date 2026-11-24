@@ -15,12 +15,12 @@ config: [config:CATALOG_URL]
 | Folders and files | `components/orders/` (`components/orders/orders.py:1-51`, `components/orders/catalog_client.py:1-29`, `components/orders/test_orders.py:1-12`, `components/orders/test_catalog_client.py:1-66`) |
 | Technology | Python modules using the standard library and local catalog modules (`components/orders/orders.py:1-5`, `components/orders/catalog_client.py:6-9`) |
 | Starts by | Order helpers are imported by Python callers; the test modules call `unittest.main()` when run as scripts (`components/orders/test_orders.py:3,11-12`, `components/orders/test_catalog_client.py:9,65-66`) |
-| Size | 4 files, 158 lines, 18 functions/methods, 0 routes (`components/orders/orders.py:1-51`, `components/orders/catalog_client.py:1-29`, `components/orders/test_orders.py:1-12`, `components/orders/test_catalog_client.py:1-66`) |
+| Size | 4 files, 158 source lines (`components/orders/orders.py:1-51`, `components/orders/catalog_client.py:1-29`, `components/orders/test_orders.py:1-12`, `components/orders/test_catalog_client.py:1-66`) |
 | Depth | deep |
 
 ## Responsibility
 
-The component provides order line and discounted-total calculations, validates requested quantities against catalog stock, and submits order settlements (`components/orders/orders.py:19-51`). Its `catalog_client` module also resolves a catalog service URL and requests prices over HTTP (`components/orders/catalog_client.py:14-29`). Both catalog access paths are intentional: `orders.py` imports `components.catalog.catalog` directly when catalog and orders run in one process (today's deployment), while `catalog_client.py` is the path for orders running as its own service and reading prices from the catalog HTTP API (answer to Q1; code paths at `components/orders/orders.py:5,19-20,35-41` and `components/orders/catalog_client.py:1-4,14-23`). The HTTP path's only callers found are its tests, and it uses plain HTTP to `CATALOG_URL`, defaulting to `http://127.0.0.1:8001` (answer to Q1; `components/orders/catalog_client.py:11,14-23`, `components/orders/test_catalog_client.py:37-62`). The component does not declare routes or a service entry point in these modules; the test files run through `unittest` (`components/orders/test_orders.py:1-12`, `components/orders/test_catalog_client.py:1-66`).
+The component provides order line and discounted-total calculations, validates requested quantities against catalog stock, and submits order settlements (`components/orders/orders.py:19-51`). Its `catalog_client` module also resolves a catalog service URL and requests prices over HTTP (`components/orders/catalog_client.py:14-29`). Per the [recorded answer to Q1](../../ledger/components/orders/questions.md), `orders.py`'s direct import is used when catalog and orders run in one process (today's deployment), while `catalog_client.py` is intended for orders running as a separate service; the code confirms the direct import and HTTP client behavior (`components/orders/orders.py:5,19-20,35-41`; `components/orders/catalog_client.py:1-4,14-23`). The answer also notes that tests are the HTTP path's in-repository callers; the client uses plain HTTP to `CATALOG_URL`, defaulting to `http://127.0.0.1:8001` (`components/orders/catalog_client.py:11,14-23`; `components/orders/test_catalog_client.py:37-62`). The test modules invoke `unittest.main()` when run as scripts (`components/orders/test_orders.py:11-12`, `components/orders/test_catalog_client.py:65-66`).
 
 ## Structure
 
@@ -38,7 +38,7 @@ flowchart TB
   orders_py -->|"price_of, in_stock (direct import)"| catalog_data
   test_client -->|"calls remote_price and remote_line_total"| catalog_client
   test_client -->|"starts local server in fixture"| catalog_service
-  catalog_client -->|"GET /price/{quoted SKU}, HTTP"| catalog_service
+  catalog_client -->|"GET /price/{quoted SKU}, HTTP :8001 by default or ephemeral in test"| catalog_service
 ```
 
 | Element | Evidence |
@@ -118,15 +118,15 @@ No application logging or metrics calls are present in the four orders files (in
 
 | Test page | Coverage |
 | --- | --- |
-| [test_orders](test_orders.md#tests) | Checks `line_total("SKU-3", 2) == 12.0` (`components/orders/test_orders.py:6-8`). |
-| [test_catalog_client](test_catalog_client.md#tests) | Checks HTTP price and line-total calls, zero quantity, unknown and unusual SKUs, query handling, and percent-encoded SKU decoding (`components/orders/test_catalog_client.py:37-62`). |
+| [test_orders](test_orders.md#tests) | Checks `line_total("SKU-3", 2) == 12.0` (`components/orders/test_orders.py:6-8`; implementation: `components/orders/orders.py:19-20`). |
+| [test_catalog_client](test_catalog_client.md#tests) | Checks HTTP price and line-total calls, zero quantity, unknown and unusual SKUs, query handling, and percent-encoded SKU decoding (`components/orders/test_catalog_client.py:37-62`; implementation: `components/orders/catalog_client.py:19-29`, `components/catalog/service.py:24-34`). |
 
 The listed tests do not exercise `order_total`, `validate`, or `settle` (inferred: the complete test method listings are `components/orders/test_orders.py:6-8` and `components/orders/test_catalog_client.py:37-62`).
 
 ## Surprises
 
 - Settlement uses plain HTTP to the partner URL; the adjacent source comment says TLS support is “coming soon” but gives no date (inferred: per `components/orders/orders.py:7-9`).
-- The direct catalog import and HTTP client are intentional for different deployment modes: in-process catalog access today and HTTP access when orders runs separately (answer to Q1; code paths at `components/orders/orders.py:5,19-20,35-41` and `components/orders/catalog_client.py:1-4,19-23`). The HTTP path's only callers found are its tests, and its URL is plain HTTP to `CATALOG_URL` (default `http://127.0.0.1:8001`) (answer to Q1; `components/orders/catalog_client.py:11,14-23`, `components/orders/test_catalog_client.py:37-62`).
+- The direct catalog import and HTTP client are intentional for different deployment modes: the [recorded answer to Q1](../../ledger/components/orders/questions.md) identifies the in-process path as today's deployment and the HTTP client for a separate orders service (`components/orders/orders.py:5,19-20,35-41`; `components/orders/catalog_client.py:1-4,19-23`). The answer notes tests as the HTTP path's in-repository callers; the URL is plain HTTP to `CATALOG_URL` (default `http://127.0.0.1:8001`) (`components/orders/catalog_client.py:11,14-23`; `components/orders/test_catalog_client.py:37-62`).
 
 ## For the whole-system pages
 

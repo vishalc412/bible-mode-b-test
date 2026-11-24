@@ -132,9 +132,9 @@ otherwise: send 404 not-found JSON
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `service.py:26` | if | `path == "/health"` | Sends status 200 and health JSON (`components/catalog/service.py:26-27`). |
-| `service.py:28` | if | `path.startswith("/price/")` | Extracts and decodes `sku`, then attempts a price response (`components/catalog/service.py:28-31`). |
-| `service.py:32` | except | A `KeyError` occurs while evaluating the success response | Sends status 404 with the unknown-SKU error (`components/catalog/service.py:30-33`). |
+| `components/catalog/service.py:26` | if | `path == "/health"` | Sends status 200 and health JSON (`components/catalog/service.py:26-27`). |
+| `components/catalog/service.py:28` | if | `path.startswith("/price/")` | Extracts and decodes `sku`, then attempts a price response (`components/catalog/service.py:28-31`). |
+| `components/catalog/service.py:32` | except | A `KeyError` occurs while evaluating the success response | Sends status 404 with the unknown-SKU error (`components/catalog/service.py:30-33`). |
 
 **Output and side effects**: writes one JSON response through `_send`; response status and payload depend on the path and price lookup (`components/catalog/service.py:26-34`).
 
@@ -199,7 +199,7 @@ return ThreadingHTTPServer((host, port), CatalogHandler)
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
-| `service.py:42` | conditional expression | `port is not None` | Uses the explicit port; otherwise reads `CATALOG_PORT` with default `"8001"` (`components/catalog/service.py:42`). |
+| `components/catalog/service.py:42` | conditional expression | `port is not None` | Uses the explicit port; otherwise reads `CATALOG_PORT` with default `"8001"` (`components/catalog/service.py:42`). |
 
 **Output and side effects**: returns a `ThreadingHTTPServer` bound to `(host, port)` with `CatalogHandler` as its request handler (`components/catalog/service.py:40-43`).
 

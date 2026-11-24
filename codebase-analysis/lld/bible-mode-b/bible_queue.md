@@ -19,14 +19,14 @@ Source file: `.github/bible/bible_queue.py`
 | | |
 | --- | --- |
 | Component | `bible-mode-b` (its design page is `README.md` in this folder) |
-| Lines | 1,291 |
+| Lines | 1,294 |
 | Role | Runs the Mode B analysis queue and its GitHub API client. |
 | Imports that matter | Python standard-library JSON, URL, base64, temporary-file, archive, subprocess, and filesystem modules used by the API client, queue, and CLI. (`.github/bible/bible_queue.py:42-56`) |
 | Module-level state | `COPILOT`, `AGENT_LOGINS`, `AGENT_APP`, `START_ERROR`, verification/session limits, regexes, and `LABELS` are initialized at import; environment-backed values include `BIBLE_AGENT_LOGINS` and `BIBLE_AGENT_APP`. (`.github/bible/bible_queue.py:60-98`) |
 
 ## Summary
 
-`main` exposes the `start`, `reconcile`, and `delta` CLI commands. It constructs `Queue` and `GitHub`; `Queue` coordinates tracker/session state and delegates repository operations to `GitHub`, whose methods build REST requests and a GraphQL ready-for-review mutation. `Queue.delta` also imports component-membership helpers from the analysis toolkit. (`.github/bible/bible_queue.py:1244-1290`, `.github/bible/bible_queue.py:473-1241`, `.github/bible/bible_queue.py:104-347`, `.github/bible/bible_queue.py:1205-1211`)
+`main` exposes the `start`, `reconcile`, and `delta` CLI commands. It constructs `Queue` and `GitHub`; `Queue` coordinates tracker/session state and delegates repository operations to `GitHub`, whose methods build REST requests and a GraphQL ready-for-review mutation. `Queue.delta` also imports component-membership helpers from the analysis toolkit. The module guard invokes `main` when the file runs as a script. (`.github/bible/bible_queue.py:1244-1294`, `.github/bible/bible_queue.py:473-1241`, `.github/bible/bible_queue.py:104-347`, `.github/bible/bible_queue.py:1205-1211`)
 
 ## Index
 
@@ -2607,7 +2607,7 @@ Source: `.github/bible/bible_queue.py:357-358` <!-- code: f2f8bb65e56f -->
 | | |
 | --- | --- |
 | Kind | module function |
-| Called by | `Queue.reconcile` (`.github/bible/bible_queue.py:581`), `main` (`.github/bible/bible_queue.py:1277`) |
+| Called by | `Queue.session` (`.github/bible/bible_queue.py:496,500`), `Queue.continue_if_unfinished` (`.github/bible/bible_queue.py:1147`), `Queue.delta` (`.github/bible/bible_queue.py:1187`) |
 | Calls | `now`, `datetime.datetime.fromisoformat`, `replace`, `total_seconds` |
 | Purpose | Returns elapsed seconds between `stamp` and `now()`. |
 
@@ -2864,7 +2864,7 @@ Source: `.github/bible/bible_queue.py:442-455` <!-- code: a367c151c5b0 -->
 2. Removes HTML comments and fenced code blocks, then finds visible `Verdict` values and rows. (`.github/bible/bible_queue.py:447-449`)
 3. Returns `("UNREADABLE", 0, None)` unless exactly one accepted verdict and exactly one verdict row were found. (`.github/bible/bible_queue.py:450-451`)
 4. Counts lines in the `Corrections` section that begin with `|` and contain a `major` cell. (`.github/bible/bible_queue.py:452-453`)
-5. Searches for a 16-character lowercase hexadecimal fingerprint and returns the uppercased verdict, count, and captured fingerprint or `None`. (`.github/bible/bible_queue.py:454-455`)
+5. Searches case-insensitively for a 16-character hexadecimal fingerprint and returns the verdict converted to uppercase, the major count, and the captured fingerprint unchanged or `None`. (`.github/bible/bible_queue.py:454-455`)
 
 **Pseudo-code**
 
@@ -2979,7 +2979,7 @@ return data if data is a dict, otherwise {}
 
 The module imports Python standard-library utilities and initializes queue labels, environment-derived agent settings, regexes, and timing/verification constants. (`.github/bible/bible_queue.py:42-98`)
 
-It declares the `GitHub` API client (`.github/bible/bible_queue.py:104-347`), helper functions (`.github/bible/bible_queue.py:352-468`), and `Queue` coordinator (`.github/bible/bible_queue.py:473-1241`). The CLI `main` parses arguments, and the module guard calls it when executed as a script. (`.github/bible/bible_queue.py:1244-1294`)
+It declares the `GitHub` API client (`.github/bible/bible_queue.py:104-347`) and helper functions (`.github/bible/bible_queue.py:352-468`). It declares the `Queue` coordinator (`.github/bible/bible_queue.py:473-1241`). The CLI `main` parses arguments, and the module guard calls it when executed as a script (`.github/bible/bible_queue.py:1244-1294`).
 
 ## Surprises
 

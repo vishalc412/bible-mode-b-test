@@ -30,23 +30,23 @@ flowchart LR
     catalog["catalog<br/>Python module and optional HTTP service"]
     orders["orders<br/>Python library and HTTP client"]
     queue["bible-mode-b<br/>GitHub Actions workflow and Python queue"]
-    tools["tools<br/>planning, gate, and fanout"]
+    tools["tools<br/>Python and Bash<br/>planning, gate, and fanout"]
   end
   github{{"GitHub<br/>Actions, issues, repository and PRs"}}
   copilot{{"Copilot coding agent<br/>assigned to workflow issues"}}
-  supplier{{"Supplier One<br/>product JSON feed"}}
-  partner{{"Payment partner<br/>settlement endpoint"}}
-  cdn{{"Image CDN<br/>URL target only; not fetched"}}
+  supplier{{"Supplier One<br/>product JSON over HTTP"}}
+  partner{{"Payment partner<br/>settlement over HTTP"}}
+  cdn{{"Image CDN<br/>HTTPS URL target only, not fetched"}}
   operator -->|"manual workflow dispatch"| github
   reviewer -->|"reviews PRs and answers issues"| github
   github -->|"runs workflows from the repository"| queue
-  queue -->|"REST and GraphQL; issue and repository state"| github
+  queue -->|"REST and GraphQL, HTTPS :443 by default, issue and repository state"| github
   github -->|"issue assignment"| copilot
   copilot -->|"session PRs and commits"| github
   orders -->|"in-process catalog calls"| catalog
-  catalog -->|"product JSON, HTTP"| supplier
-  orders -->|"settlement JSON, HTTP"| partner
-  catalog -.->|"returns constructed image URL; no request"| cdn
+  catalog -->|"product JSON, HTTP :80 implicit"| supplier
+  orders -->|"settlement JSON, HTTP :80 implicit"| partner
+  catalog -.->|"returns constructed image URL, no request"| cdn
 ```
 
 | Person or outside system | What the system uses it for | Protocol, scheme, port | Address from | Authentication | Evidence |

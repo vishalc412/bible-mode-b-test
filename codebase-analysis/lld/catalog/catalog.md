@@ -54,7 +54,7 @@ flowchart LR
   instock -->|"looks up product"| getproduct
   getproduct -->|"reads"| store
   apply -->|"updates matching records"| store
-  fetch -->|"opens and parses"| feed
+  fetch -->|"product JSON, HTTP :80 implicit"| feed
 ```
 
 ## Functions and methods

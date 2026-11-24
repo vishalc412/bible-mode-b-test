@@ -57,7 +57,7 @@ flowchart TB
   main -->|"constructs client"| client
   queue -->|"repository operations"| client
   queue -->|"python -I subprocess"| scripts
-  client -->|"REST or GraphQL at configured API URL"| api
+  client -->|"REST or GraphQL, HTTPS :443 by default"| api
 ```
 
 | Element | Evidence |
@@ -83,13 +83,13 @@ sequenceDiagram
   participant API as GitHub API
   Workflow->>Queue: reconcile via main
   Queue->>GitHub: default_branch and issues
-  GitHub->>API: repository and issue requests
-  API-->>GitHub: tracker data
+  GitHub->>API: REST or GraphQL, HTTPS :443 by default, repository and issue requests
+  API-->>GitHub: HTTPS :443 by default, tracker data
   GitHub-->>Queue: trackers
   Queue->>Queue: run and component
   Queue->>GitHub: linked_prs and session data
-  GitHub->>API: timeline and PR requests
-  API-->>GitHub: session data
+  GitHub->>API: REST or GraphQL, HTTPS :443 by default, timeline and PR requests
+  API-->>GitHub: HTTPS :443 by default, session data
   GitHub-->>Queue: session data
   alt no PR after assignment timeout
     Queue->>Queue: fail_or_retry
@@ -216,7 +216,7 @@ The field types shown in the diagram are inferred from constructor assignments a
 
 | Target | Purpose | Protocol and scheme | Address from | Timeout, retry, fallback | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| GitHub API | Issues, labels, branches, contents, pull requests, timelines, commits, archives, and ready-for-review mutation | REST and GraphQL; configured API URL defaults to HTTPS | `GITHUB_API_URL`, default `https://api.github.com` | Request timeout defaults to 60 seconds; tarball request uses 300 seconds. HTTP and URL/timeout/OS errors become `RuntimeError`, except `ready` wraps only HTTP errors; API helper supports optional 404 fallback. | `.github/bible/bible_queue.py:107-119`, `.github/bible/bible_queue.py:121-133`, `.github/bible/bible_queue.py:246-252`, `.github/bible/bible_queue.py:327-335` |
+| GitHub API | Issues, labels, branches, contents, pull requests, timelines, commits, archives, and ready-for-review mutation | REST and GraphQL; configured API URL defaults to HTTPS | `GITHUB_API_URL`, default `https://api.github.com` | Request timeout defaults to 60 seconds; tarball request uses 300 seconds. HTTP and URL/timeout/OS errors become `RuntimeError`, except `ready` wraps only HTTP errors; API helper supports optional 404 fallback. | `.github/bible/bible_queue.py:107-133,137-347`; tarball timeout and errors: `.github/bible/bible_queue.py:269-280`; `ready`: `.github/bible/bible_queue.py:327-335` |
 | Analysis toolkit `components` helpers | Maps changed paths to component rows during delta processing | In-process Python import | `BIBLE_SKILLS` path, default `.github/skills` | No fallback is defined for import or helper errors in `Queue.delta`. | `.github/bible/bible_queue.py:474-477,1181-1217` |
 | Analysis toolkit `coverage.py` and `status.py` | Check component coverage and obtain page fingerprint | Local subprocess, `python -I` | `BIBLE_SKILLS` path, default `.github/skills` | Both subprocesses use `GATE_TIMEOUT`. | `.github/bible/bible_queue.py:853-879` |
 

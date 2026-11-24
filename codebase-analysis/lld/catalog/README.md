@@ -49,7 +49,7 @@ flowchart TB
   service -->|"catalog.price_of"| catalogmod
   catalogmod -->|"reads and updates"| records
   testmod -->|"catalog.price_of"| catalogmod
-  catalogmod -->|"urlopen, HTTP"| supplier
+  catalogmod -->|"product JSON, HTTP :80 implicit"| supplier
 ```
 
 | Element | Evidence |

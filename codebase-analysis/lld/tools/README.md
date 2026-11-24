@@ -44,7 +44,7 @@ flowchart LR
   plan -->|"counts tests via count_tests"| gate
   jsonplan -->|"plan input"| gate
   jsonplan -->|"component names"| fanout
-  fanout -->|"labels and issues via gh CLI; transport not stated"| gh
+  fanout -->|"labels and issues via gh CLI, transport not stated"| gh
 ```
 
 | Element | Evidence |
@@ -65,7 +65,7 @@ flowchart LR
 
 ## Main types
 
-Not applicable: the three files declare functions and a shell script, but no classes (`tools/gate.py:23-117`, `tools/plan.py:21-62`, `tools/fanout.sh:1-31`).
+Not applicable: the two Python files declare functions but no classes, and the third file is a shell script (`tools/gate.py:1-117`, `tools/plan.py:1-62`, `tools/fanout.sh:1-31`).
 
 ## Public interface
 

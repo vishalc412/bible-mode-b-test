@@ -41,9 +41,11 @@ flowchart LR
   settle["settle"]
   catalogPrice["catalog.price_of"]
   catalogStock["catalog.in_stock"]
+  urlopen["urllib.request.urlopen"]
   lineTotal -->|"catalog.price_of"| catalogPrice
   orderTotal -->|"line_total"| lineTotal
   validate -->|"catalog.in_stock"| catalogStock
+  settle -->|"HTTP request"| urlopen
 ```
 
 ## Functions and methods
@@ -63,7 +65,7 @@ Source: `components/orders/orders.py:19-20` <!-- code: 878843ee3bcf -->
 
 | Name | Type | Meaning | Checked how |
 | --- | --- | --- | --- |
-| `sku` | not annotated | SKU passed to `catalog.price_of` | Catalog lookup; unknown SKUs raise `KeyError` (`components/catalog/catalog.py:17-22`). |
+| `sku` | not annotated | SKU passed to `catalog.price_of` | Catalog lookup; unknown SKUs raise `KeyError` (`components/catalog/catalog.py:20-24`). |
 | `qty` | not annotated | Multiplier for the catalog price | No validation in this function (`components/orders/orders.py:19-20`). |
 
 **Steps**
@@ -76,7 +78,7 @@ Source: `components/orders/orders.py:19-20` <!-- code: 878843ee3bcf -->
 return catalog.price_of(sku) * qty
 ```
 
-**Output and side effects**: Returns the product of the catalog price and quantity; the catalog lookup may raise `KeyError` for an unknown SKU (`components/orders/orders.py:19-20`, `components/catalog/catalog.py:17-22`).
+**Output and side effects**: Returns the product of the catalog price and quantity; the catalog lookup may raise `KeyError` for an unknown SKU (`components/orders/orders.py:19-20`, `components/catalog/catalog.py:20-24`).
 
 ### `order_total(lines, loyal=False)`
 
@@ -120,7 +122,7 @@ return round(subtotal * (1 - discount), 2)
 | `components/orders/orders.py:28` | `if loyal` | `loyal` is truthy | Sets the discount to `LOYALTY_DISCOUNT` (`components/orders/orders.py:28-29`). |
 | `components/orders/orders.py:30` | `if items >= BULK_THRESHOLD` | Total quantity is at least 10 | Uses the greater of the current discount and `BULK_DISCOUNT` (`components/orders/orders.py:30-31`). |
 
-**Output and side effects**: Returns the discounted subtotal rounded to two decimal places (`components/orders/orders.py:32`). A catalog lookup error from `line_total` propagates (`components/orders/orders.py:25`, `components/catalog/catalog.py:17-22`).
+**Output and side effects**: Returns the discounted subtotal rounded to two decimal places (`components/orders/orders.py:32`). A catalog lookup error from `line_total` propagates (`components/orders/orders.py:25`, `components/catalog/catalog.py:20-24`).
 
 ### `validate(lines)`
 
@@ -144,7 +146,7 @@ Source: `components/orders/orders.py:35-42` <!-- code: c72f2cd2ce78 -->
 1. Creates an empty `errors` list and iterates through `(sku, qty)` pairs (`components/orders/orders.py:36-37`).
 2. If `qty <= 0`, appends `"<sku>: quantity must be positive"`; the `elif` means this line is not also checked for stock (`components/orders/orders.py:38-40`).
 3. Otherwise, if `catalog.in_stock(sku, qty)` is false, appends `"<sku>: not enough stock"` (`components/orders/orders.py:40-41`).
-4. Returns the accumulated list, which is empty if no line met either error condition (`components/orders/orders.py:42`). `catalog.in_stock` returns false for an unknown SKU (`components/catalog/catalog.py:25-27`).
+4. Returns the accumulated list, which is empty if no line met either error condition (`components/orders/orders.py:42`). `catalog.in_stock` returns false for an unknown SKU (`components/catalog/catalog.py:27-29`).
 
 **Pseudo-code**
 
@@ -162,7 +164,7 @@ return errors
 | --- | --- | --- | --- |
 | `components/orders/orders.py:37` | `for` | For each `(sku, qty)` in `lines` | Checks each line in iteration order (`components/orders/orders.py:37-41`). |
 | `components/orders/orders.py:38` | `if qty <= 0` | Quantity is zero or negative | Appends the positive-quantity error (`components/orders/orders.py:38-39`). |
-| `components/orders/orders.py:40` | `elif not catalog.in_stock(sku, qty)` | Quantity is positive and catalog reports insufficient stock or unknown SKU | Appends the stock error (`components/orders/orders.py:40-41`, `components/catalog/catalog.py:25-27`). |
+| `components/orders/orders.py:40` | `elif not catalog.in_stock(sku, qty)` | Quantity is positive and catalog reports insufficient stock or unknown SKU | Appends the stock error (`components/orders/orders.py:40-41`, `components/catalog/catalog.py:27-29`). |
 
 **Output and side effects**: Returns a list of error strings; it does not modify catalog stock (`components/orders/orders.py:36-42`).
 

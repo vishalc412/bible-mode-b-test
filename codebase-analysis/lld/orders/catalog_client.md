@@ -40,7 +40,7 @@ flowchart LR
   remoteLineTotal["remote_line_total"]
   catalog_service["catalog service"]
   remotePrice -->|"catalog_url"| catalogUrl
-  remotePrice -->|"GET /price/{quoted SKU}"| catalog_service
+  remotePrice -->|"GET /price/{quoted SKU}, HTTP :8001 by default"| catalog_service
   remoteLineTotal -->|"remote_price"| remotePrice
 ```
 

@@ -7,14 +7,14 @@ depends_on: [00-mind-map, hld/01-system-context, hld/02-architecture, reference/
 ---
 # bible-mode-b test: system reference
 
-Status: CORRECTED AFTER VERIFICATION (report of 2026-11-23; 7 correction items applied since, not re-verified).
+Status: CORRECTED AFTER VERIFICATION (report of 2026-11-23; 7 report corrections and 6 audit follow-ups applied, not re-verified).
 
 | | |
 | --- | --- |
 | Depth | Deep for all four components |
 | Version given by the user | Not provided |
 | Snapshot | 24 in-scope files, 1,770 current source lines, 2026-11-24 |
-| Coverage | PASS at deep: 116/116 symbols, 310/310 branch lines, 1,855/1,855 citations, 231/231 same-file calls |
+| Coverage | PASS at deep: 116/116 symbols, 310/310 branch lines, 1,860/1,860 citations, 231/231 same-file calls |
 | Produced with | Copilot coding agent; model not recorded |
 | Diagrams | Checked by reading only; no Mermaid renderer was available |
 
@@ -34,23 +34,23 @@ flowchart LR
     catalog["catalog<br/>Python module and optional HTTP service"]
     orders["orders<br/>Python library and HTTP client"]
     queue["bible-mode-b<br/>GitHub Actions workflow and Python queue"]
-    tools["tools<br/>planning, gate, and fanout"]
+    tools["tools<br/>Python and Bash<br/>planning, gate, and fanout"]
   end
   github{{"GitHub<br/>Actions, issues, repository and PRs"}}
   copilot{{"Copilot coding agent<br/>assigned to workflow issues"}}
-  supplier{{"Supplier One<br/>product JSON feed"}}
-  partner{{"Payment partner<br/>settlement endpoint"}}
-  cdn{{"Image CDN<br/>URL target only; not fetched"}}
+  supplier{{"Supplier One<br/>product JSON over HTTP"}}
+  partner{{"Payment partner<br/>settlement over HTTP"}}
+  cdn{{"Image CDN<br/>HTTPS URL target only, not fetched"}}
   operator -->|"manual workflow dispatch"| github
   reviewer -->|"reviews PRs and answers issues"| github
   github -->|"runs workflows from the repository"| queue
-  queue -->|"REST and GraphQL; issue and repository state"| github
+  queue -->|"REST and GraphQL, HTTPS :443 by default, issue and repository state"| github
   github -->|"issue assignment"| copilot
   copilot -->|"session PRs and commits"| github
   orders -->|"in-process catalog calls"| catalog
-  catalog -->|"product JSON, HTTP"| supplier
-  orders -->|"settlement JSON, HTTP"| partner
-  catalog -.->|"returns constructed image URL; no request"| cdn
+  catalog -->|"product JSON, HTTP :80 implicit"| supplier
+  orders -->|"settlement JSON, HTTP :80 implicit"| partner
+  catalog -.->|"returns constructed image URL, no request"| cdn
 ```
 
 | Element | Evidence |

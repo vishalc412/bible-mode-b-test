@@ -48,8 +48,8 @@ sequenceDiagram
   Operator->>Actions: Dispatch bible-plan with model and component inputs
   Actions->>Queue: Run start with GH_TOKEN and workflow inputs
   Queue->>Queue: Validate model and component arguments
-  Queue->>API: Ensure labels and create tracker issue with settings JSON
-  API-->>Queue: Tracker issue number
+  Queue->>API: REST request, HTTPS :443 by default, ensure labels and create tracker issue
+  API-->>Queue: HTTPS :443 by default, tracker issue number
   Queue-->>Actions: Print tracker number and queue-start guidance
   Actions-->>Operator: Report workflow result
 ```
@@ -78,13 +78,13 @@ sequenceDiagram
   participant API as GitHub API
   participant Agent as Copilot coding agent
   Actions->>Queue: Run reconcile from default-branch checkout
-  Queue->>API: List open tracker issues
-  API-->>Queue: Tracker and hidden settings
+  Queue->>API: REST request, HTTPS :443 by default, list open tracker issues
+  API-->>Queue: HTTPS :443 by default, tracker and hidden settings
   Queue->>Queue: Read components.json and select planning phase
-  Queue->>API: Read planning issue text
-  API-->>Queue: Issue template
-  Queue->>API: Create planning issue
-  Queue->>API: Assign configured model
+  Queue->>API: REST request, HTTPS :443 by default, read planning issue text
+  API-->>Queue: HTTPS :443 by default, issue template
+  Queue->>API: REST request, HTTPS :443 by default, create planning issue
+  Queue->>API: REST request, HTTPS :443 by default, assign configured model
   API-->>Agent: Deliver issue assignment
   Agent-->>API: Open planning PR
 ```
@@ -94,7 +94,7 @@ sequenceDiagram
 | 1 | The queue workflow starts on schedule or manual dispatch and checks out the default branch. | `.github/workflows/bible-queue.yml:7-10,23-37` |
 | 2 | `reconcile` lists open tracker issues. | `.github/bible/bible_queue.py:129-131,486-488` |
 | 3 | GitHub returns the tracker and its hidden settings. | `.github/bible/bible_queue.py:129-131,316-321` |
-| 4 | Queue loads `components.json` and selects planning when the catalog is missing, proposed, or invalid. | `.github/bible/bible_queue.py:526-535` |
+| 4 | Queue selects planning when `components.json` is missing, non-dict, marked proposed, or lacks a list-valued `components` field. | `.github/bible/bible_queue.py:601-603` |
 | 5 | Queue reads the planning issue text from `ledger/issues/plan.md`. | `.github/bible/bible_queue.py:645-652` |
 | 6 | GitHub returns the issue template. | `.github/bible/bible_queue.py:645-652` |
 | 7 | Queue creates the planning issue. | `.github/bible/bible_queue.py:144-151,538-546` |
@@ -117,16 +117,16 @@ sequenceDiagram
   participant Gate as coverage.py and status.py
   actor Reviewer as Repository reviewer
   Agent->>API: Open chunk PR with component pages and status
-  Queue->>API: Read PR files and status at PR head
-  Queue->>API: Merge accepted session PR into component branch
-  Queue->>API: Read component status from branch
-  Queue->>API: Download component branch tarball
+  Queue->>API: REST request, HTTPS :443 by default, read PR files and status
+  Queue->>API: REST request, HTTPS :443 by default, merge accepted session PR
+  Queue->>API: REST request, HTTPS :443 by default, read component status
+  Queue->>API: HTTPS :443 by default, download component branch tarball
   Queue->>Gate: Check coverage and calculate page fingerprint
   Gate-->>Queue: Gate result and fingerprint
-  Queue->>API: Create verification issue with separate model
+  Queue->>API: REST request, HTTPS :443 by default, create verification issue
   Agent->>API: Open verification PR with report
-  Queue->>API: Read report and merge accepted verification PR
-  Queue->>API: Create component review PR against default branch
+  Queue->>API: REST request, HTTPS :443 by default, read report and merge PR
+  Queue->>API: REST request, HTTPS :443 by default, create component review PR
   Reviewer->>API: Review and merge component PR
 ```
 
@@ -162,16 +162,16 @@ sequenceDiagram
   Reviewer->>API: Merge all component review PRs
   Actions->>Queue: Run scheduled reconcile
   Queue->>Queue: Select whole-system assembly phase
-  Queue->>API: Read assembly issue template
-  API-->>Queue: Assembly template
-  Queue->>API: Create and assign assembly issue
+  Queue->>API: REST request, HTTPS :443 by default, read assembly issue template
+  API-->>Queue: HTTPS :443 by default, assembly template
+  Queue->>API: REST request, HTTPS :443 by default, create and assign issue
   Agent->>API: Open assembly PR with whole-system pages
   Reviewer->>API: Review and merge assembly PR
-  Queue->>API: Close assembly issue and create verify-all issue
+  Queue->>API: REST request, HTTPS :443 by default, close assembly and create verify-all issue
   Agent->>API: Open verification PR with whole-analysis report
   Reviewer->>API: Review and merge verification PR
-  Queue->>API: Read verdict and validate report
-  Queue->>API: Close tracker and post Done after clean PASS
+  Queue->>API: REST request, HTTPS :443 by default, read verdict and report
+  Queue->>API: REST request, HTTPS :443 by default, close tracker after clean PASS
 ```
 
 | Step | What happens | Evidence |
@@ -207,9 +207,9 @@ sequenceDiagram
   Git->>Actions: Push on default branch
   Actions->>Actions: Checkout full history and write changed.txt
   Actions->>Queue: Run delta with changed-file path
-  Queue->>API: Read components.json and baseline.json
+  Queue->>API: REST request, HTTPS :443 by default, read components and baseline
   Queue->>Queue: Map changed source paths to component names
-  Queue->>API: Skip duplicate or create delta issue
+  Queue->>API: REST request, HTTPS :443 by default, skip duplicate or create delta issue
   API-->>Agent: Assign new issue
 ```
 
@@ -273,7 +273,7 @@ sequenceDiagram
   participant Server as CatalogHandler
   participant Catalog as catalog.py
   Client->>Client: Read CATALOG_URL and percent-encode SKU
-  Client->>Server: GET /price/<sku>, HTTP
+  Client->>Server: GET /price/sku, HTTP port 8001 by default or ephemeral in test
   Server->>Server: Decode URL path
   Server->>Catalog: price_of(sku)
   Catalog-->>Server: Price or KeyError
@@ -306,8 +306,8 @@ sequenceDiagram
   Caller->>Orders: settle(order_id, amount, dev)
   Orders->>Orders: Select partner or localhost URL
   Orders->>Orders: Serialize order and amount as JSON
-  Orders->>Partner: POST JSON, HTTP
-  Partner-->>Orders: HTTP response
+  Orders->>Partner: POST JSON, HTTP port 80 implicit
+  Partner-->>Orders: HTTP response from port 80
   Orders-->>Caller: true only for status 200
 ```
 
@@ -378,8 +378,8 @@ sequenceDiagram
   Actions->>Shell: Pass inputs and secret through environment
   Shell->>Shell: Exit if secret is missing
   Shell->>Shell: Build request.json without token
-  Shell->>API: gh api POST issue with assignment fields
-  API-->>Shell: Issue response
+  Shell->>API: gh api POST issue, HTTPS :443 by default
+  API-->>Shell: HTTPS :443 by default, issue response
   Shell->>Shell: Write response.json and print issue details
   API-->>Agent: Assign issue to Copilot
 ```

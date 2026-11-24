@@ -69,7 +69,7 @@ The dated verification archive's four changed-source citations were rechecked an
 - Refreshed the generated inventory from the current source: 24 files, 14 source files, 1,770 source lines, 116 symbols, and 0 statically detected routes. The catalog GET paths are documented separately because its handler uses imperative path matching rather than route decorators.
 - Updated the coverage ledger to map all 24 in-scope files to analysis pages.
 - Completed HLD pages, mind maps, front page, reference pages, and the knowledge base. The first knowledge graph build identified unmatched front-matter names and two spellings for Supplier One; these were corrected before regenerating the graph.
-- The final knowledge graph is regenerated after this revision; see `knowledge/README.md` for current node, edge and chunk counts.
+- The final knowledge graph was regenerated after the revised pages: 225 nodes, 572 edges, and 327 chunks; see `knowledge/README.md`. The 94 unresolved call edges are recorded as graph limitations.
 - The two component questions have answers and are recorded as resolved; no unanswered questions are open.
 
 ## Quality gate
@@ -79,7 +79,7 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 ### Coverage and depth
 
 - `inventory.py` refreshed the source inventory: 24 in-scope files, 14 source files, 1,770 lines, 116 symbols, and 0 statically detected routes.
-- `coverage.py --depth deep` passed: 116/116 symbols, 98/98 full cards, 310/310 branch lines, 231/231 same-file calls, 17/17 LLD pages with front matter, and 1,855/1,855 citations. The exact measures are in `ledger/coverage-report.md`.
+- `coverage.py --depth deep` passed: 116/116 symbols, 98/98 full cards, 310/310 branch lines, 231/231 same-file calls, 17/17 LLD pages with front matter, and 1,860/1,860 citations. The exact measures are in `ledger/coverage-report.md`.
 - The four component verification reports record `PASS`; the audits cover card depth, branches, endpoint cards, diagrams, citations, and component-specific behavior.
 
 ### Reader test
@@ -102,10 +102,15 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 
 ### Diagrams, evidence, and knowledge base
 
-- The 43 Mermaid blocks were checked against their evidence and required diagram types; no renderer was available, so they were not rendered. This limitation is recorded in `README.md`.
+- The 43 Mermaid blocks were checked against their evidence and required diagram types. The final static pre-flight found no forbidden punctuation or unlabeled flowchart edges; no renderer was available, so they were not rendered. This limitation is recorded in `README.md`.
+- An independent review checked every tenth row in the citation ledger in three batches (186 sampled rows total). The first two batches had no findings; apparent flags in the third batch were re-opened against their full statements and adjacent citations, and none was a confirmed mismatch.
 - All sweep searches and assistant-directed repository text locations are recorded in this file and `run-notes.md`. No secret values were copied into the analysis.
-- `knowledge.py` is rerun after the revised pages; `knowledge/README.md` records current node, edge, chunk and front-matter results. Calls it cannot resolve remain graph limitations; source code and component cards are the source of truth.
-- The three knowledge-base reader questions are summarized after final graph generation.
+- The knowledge base has 225 nodes, 572 edges, and 327 chunks. Store, external-system, and thing names have no duplicates; `AGENT-CONTEXT.md` is 1,739 words, below the 3,000-word limit.
+- Knowledge-base reader test, using only `AGENT-CONTEXT.md`, `symbol-index.json`, and the selected chunks:
+  1. The repository combines sample catalog/order functions with GitHub Actions analysis tooling; the intended customer for the sample app is not stated. `AGENT-CONTEXT.md`, “What the system is” and “Components.”
+  2. Catalog HTTP requests enter `CatalogHandler.do_GET` through `GET /health` or `GET /price/<sku>`; the index points to both route chunks, which list request paths and response statuses. Queue runs enter through workflow adapters or the `start`, `reconcile`, and `delta` commands. `symbol-index.json` entry for `CatalogHandler.do_GET`; `lld/api/catalog/catalog.md#get-health`, `#get-pricesku`, and `AGENT-CONTEXT.md`, “Components.”
+  3. Catalog and order dependency errors are not generally retried; queue GitHub errors are converted to `RuntimeError`, while failed agent sessions receive one retry before a human hold. `lld/catalog/README.md#errors-and-resilience`, `lld/orders/README.md#errors-and-resilience`, and `lld/bible-mode-b/README.md#errors-and-resilience`.
+- Calls the parser cannot resolve remain graph limitations; source code and component cards are the source of truth.
 
 <!-- cites .github/bible/bible_queue.py@9084f4915d286441c5b3a9a29a8df059bf76dacc -->
 
