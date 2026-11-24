@@ -55,6 +55,7 @@ FINGERPRINT_ROW = re.compile(r"^\|\s*Analysis fingerprint\s*\|\s*`?([0-9a-f]{16}
 RECHECK_LINE = re.compile(r"After corrections:[^\n]*?(\d+)\s+of\s+(\d+)\s+confirmed", re.I)
 ACCURACY_ROW = re.compile(r"^\|\s*Accuracy[^|]*\|\s*(\d+(?:\.\d+)?)\s*%", re.M | re.I)
 RECHECK_MIN_ACCURACY = 95.0  # a re-check judges a bounded list: only after a round as accurate as a PASS needs
+REPORT_FILE = re.compile(r"^verification-report[\w.-]*\.md$")
 RECHECK_OF_ROW = re.compile(r"^\|\s*Re-check of\s*\|\s*`?([^|`]+?)`?\s*\|\s*$", re.M | re.I)
 PAGE_ROW = re.compile(r"^\|\s*`?([^|`]+?)`?\s*\|\s*`?([0-9a-f]{12})`?\s*\|\s*$", re.M)
 CITES_LINE = re.compile(r"^<!--\s*cites\s+\S+@[0-9a-f]{40}\s*-->\s*$")
@@ -145,12 +146,19 @@ def base_accuracy(report_path, depth=0):
     if text is None or depth > 20:
         return None
     visible = HIDDEN.sub("", text)
+    if len(VERDICT.findall(visible)) != 1 or len(VERDICT_ROW.findall(visible)) != 1:
+        return None  # only a real report (one verdict) can be a round
+    found = [float(v) for v in ACCURACY_ROW.findall(section(visible, "Scores"))]
+    own = min(found) if found else None
     base = RECHECK_OF_ROW.search(visible)
     if base and RECHECK_LINE.search(visible):
-        nxt = safe_report(os.path.dirname(report_path), base.group(1).strip())
-        return base_accuracy(nxt, depth + 1) if nxt else None
-    found = [float(v) for v in ACCURACY_ROW.findall(section(visible, "Scores"))]
-    return min(found) if found else None
+        name = base.group(1).strip()
+        nxt = safe_report(os.path.dirname(report_path), name) if REPORT_FILE.match(os.path.basename(name)) else None
+        older = base_accuracy(nxt, depth + 1) if nxt else None
+        if older is None:
+            return None  # a broken chain proves nothing
+        return min(older, own) if own is not None else older  # never higher than any round on the way (third review)
+    return own
 
 
 def report_facts(path):
@@ -166,14 +174,11 @@ def report_facts(path):
     majors = sum(1 for line in corrections.splitlines() if line.lstrip().startswith("|") and re.search(r"\|\s*major\s*\|", line, re.I))
     printed = FINGERPRINT_ROW.search(visible)
     recheck = RECHECK_LINE.search(visible)
-    if RECHECK_OF_ROW.search(visible) and recheck:
-        accuracy = base_accuracy(path)  # the full round's own figure, never the copy
-    else:
-        found = [float(v) for v in ACCURACY_ROW.findall(section(visible, "Scores"))]
-        accuracy = min(found) if found else None  # every Accuracy row counts: the lowest one decides
+    accuracy = base_accuracy(path)  # the lowest Accuracy of this report and of every round its Re-check of row leads to
+    chained = bool(RECHECK_OF_ROW.search(visible))
     noted = sum(1 for line in section(visible, "Noticed outside the re-check").splitlines()
                 if line.lstrip().startswith("|") and not re.match(r"^\|\s*(#|-{3}|none\s*\|)", line.strip(), re.I))
-    return {"accuracy": accuracy, "noted": noted, "verdict": verdict.upper() if verdict else "UNREADABLE (the report needs exactly one Verdict row, holding one verdict)", "date": date.group(1) if date else "", "majors": majors,
+    return {"accuracy": accuracy, "noted": noted, "chained": chained, "verdict": verdict.upper() if verdict else "UNREADABLE (the report needs exactly one Verdict row, holding one verdict)", "date": date.group(1) if date else "", "majors": majors,
             "fingerprint": printed.group(1) if printed else None,
             "recheck": (int(recheck.group(1)), int(recheck.group(2))) if recheck else None, "report": path}
 
@@ -212,6 +217,8 @@ def trusted(facts, current):
         return "stale", "pages changed since the verification (fingerprint %s then, %s now): verify the changed parts" % (facts["fingerprint"], current)
     recheck = ", after corrections %d of %d confirmed" % facts["recheck"] if facts["recheck"] else ""
     noted = "; %d minor item(s) noted outside the re-check, for the next full verification" % facts["noted"] if facts.get("noted") else ""
+    if facts["recheck"] and not facts.get("chained"):
+        noted += "; the re-check names no earlier round (no `Re-check of` row): judged by its own Accuracy rows"
     return "ok", "verdict %s%s; the pages are the ones verified (fingerprint %s)%s" % (verdict, recheck, current, noted)
 
 
