@@ -61,12 +61,14 @@ COPILOT = "copilot-swe-agent[bot]"
 AGENT_LOGINS = {l.strip() for l in os.environ.get("BIBLE_AGENT_LOGINS", "Copilot,copilot-swe-agent[bot],copilot-swe-agent").split(",") if l.strip()}
 # With a user token, GitHub records Copilot's pull requests and commits under the token owner's login. What only GitHub
 # can set is the app on the pull request's timeline events: copilot_work_started / copilot_work_finished performed via
-# this app. That marks a pull request as Copilot's, and the last of the two says whether the session is still working.
+# this app. That marks a pull request as Copilot's; the session is still working while copilot_work_started is the last
+# of its WORK_EVENTS (below).
 AGENT_APP = os.environ.get("BIBLE_AGENT_APP", "copilot-swe-agent")
 # A session that ends in an error is recorded as copilot_work_finished_failure. With no copilot_work_started before it,
 # Copilot never ran (seen on github.com, 24 Nov 2026: the account's monthly AI credits were used up; every
 # "@copilot continue" failed within seconds and used 0 premium requests): retrying cannot help, a person must act.
 WORK_EVENTS = ("copilot_work_started", "copilot_work_finished", "copilot_work_finished_failure")
+COMPARE_MAX = 300  # GitHub's comparison of two commits lists at most this many files
 START_ERROR = re.compile(r"unable to start working", re.I)
 FINAL_STATES = ("NEW_CHAT", "COMPONENT_DONE", "WAITING_ANSWER", "STOP")
 NO_PR_AFTER = 30 * 60      # seconds after assignment with no pull request: the session did not start
@@ -229,7 +231,7 @@ class GitHub:
         user = pr.get("user") or {}
         if user.get("login", "") in AGENT_LOGINS and user.get("type", "Bot") == "Bot":
             return True  # an agent login counts only on a Bot account: a person cannot take that name
-        return any(ev == "copilot_work_started" for ev, _ in self.agent_events(pr["number"]))
+        return bool(self.agent_events(pr["number"]))  # any WORK_EVENTS by the agent app: only GitHub can record those
 
     def start_error(self, issue):
         """Copilot's comment saying it could not start (a model not allowed, a policy) since the last assignment, or None."""
@@ -250,8 +252,29 @@ class GitHub:
     def pr_files(self, number):
         """Every path a pull request touches, the old name of a renamed file included. GitHub lists at most 3,000
         files: a list shorter than the pull request's own count is refused, so no file escapes the scope checks."""
-        listed = self.paged("/pulls/%d/files" % number)
-        expected = as_int((self.call("GET", "/pulls/%d" % number) or {}).get("changed_files"))
+        pr = self.call("GET", "/pulls/%d" % number) or {}
+        base, head = pr.get("base") or {}, (pr.get("head") or {}).get("sha")
+        # only an open pull request: once merged, the tip contains it and the comparison is empty
+        tip = (self.branch_sha(base["ref"]) if pr.get("state") == "open" and base.get("ref") and base.get("sha") and head
+               else None)
+        if tip and tip != base["sha"]:
+            # GitHub lists a pull request's files against the base commit it last recorded. Seen on github.com, 24 Nov
+            # 2026: main moved, the revision merged main, and its file list then held main's own changes, so the scope
+            # check failed a clean pull request. Compare against the base branch as it is now (the merge base, as a
+            # merge would see it). GitHub's comparison lists at most COMPARE_MAX files: a full list is refused.
+            compared = self.call("GET", "/compare/%s...%s" % (tip, head))
+            listed = compared.get("files") if isinstance(compared, dict) else None
+            # fail closed: no file list, or none while GitHub counts changed files, is never read as "nothing changed"
+            if not isinstance(listed, list) or (not listed and as_int(pr.get("changed_files"))):
+                raise RuntimeError("the comparison of #%d with %s gave no file list: not checked, not merged"
+                                   % (number, base["ref"]))
+            if len(listed) >= COMPARE_MAX:
+                raise RuntimeError("the file list of #%d is incomplete (%d files or more against %s): not checked, not merged"
+                                   % (number, COMPARE_MAX, base["ref"]))
+            expected = None
+        else:
+            listed = self.paged("/pulls/%d/files" % number)
+            expected = as_int(pr.get("changed_files"))
         if expected and len(listed) != expected:
             raise RuntimeError("the file list of #%d is incomplete (%d of %d files): not checked, not merged"
                                % (number, len(listed), expected))
@@ -1149,7 +1172,10 @@ class Queue:
         asked = sorted(e.get("created_at") or "" for e in events if e.get("event") == "commented"
                        and ((e.get("actor") or e.get("user")) or {}).get("login") == me and CONTINUE_MARK in (e.get("body") or "")
                        and (e.get("created_at") or "") > released)
-        after = [ev for ev, t in sorted(work, key=lambda w: w[1]) if asked and t > asked[-1]]
+        # the work since the queue's last request, or, before any request, since a person last released the hold (the
+        # whole history when nobody has): a first session that fails before starting is held without a continuation
+        since = asked[-1] if asked else released
+        after = [ev for ev, t in sorted(work, key=lambda w: w[1]) if t > since]
         if after and after[-1] == "copilot_work_finished_failure" and "copilot_work_started" not in after:
             # Copilot did not run at all: holding now keeps the queue from spending the remaining continuations on it
             if "bible-needs-human" not in labels_of(issue):
