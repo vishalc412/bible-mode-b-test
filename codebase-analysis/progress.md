@@ -32,7 +32,7 @@ Version: not provided
 | --- | --- | --- | --- | --- | ---: |
 | `catalog` | `components/catalog/` | Python 3; standard-library HTTP server (`components/catalog/service.py:7-12`) | `python3 -m components.catalog.service` (`components/catalog/service.py:40-48`) | `CatalogHandler.do_GET`, `make_server` (`components/catalog/service.py:24-43`) | 3 |
 | `orders` | `components/orders/` | Python 3; standard library (`components/orders/orders.py:1-5`) | Imported and called by Python code (`components/orders/test_orders.py:1-8`) | `line_total`, `order_total`, `validate`, `settle` (`components/orders/orders.py:19-51`) | 4 |
-| `bible-mode-b` | `.github/bible/`, `.github/workflows/` | Python 3 and GitHub Actions YAML (`.github/bible/bible_queue.py:1-10`) | Manual dispatch, 15-minute schedule, and default-branch push workflows (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10,16-18`, `.github/workflows/poc-assign-copilot.yml:11-13`) | `bible_queue.py start`, `reconcile`, `delta` (`.github/bible/bible_queue.py:9-11,1286-1332`) | 4 |
+| `bible-mode-b` | `.github/bible/`, `.github/workflows/` | Python 3 and GitHub Actions YAML (`.github/bible/bible_queue.py:1-10`) | Manual dispatch, 15-minute schedule, and default-branch push workflows (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10`, `.github/workflows/bible-delta.yml:16-18`, `.github/workflows/poc-assign-copilot.yml:11-13`) | `bible_queue.py start`, `reconcile`, `delta` (`.github/bible/bible_queue.py:9-11`, `.github/bible/bible_queue.py:1286-1332`) | 4 |
 | `tools` | `tools/` | Python 3 and Bash (`tools/plan.py:8-15`, `tools/fanout.sh:1-6`) | CLI and shell invocation (`tools/plan.py:41-61`, `tools/gate.py:81-116`, `tools/fanout.sh:1-6`) | `plan.py`, `gate.py`, `fanout.sh` (`tools/plan.py:41-61`, `tools/gate.py:81-116`, `tools/fanout.sh:1-6`) | 3 |
 
 Discovery succeeded and wrote `components.json`, `components.md`, and issue texts under `ledger/issues/`. The component analyses were completed in separate pull requests. The whole-system pass is now being assembled.
@@ -104,6 +104,8 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 - The three knowledge-base reader questions are summarized after final graph generation.
 
 <!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
+
+<!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
 
 <!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
 

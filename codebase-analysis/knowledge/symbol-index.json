@@ -2382,7 +2382,8 @@
     "lld/catalog/catalog.md#fetch_supplier_feedtimeout10"
    ],
    "chunks": [
-    "hld/01-system-context.md#system-context",
+    "hld/01-system-context.md#system-context-part1",
+    "hld/03-integrations.md#dependency-matrix",
     "hld/03-integrations.md#outbound-calls",
     "knowledge/AGENT-CONTEXT.md#domain-vocabulary",
     "lld/catalog/README.md#data",
@@ -2833,7 +2834,7 @@
     "lld/orders/orders.md#settleorder_id-amount-devfalse-timeout15"
    ],
    "chunks": [
-    "hld/01-system-context.md#system-context",
+    "hld/01-system-context.md#system-context-part1",
     "hld/03-integrations.md#inbound-interfaces",
     "hld/03-integrations.md#outbound-calls",
     "hld/05-key-flows.md#8-settlement-sends-an-order-amount",

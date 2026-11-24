@@ -57,14 +57,14 @@ sequenceDiagram
 | Step | What happens | Evidence |
 | ---: | --- | --- |
 | 1 | Operator dispatches the workflow and supplies the inputs. | `.github/workflows/bible-plan.yml:7-23` |
-| 2 | Workflow checks the default branch (the job's `if:` condition), verifies `BIBLE_ASSIGN_TOKEN`, and invokes `start`. | `.github/workflows/bible-plan.yml:36,40-54` |
+| 2 | Workflow checks the default branch (the job's `if:` condition), verifies `BIBLE_ASSIGN_TOKEN`, and invokes `start`. | `.github/workflows/bible-plan.yml:36`, `.github/workflows/bible-plan.yml:40-54` |
 | 3 | `main` validates the model and component arguments. | `.github/bible/bible_queue.py:1309-1313` |
 | 4 | Queue ensures labels, refuses an existing tracker, and creates a tracker issue with settings in a hidden JSON comment. | `.github/bible/bible_queue.py:1314-1322` |
 | 5 | GitHub returns the tracker issue number. | `.github/bible/bible_queue.py:1322-1323` |
 | 6 | CLI prints the issue number and queue-start guidance. | `.github/bible/bible_queue.py:1323-1324` |
 | 7 | Workflow reports its result to the operator. | `.github/workflows/bible-plan.yml:50-54` |
 
-**Failure paths:** A non-default branch skips the job (`if:` at line 36); missing secret exits with an error; invalid models, components, missing repository/token settings, or an already-open tracker terminate `start` rather than creating a second run (`.github/workflows/bible-plan.yml:36,52-54`; `.github/bible/bible_queue.py:1302-1321`).
+**Failure paths:** A non-default branch skips the job (`if:` at line 36); missing secret exits with an error; invalid models, components, missing repository/token settings, or an already-open tracker terminate `start` rather than creating a second run (`.github/workflows/bible-plan.yml:36`, `.github/workflows/bible-plan.yml:52-54`; `.github/bible/bible_queue.py:1302-1321`).
 
 ## 2. Queue creates and assigns the planning session
 
@@ -96,18 +96,18 @@ sequenceDiagram
 
 | Step | What happens | Evidence |
 | ---: | --- | --- |
-| 1 | The queue workflow starts on schedule or manual dispatch and checks out the default branch. | `.github/workflows/bible-queue.yml:7-10,23-37` |
-| 2 | `reconcile` lists open tracker issues. | `.github/bible/bible_queue.py:151-153,607` |
-| 3 | GitHub returns the tracker and its hidden settings. | `.github/bible/bible_queue.py:141-153,405-425` |
+| 1 | The queue workflow starts on schedule or manual dispatch and checks out the default branch. | `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-queue.yml:23-37` |
+| 2 | `reconcile` lists open tracker issues. | `.github/bible/bible_queue.py:151-153`, `.github/bible/bible_queue.py:607` |
+| 3 | GitHub returns the tracker and its hidden settings. | `.github/bible/bible_queue.py:141-153`, `.github/bible/bible_queue.py:405-425` |
 | 4 | Queue loads `components.json` and selects planning when the catalog is missing, proposed, or invalid. | `.github/bible/bible_queue.py:628-630` |
 | 5 | Queue reads the planning issue text from `ledger/issues/plan.md`. | `.github/bible/bible_queue.py:674-678` |
-| 6 | GitHub returns the issue template. | `.github/bible/bible_queue.py:194-198,436-442` |
-| 7 | Queue creates the planning issue. | `.github/bible/bible_queue.py:166-173,679-680` |
-| 8 | Queue assigns the configured analysis model. | `.github/bible/bible_queue.py:445-449,680` |
+| 6 | GitHub returns the issue template. | `.github/bible/bible_queue.py:194-198`, `.github/bible/bible_queue.py:436-442` |
+| 7 | Queue creates the planning issue. | `.github/bible/bible_queue.py:166-173`, `.github/bible/bible_queue.py:679-680` |
+| 8 | Queue assigns the configured analysis model. | `.github/bible/bible_queue.py:445-449`, `.github/bible/bible_queue.py:680` |
 | 9 | GitHub delivers the issue assignment to Copilot. | `.github/bible/bible_queue.py:170-173` |
-| 10 | Agent work and PR status return through GitHub issue timelines and pull requests. | `.github/bible/bible_queue.py:204-234,517-533` |
+| 10 | Agent work and PR status return through GitHub issue timelines and pull requests. | `.github/bible/bible_queue.py:204-234`, `.github/bible/bible_queue.py:517-533` |
 
-**Failure paths:** An unreadable tracker settings block is logged and skipped; a per-tracker exception does not stop reconciliation of other trackers. A detected start error creates a human hold; a no-PR timeout retries once, then requires a person (`.github/bible/bible_queue.py:609-615,686-690,574-601`).
+**Failure paths:** An unreadable tracker settings block is logged and skipped; a per-tracker exception does not stop reconciliation of other trackers. A detected start error creates a human hold; a no-PR timeout retries once, then requires a person (`.github/bible/bible_queue.py:609-615`, `.github/bible/bible_queue.py:686-690`, `.github/bible/bible_queue.py:574-601`).
 
 ## 3. Component session passes the gate and reaches human review
 
@@ -146,20 +146,20 @@ sequenceDiagram
 
 | Step | What happens | Evidence |
 | ---: | --- | --- |
-| 1 | Queue finds the agent's open chunk PR and checks the PR's changed files. | `.github/bible/bible_queue.py:508-514,824,835-850` |
+| 1 | Queue finds the agent's open chunk PR and checks the PR's changed files. | `.github/bible/bible_queue.py:508-514`, `.github/bible/bible_queue.py:824`, `.github/bible/bible_queue.py:835-850` |
 | 2 | Queue validates changed paths and reads status JSON at the PR head. | `.github/bible/bible_queue.py:841-851` |
-| 3 | A valid session PR is marked ready if draft, merged into the component branch, and its issue is closed. | `.github/bible/bible_queue.py:354-368,875-878` |
+| 3 | A valid session PR is marked ready if draft, merged into the component branch, and its issue is closed. | `.github/bible/bible_queue.py:354-368`, `.github/bible/bible_queue.py:875-878` |
 | 4 | Queue reads the merged component status; on `COMPONENT_DONE`, it starts the gate. | `.github/bible/bible_queue.py:742-747` |
-| 5 | Queue unpacks the branch tarball in a temporary directory. | `.github/bible/bible_queue.py:291-330,886-889` |
+| 5 | Queue unpacks the branch tarball in a temporary directory. | `.github/bible/bible_queue.py:291-330`, `.github/bible/bible_queue.py:886-889` |
 | 6 | Queue runs coverage and fingerprint checks using scripts from the configured toolkit path. | `.github/bible/bible_queue.py:882-900` |
 | 7 | Gate returns its pass/fail result and page fingerprint. | `.github/bible/bible_queue.py:897-900` |
 | 8 | Queue starts a verification issue using the distinct verification model. | `.github/bible/bible_queue.py:810-819` |
-| 9 | Verification agent opens a PR containing the verification report. | `.github/bible/bible_queue.py:821-824,872-874` |
-| 10 | Queue merges the eligible verification PR and reads its verdict/fingerprint. | `.github/bible/bible_queue.py:875-878,469-482,777` |
+| 9 | Verification agent opens a PR containing the verification report. | `.github/bible/bible_queue.py:821-824`, `.github/bible/bible_queue.py:872-874` |
+| 10 | Queue merges the eligible verification PR and reads its verdict/fingerprint. | `.github/bible/bible_queue.py:875-878`, `.github/bible/bible_queue.py:469-482`, `.github/bible/bible_queue.py:777` |
 | 11 | A clean `PASS` whose fingerprint matches the checked pages creates a PR for a person to review. | `.github/bible/bible_queue.py:778-782` |
-| 12 | Human reviewer merges the component PR to the default branch. | `.github/bible/bible_queue.py:28,715-716` |
+| 12 | Human reviewer merges the component PR to the default branch. | `.github/bible/bible_queue.py:28`, `.github/bible/bible_queue.py:715-716` |
 
-**Failure paths:** Disallowed PR files, `STOP`, no progress, missing verification report, or a revision that does not reach `COMPONENT_DONE` triggers the one-retry/hold logic. `WAITING_ANSWER` labels the issue and PR. A failed gate starts more component work; a report with corrections, an unreadable or stale fingerprint, or repeated non-clean verification leads to revision, re-verification, or a human hold (`.github/bible/bible_queue.py:582-601,841-874,753-809`).
+**Failure paths:** Disallowed PR files, `STOP`, no progress, missing verification report, or a revision that does not reach `COMPONENT_DONE` triggers the one-retry/hold logic. `WAITING_ANSWER` labels the issue and PR. A failed gate starts more component work; a report with corrections, an unreadable or stale fingerprint, or repeated non-clean verification leads to revision, re-verification, or a human hold (`.github/bible/bible_queue.py:582-601`, `.github/bible/bible_queue.py:841-874`, `.github/bible/bible_queue.py:753-809`).
 
 ## 4. Whole-analysis assembly and verification
 
@@ -203,7 +203,7 @@ sequenceDiagram
 | Step | What happens | Evidence |
 | ---: | --- | --- |
 | 1 | Component PRs are merged by a person; scripts do not merge work to the default branch. | `.github/bible/bible_queue.py:28`, `.github/bible/bible_queue.py:715-716` |
-| 2 | Queue workflow invokes reconciliation. | `.github/workflows/bible-queue.yml:7-10,23-37` |
+| 2 | Queue workflow invokes reconciliation. | `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-queue.yml:23-37` |
 | 3 | Queue selects the whole-system assembly phase when every wanted component's row is `merged`. | `.github/bible/bible_queue.py:666-667` |
 | 4 | Queue reads the assembly issue template. | `.github/bible/bible_queue.py:1027-1028` |
 | 5 | GitHub returns the assembly template. | `.github/bible/bible_queue.py:436-442` |
@@ -252,8 +252,8 @@ sequenceDiagram
 
 | Step | What happens | Evidence |
 | ---: | --- | --- |
-| 1 | Push workflow runs for default-branch changes (job condition) and ignores only `codebase-analysis/**` and `.github/skills/**`; a push that changes workflows or queue code under `.github/` starts it. | `.github/workflows/bible-delta.yml:6-12,19` |
-| 2 | Workflow checks out full history and writes changed paths to `$RUNNER_TEMP/changed.txt`. | `.github/workflows/bible-delta.yml:20-25,34-37` |
+| 1 | Push workflow runs for default-branch changes (job condition) and ignores only `codebase-analysis/**` and `.github/skills/**`; a push that changes workflows or queue code under `.github/` starts it. | `.github/workflows/bible-delta.yml:6-12`, `.github/workflows/bible-delta.yml:19` |
+| 2 | Workflow checks out full history and writes changed paths to `$RUNNER_TEMP/changed.txt`. | `.github/workflows/bible-delta.yml:20-25`, `.github/workflows/bible-delta.yml:34-37` |
 | 3 | CLI reads nonempty path lines and passes them to `Queue.delta`. | `.github/bible/bible_queue.py:1328-1330` |
 | 4 | When a tracker issue is open and its own `Updated` line is no older than 14 days (`ABANDONED_AFTER`), the queue does not create update issues: it comments the plain paths on the first such tracker, in comments of at most 200 paths, each with a hidden `bible-deferred-update` marker, and returns. | `.github/bible/bible_queue.py:1226-1242`, `.github/bible/bible_queue.py:390-391` |
 | 5 | The update issues for those paths are created when the run ends: the assembly phase reads the marked comments the queue itself wrote, runs the update for them before it closes the tracker, and once more for paths recorded after the close. | `.github/bible/bible_queue.py:1038-1050`, `.github/bible/bible_queue.py:1052-1064` |
@@ -306,7 +306,7 @@ sequenceDiagram
 | 1 | Caller supplies `(sku, qty)` lines and a loyalty flag. | `components/orders/orders.py:23-24` |
 | 2 | `order_total` requests each line's price from `catalog.price_of`. | `components/orders/orders.py:19-25` |
 | 3 | Catalog returns the price for a known SKU. | `components/catalog/catalog.py:20-25` |
-| 4 | `order_total` selects the larger loyalty/bulk discount and returns the rounded total. | `components/orders/orders.py:14-16,26-32` |
+| 4 | `order_total` selects the larger loyalty/bulk discount and returns the rounded total. | `components/orders/orders.py:14-16`, `components/orders/orders.py:26-32` |
 | 5 | Caller invokes `validate` on the lines. | `components/orders/orders.py:35` |
 | 6 | Validation rejects nonpositive quantities or asks the catalog whether stock is sufficient. | `components/orders/orders.py:35-42` |
 | 7 | Catalog returns stock availability for the SKU. | `components/catalog/catalog.py:27-29` |
@@ -339,7 +339,7 @@ sequenceDiagram
 
 | Step | What happens | Evidence |
 | ---: | --- | --- |
-| 1 | Client reads `CATALOG_URL` and quotes the SKU. | `components/orders/catalog_client.py:11,14-21` |
+| 1 | Client reads `CATALOG_URL` and quotes the SKU. | `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-21` |
 | 2 | Client sends GET with its configured timeout (default 5 seconds). | `components/orders/catalog_client.py:19-23` |
 | 3 | Handler extracts the URL path. | `components/catalog/service.py:24-25` |
 | 4 | Handler decodes the SKU and calls `price_of`. | `components/catalog/service.py:28-31` |
@@ -374,7 +374,7 @@ sequenceDiagram
 | Step | What happens | Evidence |
 | ---: | --- | --- |
 | 1 | Caller supplies the order identifier, amount, and optional development flag. | `components/orders/orders.py:45` |
-| 2 | `dev=True` selects `localhost:8099`; otherwise the hard-coded partner URL is used. | `components/orders/orders.py:7-12,47` |
+| 2 | `dev=True` selects `localhost:8099`; otherwise the hard-coded partner URL is used. | `components/orders/orders.py:7-12`, `components/orders/orders.py:47` |
 | 3 | Code serializes `order` and `amount` as JSON. | `components/orders/orders.py:48-49` |
 | 4 | Code sends the POST with a 15-second timeout by default. | `components/orders/orders.py:49-50` |
 | 5 | Partner returns an HTTP response. | `components/orders/orders.py:49-51` |
@@ -420,11 +420,11 @@ sequenceDiagram
 | 5 | Fanout reads component names from `plan.json`. | `tools/fanout.sh:9` |
 | 6 | Fanout creates labels and issues through `gh`. | `tools/fanout.sh:10-29` |
 | 7 | Operator runs the component gate for a selected pass. | `tools/gate.py:81-92` |
-| 8 | Gate reads the plan and component pass artifacts. | `tools/gate.py:42-65,86-108` |
+| 8 | Gate reads the plan and component pass artifacts. | `tools/gate.py:42-65`, `tools/gate.py:86-108` |
 | 9 | For pass 3, gate invokes unittest discovery. | `tools/gate.py:63-78` |
-| 10 | Gate prints PASS/FAIL and returns its process status. | `tools/gate.py:23-26,109-117` |
+| 10 | Gate prints PASS/FAIL and returns its process status. | `tools/gate.py:23-26`, `tools/gate.py:109-117` |
 
-**Failure paths:** File/AST/JSON errors stop the relevant tool; the gate fails on missing artifacts, unresolved `ASK`, no new test functions, or failing tests. `fanout.sh` exits on command failure and rejects an unknown engine (`tools/plan.py:21-58`; `tools/gate.py:42-78,94-108`; `tools/fanout.sh:6,24-30`).
+**Failure paths:** File/AST/JSON errors stop the relevant tool; the gate fails on missing artifacts, unresolved `ASK`, no new test functions, or failing tests. `fanout.sh` exits on command failure and rejects an unknown engine (`tools/plan.py:21-58`; `tools/gate.py:42-78`, `tools/gate.py:94-108`; `tools/fanout.sh:6`, `tools/fanout.sh:24-30`).
 
 ## 10. POC workflow creates and assigns a task issue
 
@@ -462,13 +462,15 @@ sequenceDiagram
 | 7 | Shell writes `response.json` and prints issue details. | `.github/workflows/poc-assign-copilot.yml:68-72` |
 | 8 | GitHub assigns the issue to Copilot. | `.github/workflows/poc-assign-copilot.yml:65-72` |
 
-**Failure paths:** Missing `BIBLE_ASSIGN_TOKEN` exits before request creation; invalid input or API/CLI errors stop the job under `set -euo pipefail`. Nothing retries (inferred: a search of the workflow for `retry` finds nothing); the job is limited to 5 minutes (`timeout-minutes: 5`), and the `gh api` call has no timeout of its own (`.github/workflows/poc-assign-copilot.yml:37,40-69`).
+**Failure paths:** Missing `BIBLE_ASSIGN_TOKEN` exits before request creation; invalid input or API/CLI errors stop the job under `set -euo pipefail`. Nothing retries (inferred: a search of the workflow for `retry` finds nothing); the job is limited to 5 minutes (`timeout-minutes: 5`), and the `gh api` call has no timeout of its own (`.github/workflows/poc-assign-copilot.yml:37`, `.github/workflows/poc-assign-copilot.yml:40-69`).
 
 <!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
 
 <!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
 
 <!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
+
+<!-- cites .github/workflows/bible-queue.yml@d54080b12d039672f31f0d0924cc380ded069010 -->
 
 <!-- cites .github/workflows/poc-assign-copilot.yml@dab60e0d846bfee50726dce662df48fc186ca3d3 -->
 

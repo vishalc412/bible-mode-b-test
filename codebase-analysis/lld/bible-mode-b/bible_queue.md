@@ -2113,7 +2113,7 @@ Source: `.github/bible/bible_queue.py:880-905` <!-- code: 4b957b96bfcc -->
 1. Builds the toolkit scripts directory. If `coverage.py` is absent, logs that the gate is skipped and treated as failing, then returns `(False, None)`. (`.github/bible/bible_queue.py:882-885`)
 2. Creates a temporary work directory, downloads and extracts `branch`, then runs isolated `coverage.py` with `--repo`, `--analysis`, configured `--depth`, `--component` and `--report -`. Logs the final stripped output line or `no output`. (`.github/bible/bible_queue.py:886-896`)
 3. Runs isolated `status.py --fingerprint --component` in the same work tree and returns `(run.returncode == 0, printed.stdout.strip() or None)`. (`.github/bible/bible_queue.py:897-900`)
-4. On `RuntimeError` from tarball retrieval, logs the cause and returns `(None, None)`; on `TimeoutExpired`, logs the timeout and returns `(None, None)`. In either case, `finally` removes the temporary directory while ignoring cleanup errors. (`.github/bible/bible_queue.py:889-892,901-905`)
+4. On `RuntimeError` from tarball retrieval, logs the cause and returns `(None, None)`; on `TimeoutExpired`, logs the timeout and returns `(None, None)`. In either case, `finally` removes the temporary directory while ignoring cleanup errors. (`.github/bible/bible_queue.py:889-892`, `.github/bible/bible_queue.py:901-905`)
 
 **Pseudo-code**
 

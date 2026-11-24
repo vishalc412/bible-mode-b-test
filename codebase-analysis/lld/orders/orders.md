@@ -99,8 +99,8 @@ Source: `components/orders/orders.py:23-32` <!-- code: d96746cc95d2 -->
 **Steps**
 
 1. Sums `line_total(sku, qty)` for every pair in `lines` to get `subtotal`, then sums each quantity to get `items` (`components/orders/orders.py:25-26`).
-2. Starts with a `0.0` discount; when `loyal` is truthy, selects `LOYALTY_DISCOUNT` (`0.05`) (`components/orders/orders.py:14,27-29`).
-3. When `items >= BULK_THRESHOLD` (`10`), selects the greater of the current discount and `BULK_DISCOUNT` (`0.10`), so the discounts do not stack (`components/orders/orders.py:15-16,30-31`).
+2. Starts with a `0.0` discount; when `loyal` is truthy, selects `LOYALTY_DISCOUNT` (`0.05`) (`components/orders/orders.py:14`, `components/orders/orders.py:27-29`).
+3. When `items >= BULK_THRESHOLD` (`10`), selects the greater of the current discount and `BULK_DISCOUNT` (`0.10`), so the discounts do not stack (`components/orders/orders.py:15-16`, `components/orders/orders.py:30-31`).
 4. Returns the subtotal multiplied by `1 - discount`, rounded to two decimal places (`components/orders/orders.py:32`).
 
 **Pseudo-code**
@@ -184,7 +184,7 @@ Source: `components/orders/orders.py:45-51` <!-- code: 32a9ae9ec0b6 -->
 | `order_id` | not annotated | Value serialized as the `order` JSON field | No explicit validation (`components/orders/orders.py:45-49`). |
 | `amount` | not annotated | Value serialized as the `amount` JSON field | No explicit validation (`components/orders/orders.py:45-49`). |
 | `dev` | boolean-like, default `False` (inferred: used in a conditional expression) | Selects the development or partner URL | Truthy selects `DEV_SETTLE_URL`; otherwise selects `PARTNER_SETTLE_URL` (`components/orders/orders.py:47`). |
-| `timeout` | not annotated, default `15` | Timeout passed to `urlopen` | Passed directly as the `timeout` argument (`components/orders/orders.py:45,50`). |
+| `timeout` | not annotated, default `15` | Timeout passed to `urlopen` | Passed directly as the `timeout` argument (`components/orders/orders.py:45`, `components/orders/orders.py:50`). |
 
 **Steps**
 

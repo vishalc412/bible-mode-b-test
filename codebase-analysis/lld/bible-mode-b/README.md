@@ -29,7 +29,7 @@ This component coordinates the Mode B analysis workflow through a `start`, `reco
 
 The `bible-plan.yml` workflow starts a run from a manual dispatch, `bible-queue.yml` invokes reconciliation on demand or every 15 minutes, and `bible-delta.yml` writes changed paths to a file and starts delta processing after a default-branch push. (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-plan.yml:50-54`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-queue.yml:34-37`, `.github/workflows/bible-delta.yml:6-10`, `.github/workflows/bible-delta.yml:31-38`)
 
-`poc-assign-copilot.yml` independently creates an issue and assigns Copilot through its inline `gh api` command; it does not invoke the queue or check out repository code. Its required `task` input defaults to an instruction to create `docs/poc-hello.md` with one line, and the input becomes the issue body passed to Copilot. (`.github/workflows/poc-assign-copilot.yml:18-21,31-37,55-69`)
+`poc-assign-copilot.yml` independently creates an issue and assigns Copilot through its inline `gh api` command; it does not invoke the queue or check out repository code. Its required `task` input defaults to an instruction to create `docs/poc-hello.md` with one line, and the input becomes the issue body passed to Copilot. (`.github/workflows/poc-assign-copilot.yml:18-21`, `.github/workflows/poc-assign-copilot.yml:31-37`, `.github/workflows/poc-assign-copilot.yml:55-69`)
 
 No other analysis component calls into this component or is called by it (inferred: repository search for `bible_queue|\.github/bible/` in `*.py` and `*.yml` returned seven references, including the toolkit's mirrored revision rule). The queue's `delta` method does call the analysis toolkit's `components` helpers, which are outside the component catalog. (`.github/bible/bible_queue.py:1247-1249`, `.github/bible/bible_queue.py:1252-1253`, `.github/bible/bible_queue.py:1267`)
 
@@ -267,7 +267,7 @@ The field types shown in the diagram are inferred from constructor assignments a
 | Analysis toolkit `components` helpers | Maps changed paths to component rows during delta processing | In-process Python import | `BIBLE_SKILLS` path, default `.github/skills` | No fallback is defined for import or helper errors in `Queue.delta`. | `.github/bible/bible_queue.py:501-503`, `.github/bible/bible_queue.py:1247-1249` |
 | Analysis toolkit `coverage.py` and `status.py` | Check component coverage and obtain page fingerprint | Local subprocess, `python -I` | `BIBLE_SKILLS` path, default `.github/skills` | Each subprocess is run with a 300-second timeout (`GATE_TIMEOUT`, `.github/bible/bible_queue.py:78`); `subprocess.TimeoutExpired` is logged and the check counts as could not run (`.github/bible/bible_queue.py:901-903`). | `.github/bible/bible_queue.py:501-503`, `.github/bible/bible_queue.py:882-900` |
 
-The API client adds a bearer authorization header only when a token is present (`.github/bible/bible_queue.py:121-122`). It does not log the token value (inferred: a search of `bible_queue.py` for `token` finds it only in the constructor, the header, the `GH_TOKEN` check in `main` and comments, `.github/bible/bible_queue.py:111-112,121-122,1302-1305`, and no `print` or `self.log` call is given it).
+The API client adds a bearer authorization header only when a token is present (`.github/bible/bible_queue.py:121-122`). It does not log the token value (inferred: a search of `bible_queue.py` for `token` finds it only in the constructor, the header, the `GH_TOKEN` check in `main` and comments, `.github/bible/bible_queue.py:111-112`, `.github/bible/bible_queue.py:121-122`, `.github/bible/bible_queue.py:1302-1305`, and no `print` or `self.log` call is given it).
 
 ## Configuration read
 
@@ -334,3 +334,5 @@ None found in this component.
 <!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
 
 <!-- cites .github/workflows/bible-queue.yml@d54080b12d039672f31f0d0924cc380ded069010 -->
+
+<!-- cites .github/workflows/poc-assign-copilot.yml@dab60e0d846bfee50726dce662df48fc186ca3d3 -->

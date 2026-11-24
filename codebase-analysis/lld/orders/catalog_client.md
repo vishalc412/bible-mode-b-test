@@ -21,7 +21,7 @@ Source file: `components/orders/catalog_client.py`
 
 ## Summary
 
-The module resolves `CATALOG_URL` at call time, requests `/price/<quoted SKU>` from that base URL, parses the returned JSON `price`, and optionally multiplies it by a quantity. Its module docstring describes it as orders' HTTP client for the catalog service (`components/orders/catalog_client.py:1-4,14-29`).
+The module resolves `CATALOG_URL` at call time, requests `/price/<quoted SKU>` from that base URL, parses the returned JSON `price`, and optionally multiplies it by a quantity. Its module docstring describes it as orders' HTTP client for the catalog service (`components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:14-29`).
 
 ## Index
 
@@ -68,7 +68,7 @@ Source: `components/orders/catalog_client.py:14-16` <!-- code: e72fa0984dfa -->
 return os.environ.get("CATALOG_URL", DEFAULT_CATALOG_URL).rstrip("/")
 ```
 
-**Output and side effects**: Returns a string based on the environment value or `http://127.0.0.1:8001`; it does not cache the environment value (`components/orders/catalog_client.py:11,14-16`).
+**Output and side effects**: Returns a string based on the environment value or `http://127.0.0.1:8001`; it does not cache the environment value (`components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-16`).
 
 ### `remote_price(sku, timeout=5)`
 
@@ -86,7 +86,7 @@ Source: `components/orders/catalog_client.py:19-23` <!-- code: 03c13d0b8444 -->
 | Name | Type | Meaning | Checked how |
 | --- | --- | --- | --- |
 | `sku` | not annotated | SKU path segment for the price request | Quoted with `safe=""` before insertion into the URL (`components/orders/catalog_client.py:21`). |
-| `timeout` | not annotated, default `5` | Timeout passed to `urlopen` | Passed directly to `urlopen` (`components/orders/catalog_client.py:19,22`). |
+| `timeout` | not annotated, default `5` | Timeout passed to `urlopen` | Passed directly to `urlopen` (`components/orders/catalog_client.py:19`, `components/orders/catalog_client.py:22`). |
 
 **Steps**
 
@@ -144,11 +144,11 @@ return remote_price(sku) * qty
 
 ## Module-level code
 
-The module imports JSON, environment, URL parsing, and URL request libraries and defines `DEFAULT_CATALOG_URL` as `http://127.0.0.1:8001` (`components/orders/catalog_client.py:6-11`). The default and module docstring specify plain HTTP (`components/orders/catalog_client.py:1-4,11`).
+The module imports JSON, environment, URL parsing, and URL request libraries and defines `DEFAULT_CATALOG_URL` as `http://127.0.0.1:8001` (`components/orders/catalog_client.py:6-11`). The default and module docstring specify plain HTTP (`components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:11`).
 
 ## Surprises
 
-This HTTP access path is intended for orders running as its own service; the direct catalog import in `orders.py` is intended when both modules run in one process (today's deployment) (answer to Q1; `components/orders/catalog_client.py:3`, `components/orders/orders.py:5`). The HTTP path's only callers found are the tests, and requests use plain HTTP to `CATALOG_URL`, defaulting to `http://127.0.0.1:8001` (answer to Q1; `components/orders/catalog_client.py:11,14-23`, `components/orders/test_catalog_client.py:37-62`).
+This HTTP access path is intended for orders running as its own service; the direct catalog import in `orders.py` is intended when both modules run in one process (today's deployment) (answer to Q1; `components/orders/catalog_client.py:3`, `components/orders/orders.py:5`). The HTTP path's only callers found are the tests, and requests use plain HTTP to `CATALOG_URL`, defaulting to `http://127.0.0.1:8001` (answer to Q1; `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`, `components/orders/test_catalog_client.py:37-62`).
 
 <!-- cites components/orders/catalog_client.py@469f9d282aab983cdd85f364e46bcd02ef6d3635 -->
 
