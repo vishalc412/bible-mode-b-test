@@ -39,6 +39,8 @@ Handler: [`CatalogHandler.do_GET`](../../catalog/service.md#cataloghandlerdo_get
 | 200 | Path equals `/health` | `{"status": "ok"}` | `components/catalog/service.py:26-27` |
 | 404 | Path is neither `/health` nor a `/price/` path | `{"error": "not found"}` | `components/catalog/service.py:26-28`, `components/catalog/service.py:34` |
 
+Every response carries `Content-Type: application/json` and a `Content-Length` header (`components/catalog/service.py:16-22`). The handler defines `do_GET` only, so a request with another method is answered by the library's default handler with status 501 (assumed: `BaseHTTPRequestHandler` behaviour for a method without a `do_` handler).
+
 ```mermaid
 sequenceDiagram
   autonumber
@@ -87,6 +89,8 @@ Handler: [`CatalogHandler.do_GET`](../../catalog/service.md#cataloghandlerdo_get
 | 200 | SKU exists | `{"sku": "<decoded sku>", "price": <price>}` | `components/catalog/service.py:30-31` |
 | 404 | SKU is unknown | `{"error": "unknown sku <sku>"}` | `components/catalog/service.py:32-33` |
 | 404 | Path does not match `/health` or `/price/` | `{"error": "not found"}` | `components/catalog/service.py:26-28`, `components/catalog/service.py:34` |
+
+Every response carries `Content-Type: application/json` and a `Content-Length` header (`components/catalog/service.py:16-22`). The handler defines `do_GET` only, so a request with another method is answered by the library's default handler with status 501 (assumed: `BaseHTTPRequestHandler` behaviour for a method without a `do_` handler).
 
 ```mermaid
 sequenceDiagram

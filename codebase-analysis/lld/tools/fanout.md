@@ -81,7 +81,7 @@ for each component:
 | `tools/fanout.sh:11` | `for` | For each word in the unquoted `components` expansion | Creates a component label and issue according to `engine` (`tools/fanout.sh:11-30`). |
 | `tools/fanout.sh:24` | `case` | `engine` equals `copilot` | Runs `gh issue create` with `--assignee "@copilot"` and the component label (`tools/fanout.sh:25-26`). |
 | `tools/fanout.sh:24` | `case` | `engine` equals `claude` | Replaces `@copilot` with `@claude` in the body and creates the issue with component and agent labels (`tools/fanout.sh:27-28`). |
-| `tools/fanout.sh:24` | default case | `engine` is neither `copilot` nor `claude` | Prints the unknown-engine message to standard error and exits `2` (`tools/fanout.sh:29`). |
+| `tools/fanout.sh:29` | default case | `engine` is neither `copilot` nor `claude` | Prints the unknown-engine message to standard error and exits `2` (`tools/fanout.sh:29`). |
 
 **Output and side effects**: Invokes GitHub CLI commands targeting the supplied repository to create labels and component issues; the `agent:claude` label command's standard output is discarded (`tools/fanout.sh:10-12`, `tools/fanout.sh:25-29`). When there are no component keys, it still attempts the shared label creation and the loop body runs zero times (`tools/fanout.sh:9-11`).
 

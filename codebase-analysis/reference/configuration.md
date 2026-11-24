@@ -11,7 +11,7 @@ Secret values are not recorded here. `BIBLE_ASSIGN_TOKEN` is configured as a rep
 
 | Key or variable | Purpose | Default | Read in | Set in | Secret? |
 | --- | --- | --- | --- | --- | --- |
-| `CATALOG_HOST` | Catalog HTTP server bind host | `127.0.0.1` | `components/catalog/service.py:40-41` | Environment or `make_server` argument | No |
+| `CATALOG_HOST` | Catalog HTTP server bind host | `127.0.0.1`; the `host` argument of `make_server` comes first, and a variable set to an empty string is used as it is and binds all interfaces (assumed: library behaviour of an empty host string in a socket address) | `components/catalog/service.py:40-43` | Environment or `make_server` argument | No |
 | `CATALOG_PORT` | Catalog HTTP server bind port | `8001` | `components/catalog/service.py:40-43` | Environment or `make_server` argument | No |
 | `SUPPLIER_FEED_URL` | Supplier product JSON endpoint | `http://feeds.supplier-one.example.com/v2/products.json` | `components/catalog/catalog.py:5`, `components/catalog/catalog.py:36-39` | Source constant | No |
 | `IMAGE_CDN` | Prefix used to construct product image URLs; not fetched | `https://cdn.example.com/img/` | `components/catalog/catalog.py:6`, `components/catalog/catalog.py:32-33` | Source constant | No |

@@ -209,9 +209,9 @@ Source: `tools/gate.py:42-78` <!-- code: 705feaea6761 -->
 1. Selects `plan["components"][component]` and initializes an empty `errors` list (`tools/gate.py:43-44`).
 2. For pass 1, reads `inventory.md`; if absent, returns `["inventory.md missing"]`. Otherwise it adds an error for each planned function name not found in the text (`tools/gate.py:45-50`).
 3. For pass 2, reads `risks.md`; if absent, returns `["risks.md missing"]`. For each planned HTTP site, it searches lines containing that site's `at` value, adds an error if no line is found, adds an unresolved-`ASK` error if any matching line says `ASK`, or adds a missing-decision error unless any matching line contains `CHANGE` or `KEEP` (`tools/gate.py:51-62`).
-4. For pass 3, adds an error if `tests-report.md` is absent, collects sorted `components/<component>/test_*.py` paths relative to `ROOT`, and chooses the baseline from `test_count` or, for older plans without it, counts the paths in `spec["tests"]` (`tools/gate.py:63-70`).
+4. For pass 3, adds an error if `tests-report.md` is absent, collects sorted `components/<component>/test_*.py` paths relative to `ROOT`, and chooses the baseline from `test_count` or, for older plans without it, counts the `test_` functions (not the paths) in the files listed in `spec["tests"]` (`tools/gate.py:63-70`).
 5. Adds an error when the current test-function count is not greater than the baseline (`tools/gate.py:70-72`).
-6. Runs unittest discovery from `ROOT` with `-m unittest discover -s . -p test_*.py -t .`; if it fails, appends the last 1,500 characters of stderr to the error (`tools/gate.py:73-77`).
+6. Runs unittest discovery from `ROOT` with `-m unittest discover -s . -p test_*.py -t .`, which finds every `test_*.py` file under `ROOT`, not only the selected component's; if it fails, appends the last 1,500 characters of stderr to the error (`tools/gate.py:73-77`).
 7. Returns the accumulated errors (`tools/gate.py:78`).
 
 **Pseudo-code**
@@ -230,8 +230,8 @@ elif pass 2:
 elif pass 3:
     require tests-report.md
     list and count component test functions
-    compare count with the planned baseline (or count planned paths)
-    run unittest discovery from ROOT
+    compare count with the planned baseline (or count test functions in the planned test files)
+    run unittest discovery over every test_*.py under ROOT
     report failure with stderr tail when command fails
 return errors
 ```
@@ -250,7 +250,7 @@ return errors
 | `tools/gate.py:61` | `elif` | No matching row contains `CHANGE` or `KEEP` and no earlier condition matched | Appends a missing-decision error (`tools/gate.py:61-62`). |
 | `tools/gate.py:63` | `elif` | `n == 3` after the first two conditions are false | Checks the report, test count, and test run (`tools/gate.py:64-77`). |
 | `tools/gate.py:64` | `if` | `tests-report.md` is absent | Appends `tests-report.md missing` and continues (`tools/gate.py:64-65`). |
-| `tools/gate.py:69` | conditional expression | `test_count` is present in `spec` | Uses that snapshot; otherwise counts the planned `spec["tests"]` paths (`tools/gate.py:69`). |
+| `tools/gate.py:69` | conditional expression | `test_count` is present in `spec` | Uses that snapshot; otherwise counts the `test_` functions in the files of `spec["tests"]` (`tools/gate.py:69`, `tools/gate.py:33-39`). |
 | `tools/gate.py:71` | `if` | `now <= before` | Appends an error that the component has no new test functions (`tools/gate.py:71-72`). |
 | `tools/gate.py:76` | `if` | `subprocess.run` returns a nonzero code | Appends a test-failure error with the final 1,500 stderr characters (`tools/gate.py:76-77`). |
 

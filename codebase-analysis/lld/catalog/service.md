@@ -179,20 +179,20 @@ Source: `components/catalog/service.py:40-43` <!-- code: a060da66ba9d -->
 
 | Name | Type | Meaning | Checked how |
 | --- | --- | --- | --- |
-| `host` | string or `None` | Bind address | A falsey value falls back to `CATALOG_HOST`, then `"127.0.0.1"` (`components/catalog/service.py:41`). |
+| `host` | string or `None` | Bind address | A falsey value (`None`, an empty string) falls back to `CATALOG_HOST` when that variable is set (an empty value is used as it is), else `"127.0.0.1"` (`components/catalog/service.py:41`). |
 | `port` | integer-like or `None` | Bind port | If not `None`, converted with `int`; otherwise reads `CATALOG_PORT`, defaulting to `"8001"`, then converts (`components/catalog/service.py:42`). |
 
 **Steps**
 
-1. Selects `host` from the argument or `CATALOG_HOST`, defaulting to `127.0.0.1` (`components/catalog/service.py:41`).
+1. Selects `host`: the argument when it is truthy, else `os.environ.get("CATALOG_HOST", "127.0.0.1")`, so `127.0.0.1` applies only when the variable is unset and an empty `CATALOG_HOST` is used as it is (`components/catalog/service.py:41`).
 2. Selects the explicit non-`None` port or `CATALOG_PORT` (default `"8001"`) and converts it to an integer (`components/catalog/service.py:42`).
 3. Returns `ThreadingHTTPServer((host, port), CatalogHandler)` (`components/catalog/service.py:43`).
 
 **Pseudo-code**
 
 ```text
-host = argument or CATALOG_HOST or 127.0.0.1
-port = int(argument if not None else CATALOG_PORT or 8001)
+host = argument if argument is truthy else environment CATALOG_HOST (127.0.0.1 only when the variable is unset)
+port = int(argument if argument is not None else environment CATALOG_PORT (8001 when unset))
 return ThreadingHTTPServer((host, port), CatalogHandler)
 ```
 
@@ -200,7 +200,9 @@ return ThreadingHTTPServer((host, port), CatalogHandler)
 
 | Line | Branch | When | What happens |
 | --- | --- | --- | --- |
+| `service.py:41` | `or` expression | `host` is falsey | Reads `CATALOG_HOST` with default `"127.0.0.1"` (`components/catalog/service.py:41`). |
 | `service.py:42` | conditional expression | `port is not None` | Uses the explicit port; otherwise reads `CATALOG_PORT` with default `"8001"` (`components/catalog/service.py:42`). |
+| `service.py:42` | call | The port or `CATALOG_PORT` is not a number | `int` raises `ValueError`; nothing in `make_server` catches it (`components/catalog/service.py:42`). |
 
 **Output and side effects**: returns a `ThreadingHTTPServer` bound to `(host, port)` with `CatalogHandler` as its request handler (`components/catalog/service.py:40-43`).
 

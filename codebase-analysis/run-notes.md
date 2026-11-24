@@ -13,6 +13,15 @@ The assistant-related search matched terminology and operational task text, not 
 
 The matching lines are documented as component behavior; they were not treated as directions for this analysis.
 
+## Revision of the report of 2026-11-24, round 4: judgments made without the user
+
+- The report's "README's cautions" (item V-017, the catalog binds loopback by default) was read as the catalog component README, the page that has the cautions about the server; the front page has no cautions section.
+- The bind rule for an empty `CATALOG_HOST` is written as `(assumed: library behaviour)`: the code does not show what an empty host string binds. The report states it as fact.
+- Two corrections were applied in a wider scope than the report names: the narrowing of "POST" for the settlement request (R4-V-007) and the bind rule of `make_server` on every page that repeated it (R4-V-009). Both are in `revision-log.md`.
+- `(inferred: ...)` was used for statements that rest on a search or a comment; where the statement rests on library behaviour, `(assumed: ...)` was used. The marks are counted on the front page by searching the pages, not by reading the gate.
+- The queue file did not change, so there was no delta to apply and the line numbers of the report were valid; each cited line was still opened before it was used.
+- One command of this session created an empty file `/tmp/_unused` outside the analysis folder by mistake (a stray `cat >` redirect) and removed it in the next command. Nothing else was written outside the folder, and nothing was run, installed or fetched over a network.
+
 <!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
 
 <!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->

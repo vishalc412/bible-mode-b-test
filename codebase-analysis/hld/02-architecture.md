@@ -35,7 +35,7 @@ flowchart LR
     catalog["catalog<br/>Python 3 standard library<br/>Product data, functions, optional HTTP server"]
     orders["orders<br/>Python 3 standard library<br/>Totals, validation and settlement"]
     client["catalog_client.py<br/>Python standard library<br/>Optional remote price lookup"]
-    workflows["bible-plan.yml, bible-queue.yml, bible-delta.yml<br/>GitHub Actions YAML"]
+    workflows["bible-plan.yml, bible-queue.yml, bible-delta.yml, poc-assign-copilot.yml<br/>GitHub Actions YAML"]
     queue["bible_queue.py<br/>Python 3 standard library<br/>Run coordinator and GitHub API client"]
     analysiskit[".github/skills toolkit<br/>Local Python helpers and scripts"]
     tools["tools/plan.py, gate.py, fanout.sh<br/>Python 3, Bash, gh"]
@@ -48,8 +48,9 @@ flowchart LR
   payment{{"Payment partner<br/>external"}}
   devsettle{{"Local settle fake<br/>development only"}}
   operator -->|"workflow dispatch"| actions
-  workflows -->|"starts Python entry point"| actions
-  actions -->|"checks out default branch and runs"| queue
+  actions -->|"runs the workflow definitions"| workflows
+  workflows -->|"check out the code and start the Python entry point"| queue
+  workflows -->|"POC only: gh api creates and assigns an issue"| github
   queue -->|"HTTPS REST and GraphQL: issues, refs, files, PRs"| github
   tools -->|"gh CLI: labels and issues, transport not stated"| github
   github -->|"assigns issues"| copilot
@@ -58,7 +59,7 @@ flowchart LR
   client -.->|"HTTP price API, test caller and intended separate-service mode"| catalog
   catalog -->|"HTTP: reads JSON feed"| supplier
   orders -->|"HTTP: settlement request"| payment
-  orders -.->|"HTTP: settlement request when dev is set"| devsettle
+  orders -->|"HTTP: settlement request when dev is set"| devsettle
   catalog -->|"reads and updates"| products
 ```
 
@@ -69,12 +70,13 @@ flowchart LR
 | Catalog product store is module memory | `components/catalog/catalog.py:8-12`, `components/catalog/catalog.py:42-47` |
 | `orders` posts settlements over HTTP to the payment partner, or to a local fake at `localhost:8099` when `dev` is set; `catalog` reads the supplier feed over HTTP | `components/orders/orders.py:7-12`, `components/orders/orders.py:47-51`; `components/catalog/catalog.py:5`, `components/catalog/catalog.py:36-39` |
 | `tools/fanout.sh` calls GitHub through the `gh` CLI | `tools/fanout.sh:10-12`, `tools/fanout.sh:24-29` |
+| The POC workflow calls the GitHub issues API with `gh api` and starts no queue code | `.github/workflows/poc-assign-copilot.yml:66-69` |
 | `bible_queue.py` talks to GitHub over REST and GraphQL (HTTPS by default) | `.github/bible/bible_queue.py:113`, `.github/bible/bible_queue.py:116-125`, `.github/bible/bible_queue.py:354-362` |
 | Workflows invoke queue commands on GitHub Actions runners | `.github/workflows/bible-plan.yml:37-54`; `.github/workflows/bible-queue.yml:23-37`; `.github/workflows/bible-delta.yml:20-38` |
-| Queue uses GitHub API and invokes local analysis toolkit code | `.github/bible/bible_queue.py:92-105`, `.github/bible/bible_queue.py:127-153`, `.github/bible/bible_queue.py:880-905`, `.github/bible/bible_queue.py:1247-1249` |
+| Queue uses GitHub API and invokes local analysis toolkit code | `.github/bible/bible_queue.py:155-173`, `.github/bible/bible_queue.py:127-153`, `.github/bible/bible_queue.py:880-905`, `.github/bible/bible_queue.py:1247-1249` |
 | `tools` contains planning, gate, and fanout commands | `tools/plan.py:21-62`; `tools/gate.py:23-117`; `tools/fanout.sh:1-31` |
 
-Shapes: rounded = people, rectangle = repository units, cylinder = data store, hexagon = external system. Dashed line = documented intended/test-only HTTP path, not a production deployment.
+Shapes: rounded = people, rectangle = repository units, cylinder = data store, hexagon = external system. Dashed line = documented intended/test-only HTTP path, not a production deployment. The local settle fake is drawn solid because `settle` calls it whenever `dev` is set.
 
 ## Deployment
 
@@ -94,6 +96,8 @@ flowchart TB
   end
   copilot{{"Copilot coding agent<br/>external"}}
   operator -->|"dispatch or review"| github
+  operator -->|"starts by hand"| catalogdev
+  operator -->|"runs the test module"| testprocess
   repo -->|"workflow definitions and checked-out code"| runner
   runner -->|"GitHub API"| issues
   runner -->|"assigns work"| copilot
@@ -107,6 +111,11 @@ flowchart TB
 | `bible-delta` | Repository Python script plus Actions YAML | GitHub Actions checkout with `fetch-depth: 0` | Default-branch push, ignoring only `codebase-analysis/**` and `.github/skills/**`; changes under `.github/workflows/` or `.github/bible/` do start it | No service port | `ubuntu-latest`; 15-minute timeout | `$RUNNER_TEMP/changed.txt` | `.github/workflows/bible-delta.yml:6-36`; `.github/bible/bible_queue.py:1250-1253` |
 | POC assignment workflow | Actions YAML and inline shell/`jq`/`gh` commands; no checkout | No build step; explicitly checks out no repository code | Manual `workflow_dispatch` | No service port | `ubuntu-latest`; 5-minute timeout | Runner-local `request.json` and `response.json` | `.github/workflows/poc-assign-copilot.yml:1-10`, `.github/workflows/poc-assign-copilot.yml:11-69` |
 | `tools` | Python scripts and Bash script | No build step declared | CLI or `ENGINE=... tools/fanout.sh <owner/repo>` | None | Not specified | Reads and writes `codebase-analysis/plan.json` | `tools/plan.py:41-58`; `tools/gate.py:81-117`; `tools/fanout.sh:2-12` |
+
+| Edge | Evidence |
+| --- | --- |
+| `operator` starts `catalogdev` by hand | `components/catalog/service.py:3`, `components/catalog/service.py:46-49` |
+| `operator` runs the test module that becomes `testprocess` | `components/orders/test_catalog_client.py:12-19`, `components/orders/test_catalog_client.py:65-66` |
 
 `catalogdev` is a source-supported local invocation, not a deployment declared by a workflow or manifest. The orders test starts its server in the test process on an ephemeral port selected by the operating system (`components/catalog/service.py:40-49`; `components/orders/test_catalog_client.py:12-19`).
 

@@ -144,7 +144,7 @@ Source: `components/orders/orders.py:35-42` <!-- code: c72f2cd2ce78 -->
 1. Creates an empty `errors` list and iterates through `(sku, qty)` pairs (`components/orders/orders.py:36-37`).
 2. If `qty <= 0`, appends `"<sku>: quantity must be positive"`; the `elif` means this line is not also checked for stock (`components/orders/orders.py:38-40`).
 3. Otherwise, if `catalog.in_stock(sku, qty)` is false, appends `"<sku>: not enough stock"` (`components/orders/orders.py:40-41`).
-4. Returns the accumulated list, which is empty if no line met either error condition (`components/orders/orders.py:42`). `catalog.in_stock` returns false for an unknown SKU (`components/catalog/catalog.py:25-27`).
+4. Returns the accumulated list, which is empty if no line met either error condition (`components/orders/orders.py:42`). `catalog.in_stock` returns false for an unknown SKU (`components/catalog/catalog.py:27-29`).
 
 **Pseudo-code**
 
@@ -162,7 +162,7 @@ return errors
 | --- | --- | --- | --- |
 | `components/orders/orders.py:37` | `for` | For each `(sku, qty)` in `lines` | Checks each line in iteration order (`components/orders/orders.py:37-41`). |
 | `components/orders/orders.py:38` | `if qty <= 0` | Quantity is zero or negative | Appends the positive-quantity error (`components/orders/orders.py:38-39`). |
-| `components/orders/orders.py:40` | `elif not catalog.in_stock(sku, qty)` | Quantity is positive and catalog reports insufficient stock or unknown SKU | Appends the stock error (`components/orders/orders.py:40-41`, `components/catalog/catalog.py:25-27`). |
+| `components/orders/orders.py:40` | `elif not catalog.in_stock(sku, qty)` | Quantity is positive and catalog reports insufficient stock or unknown SKU | Appends the stock error (`components/orders/orders.py:40-41`, `components/catalog/catalog.py:27-29`). |
 
 **Output and side effects**: Returns a list of error strings; it does not modify catalog stock (`components/orders/orders.py:36-42`).
 

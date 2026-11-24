@@ -12,6 +12,7 @@ mindmap
       Copilot coding agent, hld/01-system-context.md
       Supplier One feed, hld/03-integrations.md
       Payment partner, hld/03-integrations.md
+      Local settle fake development only, hld/01-system-context.md
       Image CDN URL only, hld/01-system-context.md
     Components
       catalog, lld/catalog/README.md
@@ -79,6 +80,7 @@ mindmap
     Outbound
       Catalog service, hld/03-integrations.md
       Payment partner, hld/03-integrations.md
+      Local settle fake development only, hld/01-system-context.md
 ```
 
 ## bible-mode-b

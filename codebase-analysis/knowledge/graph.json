@@ -1,10 +1,10 @@
 {
- "generated": "2026-11-24T15:08:46",
+ "generated": "2026-11-24T15:55:49",
  "tool": "analyzing-a-codebase/scripts/knowledge.py 1.5.0",
  "stats": {
   "nodes": 211,
   "edges": 566,
-  "chunks": 324,
+  "chunks": 336,
   "calls_unresolved": 97,
   "by_node_type": {
    "File": 33,
