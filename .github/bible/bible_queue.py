@@ -63,6 +63,10 @@ AGENT_LOGINS = {l.strip() for l in os.environ.get("BIBLE_AGENT_LOGINS", "Copilot
 # can set is the app on the pull request's timeline events: copilot_work_started / copilot_work_finished performed via
 # this app. That marks a pull request as Copilot's, and the last of the two says whether the session is still working.
 AGENT_APP = os.environ.get("BIBLE_AGENT_APP", "copilot-swe-agent")
+# A session that ends in an error is recorded as copilot_work_finished_failure. With no copilot_work_started before it,
+# Copilot never ran (seen on github.com, 24 Nov 2026: the account's monthly AI credits were used up; every
+# "@copilot continue" failed within seconds and used 0 premium requests): retrying cannot help, a person must act.
+WORK_EVENTS = ("copilot_work_started", "copilot_work_finished", "copilot_work_finished_failure")
 START_ERROR = re.compile(r"unable to start working", re.I)
 FINAL_STATES = ("NEW_CHAT", "COMPONENT_DONE", "WAITING_ANSWER", "STOP")
 NO_PR_AFTER = 30 * 60      # seconds after assignment with no pull request: the session did not start
@@ -218,7 +222,7 @@ class GitHub:
         """[(event, time)] of Copilot's work on a pull request: events GitHub records as performed via the agent's app."""
         return [(e.get("event"), e.get("created_at") or "") for e in self.timeline(number)
                 if (e.get("performed_via_github_app") or {}).get("slug") == AGENT_APP
-                and e.get("event") in ("copilot_work_started", "copilot_work_finished")]
+                and e.get("event") in WORK_EVENTS]
 
     def is_agent_pr(self, pr):
         """Copilot's pull request: by an agent login, or with Copilot's work recorded on its timeline by GitHub."""
@@ -496,7 +500,7 @@ class Queue:
             return ("no-start" if age(self.gh.assigned_at(issue)) > NO_PR_AFTER else "waiting"), None
         work = self.gh.agent_events(pr["number"])
         if work:  # GitHub says exactly whether Copilot is still working
-            return ("finished" if sorted(work, key=lambda w: w[1])[-1][0] == "copilot_work_finished" else "running"), pr
+            return ("running" if sorted(work, key=lambda w: w[1])[-1][0] == "copilot_work_started" else "finished"), pr
         pushed = age(self.gh.commit_time(pr["head"]["sha"]))
         asked = bool(pr.get("requested_reviewers")) or not pr.get("draft", False)
         if comp and "bible-chunk" in labels_of(issue):
@@ -1139,11 +1143,23 @@ class Queue:
         released = max([e.get("created_at") or "" for e in gh.timeline(issue["number"]) if e.get("event") == "unlabeled"
                         and (e.get("label") or {}).get("name") == "bible-needs-human"] + [""])
         events = gh.timeline(pr["number"])
-        finished = max([e.get("created_at") or "" for e in events if e.get("event") == "copilot_work_finished"
-                        and (e.get("performed_via_github_app") or {}).get("slug") == AGENT_APP] + [""])
+        work = [(e.get("event"), e.get("created_at") or "") for e in events if e.get("event") in WORK_EVENTS
+                and (e.get("performed_via_github_app") or {}).get("slug") == AGENT_APP]
+        finished = max([t for ev, t in work if ev != "copilot_work_started"] + [""])
         asked = sorted(e.get("created_at") or "" for e in events if e.get("event") == "commented"
                        and ((e.get("actor") or e.get("user")) or {}).get("login") == me and CONTINUE_MARK in (e.get("body") or "")
                        and (e.get("created_at") or "") > released)
+        after = [ev for ev, t in sorted(work, key=lambda w: w[1]) if asked and t > asked[-1]]
+        if after and after[-1] == "copilot_work_finished_failure" and "copilot_work_started" not in after:
+            # Copilot did not run at all: holding now keeps the queue from spending the remaining continuations on it
+            if "bible-needs-human" not in labels_of(issue):
+                gh.label(issue["number"], "bible-needs-human")
+                gh.comment(issue["number"], "Copilot's session on #%d failed before it started any work (GitHub recorded "
+                           "copilot_work_finished_failure with no copilot_work_started). The usual causes are the account's "
+                           "Copilot AI credits or budget for the month, or Copilot turned off for this repository; open the "
+                           "session on the pull request to read GitHub's reason. Fix the cause, then remove the label "
+                           "`bible-needs-human`." % pr["number"])
+            return "%s: Copilot could not start: see #%d" % (kind[6:], issue["number"])
         if asked and asked[-1] > finished and age(asked[-1]) <= NO_PR_AFTER:
             return "%s: continuing (pull request #%d)" % (kind[6:], pr["number"])  # asked; Copilot has not started yet
         if len(asked) >= MAX_CONTINUE:
