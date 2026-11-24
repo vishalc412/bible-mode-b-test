@@ -19,90 +19,95 @@ Source file: `.github/bible/bible_queue.py`
 | | |
 | --- | --- |
 | Component | `bible-mode-b` (its design page is `README.md` in this folder) |
-| Lines | 867 |
+| Lines | 1294 |
 | Role | Runs the Mode B analysis queue and its GitHub API client. |
-| Imports that matter | Python standard-library JSON, URL, base64, temporary-file, archive, subprocess, and filesystem modules used by the API client, queue, and CLI. (`.github/bible/bible_queue.py:42-55` <!-- recheck: was .github/bible/bible_queue.py:42-55 -->) |
-| Module-level state | `COPILOT`, `AGENT_LOGINS`, `AGENT_APP`, `START_ERROR`, `FINAL_STATES`, `NO_PR_AFTER`, `IDLE_AFTER`, `MAX_VERIFY_ROUNDS`, `SETTINGS`, `ATTEMPT`, `NAME`, and `LABELS` are initialized at import; environment-backed values include `BIBLE_AGENT_LOGINS` and `BIBLE_AGENT_APP`. (`.github/bible/bible_queue.py:59-83` <!-- recheck: was .github/bible/bible_queue.py:59-83 -->) |
+| Imports that matter | Python standard-library JSON, URL, base64, temporary-file, archive, subprocess, and filesystem modules used by the API client, queue, and CLI. (`.github/bible/bible_queue.py:42-56`) |
+| Module-level state | Constants and labels are initialized at import; environment-backed values include `BIBLE_AGENT_LOGINS` and `BIBLE_AGENT_APP`. (`.github/bible/bible_queue.py:60-99`) |
 
 ## Summary
 
-`main` exposes the `start`, `reconcile`, and `delta` CLI commands. It constructs `Queue` and `GitHub`; `Queue` coordinates tracker/session state and delegates repository operations to `GitHub`, whose methods build REST requests and a GraphQL ready-for-review mutation. `Queue.delta` also imports component-membership helpers from the analysis toolkit. (`.github/bible/bible_queue.py:820-863` <!-- recheck: was .github/bible/bible_queue.py:820-863 -->, `.github/bible/bible_queue.py:396-817` <!-- recheck: was .github/bible/bible_queue.py:396-817 -->, `.github/bible/bible_queue.py:88-302` <!-- recheck: was .github/bible/bible_queue.py:88-302 -->, `.github/bible/bible_queue.py:839-843`)
+`main` exposes the `start`, `reconcile`, and `delta` CLI commands. It constructs `Queue` and `GitHub`; `Queue` coordinates tracker/session state and delegates repository operations to `GitHub`, whose methods build REST requests and a GraphQL ready-for-review mutation. `Queue.delta` also imports component-membership helpers from the analysis toolkit. (`.github/bible/bible_queue.py:1244-1290`, `.github/bible/bible_queue.py:473-1241`, `.github/bible/bible_queue.py:104-347`, `.github/bible/bible_queue.py:1205-1206`)
 
 ## Index
 
 | Symbol | Kind | Lines | Card |
 | --- | --- | --- | --- |
-| `GitHub` | class | 88-302 | [class](#github) |
-| `GitHub.__init__` | method | 89-92 | [card](#github__init__repo-token-api-none) |
-| `GitHub.request` | method | 94-103 | [card](#githubrequestmethod-url-body-none-timeout-60) |
-| `GitHub.call` | method | 105-117 | [card](#githubcallmethod-path-body-none-ok404-false) |
-| `GitHub.paged` | method | 119-127 | [card](#githubpagedpath) |
-| `GitHub.issues` | method | 129-131 | [card](#githubissueslabels-state-open) |
-| `GitHub.ensure_label` | method | 133-138 | [card](#githubensure_labelname-whycodebase-analysis) |
-| `GitHub.ensure_labels` | method | 140-142 | [card](#githubensure_labels) |
-| `GitHub.create_issue` | method | 144-151 | [card](#githubcreate_issuetitle-body-labels-assign-none) |
-| `GitHub.me` | method | 160-164 | [card](#githubme) |
-| `GitHub.default_branch` | method | 153-154 | [card](#githubdefault_branch) |
-| `GitHub.branch_sha` | method | 156-158 | [card](#githubbranch_shabranch) |
-| `GitHub.create_branch` | method | 160-161 | [card](#githubcreate_branchbranch-sha) |
-| `GitHub.reset_branch` | method | 163-164 | [card](#githubreset_branchbranch-sha) |
-| `GitHub.file` | method | 166-170 | [card](#githubfilepath-ref) |
-| `GitHub.prs` | method | 172-174 | [card](#githubprsbase-none-state-open) |
-| `GitHub.timeline` | method | 176-177 | [card](#githubtimelinenumber) |
-| `GitHub.linked_prs` | method | 179-188 | [card](#githublinked_prsnumber) |
-| `GitHub.branch_prs` | method | 190-193 | [card](#githubbranch_prsbranch-base) |
-| `GitHub.agent_events` | method | 195-199 | [card](#githubagent_eventsnumber) |
-| `GitHub.is_agent_pr` | method | 214-219 | [card](#githubis_agent_prpr) |
-| `GitHub.start_error` | method | 221-230 | [card](#githubstart_errorissue) |
-| `GitHub.assigned_at` | method | 217-220 | [card](#githubassigned_atissue) |
-| `GitHub.pr_files` | method | 237-250 | [card](#githubpr_filesnumber) |
-| `GitHub.commit_time` | method | 231-232 | [card](#githubcommit_timesha) |
-| `GitHub.tarball` | method | 255-288 | [card](#githubtarballref-dest) |
-| `GitHub.label` | method | 261-263 | [card](#githublabelnumber-name) |
-| `GitHub.unlabel` | method | 265-266 | [card](#githubunlabelnumber-name) |
-| `GitHub.comment` | method | 268-269 | [card](#githubcommentnumber-text) |
-| `GitHub.close` | method | 271-272 | [card](#githubclosenumber-reason-completed) |
-| `GitHub.set_body` | method | 274-275 | [card](#githubset_bodynumber-body) |
-| `GitHub.unassign` | method | 277-278 | [card](#githubunassignnumber) |
-| `GitHub.assign` | method | 280-281 | [card](#githubassignnumber-assign) |
-| `GitHub.ready` | method | 283-291 | [card](#githubreadypr) |
-| `GitHub.merge` | method | 322-326 | [card](#githubmergepr-title) |
-| `GitHub.close_pr` | method | 298-299 | [card](#githubclose_prnumber) |
-| `GitHub.create_pr` | method | 301-302 | [card](#githubcreate_prhead-base-title-body) |
-| `now` | function | 307-309 | [card](#now) |
-| `age` | function | 312-313 | [card](#age) |
-| `settings_of` | function | 353-373 | [card](#settings_of) |
-| `labels_of` | function | 324-325 | [card](#labels_of) |
-| `comp_label` | function | 328-329 | [card](#comp_label) |
-| `issue_text` | function | 332-338 | [card](#issue_textgh-path-ref-fallback_title) |
-| `assignment` | function | 341-345 | [card](#assignmentgh-base-model) |
-| `json_file` | function | 348-353 | [card](#json_filegh-path-ref) |
-| `section` | function | 356-362 | [card](#sectiontext-title) |
-| `report_facts` | function | 365-378 | [card](#report_factstext) |
-| `as_int` | function | 381-385 | [card](#as_intvalue) |
-| `status_of` | function | 388-391 | [card](#status_ofgh-path-ref) |
-| `Queue` | class | 396-798 | [class](#queue) |
-| `Queue.__init__` | method | 397-399 | [card](#queue__init__gh-log-print) |
-| `Queue.run_issues` | method | 401-402 | [card](#queue_run_issueslabels-state-open) |
-| `Queue.agent_pr` | method | 404-410 | [card](#queue_agent_prissue-base) |
-| `Queue.session` | method | 413-429 | [card](#queue_sessionissue-base-analysis-comp-none) |
-| `Queue.held` | method | 483-516 | [card](#queue_heldissue) |
-| `Queue.model_for` | method | 452-454 | [card](#queue_model_forissue) |
-| `Queue.hold_start_error` | method | 456-462 | [card](#queue_hold_start_errorissue) |
-| `Queue.fail_or_retry` | method | 464-483 | [card](#queue_fail_or_retryissue-pr-why) |
-| `Queue.reconcile` | method | 486-496 | [card](#queue_reconcile) |
-| `Queue.run` | method | 564-608 | [card](#queue_runtracker-settings) |
-| `Queue.plan_phase` | method | 536-558 | [card](#queue_plan_phasetracker-settings-analysis) |
-| `Queue.start_chunk` | method | 560-572 | [card](#queue_start_chunkanalysis-name-fresh-false-note) |
-| `Queue.component` | method | 648-751 | [card](#queue_componentanalysis-name) |
-| `Queue.follow` | method | 753-810 | [card](#queue_followanalysis-name-issue) |
-| `Queue.check` | method | 812-837 | [card](#queue_checkanalysis-name-branch) |
-| `Queue.assemble_phase` | method | 839-907 | [card](#queue_assemble_phasetracker-settings-analysis) |
-| `Queue.revise_all_step` | method | 909-979 | [card](#queue_revise_all_steptracker-analysis) |
-| `Queue.continue_if_unfinished` | method | 981-1019 | [card](#queue_continue_if_unfinishedissue-pr-kind-analysis) |
-| `Queue.render` | method | 778-788 | [card](#queue_rendertracker-settings-rows) |
-| `Queue.delta` | method | 791-817 | [card](#queue_deltachanged-settings_analysiscodebase-analysis) |
-| `main` | function | 820-863 | [card](#main) |
+| `GitHub` | class | 104-347 | [class](#github) |
+| `GitHub.__init__` | method | 105-108 | [card](#github__init__repo-token-api-none) |
+| `GitHub.request` | method | 110-119 | [card](#githubrequestmethod-url-body-none-timeout-60) |
+| `GitHub.call` | method | 121-133 | [card](#githubcallmethod-path-body-none-ok404-false) |
+| `GitHub.paged` | method | 135-143 | [card](#githubpagedpath) |
+| `GitHub.issues` | method | 145-147 | [card](#githubissueslabels-state-open) |
+| `GitHub.ensure_label` | method | 149-154 | [card](#githubensure_labelname-whycodebase-analysis) |
+| `GitHub.ensure_labels` | method | 156-158 | [card](#githubensure_labels) |
+| `GitHub.create_issue` | method | 160-167 | [card](#githubcreate_issuetitle-body-labels-assign-none) |
+| `GitHub.me` | method | 169-173 | [card](#githubme) |
+| `GitHub.default_branch` | method | 175-176 | [card](#githubdefault_branch) |
+| `GitHub.branch_sha` | method | 178-180 | [card](#githubbranch_shabranch) |
+| `GitHub.create_branch` | method | 182-183 | [card](#githubcreate_branchbranch-sha) |
+| `GitHub.reset_branch` | method | 185-186 | [card](#githubreset_branchbranch-sha) |
+| `GitHub.file` | method | 188-192 | [card](#githubfilepath-ref) |
+| `GitHub.prs` | method | 194-196 | [card](#githubprsbase-none-state-open) |
+| `GitHub.timeline` | method | 198-199 | [card](#githubtimelinenumber) |
+| `GitHub.linked_prs` | method | 201-210 | [card](#githublinked_prsnumber) |
+| `GitHub.branch_prs` | method | 212-215 | [card](#githubbranch_prsbranch-base) |
+| `GitHub.agent_events` | method | 217-221 | [card](#githubagent_eventsnumber) |
+| `GitHub.is_agent_pr` | method | 223-228 | [card](#githubis_agent_prpr) |
+| `GitHub.start_error` | method | 230-239 | [card](#githubstart_errorissue) |
+| `GitHub.assigned_at` | method | 241-244 | [card](#githubassigned_atissue) |
+| `GitHub.pr_files` | method | 246-259 | [card](#githubpr_filesnumber) |
+| `GitHub.commit_time` | method | 261-262 | [card](#githubcommit_timesha) |
+| `GitHub.tarball` | method | 264-303 | [card](#githubtarballref-dest) |
+| `GitHub.label` | method | 305-307 | [card](#githublabelnumber-name) |
+| `GitHub.unlabel` | method | 309-310 | [card](#githubunlabelnumber-name) |
+| `GitHub.comment` | method | 312-313 | [card](#githubcommentnumber-text) |
+| `GitHub.close` | method | 315-316 | [card](#githubclosenumber-reason-completed) |
+| `GitHub.set_body` | method | 318-319 | [card](#githubset_bodynumber-body) |
+| `GitHub.unassign` | method | 321-322 | [card](#githubunassignnumber) |
+| `GitHub.assign` | method | 324-325 | [card](#githubassignnumber-assign) |
+| `GitHub.ready` | method | 327-335 | [card](#githubreadypr) |
+| `GitHub.merge` | method | 337-341 | [card](#githubmergepr-title) |
+| `GitHub.close_pr` | method | 343-344 | [card](#githubclose_prnumber) |
+| `GitHub.create_pr` | method | 346-347 | [card](#githubcreate_prhead-base-title-body) |
+| `now` | function | 352-354 | [card](#now) |
+| `age` | function | 357-358 | [card](#age) |
+| `shown_files` | function | 370-375 | [card](#shown_filespaths-limit10) |
+| `settings_of` | function | 378-398 | [card](#settings_of) |
+| `labels_of` | function | 401-402 | [card](#labels_of) |
+| `comp_label` | function | 405-406 | [card](#comp_label) |
+| `issue_text` | function | 409-415 | [card](#issue_textgh-path-ref-fallback_title) |
+| `assignment` | function | 418-422 | [card](#assignmentgh-base-model) |
+| `json_file` | function | 425-430 | [card](#json_filegh-path-ref) |
+| `section` | function | 433-439 | [card](#sectiontext-title) |
+| `report_facts` | function | 442-455 | [card](#report_factstext) |
+| `as_int` | function | 458-462 | [card](#as_intvalue) |
+| `status_of` | function | 465-468 | [card](#status_ofgh-path-ref) |
+| `Queue` | class | 473-1241 | [class](#queue) |
+| `Queue.__init__` | method | 474-476 | [card](#queue__init__gh-log-print) |
+| `Queue.run_issues` | method | 478-479 | [card](#queue_run_issueslabels-state-open) |
+| `Queue.agent_pr` | method | 481-487 | [card](#queue_agent_prissue-base) |
+| `Queue.session` | method | 490-506 | [card](#queue_sessionissue-base-analysis-comp-none) |
+| `Queue.held` | method | 508-541 | [card](#queue_heldissue) |
+| `Queue.model_for` | method | 543-545 | [card](#queue_model_forissue) |
+| `Queue.hold_start_error` | method | 547-553 | [card](#queue_hold_start_errorissue) |
+| `Queue.fail_or_retry` | method | 555-574 | [card](#queue_fail_or_retryissue-pr-why) |
+| `Queue.reconcile` | method | 577-588 | [card](#queue_reconcile) |
+| `Queue.run` | method | 590-641 | [card](#queue_runtracker-settings) |
+| `Queue.plan_phase` | method | 643-665 | [card](#queue_plan_phasetracker-settings-analysis) |
+| `Queue.start_chunk` | method | 667-679 | [card](#queue_start_chunkanalysis-name-fresh-false-note) |
+| `Queue.component` | method | 681-792 | [card](#queue_componentanalysis-name) |
+| `Queue.follow` | method | 794-851 | [card](#queue_followanalysis-name-issue) |
+| `Queue.check` | method | 853-878 | [card](#queue_checkanalysis-name-branch) |
+| `Queue.could_not_check` | method | 880-891 | [card](#queue_could_not_checkkey-what-hold_labels-hold_title) |
+| `Queue.whole_fingerprint` | method | 893-908 | [card](#queue_whole_fingerprintanalysis) |
+| `Queue.assemble_phase` | method | 910-1023 | [card](#queue_assemble_phasetracker-settings-analysis) |
+| `Queue.deferred_updates` | method | 1025-1037 | [card](#queue_deferred_updatestracker) |
+| `Queue.whole_hold` | method | 1039-1045 | [card](#queue_whole_hold) |
+| `Queue.revise_all_step` | method | 1047-1125 | [card](#queue_revise_all_steptracker-analysis) |
+| `Queue.continue_if_unfinished` | method | 1127-1165 | [card](#queue_continue_if_unfinishedissue-pr-kind-analysis) |
+| `Queue.render` | method | 1167-1178 | [card](#queue_rendertracker-settings-rows) |
+| `Queue.delta` | method | 1181-1241 | [card](#queue_deltachanged-settings_analysiscodebase-analysis-recordtrue) |
+| `main` | function | 1244-1290 | [card](#main) |
 
 ## Call graph
 
@@ -135,6 +140,7 @@ flowchart LR
   section["section"]
   reportfacts["report_facts"]
   statusof["status_of"]
+  shownfiles["shown_files"]
   labelsof["labels_of"]
   complabel["comp_label"]
   assignment["assignment"]
@@ -155,7 +161,11 @@ flowchart LR
   component["Queue.component"]
   follow["Queue.follow"]
   check["Queue.check"]
+  couldnotcheck["Queue.could_not_check"]
+  wholefingerprint["Queue.whole_fingerprint"]
   assemblephase["Queue.assemble_phase"]
+  deferredupdates["Queue.deferred_updates"]
+  wholehold["Queue.whole_hold"]
   reviseall["Queue.revise_all_step"]
   continueunfinished["Queue.continue_if_unfinished"]
   render["Queue.render"]
@@ -236,6 +246,7 @@ flowchart LR
   component -->|"follow"| follow
   component -->|"status_of"| statusof
   component -->|"check"| check
+  component -->|"could_not_check"| couldnotcheck
   component -->|"report_facts"| reportfacts
   component -->|"comp_label"| complabel
   component -->|"as_int"| asint
@@ -244,9 +255,16 @@ flowchart LR
   follow -->|"labels_of"| labelsof
   follow -->|"status_of"| statusof
   follow -->|"as_int"| asint
+  follow -->|"shown_files"| shownfiles
   check -->|"tarball"| tarball
   check -->|"subprocess.run"| subprocessrun
   assemblephase -->|"run_issues"| runissues
+  assemblephase -->|"whole_hold"| wholehold
+  assemblephase -->|"whole_fingerprint"| wholefingerprint
+  assemblephase -->|"could_not_check"| couldnotcheck
+  assemblephase -->|"deferred_updates"| deferredupdates
+  assemblephase -->|"shown_files"| shownfiles
+  assemblephase -->|"delta"| delta
   assemblephase -->|"session"| session
   assemblephase -->|"continue_if_unfinished"| continueunfinished
   assemblephase -->|"label"| label
@@ -265,6 +283,13 @@ flowchart LR
   me -->|"call"| call
   prfiles -->|"as_int"| asint
   prfiles -->|"call"| call
+  couldnotcheck -->|"as_int"| asint
+  couldnotcheck -->|"create_issue"| createissue
+  wholefingerprint -->|"tarball"| tarball
+  wholefingerprint -->|"subprocess.run"| subprocessrun
+  wholehold -->|"run_issues"| runissues
+  wholehold -->|"labels_of"| labelsof
+  wholehold -->|"close"| close
   reviseall -->|"assignment"| assignment
   reviseall -->|"close"| close
   reviseall -->|"continue_if_unfinished"| continueunfinished
@@ -272,6 +297,7 @@ flowchart LR
   reviseall -->|"fail_or_retry"| failorretry
   reviseall -->|"held"| held
   reviseall -->|"hold_start_error"| holdstarterror
+  reviseall -->|"shown_files"| shownfiles
   reviseall -->|"is_agent_pr"| isagent
   reviseall -->|"labels_of"| labelsof
   reviseall -->|"linked_prs"| linked
@@ -1444,7 +1470,7 @@ return POST /pulls with head, base, title, and body
 
 ### `Queue`
 
-Source: `.github/bible/bible_queue.py:396-817` <!-- recheck: was .github/bible/bible_queue.py:396-817, the card's code changed --> <!-- code: c7b3115b36f1 -->
+Source: `.github/bible/bible_queue.py:473-1241`
 
 `Queue` coordinates tracker issues, component sessions, verification/revision cycles, assembly, and delta updates. Its constructor sets the GitHub client, logger, and skill directory; methods also populate run-specific fields such as `default`, `settings`, `tracker`, `run_label`, and `estimate` (`.github/bible/bible_queue.py:397-399,464-483,486-496,498-534`).
 
@@ -1683,7 +1709,7 @@ Source: `.github/bible/bible_queue.py:555-574` <!-- code: c86515a02433 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:663`), `Queue.follow` (`.github/bible/bible_queue.py:804`, `.github/bible/bible_queue.py:781` <!-- recheck: was .github/bible/bible_queue.py:781 -->, `.github/bible/bible_queue.py:835`, `.github/bible/bible_queue.py:840`, `.github/bible/bible_queue.py:843`, `.github/bible/bible_queue.py:846`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:1002`) |
+| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:663`), `Queue.follow` (`.github/bible/bible_queue.py:804`, `.github/bible/bible_queue.py:812`, `.github/bible/bible_queue.py:835`, `.github/bible/bible_queue.py:840`, `.github/bible/bible_queue.py:843`, `.github/bible/bible_queue.py:846`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:992`) |
 | Calls | `ATTEMPT.search`, `int`, `self.gh.comment`, `self.gh.close_pr`, `self.gh.label`, `self.gh.unassign`, `self.gh.close`, `ATTEMPT.sub`, `re.search`, `self.gh.create_issue`, `sorted`, `assignment`, `self.model_for`, `labels_of`, `startswith` |
 | Purpose | Closes a failed attempt and opens its retry, or holds the issue after a second failure. |
 
@@ -2175,6 +2201,8 @@ return done
 | `.github/bible/bible_queue.py:946` | if | Report fingerprint equals current pages fingerprint | Continues to the next phase. |
 | `.github/bible/bible_queue.py:948` | if | PASS is stale/unverified, has no prior stale/revision label, and no open verifier issue exists | Labels/comments the issue as stale and returns. |
 | `.github/bible/bible_queue.py:954` | if | Report is not clean and no revision label/open verifier exists | Marks the issue for revision and returns. |
+| `.github/bible/bible_queue.py:957` | conditional expression | Report facts exist | Includes the report verdict in the issue comment; otherwise uses `missing`. |
+| `.github/bible/bible_queue.py:958` | return | A completed verdict needs revision | Returns the corrections-requested status. |
 | `.github/bible/bible_queue.py:959` | elif | A completed assembly issue exists | Skips assembly. |
 | `.github/bible/bible_queue.py:961` | if | Current phase is verify-all | Runs whole-analysis revision handling. |
 | `.github/bible/bible_queue.py:963` | if | Revision handler returned a status | Returns it. |
@@ -2910,13 +2938,13 @@ return data if data is a dict, otherwise {}
 
 ## Module-level code
 
-The module imports Python standard-library utilities and initializes queue labels, environment-derived agent settings, regexes, and timing/verification constants. (`.github/bible/bible_queue.py:42-83` <!-- recheck: was .github/bible/bible_queue.py:42-83 -->)
+The module imports Python standard-library utilities and initializes queue labels, environment-derived agent settings, regexes, and timing/verification constants. (`.github/bible/bible_queue.py:42-99`)
 
-It declares the `GitHub` API client (`.github/bible/bible_queue.py:88-302` <!-- recheck: was .github/bible/bible_queue.py:88-302 -->), helper functions (`.github/bible/bible_queue.py:307-391` <!-- recheck: was .github/bible/bible_queue.py:307-391 -->), and `Queue` coordinator (`.github/bible/bible_queue.py:396-817` <!-- recheck: was .github/bible/bible_queue.py:396-817 -->). The CLI `main` parses arguments, and the module guard calls it when executed as a script. (`.github/bible/bible_queue.py:820-867` <!-- recheck: was .github/bible/bible_queue.py:820-867 -->)
+It declares the `GitHub` API client (`.github/bible/bible_queue.py:104-347`), helper functions (`.github/bible/bible_queue.py:352-468`), and `Queue` coordinator (`.github/bible/bible_queue.py:473-1241`). The CLI `main` parses arguments, and the module guard calls it when executed as a script. (`.github/bible/bible_queue.py:1244-1294`)
 
 ## Surprises
 
-`tarball` filters archive members to regular files and directories and checks normalized targets against the destination root before writing them. (`.github/bible/bible_queue.py:275-288` <!-- recheck: was .github/bible/bible_queue.py:275-288 -->)
+`tarball` limits download/member sizes, filters archive members to regular files and directories, and checks normalized targets against the destination root before writing them. (`.github/bible/bible_queue.py:268-303`)
 
 The `Queue.session` docstring lists four result states, but the code also returns `start-error` when `GitHub.start_error` is truthy. (`.github/bible/bible_queue.py:490-495`)
 

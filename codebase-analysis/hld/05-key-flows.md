@@ -58,13 +58,13 @@ sequenceDiagram
 | ---: | --- | --- |
 | 1 | Operator dispatches the workflow and supplies the inputs. | `.github/workflows/bible-plan.yml:7-23` |
 | 2 | Workflow checks the default branch, verifies `BIBLE_ASSIGN_TOKEN`, and invokes `start`. | `.github/workflows/bible-plan.yml:37-54` |
-| 3 | `main` validates the model and component arguments. | `.github/bible/bible_queue.py:823-827,839-847` |
-| 4 | Queue ensures labels and creates a tracker issue with settings in a hidden JSON comment. | `.github/bible/bible_queue.py:828-854` <!-- recheck: was .github/bible/bible_queue.py:828-854 --> |
+| 3 | `main` validates the model and component arguments. | `.github/bible/bible_queue.py:1267-1271,1277-1279` |
+| 4 | Queue ensures labels, refuses an existing tracker, and creates a tracker issue with settings in a hidden JSON comment. | `.github/bible/bible_queue.py:1272-1280` |
 | 5 | GitHub returns the tracker issue number. | `.github/bible/bible_queue.py:1280-1281` |
 | 6 | CLI prints the issue number and queue-start guidance. | `.github/bible/bible_queue.py:1281-1282` |
 | 7 | Workflow reports its result to the operator. | `.github/workflows/bible-plan.yml:50-54` |
 
-**Failure paths:** A non-default branch skips the job; missing secret exits with an error; invalid models, components, missing repository/token settings, or an already-open tracker terminate `start` rather than creating a second run (`.github/workflows/bible-plan.yml:37-54`; `.github/bible/bible_queue.py:823-854` <!-- recheck: was .github/bible/bible_queue.py:823-854 -->).
+**Failure paths:** A non-default branch skips the job; missing secret exits with an error; invalid models, components, missing repository/token settings, or an already-open tracker terminate `start` rather than creating a second run (`.github/workflows/bible-plan.yml:37-54`; `.github/bible/bible_queue.py:1260-1279`).
 
 ## 2. Queue creates and assigns the planning session
 
@@ -132,8 +132,8 @@ sequenceDiagram
 
 | Step | What happens | Evidence |
 | ---: | --- | --- |
-| 1 | Agent opens a chunk PR containing component pages and a status artifact. | `.github/bible/bible_queue.py:659-696` <!-- recheck: was .github/bible/bible_queue.py:659-696 --> |
-| 2 | Queue validates changed paths and reads status JSON at the PR head. | `.github/bible/bible_queue.py:659-697` <!-- recheck: was .github/bible/bible_queue.py:659-697 --> |
+| 1 | Queue finds the agent's open chunk PR and checks the PR's changed files. | `.github/bible/bible_queue.py:481-486,794-812` |
+| 2 | Queue validates changed paths and reads status JSON at the PR head. | `.github/bible/bible_queue.py:808-824` |
 | 3 | A valid session PR is marked ready if draft, merged into the component branch, and its issue is closed. | `.github/bible/bible_queue.py:284-302,713-718` |
 | 4 | Queue reads the merged component status; on `COMPONENT_DONE`, it starts the gate. | `.github/bible/bible_queue.py:633-636` |
 | 5 | Queue unpacks the branch tarball in a temporary directory. | `.github/bible/bible_queue.py:237-260,723-728` |
