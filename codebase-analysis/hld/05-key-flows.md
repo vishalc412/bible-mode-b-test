@@ -58,13 +58,13 @@ sequenceDiagram
 | ---: | --- | --- |
 | 1 | Operator dispatches the workflow and supplies the inputs. | `.github/workflows/bible-plan.yml:7-23` |
 | 2 | Workflow checks the default branch, verifies `BIBLE_ASSIGN_TOKEN`, and invokes `start`. | `.github/workflows/bible-plan.yml:37-54` |
-| 3 | `main` validates the model and component arguments. | `.github/bible/bible_queue.py:823-827,839-847` |
-| 4 | Queue ensures labels and creates a tracker issue with settings in a hidden JSON comment. | `.github/bible/bible_queue.py:828-854` <!-- recheck: was .github/bible/bible_queue.py:828-854 --> |
+| 3 | `main` validates the model, component arguments, and settings. | `.github/bible/bible_queue.py:1267-1279` |
+| 4 | Queue ensures labels, refuses an already-open tracker, and creates a tracker issue with settings in a hidden JSON comment. | `.github/bible/bible_queue.py:1272-1280` |
 | 5 | GitHub returns the tracker issue number. | `.github/bible/bible_queue.py:1280-1281` |
 | 6 | CLI prints the issue number and queue-start guidance. | `.github/bible/bible_queue.py:1281-1282` |
 | 7 | Workflow reports its result to the operator. | `.github/workflows/bible-plan.yml:50-54` |
 
-**Failure paths:** A non-default branch skips the job; missing secret exits with an error; invalid models, components, missing repository/token settings, or an already-open tracker terminate `start` rather than creating a second run (`.github/workflows/bible-plan.yml:37-54`; `.github/bible/bible_queue.py:823-854` <!-- recheck: was .github/bible/bible_queue.py:823-854 -->).
+**Failure paths:** A non-default branch skips the job; missing secret exits with an error; invalid models, components, settings, missing repository/token settings, or an already-open tracker terminate `start` rather than creating a second run (`.github/workflows/bible-plan.yml:37-54`; `.github/bible/bible_queue.py:1260-1279`).
 
 ## 2. Queue creates and assigns the planning session
 
@@ -132,17 +132,17 @@ sequenceDiagram
 
 | Step | What happens | Evidence |
 | ---: | --- | --- |
-| 1 | Agent opens a chunk PR containing component pages and a status artifact. | `.github/bible/bible_queue.py:659-696` <!-- recheck: was .github/bible/bible_queue.py:659-696 --> |
-| 2 | Queue validates changed paths and reads status JSON at the PR head. | `.github/bible/bible_queue.py:659-697` <!-- recheck: was .github/bible/bible_queue.py:659-697 --> |
-| 3 | A valid session PR is marked ready if draft, merged into the component branch, and its issue is closed. | `.github/bible/bible_queue.py:284-302,713-718` |
-| 4 | Queue reads the merged component status; on `COMPONENT_DONE`, it starts the gate. | `.github/bible/bible_queue.py:633-636` |
-| 5 | Queue unpacks the branch tarball in a temporary directory. | `.github/bible/bible_queue.py:237-260,723-728` |
-| 6 | Queue runs coverage and fingerprint checks using scripts from the configured toolkit path. | `.github/bible/bible_queue.py:764-776` |
-| 7 | Gate returns its pass/fail result and page fingerprint. | `.github/bible/bible_queue.py:767-776` |
-| 8 | Queue starts a verification issue using the distinct verification model. | `.github/bible/bible_queue.py:780-791` |
-| 9 | Verification agent opens a PR containing the verification report. | `.github/bible/bible_queue.py:659-660,709-718` |
-| 10 | Queue merges the eligible verification PR and reads its verdict/fingerprint. | `.github/bible/bible_queue.py:709-718,365-379` |
-| 11 | A clean `PASS` whose fingerprint matches the checked pages creates a PR for a person to review. | `.github/bible/bible_queue.py:707-711` |
+| 1 | Queue observes the chunk or verification session and its linked PR. | `.github/bible/bible_queue.py:794-810` |
+| 2 | Queue validates allowed file paths and reads status JSON at the PR head. | `.github/bible/bible_queue.py:814-847` |
+| 3 | A valid session PR is merged and its issue is closed. | `.github/bible/bible_queue.py:848-851` |
+| 4 | Queue reads component status; on `COMPONENT_DONE`, it starts the gate. | `.github/bible/bible_queue.py:731-741` |
+| 5 | Queue unpacks the branch tarball in a temporary directory. | `.github/bible/bible_queue.py:264-303,859-865` |
+| 6 | Queue runs coverage and fingerprint checks using scripts from the configured toolkit path. | `.github/bible/bible_queue.py:853-879` |
+| 7 | Gate returns its pass/fail result and page fingerprint. | `.github/bible/bible_queue.py:866-873` |
+| 8 | Queue starts a verification issue using the distinct verification model. | `.github/bible/bible_queue.py:785-792` |
+| 9 | Verification PR must contain a report before it can be merged. | `.github/bible/bible_queue.py:845-847` |
+| 10 | Queue reads the verification verdict and fingerprint after the session is merged. | `.github/bible/bible_queue.py:753-780` |
+| 11 | A clean `PASS` whose fingerprint matches the checked pages creates a PR for a person to review. | `.github/bible/bible_queue.py:765-779` |
 | 12 | Human reviewer merges the component PR to the default branch. | `.github/bible/bible_queue.py:28,608-612` |
 
 **Failure paths:** Disallowed PR files, `STOP`, no progress, missing verification report, or a revision that does not reach `COMPONENT_DONE` triggers the one-retry/hold logic. `WAITING_ANSWER` labels the issue and PR. A failed gate starts more component work; a report with corrections, an unreadable or stale fingerprint, or repeated non-clean verification leads to revision, re-verification, or a human hold (`.github/bible/bible_queue.py:455-483,659-713,608-627`).

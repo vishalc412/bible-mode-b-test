@@ -21,8 +21,8 @@ Source file: `.github/bible/bible_queue.py`
 | Component | `bible-mode-b` (its design page is `README.md` in this folder) |
 | Lines | 1,291 |
 | Role | Runs the Mode B analysis queue and its GitHub API client. |
-| Imports that matter | Python standard-library JSON, URL, base64, temporary-file, archive, subprocess, and filesystem modules used by the API client, queue, and CLI. (`.github/bible/bible_queue.py:42-55` <!-- recheck: was .github/bible/bible_queue.py:42-55 -->) |
-| Module-level state | `COPILOT`, `AGENT_LOGINS`, `AGENT_APP`, `START_ERROR`, `FINAL_STATES`, `NO_PR_AFTER`, `IDLE_AFTER`, `MAX_VERIFY_ROUNDS`, `SETTINGS`, `ATTEMPT`, `NAME`, and `LABELS` are initialized at import; environment-backed values include `BIBLE_AGENT_LOGINS` and `BIBLE_AGENT_APP`. (`.github/bible/bible_queue.py:59-83` <!-- recheck: was .github/bible/bible_queue.py:59-83 -->) |
+| Imports that matter | Python standard-library JSON, URL, base64, temporary-file, archive, subprocess, and filesystem modules used by the API client, queue, and CLI. (`.github/bible/bible_queue.py:42-56`) |
+| Module-level state | `COPILOT`, `AGENT_LOGINS`, `AGENT_APP`, `START_ERROR`, verification/session limits, regexes, and `LABELS` are initialized at import; environment-backed values include `BIBLE_AGENT_LOGINS` and `BIBLE_AGENT_APP`. (`.github/bible/bible_queue.py:60-98`) |
 
 ## Summary
 
@@ -468,11 +468,11 @@ flowchart LR
 
 ### `GitHub`
 
-Source: `.github/bible/bible_queue.py:88-302` <!-- recheck: was .github/bible/bible_queue.py:88-302, the card's code changed --> <!-- code: fa8466d1289a -->
+Source: `.github/bible/bible_queue.py:104-347` <!-- code: fa8466d1289a -->
 
-`GitHub` is a client for repository-scoped GitHub REST operations and the GraphQL ready-for-review mutation. Its instance fields are `repo`, `token`, normalized `api`, and `known_labels`; the last begins as `None` and is populated by `ensure_label`. (`.github/bible/bible_queue.py:89-92` <!-- recheck: was .github/bible/bible_queue.py:89-92, the card's code changed -->, `.github/bible/bible_queue.py:133-138` <!-- recheck: was .github/bible/bible_queue.py:133-138, the card's code changed -->)
+`GitHub` is a client for repository-scoped GitHub REST operations and the GraphQL ready-for-review mutation. Its instance fields are `repo`, `token`, normalized `api`, and `known_labels`; the last begins as `None` and is populated by `ensure_label`. (`.github/bible/bible_queue.py:105-108`, `.github/bible/bible_queue.py:149-154`)
 
-No type annotations or factory are declared for the class; callers provide its constructor values. (inferred: `.github/bible/bible_queue.py:88-92` <!-- recheck: was .github/bible/bible_queue.py:88-92, the card's code changed -->)
+No type annotations or factory are declared for the class; callers provide its constructor values. (inferred: `.github/bible/bible_queue.py:104-108`)
 
 #### `GitHub.__init__(repo, token, api=None)`
 
@@ -1471,7 +1471,7 @@ return POST /pulls with head, base, title, and body
 
 ### `Queue`
 
-Source: `.github/bible/bible_queue.py:396-817` <!-- recheck: was .github/bible/bible_queue.py:396-817, the card's code changed --> <!-- code: c7b3115b36f1 -->
+Source: `.github/bible/bible_queue.py:473-1241` <!-- code: c7b3115b36f1 -->
 
 `Queue` coordinates tracker issues, component sessions, verification/revision cycles, assembly, and delta updates. Its constructor sets the GitHub client, logger, and skill directory; methods also populate run-specific fields such as `default`, `settings`, `tracker`, `run_label`, and `estimate` (`.github/bible/bible_queue.py:397-399,464-483,486-496,498-534`).
 
@@ -1710,7 +1710,7 @@ Source: `.github/bible/bible_queue.py:555-574` <!-- code: c86515a02433 -->
 | | |
 | --- | --- |
 | Kind | instance method |
-| Called by | `Queue.plan_phase` (`.github/bible/bible_queue.py:663`), `Queue.follow` (`.github/bible/bible_queue.py:804`, `.github/bible/bible_queue.py:781` <!-- recheck: was .github/bible/bible_queue.py:781 -->, `.github/bible/bible_queue.py:835`, `.github/bible/bible_queue.py:840`, `.github/bible/bible_queue.py:843`, `.github/bible/bible_queue.py:846`), `Queue.assemble_phase` (`.github/bible/bible_queue.py:1002`) |
+| Called by | `Queue.plan_phase`, `Queue.component`, `Queue.assemble_phase`, `Queue.revise_all_step`, `Queue.delta` |
 | Calls | `ATTEMPT.search`, `int`, `self.gh.comment`, `self.gh.close_pr`, `self.gh.label`, `self.gh.unassign`, `self.gh.close`, `ATTEMPT.sub`, `re.search`, `self.gh.create_issue`, `sorted`, `assignment`, `self.model_for`, `labels_of`, `startswith` |
 | Purpose | Closes a failed attempt and opens its retry, or holds the issue after a second failure. |
 
@@ -1989,7 +1989,6 @@ else:
 | `.github/bible/bible_queue.py:751` | if | Report is clean `PASS` and fingerprint matches checked pages | Creates the final PR. |
 | `.github/bible/bible_queue.py:770` | if | No later chunk exists and the verify-round bound is reached | Creates a human-hold issue. |
 | `.github/bible/bible_queue.py:779` | if | Current-page report needs revision and no chunk followed it | Starts a revision session. |
-| `.github/bible/bible_queue.py:738` <!-- recheck: was .github/bible/bible_queue.py:738, the card's code changed --> | return | Verification is needed | Creates verification issue and returns. |
 
 #### `Queue.follow(analysis, name, issue)`
 
@@ -2974,13 +2973,13 @@ return data if data is a dict, otherwise {}
 
 ## Module-level code
 
-The module imports Python standard-library utilities and initializes queue labels, environment-derived agent settings, regexes, and timing/verification constants. (`.github/bible/bible_queue.py:42-83` <!-- recheck: was .github/bible/bible_queue.py:42-83 -->)
+The module imports Python standard-library utilities and initializes queue labels, environment-derived agent settings, regexes, and timing/verification constants. (`.github/bible/bible_queue.py:42-98`)
 
-It declares the `GitHub` API client (`.github/bible/bible_queue.py:88-302` <!-- recheck: was .github/bible/bible_queue.py:88-302 -->), helper functions (`.github/bible/bible_queue.py:307-391` <!-- recheck: was .github/bible/bible_queue.py:307-391 -->), and `Queue` coordinator (`.github/bible/bible_queue.py:396-817` <!-- recheck: was .github/bible/bible_queue.py:396-817 -->). The CLI `main` parses arguments, and the module guard calls it when executed as a script. (`.github/bible/bible_queue.py:820-867` <!-- recheck: was .github/bible/bible_queue.py:820-867 -->)
+It declares the `GitHub` API client (`.github/bible/bible_queue.py:104-347`), helper functions (`.github/bible/bible_queue.py:352-468`), and `Queue` coordinator (`.github/bible/bible_queue.py:473-1241`). The CLI `main` parses arguments, and the module guard calls it when executed as a script. (`.github/bible/bible_queue.py:1244-1294`)
 
 ## Surprises
 
-`tarball` filters archive members to regular files and directories and checks normalized targets against the destination root before writing them. (`.github/bible/bible_queue.py:275-288` <!-- recheck: was .github/bible/bible_queue.py:275-288 -->)
+`tarball` limits download size and archive member count/unpacked bytes, skips non-file/non-directory members, and checks normalized targets against the destination root before writing them. (`.github/bible/bible_queue.py:267-303`)
 
 The `Queue.session` docstring lists four result states, but the code also returns `start-error` when `GitHub.start_error` is truthy. (`.github/bible/bible_queue.py:490-495`)
 
