@@ -121,7 +121,11 @@ def load_docs(analysis_abs: str):
                 continue
             full = os.path.join(root, name)
             rel = os.path.relpath(full, analysis_abs).replace(os.sep, "/")
-            if rel in SKIP_DOCS or rel.startswith(("impact/", "ledger/components/", "ledger/issues/")) or os.path.islink(full):
+            # Root-level verification-* files are records (the current report, earlier rounds kept as
+            # verification-report-<date>.md, the coverage reports), never analysis pages: status.fingerprint
+            # leaves them out by the same rule, so delta never marks a past round's citations for recheck.
+            if (rel in SKIP_DOCS or ("/" not in rel and name.startswith("verification-"))
+                    or rel.startswith(("impact/", "ledger/components/", "ledger/issues/")) or os.path.islink(full)):
                 continue
             with open(full, encoding="utf-8", errors="replace") as handle:
                 docs[rel] = handle.read()
