@@ -18,7 +18,7 @@ The **bible** is the book an engineer keeps open beside the code: any question a
 ## Rules
 
 - **Read-only.** List, search, count and run the scripts below; the code itself is never edited, run, built or tested, and no address found in it is ever called.
-- **Write only inside the output folder**, each file by its full path (`codebase-analysis/lld/backend/upload_service.md`). If no file tool can create the folder, ask the user to, and stop.
+- **Write only inside the output folder**, each file by its full path (`codebase-analysis/lld/backend/upload_service.md`). If no file tool can create the folder, ask the user to, and stop. That includes scratch files: none in `/tmp` or beside the folder.
 - **Cite every fact** as `` `path:line` `` or `` `path:start-end` `` from the repository root, and mark what the code does not state `(inferred: why)` or `(assumed: library)`. What you cannot cite becomes an open question. [references/evidence.md](references/evidence.md) has the rules; read it before the first page.
 - **Open a file before you document it**, and write the architecture after the components. Describe the code, not the people who wrote it.
 

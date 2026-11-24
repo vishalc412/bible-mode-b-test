@@ -11,7 +11,7 @@ You are the **checker**, not the author: find out how complete, how deep and how
 
 - **New chat only.** If this conversation wrote the analysis, stop and tell the user to open a new one.
 - **Open the cited lines yourself for every statement you judge,** and re-run the script yourself. The author's `coverage-report.md`, `run-notes.md` and `progress.md` are claims: confirm any user decision they record with the user, or mark it unconfirmed.
-- **Write only `verification-report.md` and the coverage reports you name with `--report`** (`verification-coverage.md`, plus one per extra depth) in the analysis folder; the script also refreshes `ledger/citations.tsv` (in component scope, the component's own copy). For one component, the same files go under `ledger/components/<name>/` instead. Corrections go in the report.
+- **Write only `verification-report.md` and the coverage reports you name with `--report`** (`verification-coverage.md`, plus one per extra depth) in the analysis folder; the script also refreshes `ledger/citations.tsv` (in component scope, the component's own copy). For one component, the same files go under `ledger/components/<name>/` instead. Corrections go in the report. Nothing else, anywhere: no scratch copy in `/tmp` or beside the folder (in the live run, three sessions briefly wrote one); work in memory or on the command line.
 - **List, search, count and run this skill's script;** the application, its tests and its build stay unrun. Evidence comes from the repository, never from what you know about a library.
 - **No personal data in the report.**
 - **After a delta update** (`delta-log.md` has rows newer than the last verification report): every card the update rewrote is unverified. Audit the files and functions `ledger/delta.md` names in full, then draw the usual fixed sample from the rest, and say in the report which part was which.
@@ -60,6 +60,17 @@ Copy this checklist into your reply and tick it as you go:
 
 **At step 8, keep the earlier report:** if a `verification-report.md` is already there, rename it first to `verification-report-<its Date>.md` (add `-2`, `-3` if that name exists), so every round's figures stay on record. **Record the fingerprint** of the pages you judged in the report's header (`status.py --fingerprint`, from the analysing skill's scripts; component scope: `--component <name>`): it is how other skills know the pages are still the ones you verified. **Before step 8, read [references/report.md](references/report.md):** scores, verdict rules and the report template. Step 8 is done when every section of the template is filled or marked `none`, and the verdict follows from the scores by the verdict table.
 
+## Re-check after a revision
+
+When `verification-report.md` says `PASS AFTER CORRECTIONS` and `revision-log.md` records a revision of it, the next verification is its **re-check**, unless the user asks for a full one. A new sample would find new small items each round, a target that never settles (in the live run, five full rounds each found a fresh set). The re-check judges a bounded list instead:
+
+1. Steps 1 and 2 as usual (snapshot, coverage gate).
+2. List every statement the report flagged (each correction, and each sampled row not `Confirmed`) and every statement the revision changed (the rows of `revision-log.md` for this report; the files `ledger/delta.md` names, if an update ran). That list is Y.
+3. Open the cited lines of each and judge it with step 4's vocabulary. X is the number `Confirmed`. Draw no new sample.
+4. Write a new report, keeping the earlier one as at step 8, from the template in [references/report.md](references/report.md). The verdict is the earlier one. **Corrections** lists only the statements not confirmed, and **Earlier corrections re-confirmed** has one row per item. Write the line `After corrections: every flagged statement re-checked: X of Y confirmed.` under the header table, and record the fingerprint of the pages now.
+
+Something wrong that you notice outside the list goes under **Limits**, for the next full verification, and not into X or Y. The exception is a `major` error, a wrong statement that a reader would act on: add it to the list as not confirmed, and say so. `status.py` trusts a re-check only when X equals Y.
+
 ## Finish
 
 Tell the user the verdict in two lines, the coverage figures, and the next step:
@@ -67,7 +78,7 @@ Tell the user the verdict in two lines, the coverage figures, and the next step:
 | Verdict | Next step |
 | --- | --- |
 | `PASS` | The analysis can be relied on to the extent of its ledger |
-| `PASS AFTER CORRECTIONS` | Run `analyzing-a-codebase` with this report: it revises in place |
+| `PASS AFTER CORRECTIONS` | Run `analyzing-a-codebase` with this report: it revises in place; then a re-check (above), in a new chat |
 | `FAIL` | Revise, then verify again in full |
 
 Then, for the whole analysis only (component scope skips this: the file is outside the component's folder), record the result where other skills look for it: `python3 -I <analyzing-a-codebase>/scripts/status.py --repo . --analysis <folder> --write` (that skill's script; skip it, and say so, if the skill is not installed). It works out the status from your report, the gate and the code, so the front page never has to be trusted on its own.
