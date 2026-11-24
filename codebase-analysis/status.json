@@ -6,7 +6,8 @@
   "verdict": "PASS AFTER CORRECTIONS",
   "date": "2026-11-24",
   "major_corrections": 0,
-  "report": "verification-report.md"
+  "report": "verification-report.md",
+  "noted_outside_recheck": 0
  },
  "baseline": {
   "recorded": "2026-11-24T14:34:00",
@@ -40,9 +41,9 @@
   }
  },
  "reasons": [
-  "after corrections only 14 of 18 flagged statements confirmed: correct and re-check the rest",
+  "after corrections only 14 of 16 flagged statements confirmed: correct and re-check the rest",
   "0 of 4 components verified"
  ],
  "notes": [],
- "checked": "2026-11-24T16:54:09"
+ "checked": "2026-11-24T17:16:55"
 }
