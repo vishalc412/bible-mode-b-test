@@ -521,20 +521,25 @@ def recheck_due(facts):
 
 
 def accepted(facts):
-    """True when a report counts as verified, by status.py's rule (trusted(), fingerprint apart): a PASS with no open
-    major correction, or a PASS AFTER CORRECTIONS whose re-check confirmed every flagged statement (X of Y, X = Y).
-    Before 1.11.0's last fix the queue took only a clean PASS, so a completed re-check never ended a run (live run)."""
+    """True when a report counts as verified, by status.py's trusted() rule, step for step (the fingerprint apart):
+    a major correction needs a re-check with X = Y exactly; a re-check short of Y (X < Y, or Y = 0) is accepted only for
+    a full round's own PASS with no major, never for a re-check (it names its round or lists items noticed outside
+    it); a PASS AFTER CORRECTIONS needs a re-check; any report with a re-check needs 95% accuracy on its chain."""
     if not facts or facts[0] not in ("PASS", "PASS AFTER CORRECTIONS"):
         return False
+    verdict, majors = facts[0], facts[1]
     recheck = facts[3] if len(facts) > 3 else None
-    complete = bool(recheck and recheck[1] > 0 and recheck[0] >= recheck[1])  # status.py refuses only X < Y
-    if recheck and not complete and (facts[0] != "PASS" or facts[1] or not recheck[1] or (len(facts) > 5 and facts[5])):
-        return False  # status.py's rule: only a full round's PASS (no major) may leave earlier minor items re-listed
-    if recheck and (len(facts) < 5 or facts[4] is None or facts[4] < RECHECK_MIN_ACCURACY):
-        return False  # a re-check counts only after a round as accurate as a PASS needs (status.py's rule)
-    if facts[1] and not complete:
+    is_recheck = bool(len(facts) > 5 and facts[5])
+    if majors and not (recheck and recheck[0] == recheck[1]):
         return False
-    return facts[0] == "PASS" or complete
+    if recheck and (recheck[1] == 0 or recheck[0] < recheck[1]):
+        if verdict != "PASS" or majors or recheck[1] == 0 or is_recheck:
+            return False
+    if verdict == "PASS AFTER CORRECTIONS" and not recheck:
+        return False
+    if recheck and (len(facts) < 5 or facts[4] is None or facts[4] < RECHECK_MIN_ACCURACY):
+        return False
+    return True
 
 
 def as_int(value):
