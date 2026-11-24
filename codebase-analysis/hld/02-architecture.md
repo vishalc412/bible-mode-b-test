@@ -22,7 +22,7 @@ depends_on:
 ---
 # Architecture
 
-The application is a small Python library with a standard-library HTTP server; the repository also contains command-line analysis tools and GitHub Actions adapters. No application image, package build, deployment manifest, service manager, or production topology is declared (inferred: a listing of the 24 files outside the analysis folder and the skills shows no Dockerfile, compose file, Procfile, manifest, service unit or build file, and a search of them for `dockerfile`, `docker-compose`, `procfile`, `kubernetes`, `helm`, `terraform` and `systemd` finds 0 hits). GitHub Actions runs the Mode B scripts on `ubuntu-latest` runners (assumed: GitHub-hosted runners). The TLS migration inventory and service configuration are repository configuration artifacts, not deployed services (`tls-migration/evidence/inventory.json:1-14`; `tls-migration/tls-services.yaml:1-20`).
+The application is a small Python library with a standard-library HTTP server; the repository also contains command-line analysis tools and GitHub Actions adapters. No application image, package build, deployment manifest, service manager, or production topology is declared (inferred: a listing of the 30 files outside the analysis folder and the skills shows no Dockerfile, compose file, Procfile, manifest, service unit or build file, and a search of them for `dockerfile`, `docker-compose`, `procfile`, `kubernetes`, `helm`, `terraform` and `systemd` finds 0 hits). GitHub Actions runs the Mode B scripts on `ubuntu-latest` runners (assumed: GitHub-hosted runners). The TLS migration inventory and service configuration are repository configuration artifacts, not deployed services (`tls-migration/evidence/inventory.json:1-14`; `tls-migration/tls-services.yaml:1-20`). The records of the supplier-feed HTTPS migration under `https-migration/` (`changed-files.txt`, `https-allowlist.txt`, `https-inventory.md`, `https-migration-summary.md`, `tests-before.txt`, `tests-after.txt`) are documents and test output, not code that runs; they list the files the change touched, the 11 tests that passed afterwards (9 before), and the one endpoint still on HTTP, the payment partner (`https-migration/changed-files.txt:1-8`, `https-migration/tests-before.txt:3`, `https-migration/tests-after.txt:3`, `https-migration/https-migration-summary.md:11-17`).
 
 ## Containers
 
@@ -59,7 +59,7 @@ flowchart LR
   queue -->|"imports helpers / runs gate scripts"| analysiskit
   orders -->|"price_of, in_stock"| catalog
   client -->|"HTTP price API"| catalog
-  catalog -->|"HTTP: reads JSON feed"| supplier
+  catalog -->|"HTTPS: reads JSON feed"| supplier
   orders -->|"HTTP: settlement request"| payment
   orders -->|"HTTP: settlement request when dev is set"| devsettle
   catalog -->|"reads and updates"| products
@@ -71,17 +71,17 @@ flowchart LR
 | --- | --- |
 | `operator` starts workflows by dispatch | `.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:10` |
 | `tools` write `plan.json` and the gate reads the component artifacts | `tools/plan.py:55-57`, `tools/gate.py:46`, `tools/gate.py:52`, `tools/gate.py:64`, `tools/gate.py:86` |
-| `queue` unpacks a branch tarball into a temporary directory and runs the toolkit scripts on it | `.github/bible/bible_queue.py:886-905` |
-| `orders` imports and calls `catalog` directly | `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`; `components/catalog/catalog.py:15-29` |
+| `queue` unpacks a branch tarball into a temporary directory and runs the toolkit scripts on it | `.github/bible/bible_queue.py:976-995` |
+| `orders` imports and calls `catalog` directly | `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`; `components/catalog/catalog.py:27-41` |
 | `catalog_client.py` calls the catalog HTTP service; test starts that service locally | `components/orders/catalog_client.py:14-23`; `components/orders/test_catalog_client.py:12-19`, `components/orders/test_catalog_client.py:37-62` |
-| Catalog product store is module memory | `components/catalog/catalog.py:8-12`, `components/catalog/catalog.py:42-47` |
-| `orders` sends settlements over HTTP to the payment partner, or to a local fake at `localhost:8099` when `dev` is set; `catalog` reads the supplier feed over HTTP | `components/orders/orders.py:7-12`, `components/orders/orders.py:47-51`; `components/catalog/catalog.py:5`, `components/catalog/catalog.py:36-39` |
+| Catalog product store is module memory | `components/catalog/catalog.py:11-15`, `components/catalog/catalog.py:58-63` |
+| `orders` sends settlements over HTTP to the payment partner, or to a local fake at `localhost:8099` when `dev` is set; `catalog` reads the supplier feed over HTTPS with a certificate-verifying context | `components/orders/orders.py:7-12`, `components/orders/orders.py:47-51`; `components/catalog/catalog.py:8`, `components/catalog/catalog.py:48-55` |
 | `tools/fanout.sh` calls GitHub through the `gh` CLI | `tools/fanout.sh:10-12`, `tools/fanout.sh:24-29` |
-| `github` assigns issues to `copilot` | `.github/bible/bible_queue.py:166-173` |
+| `github` assigns issues to `copilot` | `.github/bible/bible_queue.py:167-174` |
 | The POC workflow calls the GitHub issues API with `gh api` and starts no queue code (inferred: its one step is the inline script, which runs `jq` and `gh api` and no repository script) | `.github/workflows/poc-assign-copilot.yml:34-72` |
-| `bible_queue.py` talks to GitHub over REST and GraphQL (HTTPS by default) | `.github/bible/bible_queue.py:113`, `.github/bible/bible_queue.py:116-125`, `.github/bible/bible_queue.py:354-362` |
+| `bible_queue.py` talks to GitHub over REST and GraphQL (HTTPS by default) | `.github/bible/bible_queue.py:114`, `.github/bible/bible_queue.py:117-126`, `.github/bible/bible_queue.py:355-363` |
 | Workflows invoke queue commands on GitHub Actions runners | `.github/workflows/bible-plan.yml:37-54`; `.github/workflows/bible-queue.yml:23-37`; `.github/workflows/bible-delta.yml:20-38` |
-| Queue uses GitHub API and invokes local analysis toolkit code | `.github/bible/bible_queue.py:155-173`, `.github/bible/bible_queue.py:127-153`, `.github/bible/bible_queue.py:880-905`, `.github/bible/bible_queue.py:1247-1249` |
+| Queue uses GitHub API and invokes local analysis toolkit code | `.github/bible/bible_queue.py:156-174`, `.github/bible/bible_queue.py:128-154`, `.github/bible/bible_queue.py:970-995`, `.github/bible/bible_queue.py:1345-1347` |
 | `tools` contains planning, gate, and fanout commands | `tools/plan.py:21-62`; `tools/gate.py:23-117`; `tools/fanout.sh:1-31` |
 
 Shapes: rounded = people, rectangle = repository units, cylinder = data store, hexagon = external system. Every edge is solid because each is read in the code; the `client` edge is the HTTP request `remote_price` makes, and that it is used only by the test and is meant for a separate service is stated in the sentence under Containers. The local settle fake is drawn solid because `settle` calls it whenever `dev` is set.
@@ -113,27 +113,27 @@ flowchart TB
 
 | Component | Packaged as | Built by | Started by | Port | Replicas, limits | Mounts and volumes | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `catalog` | Python source; no image or package artifact declared | No build step found (inferred: a listing of the 24 files outside the analysis folder and the skills shows no build file, and a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `build` finds 0 hits) | `python3 -m components.catalog.service` | Default bind `127.0.0.1` (port 8001); `CATALOG_HOST` and `CATALOG_PORT` can change it | `ThreadingHTTPServer`; deployment replica/resource limits not specified | None specified | `components/catalog/service.py:1-5`, `components/catalog/service.py:40-49` |
-| `orders` | Python library | No build step declared (inferred: a listing of the 24 files outside the analysis folder and the skills shows no build file, and a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `build` finds 0 hits) | Imported by Python callers; the HTTP test starts the catalog server in-process | No application port; test server uses `127.0.0.1` (ephemeral port) | Not specified | None | `components/orders/orders.py:1-51`; `components/orders/test_catalog_client.py:12-19` |
-| `bible-mode-b` plan and queue | Repository Python script plus Actions YAML | GitHub Actions checks out the default branch; no application build | Manual `bible-plan`; `bible-queue` manual dispatch or 15-minute cron | No service port | `ubuntu-latest`; 15-minute plan, 20-minute queue timeout; workflow concurrency groups do not cancel in-progress jobs | Runner workspace; delta list in `$RUNNER_TEMP`; gate uses a temporary work directory | `.github/workflows/bible-plan.yml:29-31`, `.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-plan.yml:37-38`; `.github/workflows/bible-queue.yml:7-37`; `.github/workflows/bible-delta.yml:20-38`; `.github/bible/bible_queue.py:886-905` |
-| `bible-delta` | Repository Python script plus Actions YAML | GitHub Actions checkout with `fetch-depth: 0` | Default-branch push, ignoring only `codebase-analysis/**` and `.github/skills/**`; changes under `.github/workflows/` or `.github/bible/` do start it (assumed: GitHub's `paths-ignore` filter starts the workflow when a changed path is not ignored) | No service port | `ubuntu-latest`; 15-minute timeout | `$RUNNER_TEMP/changed.txt` | `.github/workflows/bible-delta.yml:8-12`, `.github/workflows/bible-delta.yml:19-25`, `.github/workflows/bible-delta.yml:37`; `.github/bible/bible_queue.py:1250-1253` |
-| POC assignment workflow | Actions YAML and inline shell/`jq`/`gh` commands; no checkout | No build step (inferred: a listing of the 24 files outside the analysis folder and the skills shows no build file, and a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `build` finds 0 hits); its comment says it checks out and runs no repository code (inferred: the comment at `.github/workflows/poc-assign-copilot.yml:6-7`) | Manual `workflow_dispatch` | No service port | `ubuntu-latest`; 5-minute timeout | Runner-local `request.json` and `response.json` | `.github/workflows/poc-assign-copilot.yml:1-10`, `.github/workflows/poc-assign-copilot.yml:11-69` |
-| `tools` | Python scripts and Bash script | No build step declared (inferred: a listing of the 24 files outside the analysis folder and the skills shows no build file, and a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `build` finds 0 hits) | CLI or `ENGINE=... tools/fanout.sh <owner/repo>` | None | Not specified | Reads and writes `codebase-analysis/plan.json` | `tools/plan.py:41-58`; `tools/gate.py:81-117`; `tools/fanout.sh:2-12` |
+| `catalog` | Python source; no image or package artifact declared | No build step found (inferred: a listing of the 30 files outside the analysis folder and the skills shows no build file, and a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `build` finds 0 hits) | `python3 -m components.catalog.service` | Default bind `127.0.0.1` (port 8001); `CATALOG_HOST` and `CATALOG_PORT` can change it | `ThreadingHTTPServer`; deployment replica/resource limits not specified | None specified | `components/catalog/service.py:1-5`, `components/catalog/service.py:40-49` |
+| `orders` | Python library | No build step declared (inferred: a listing of the 30 files outside the analysis folder and the skills shows no build file, and a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `build` finds 0 hits) | Imported by Python callers; the HTTP test starts the catalog server in-process | No application port; test server uses `127.0.0.1` (ephemeral port) | Not specified | None | `components/orders/orders.py:1-51`; `components/orders/test_catalog_client.py:12-19` |
+| `bible-mode-b` plan and queue | Repository Python script plus Actions YAML | GitHub Actions checks out the default branch; no application build | Manual `bible-plan`; `bible-queue` manual dispatch or 15-minute cron | No service port | `ubuntu-latest`; 15-minute plan, 20-minute queue timeout; workflow concurrency groups do not cancel in-progress jobs | Runner workspace; delta list in `$RUNNER_TEMP`; gate uses a temporary work directory | `.github/workflows/bible-plan.yml:29-31`, `.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-plan.yml:37-38`; `.github/workflows/bible-queue.yml:7-37`; `.github/workflows/bible-delta.yml:20-38`; `.github/bible/bible_queue.py:976-995` |
+| `bible-delta` | Repository Python script plus Actions YAML | GitHub Actions checkout with `fetch-depth: 0` | Default-branch push, ignoring only `codebase-analysis/**` and `.github/skills/**`; changes under `.github/workflows/` or `.github/bible/` do start it (assumed: GitHub's `paths-ignore` filter starts the workflow when a changed path is not ignored) | No service port | `ubuntu-latest`; 15-minute timeout | `$RUNNER_TEMP/changed.txt` | `.github/workflows/bible-delta.yml:8-12`, `.github/workflows/bible-delta.yml:19-25`, `.github/workflows/bible-delta.yml:37`; `.github/bible/bible_queue.py:1348-1351` |
+| POC assignment workflow | Actions YAML and inline shell/`jq`/`gh` commands; no checkout | No build step (inferred: a listing of the 30 files outside the analysis folder and the skills shows no build file, and a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `build` finds 0 hits); its comment says it checks out and runs no repository code (inferred: the comment at `.github/workflows/poc-assign-copilot.yml:6-7`) | Manual `workflow_dispatch` | No service port | `ubuntu-latest`; 5-minute timeout | Runner-local `request.json` and `response.json` | `.github/workflows/poc-assign-copilot.yml:1-10`, `.github/workflows/poc-assign-copilot.yml:11-69` |
+| `tools` | Python scripts and Bash script | No build step declared (inferred: a listing of the 30 files outside the analysis folder and the skills shows no build file, and a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `build` finds 0 hits) | CLI or `ENGINE=... tools/fanout.sh <owner/repo>` | None | Not specified | Reads and writes `codebase-analysis/plan.json` | `tools/plan.py:41-58`; `tools/gate.py:81-117`; `tools/fanout.sh:2-12` |
 
 | Edge | Evidence |
 | --- | --- |
 | `operator` starts `catalogdev` by hand | `components/catalog/service.py:3`, `components/catalog/service.py:46-49` |
 | `operator` runs the test module that becomes `testprocess` | `components/orders/test_catalog_client.py:12-19`, `components/orders/test_catalog_client.py:65-66` |
-| `operator` dispatches workflows or reviews on GitHub | `.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:10`, `.github/bible/bible_queue.py:711-719` |
-| `runner` calls the GitHub API | `.github/bible/bible_queue.py:113`, `.github/bible/bible_queue.py:127-139` |
-| `issues` assigned to Copilot | `.github/bible/bible_queue.py:166-173` |
+| `operator` dispatches workflows or reviews on GitHub | `.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:10`, `.github/bible/bible_queue.py:799-807` |
+| `runner` calls the GitHub API | `.github/bible/bible_queue.py:114`, `.github/bible/bible_queue.py:128-140` |
+| `issues` assigned to Copilot | `.github/bible/bible_queue.py:167-174` |
 | `repo` supplies the workflow definitions and checked-out code to `runner` | `.github/workflows/bible-plan.yml:40-42`, `.github/workflows/bible-queue.yml:28-30`, `.github/workflows/bible-delta.yml:23-25` |
 
 `catalogdev` is a source-supported local invocation, not a deployment declared by a workflow or manifest (inferred: no workflow or manifest file in the repository starts it). The orders test starts its server in the test process on an ephemeral port selected by the operating system (assumed: library behaviour, port 0 asks the operating system for a free port) (`components/catalog/service.py:40-49`; `components/orders/test_catalog_client.py:12-19`).
 
 ## Module map
 
-The `bible-mode-b` queue is a Python module with workflow adapters; catalog and orders are Python modules, and tools includes Python and Bash entry points (`.github/bible/bible_queue.py:1-11`, `.github/bible/bible_queue.py:1286-1336`; `components/catalog/catalog.py:1-47`; `components/catalog/service.py:1-49`; `components/orders/orders.py:1-51`; `tools/plan.py:1-62`; `tools/gate.py:1-117`; `tools/fanout.sh:1-31`).
+The `bible-mode-b` queue is a Python module with workflow adapters; catalog and orders are Python modules, and tools includes Python and Bash entry points (`.github/bible/bible_queue.py:1-11`, `.github/bible/bible_queue.py:1384-1434`; `components/catalog/catalog.py:1-63`; `components/catalog/service.py:1-49`; `components/orders/orders.py:1-51`; `tools/plan.py:1-62`; `tools/gate.py:1-117`; `tools/fanout.sh:1-31`).
 
 ## Technology
 
@@ -148,12 +148,12 @@ The `bible-mode-b` queue is a Python module with workflow adapters; catalog and 
 
 | Component | Configuration source | Environments or profiles | Evidence |
 | --- | --- | --- | --- |
-| `catalog` | `CATALOG_HOST` default `127.0.0.1`, `CATALOG_PORT` default `8001`; supplier and image URLs are constants | No profiles or environment-specific deployment files found (inferred: a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `profile` finds 0 hits) | `components/catalog/service.py:40-43`; `components/catalog/catalog.py:5-6` |
+| `catalog` | `CATALOG_HOST` default `127.0.0.1`, `CATALOG_PORT` default `8001`; supplier and image URLs are constants | No profiles or environment-specific deployment files found (inferred: a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `profile` finds 0 hits) | `components/catalog/service.py:40-43`; `components/catalog/catalog.py:8-9` |
 | `orders` | `CATALOG_URL` default `http://127.0.0.1:8001`; settlement URL, discounts, and bulk threshold are constants; `dev` selects the local fake endpoint | No profiles or environment-specific deployment files found (inferred: a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `profile` finds 0 hits) | `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-16`; `components/orders/orders.py:7-16`, `components/orders/orders.py:45-48` |
-| `bible-mode-b` | Workflow inputs and `BIBLE_ASSIGN_TOKEN` secret; `GITHUB_REPOSITORY`, `GH_TOKEN`, `GITHUB_API_URL`, `BIBLE_AGENT_LOGINS`, `BIBLE_AGENT_APP`, `BIBLE_NOW`, `BIBLE_SKILLS` | GitHub repository workflow environment; no application profiles (inferred: a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `profile` finds 0 hits) | `.github/workflows/bible-plan.yml:9-23`, `.github/workflows/bible-plan.yml:44-49`; `.github/workflows/bible-queue.yml:31-36`; `.github/bible/bible_queue.py:34-36`, `.github/bible/bible_queue.py:61-66`, `.github/bible/bible_queue.py:113`, `.github/bible/bible_queue.py:380`, `.github/bible/bible_queue.py:501-503`, `.github/bible/bible_queue.py:1302-1304` |
+| `bible-mode-b` | Workflow inputs and `BIBLE_ASSIGN_TOKEN` secret; `GITHUB_REPOSITORY`, `GH_TOKEN`, `GITHUB_API_URL`, `BIBLE_AGENT_LOGINS`, `BIBLE_AGENT_APP`, `BIBLE_NOW`, `BIBLE_SKILLS` | GitHub repository workflow environment; no application profiles (inferred: a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `profile` finds 0 hits) | `.github/workflows/bible-plan.yml:9-23`, `.github/workflows/bible-plan.yml:44-49`; `.github/workflows/bible-queue.yml:31-36`; `.github/bible/bible_queue.py:34-36`, `.github/bible/bible_queue.py:61-66`, `.github/bible/bible_queue.py:114`, `.github/bible/bible_queue.py:381`, `.github/bible/bible_queue.py:561-563`, `.github/bible/bible_queue.py:1400-1402` |
 | `tools` | `ENGINE` environment variable, default `copilot`; repository is a positional argument; plan and gate data under `codebase-analysis/` | CLI invocation; no profiles (inferred: a search of `components`, `tools`, `.github/bible` and `.github/workflows` for `profile` finds 0 hits) | `tools/fanout.sh:7-12`, `tools/fanout.sh:24-29`; `tools/plan.py:41-58`; `tools/gate.py:81-108` |
 
-<!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
+<!-- cites .github/bible/bible_queue.py@a625b4c3353b1744b965b8bbee13e6b3ed5f72a6 -->
 
 <!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
 
@@ -163,7 +163,7 @@ The `bible-mode-b` queue is a Python module with workflow adapters; catalog and 
 
 <!-- cites .github/workflows/poc-assign-copilot.yml@dab60e0d846bfee50726dce662df48fc186ca3d3 -->
 
-<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+<!-- cites components/catalog/catalog.py@75bb1dc767dc16cad9a5ed5555a7293bc004275b -->
 
 <!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
 
@@ -172,6 +172,14 @@ The `bible-mode-b` queue is a Python module with workflow adapters; catalog and 
 <!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->
 
 <!-- cites components/orders/test_catalog_client.py@1d32463e1cdc21bd3eee3bc1b6f31feb8ef40a2d -->
+
+<!-- cites https-migration/changed-files.txt@42338a9686b5eaaa8eb9d7c74132607a9c74e9b8 -->
+
+<!-- cites https-migration/https-migration-summary.md@8af6a247647debc371a600624b95b7c94326da9c -->
+
+<!-- cites https-migration/tests-after.txt@2bb6aec8ea4d90ba65f28c44cd6226943ed976a7 -->
+
+<!-- cites https-migration/tests-before.txt@0f0a6dc797e0a6c7d3bd6e69d51360ffd5af0a10 -->
 
 <!-- cites tls-migration/evidence/inventory.json@2d46a3e849f9c1688bd72d8e4add3feeb368314e -->
 

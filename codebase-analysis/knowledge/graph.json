@@ -1,16 +1,16 @@
 {
- "generated": "2026-11-24T17:46:12",
+ "generated": "2026-11-24T20:24:43",
  "tool": "analyzing-a-codebase/scripts/knowledge.py 1.5.0",
  "stats": {
-  "nodes": 210,
-  "edges": 566,
-  "chunks": 354,
-  "calls_unresolved": 97,
+  "nodes": 224,
+  "edges": 596,
+  "chunks": 365,
+  "calls_unresolved": 102,
   "by_node_type": {
-   "File": 33,
-   "Class": 6,
-   "Method": 75,
-   "Function": 35,
+   "File": 39,
+   "Class": 7,
+   "Method": 80,
+   "Function": 37,
    "Page": 35,
    "Component": 4,
    "Route": 2,
@@ -20,9 +20,9 @@
    "Job": 3
   },
   "by_edge_type": {
-   "DEFINES": 116,
+   "DEFINES": 124,
    "IMPORTS": 8,
-   "CALLS": 250,
+   "CALLS": 269,
    "DOCUMENTS": 59,
    "DEPENDS_ON": 18,
    "HAS_PAGE": 16,
@@ -30,16 +30,16 @@
    "CONTAINS": 15,
    "READS": 34,
    "WRITES": 6,
-   "USES": 14,
+   "USES": 17,
    "CONFIG": 21
   },
   "by_resolution": {
-   "exact": 183,
-   "self": 90,
-   "same-file": 61,
-   "name-unique": 72,
-   "import": 12,
-   "analysis": 148
+   "exact": 191,
+   "self": 94,
+   "same-file": 68,
+   "name-unique": 78,
+   "import": 14,
+   "analysis": 151
   }
  },
  "nodes": [
@@ -150,7 +150,7 @@
    "path": ".github/bible/bible_queue.py",
    "kind": "source",
    "lang": "python",
-   "lines": 1336
+   "lines": 1434
   },
   {
    "id": "file:.github/workflows/bible-delta.yml",
@@ -271,7 +271,7 @@
    "path": "components/catalog/catalog.py",
    "kind": "source",
    "lang": "python",
-   "lines": 47
+   "lines": 63
   },
   {
    "id": "file:components/catalog/service.py",
@@ -289,7 +289,7 @@
    "path": "components/catalog/test_catalog.py",
    "kind": "source",
    "lang": "python",
-   "lines": 12
+   "lines": 48
   },
   {
    "id": "file:components/orders/__init__.py",
@@ -335,6 +335,60 @@
    "kind": "source",
    "lang": "python",
    "lines": 12
+  },
+  {
+   "id": "file:https-migration/changed-files.txt",
+   "type": "File",
+   "name": "changed-files.txt",
+   "path": "https-migration/changed-files.txt",
+   "kind": "doc",
+   "lang": "",
+   "lines": 8
+  },
+  {
+   "id": "file:https-migration/https-allowlist.txt",
+   "type": "File",
+   "name": "https-allowlist.txt",
+   "path": "https-migration/https-allowlist.txt",
+   "kind": "doc",
+   "lang": "",
+   "lines": 5
+  },
+  {
+   "id": "file:https-migration/https-inventory.md",
+   "type": "File",
+   "name": "https-inventory.md",
+   "path": "https-migration/https-inventory.md",
+   "kind": "doc",
+   "lang": "",
+   "lines": 93
+  },
+  {
+   "id": "file:https-migration/https-migration-summary.md",
+   "type": "File",
+   "name": "https-migration-summary.md",
+   "path": "https-migration/https-migration-summary.md",
+   "kind": "doc",
+   "lang": "",
+   "lines": 69
+  },
+  {
+   "id": "file:https-migration/tests-after.txt",
+   "type": "File",
+   "name": "tests-after.txt",
+   "path": "https-migration/tests-after.txt",
+   "kind": "doc",
+   "lang": "",
+   "lines": 5
+  },
+  {
+   "id": "file:https-migration/tests-before.txt",
+   "type": "File",
+   "name": "tests-before.txt",
+   "path": "https-migration/tests-before.txt",
+   "kind": "doc",
+   "lang": "",
+   "lines": 5
   },
   {
    "id": "file:temporary-gate-workspace",
@@ -561,7 +615,7 @@
    "name": "lld/catalog/test_catalog.md",
    "path": "lld/catalog/test_catalog.md",
    "kind": "module",
-   "summary": "Checks that price lookup returns the known SKU-1 price"
+   "summary": "Checks the known SKU-1 price, that the supplier feed is fetched over verified HTTPS, and that a redirect to HTTP is refused"
   },
   {
    "id": "page:lld/data-dictionary.md",
@@ -719,8 +773,8 @@
    "type": "Class",
    "name": "GitHub",
    "path": ".github/bible/bible_queue.py",
-   "start": 110,
-   "end": 374,
+   "start": 111,
+   "end": 375,
    "branches": 0,
    "lang": "python"
   },
@@ -729,8 +783,8 @@
    "type": "Method",
    "name": "GitHub.__init__",
    "path": ".github/bible/bible_queue.py",
-   "start": 111,
-   "end": 114,
+   "start": 112,
+   "end": 115,
    "branches": 0,
    "lang": "python"
   },
@@ -739,8 +793,8 @@
    "type": "Method",
    "name": "GitHub.agent_events",
    "path": ".github/bible/bible_queue.py",
-   "start": 223,
-   "end": 227,
+   "start": 224,
+   "end": 228,
    "branches": 0,
    "lang": "python"
   },
@@ -749,8 +803,8 @@
    "type": "Method",
    "name": "GitHub.assign",
    "path": ".github/bible/bible_queue.py",
-   "start": 351,
-   "end": 352,
+   "start": 352,
+   "end": 353,
    "branches": 0,
    "lang": "python"
   },
@@ -759,8 +813,8 @@
    "type": "Method",
    "name": "GitHub.assigned_at",
    "path": ".github/bible/bible_queue.py",
-   "start": 247,
-   "end": 250,
+   "start": 248,
+   "end": 251,
    "branches": 1,
    "lang": "python"
   },
@@ -769,8 +823,8 @@
    "type": "Method",
    "name": "GitHub.branch_prs",
    "path": ".github/bible/bible_queue.py",
-   "start": 218,
-   "end": 221,
+   "start": 219,
+   "end": 222,
    "branches": 0,
    "lang": "python"
   },
@@ -779,8 +833,8 @@
    "type": "Method",
    "name": "GitHub.branch_sha",
    "path": ".github/bible/bible_queue.py",
-   "start": 184,
-   "end": 186,
+   "start": 185,
+   "end": 187,
    "branches": 1,
    "lang": "python"
   },
@@ -789,8 +843,8 @@
    "type": "Method",
    "name": "GitHub.call",
    "path": ".github/bible/bible_queue.py",
-   "start": 127,
-   "end": 139,
+   "start": 128,
+   "end": 140,
    "branches": 7,
    "lang": "python"
   },
@@ -799,8 +853,8 @@
    "type": "Method",
    "name": "GitHub.close",
    "path": ".github/bible/bible_queue.py",
-   "start": 342,
-   "end": 343,
+   "start": 343,
+   "end": 344,
    "branches": 0,
    "lang": "python"
   },
@@ -809,8 +863,8 @@
    "type": "Method",
    "name": "GitHub.close_pr",
    "path": ".github/bible/bible_queue.py",
-   "start": 370,
-   "end": 371,
+   "start": 371,
+   "end": 372,
    "branches": 0,
    "lang": "python"
   },
@@ -819,8 +873,8 @@
    "type": "Method",
    "name": "GitHub.comment",
    "path": ".github/bible/bible_queue.py",
-   "start": 339,
-   "end": 340,
+   "start": 340,
+   "end": 341,
    "branches": 0,
    "lang": "python"
   },
@@ -829,8 +883,8 @@
    "type": "Method",
    "name": "GitHub.commit_time",
    "path": ".github/bible/bible_queue.py",
-   "start": 288,
-   "end": 289,
+   "start": 289,
+   "end": 290,
    "branches": 0,
    "lang": "python"
   },
@@ -839,8 +893,8 @@
    "type": "Method",
    "name": "GitHub.create_branch",
    "path": ".github/bible/bible_queue.py",
-   "start": 188,
-   "end": 189,
+   "start": 189,
+   "end": 190,
    "branches": 0,
    "lang": "python"
   },
@@ -849,8 +903,8 @@
    "type": "Method",
    "name": "GitHub.create_issue",
    "path": ".github/bible/bible_queue.py",
-   "start": 166,
-   "end": 173,
+   "start": 167,
+   "end": 174,
    "branches": 2,
    "lang": "python"
   },
@@ -859,8 +913,8 @@
    "type": "Method",
    "name": "GitHub.create_pr",
    "path": ".github/bible/bible_queue.py",
-   "start": 373,
-   "end": 374,
+   "start": 374,
+   "end": 375,
    "branches": 0,
    "lang": "python"
   },
@@ -869,8 +923,8 @@
    "type": "Method",
    "name": "GitHub.default_branch",
    "path": ".github/bible/bible_queue.py",
-   "start": 181,
-   "end": 182,
+   "start": 182,
+   "end": 183,
    "branches": 0,
    "lang": "python"
   },
@@ -879,8 +933,8 @@
    "type": "Method",
    "name": "GitHub.ensure_label",
    "path": ".github/bible/bible_queue.py",
-   "start": 155,
-   "end": 160,
+   "start": 156,
+   "end": 161,
    "branches": 2,
    "lang": "python"
   },
@@ -889,8 +943,8 @@
    "type": "Method",
    "name": "GitHub.ensure_labels",
    "path": ".github/bible/bible_queue.py",
-   "start": 162,
-   "end": 164,
+   "start": 163,
+   "end": 165,
    "branches": 1,
    "lang": "python"
   },
@@ -899,8 +953,8 @@
    "type": "Method",
    "name": "GitHub.file",
    "path": ".github/bible/bible_queue.py",
-   "start": 194,
-   "end": 198,
+   "start": 195,
+   "end": 199,
    "branches": 1,
    "lang": "python"
   },
@@ -909,8 +963,8 @@
    "type": "Method",
    "name": "GitHub.is_agent_pr",
    "path": ".github/bible/bible_queue.py",
-   "start": 229,
-   "end": 234,
+   "start": 230,
+   "end": 235,
    "branches": 1,
    "lang": "python"
   },
@@ -919,8 +973,8 @@
    "type": "Method",
    "name": "GitHub.issues",
    "path": ".github/bible/bible_queue.py",
-   "start": 151,
-   "end": 153,
+   "start": 152,
+   "end": 154,
    "branches": 0,
    "lang": "python"
   },
@@ -929,8 +983,8 @@
    "type": "Method",
    "name": "GitHub.label",
    "path": ".github/bible/bible_queue.py",
-   "start": 332,
-   "end": 334,
+   "start": 333,
+   "end": 335,
    "branches": 0,
    "lang": "python"
   },
@@ -939,8 +993,8 @@
    "type": "Method",
    "name": "GitHub.linked_prs",
    "path": ".github/bible/bible_queue.py",
-   "start": 207,
-   "end": 216,
+   "start": 208,
+   "end": 217,
    "branches": 2,
    "lang": "python"
   },
@@ -949,8 +1003,8 @@
    "type": "Method",
    "name": "GitHub.me",
    "path": ".github/bible/bible_queue.py",
-   "start": 175,
-   "end": 179,
+   "start": 176,
+   "end": 180,
    "branches": 1,
    "lang": "python"
   },
@@ -959,8 +1013,8 @@
    "type": "Method",
    "name": "GitHub.merge",
    "path": ".github/bible/bible_queue.py",
-   "start": 364,
-   "end": 368,
+   "start": 365,
+   "end": 369,
    "branches": 1,
    "lang": "python"
   },
@@ -969,8 +1023,8 @@
    "type": "Method",
    "name": "GitHub.paged",
    "path": ".github/bible/bible_queue.py",
-   "start": 141,
-   "end": 149,
+   "start": 142,
+   "end": 150,
    "branches": 3,
    "lang": "python"
   },
@@ -979,8 +1033,8 @@
    "type": "Method",
    "name": "GitHub.pr_files",
    "path": ".github/bible/bible_queue.py",
-   "start": 252,
-   "end": 286,
+   "start": 253,
+   "end": 287,
    "branches": 11,
    "lang": "python"
   },
@@ -989,8 +1043,8 @@
    "type": "Method",
    "name": "GitHub.prs",
    "path": ".github/bible/bible_queue.py",
-   "start": 200,
-   "end": 202,
+   "start": 201,
+   "end": 203,
    "branches": 1,
    "lang": "python"
   },
@@ -999,8 +1053,8 @@
    "type": "Method",
    "name": "GitHub.ready",
    "path": ".github/bible/bible_queue.py",
-   "start": 354,
-   "end": 362,
+   "start": 355,
+   "end": 363,
    "branches": 3,
    "lang": "python"
   },
@@ -1009,8 +1063,8 @@
    "type": "Method",
    "name": "GitHub.request",
    "path": ".github/bible/bible_queue.py",
-   "start": 116,
-   "end": 125,
+   "start": 117,
+   "end": 126,
    "branches": 3,
    "lang": "python"
   },
@@ -1019,8 +1073,8 @@
    "type": "Method",
    "name": "GitHub.reset_branch",
    "path": ".github/bible/bible_queue.py",
-   "start": 191,
-   "end": 192,
+   "start": 192,
+   "end": 193,
    "branches": 0,
    "lang": "python"
   },
@@ -1029,8 +1083,8 @@
    "type": "Method",
    "name": "GitHub.set_body",
    "path": ".github/bible/bible_queue.py",
-   "start": 345,
-   "end": 346,
+   "start": 346,
+   "end": 347,
    "branches": 0,
    "lang": "python"
   },
@@ -1039,8 +1093,8 @@
    "type": "Method",
    "name": "GitHub.start_error",
    "path": ".github/bible/bible_queue.py",
-   "start": 236,
-   "end": 245,
+   "start": 237,
+   "end": 246,
    "branches": 3,
    "lang": "python"
   },
@@ -1049,8 +1103,8 @@
    "type": "Method",
    "name": "GitHub.tarball",
    "path": ".github/bible/bible_queue.py",
-   "start": 291,
-   "end": 330,
+   "start": 292,
+   "end": 331,
    "branches": 12,
    "lang": "python"
   },
@@ -1059,8 +1113,8 @@
    "type": "Method",
    "name": "GitHub.timeline",
    "path": ".github/bible/bible_queue.py",
-   "start": 204,
-   "end": 205,
+   "start": 205,
+   "end": 206,
    "branches": 0,
    "lang": "python"
   },
@@ -1069,8 +1123,8 @@
    "type": "Method",
    "name": "GitHub.unassign",
    "path": ".github/bible/bible_queue.py",
-   "start": 348,
-   "end": 349,
+   "start": 349,
+   "end": 350,
    "branches": 0,
    "lang": "python"
   },
@@ -1079,8 +1133,8 @@
    "type": "Method",
    "name": "GitHub.unlabel",
    "path": ".github/bible/bible_queue.py",
-   "start": 336,
-   "end": 337,
+   "start": 337,
+   "end": 338,
    "branches": 0,
    "lang": "python"
   },
@@ -1089,8 +1143,8 @@
    "type": "Class",
    "name": "Queue",
    "path": ".github/bible/bible_queue.py",
-   "start": 500,
-   "end": 1283,
+   "start": 560,
+   "end": 1381,
    "branches": 0,
    "lang": "python"
   },
@@ -1099,8 +1153,8 @@
    "type": "Method",
    "name": "Queue.__init__",
    "path": ".github/bible/bible_queue.py",
-   "start": 501,
-   "end": 503,
+   "start": 561,
+   "end": 563,
    "branches": 0,
    "lang": "python"
   },
@@ -1109,8 +1163,8 @@
    "type": "Method",
    "name": "Queue.agent_pr",
    "path": ".github/bible/bible_queue.py",
-   "start": 508,
-   "end": 514,
+   "start": 568,
+   "end": 574,
    "branches": 2,
    "lang": "python"
   },
@@ -1119,9 +1173,9 @@
    "type": "Method",
    "name": "Queue.assemble_phase",
    "path": ".github/bible/bible_queue.py",
-   "start": 937,
-   "end": 1050,
-   "branches": 34,
+   "start": 1027,
+   "end": 1148,
+   "branches": 35,
    "lang": "python"
   },
   {
@@ -1129,8 +1183,8 @@
    "type": "Method",
    "name": "Queue.check",
    "path": ".github/bible/bible_queue.py",
-   "start": 880,
-   "end": 905,
+   "start": 970,
+   "end": 995,
    "branches": 3,
    "lang": "python"
   },
@@ -1139,9 +1193,9 @@
    "type": "Method",
    "name": "Queue.component",
    "path": ".github/bible/bible_queue.py",
-   "start": 708,
-   "end": 819,
-   "branches": 19,
+   "start": 796,
+   "end": 909,
+   "branches": 20,
    "lang": "python"
   },
   {
@@ -1149,8 +1203,8 @@
    "type": "Method",
    "name": "Queue.continue_if_unfinished",
    "path": ".github/bible/bible_queue.py",
-   "start": 1154,
-   "end": 1207,
+   "start": 1252,
+   "end": 1305,
    "branches": 8,
    "lang": "python"
   },
@@ -1159,8 +1213,8 @@
    "type": "Method",
    "name": "Queue.could_not_check",
    "path": ".github/bible/bible_queue.py",
-   "start": 907,
-   "end": 918,
+   "start": 997,
+   "end": 1008,
    "branches": 1,
    "lang": "python"
   },
@@ -1169,8 +1223,8 @@
    "type": "Method",
    "name": "Queue.deferred_updates",
    "path": ".github/bible/bible_queue.py",
-   "start": 1052,
-   "end": 1064,
+   "start": 1150,
+   "end": 1162,
    "branches": 4,
    "lang": "python"
   },
@@ -1179,8 +1233,8 @@
    "type": "Method",
    "name": "Queue.delta",
    "path": ".github/bible/bible_queue.py",
-   "start": 1223,
-   "end": 1283,
+   "start": 1321,
+   "end": 1381,
    "branches": 11,
    "lang": "python"
   },
@@ -1189,8 +1243,8 @@
    "type": "Method",
    "name": "Queue.fail_or_retry",
    "path": ".github/bible/bible_queue.py",
-   "start": 582,
-   "end": 601,
+   "start": 642,
+   "end": 661,
    "branches": 4,
    "lang": "python"
   },
@@ -1199,8 +1253,8 @@
    "type": "Method",
    "name": "Queue.follow",
    "path": ".github/bible/bible_queue.py",
-   "start": 821,
-   "end": 878,
+   "start": 911,
+   "end": 968,
    "branches": 22,
    "lang": "python"
   },
@@ -1209,8 +1263,8 @@
    "type": "Method",
    "name": "Queue.held",
    "path": ".github/bible/bible_queue.py",
-   "start": 535,
-   "end": 568,
+   "start": 595,
+   "end": 628,
    "branches": 5,
    "lang": "python"
   },
@@ -1219,8 +1273,8 @@
    "type": "Method",
    "name": "Queue.hold_start_error",
    "path": ".github/bible/bible_queue.py",
-   "start": 574,
-   "end": 580,
+   "start": 634,
+   "end": 640,
    "branches": 0,
    "lang": "python"
   },
@@ -1229,8 +1283,8 @@
    "type": "Method",
    "name": "Queue.model_for",
    "path": ".github/bible/bible_queue.py",
-   "start": 570,
-   "end": 572,
+   "start": 630,
+   "end": 632,
    "branches": 1,
    "lang": "python"
   },
@@ -1239,8 +1293,8 @@
    "type": "Method",
    "name": "Queue.plan_phase",
    "path": ".github/bible/bible_queue.py",
-   "start": 670,
-   "end": 692,
+   "start": 758,
+   "end": 780,
    "branches": 6,
    "lang": "python"
   },
@@ -1249,9 +1303,9 @@
    "type": "Method",
    "name": "Queue.reconcile",
    "path": ".github/bible/bible_queue.py",
-   "start": 604,
-   "end": 615,
-   "branches": 3,
+   "start": 664,
+   "end": 679,
+   "branches": 4,
    "lang": "python"
   },
   {
@@ -1259,9 +1313,29 @@
    "type": "Method",
    "name": "Queue.render",
    "path": ".github/bible/bible_queue.py",
-   "start": 1209,
-   "end": 1220,
+   "start": 1307,
+   "end": 1318,
    "branches": 2,
+   "lang": "python"
+  },
+  {
+   "id": "symbol:.github/bible/bible_queue.py#Queue.replay_closed_runs",
+   "type": "Method",
+   "name": "Queue.replay_closed_runs",
+   "path": ".github/bible/bible_queue.py",
+   "start": 681,
+   "end": 697,
+   "branches": 5,
+   "lang": "python"
+  },
+  {
+   "id": "symbol:.github/bible/bible_queue.py#Queue.replayed",
+   "type": "Method",
+   "name": "Queue.replayed",
+   "path": ".github/bible/bible_queue.py",
+   "start": 699,
+   "end": 703,
+   "branches": 0,
    "lang": "python"
   },
   {
@@ -1269,8 +1343,8 @@
    "type": "Method",
    "name": "Queue.revise_all_step",
    "path": ".github/bible/bible_queue.py",
-   "start": 1074,
-   "end": 1152,
+   "start": 1172,
+   "end": 1250,
    "branches": 18,
    "lang": "python"
   },
@@ -1279,8 +1353,8 @@
    "type": "Method",
    "name": "Queue.run",
    "path": ".github/bible/bible_queue.py",
-   "start": 617,
-   "end": 668,
+   "start": 705,
+   "end": 756,
    "branches": 15,
    "lang": "python"
   },
@@ -1289,8 +1363,8 @@
    "type": "Method",
    "name": "Queue.run_issues",
    "path": ".github/bible/bible_queue.py",
-   "start": 505,
-   "end": 506,
+   "start": 565,
+   "end": 566,
    "branches": 0,
    "lang": "python"
   },
@@ -1299,8 +1373,8 @@
    "type": "Method",
    "name": "Queue.session",
    "path": ".github/bible/bible_queue.py",
-   "start": 517,
-   "end": 533,
+   "start": 577,
+   "end": 593,
    "branches": 8,
    "lang": "python"
   },
@@ -1309,8 +1383,8 @@
    "type": "Method",
    "name": "Queue.start_chunk",
    "path": ".github/bible/bible_queue.py",
-   "start": 694,
-   "end": 706,
+   "start": 782,
+   "end": 794,
    "branches": 3,
    "lang": "python"
   },
@@ -1319,8 +1393,8 @@
    "type": "Method",
    "name": "Queue.whole_fingerprint",
    "path": ".github/bible/bible_queue.py",
-   "start": 920,
-   "end": 935,
+   "start": 1010,
+   "end": 1025,
    "branches": 2,
    "lang": "python"
   },
@@ -1329,9 +1403,19 @@
    "type": "Method",
    "name": "Queue.whole_hold",
    "path": ".github/bible/bible_queue.py",
-   "start": 1066,
-   "end": 1072,
+   "start": 1164,
+   "end": 1170,
    "branches": 2,
+   "lang": "python"
+  },
+  {
+   "id": "symbol:.github/bible/bible_queue.py#accepted",
+   "type": "Function",
+   "name": "accepted",
+   "path": ".github/bible/bible_queue.py",
+   "start": 523,
+   "end": 542,
+   "branches": 7,
    "lang": "python"
   },
   {
@@ -1339,8 +1423,8 @@
    "type": "Function",
    "name": "age",
    "path": ".github/bible/bible_queue.py",
-   "start": 384,
-   "end": 385,
+   "start": 385,
+   "end": 386,
    "branches": 0,
    "lang": "python"
   },
@@ -1349,8 +1433,8 @@
    "type": "Function",
    "name": "as_int",
    "path": ".github/bible/bible_queue.py",
-   "start": 485,
-   "end": 489,
+   "start": 545,
+   "end": 549,
    "branches": 1,
    "lang": "python"
   },
@@ -1359,8 +1443,8 @@
    "type": "Function",
    "name": "assignment",
    "path": ".github/bible/bible_queue.py",
-   "start": 445,
-   "end": 449,
+   "start": 447,
+   "end": 451,
    "branches": 1,
    "lang": "python"
   },
@@ -1369,8 +1453,8 @@
    "type": "Function",
    "name": "comp_label",
    "path": ".github/bible/bible_queue.py",
-   "start": 432,
-   "end": 433,
+   "start": 434,
+   "end": 435,
    "branches": 0,
    "lang": "python"
   },
@@ -1379,8 +1463,8 @@
    "type": "Function",
    "name": "issue_text",
    "path": ".github/bible/bible_queue.py",
-   "start": 436,
-   "end": 442,
+   "start": 438,
+   "end": 444,
    "branches": 1,
    "lang": "python"
   },
@@ -1389,8 +1473,8 @@
    "type": "Function",
    "name": "json_file",
    "path": ".github/bible/bible_queue.py",
-   "start": 452,
-   "end": 457,
+   "start": 454,
+   "end": 459,
    "branches": 2,
    "lang": "python"
   },
@@ -1399,8 +1483,8 @@
    "type": "Function",
    "name": "labels_of",
    "path": ".github/bible/bible_queue.py",
-   "start": 428,
-   "end": 429,
+   "start": 430,
+   "end": 431,
    "branches": 1,
    "lang": "python"
   },
@@ -1409,8 +1493,8 @@
    "type": "Function",
    "name": "main",
    "path": ".github/bible/bible_queue.py",
-   "start": 1286,
-   "end": 1332,
+   "start": 1384,
+   "end": 1430,
    "branches": 14,
    "lang": "python"
   },
@@ -1419,9 +1503,19 @@
    "type": "Function",
    "name": "now",
    "path": ".github/bible/bible_queue.py",
-   "start": 379,
-   "end": 381,
+   "start": 380,
+   "end": 382,
    "branches": 1,
+   "lang": "python"
+  },
+  {
+   "id": "symbol:.github/bible/bible_queue.py#recheck_due",
+   "type": "Function",
+   "name": "recheck_due",
+   "path": ".github/bible/bible_queue.py",
+   "start": 516,
+   "end": 520,
+   "branches": 0,
    "lang": "python"
   },
   {
@@ -1429,9 +1523,9 @@
    "type": "Function",
    "name": "report_facts",
    "path": ".github/bible/bible_queue.py",
-   "start": 469,
-   "end": 482,
-   "branches": 3,
+   "start": 478,
+   "end": 507,
+   "branches": 11,
    "lang": "python"
   },
   {
@@ -1439,8 +1533,8 @@
    "type": "Function",
    "name": "section",
    "path": ".github/bible/bible_queue.py",
-   "start": 460,
-   "end": 466,
+   "start": 462,
+   "end": 468,
    "branches": 2,
    "lang": "python"
   },
@@ -1449,8 +1543,8 @@
    "type": "Function",
    "name": "settings_of",
    "path": ".github/bible/bible_queue.py",
-   "start": 405,
-   "end": 425,
+   "start": 407,
+   "end": 427,
    "branches": 7,
    "lang": "python"
   },
@@ -1459,8 +1553,8 @@
    "type": "Function",
    "name": "shown_files",
    "path": ".github/bible/bible_queue.py",
-   "start": 397,
-   "end": 402,
+   "start": 399,
+   "end": 404,
    "branches": 2,
    "lang": "python"
   },
@@ -1469,9 +1563,29 @@
    "type": "Function",
    "name": "status_of",
    "path": ".github/bible/bible_queue.py",
-   "start": 492,
-   "end": 495,
+   "start": 552,
+   "end": 555,
    "branches": 1,
+   "lang": "python"
+  },
+  {
+   "id": "symbol:components/catalog/catalog.py#NoHTTPRedirectHandler",
+   "type": "Class",
+   "name": "NoHTTPRedirectHandler",
+   "path": "components/catalog/catalog.py",
+   "start": 18,
+   "end": 24,
+   "branches": 0,
+   "lang": "python"
+  },
+  {
+   "id": "symbol:components/catalog/catalog.py#NoHTTPRedirectHandler.redirect_request",
+   "type": "Method",
+   "name": "NoHTTPRedirectHandler.redirect_request",
+   "path": "components/catalog/catalog.py",
+   "start": 19,
+   "end": 24,
+   "branches": 2,
    "lang": "python"
   },
   {
@@ -1479,8 +1593,8 @@
    "type": "Function",
    "name": "apply_feed",
    "path": "components/catalog/catalog.py",
-   "start": 42,
-   "end": 47,
+   "start": 58,
+   "end": 63,
    "branches": 2,
    "lang": "python"
   },
@@ -1489,8 +1603,8 @@
    "type": "Function",
    "name": "fetch_supplier_feed",
    "path": "components/catalog/catalog.py",
-   "start": 36,
-   "end": 39,
+   "start": 48,
+   "end": 55,
    "branches": 0,
    "lang": "python"
   },
@@ -1499,8 +1613,8 @@
    "type": "Function",
    "name": "get_product",
    "path": "components/catalog/catalog.py",
-   "start": 15,
-   "end": 17,
+   "start": 27,
+   "end": 29,
    "branches": 0,
    "lang": "python"
   },
@@ -1509,8 +1623,8 @@
    "type": "Function",
    "name": "image_url",
    "path": "components/catalog/catalog.py",
-   "start": 32,
-   "end": 33,
+   "start": 44,
+   "end": 45,
    "branches": 0,
    "lang": "python"
   },
@@ -1519,8 +1633,8 @@
    "type": "Function",
    "name": "in_stock",
    "path": "components/catalog/catalog.py",
-   "start": 27,
-   "end": 29,
+   "start": 39,
+   "end": 41,
    "branches": 0,
    "lang": "python"
   },
@@ -1529,8 +1643,8 @@
    "type": "Function",
    "name": "price_of",
    "path": "components/catalog/catalog.py",
-   "start": 20,
-   "end": 24,
+   "start": 32,
+   "end": 36,
    "branches": 2,
    "lang": "python"
   },
@@ -1589,8 +1703,8 @@
    "type": "Class",
    "name": "CatalogTest",
    "path": "components/catalog/test_catalog.py",
-   "start": 6,
-   "end": 8,
+   "start": 10,
+   "end": 44,
    "branches": 0,
    "lang": "python"
   },
@@ -1599,8 +1713,28 @@
    "type": "Method",
    "name": "CatalogTest.test_price_of_known_sku",
    "path": "components/catalog/test_catalog.py",
-   "start": 7,
-   "end": 8,
+   "start": 11,
+   "end": 12,
+   "branches": 0,
+   "lang": "python"
+  },
+  {
+   "id": "symbol:components/catalog/test_catalog.py#CatalogTest.test_supplier_feed_rejects_redirect_to_http",
+   "type": "Method",
+   "name": "CatalogTest.test_supplier_feed_rejects_redirect_to_http",
+   "path": "components/catalog/test_catalog.py",
+   "start": 32,
+   "end": 44,
+   "branches": 0,
+   "lang": "python"
+  },
+  {
+   "id": "symbol:components/catalog/test_catalog.py#CatalogTest.test_supplier_feed_uses_verified_https",
+   "type": "Method",
+   "name": "CatalogTest.test_supplier_feed_uses_verified_https",
+   "path": "components/catalog/test_catalog.py",
+   "start": 14,
+   "end": 30,
    "branches": 0,
    "lang": "python"
   },
@@ -1880,574 +2014,616 @@
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#GitHub",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:110",
+   "evidence": ".github/bible/bible_queue.py:111",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.__init__",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:111",
+   "evidence": ".github/bible/bible_queue.py:112",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.request",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:116",
+   "evidence": ".github/bible/bible_queue.py:117",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:127",
+   "evidence": ".github/bible/bible_queue.py:128",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.paged",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:141",
+   "evidence": ".github/bible/bible_queue.py:142",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.issues",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:151",
+   "evidence": ".github/bible/bible_queue.py:152",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.ensure_label",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:155",
+   "evidence": ".github/bible/bible_queue.py:156",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.ensure_labels",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:162",
+   "evidence": ".github/bible/bible_queue.py:163",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:166",
+   "evidence": ".github/bible/bible_queue.py:167",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.me",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:175",
+   "evidence": ".github/bible/bible_queue.py:176",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.default_branch",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:181",
+   "evidence": ".github/bible/bible_queue.py:182",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.branch_sha",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:184",
+   "evidence": ".github/bible/bible_queue.py:185",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_branch",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:188",
+   "evidence": ".github/bible/bible_queue.py:189",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.reset_branch",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:191",
+   "evidence": ".github/bible/bible_queue.py:192",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.file",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:194",
+   "evidence": ".github/bible/bible_queue.py:195",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.prs",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:200",
+   "evidence": ".github/bible/bible_queue.py:201",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.timeline",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:204",
+   "evidence": ".github/bible/bible_queue.py:205",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.linked_prs",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:207",
+   "evidence": ".github/bible/bible_queue.py:208",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.branch_prs",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:218",
+   "evidence": ".github/bible/bible_queue.py:219",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.agent_events",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:223",
+   "evidence": ".github/bible/bible_queue.py:224",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.is_agent_pr",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:229",
+   "evidence": ".github/bible/bible_queue.py:230",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.start_error",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:236",
+   "evidence": ".github/bible/bible_queue.py:237",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.assigned_at",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:247",
+   "evidence": ".github/bible/bible_queue.py:248",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.pr_files",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:252",
+   "evidence": ".github/bible/bible_queue.py:253",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.commit_time",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:288",
+   "evidence": ".github/bible/bible_queue.py:289",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.tarball",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:291",
+   "evidence": ".github/bible/bible_queue.py:292",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.label",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:332",
+   "evidence": ".github/bible/bible_queue.py:333",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.unlabel",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:336",
+   "evidence": ".github/bible/bible_queue.py:337",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.comment",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:339",
+   "evidence": ".github/bible/bible_queue.py:340",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.close",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:342",
+   "evidence": ".github/bible/bible_queue.py:343",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.set_body",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:345",
+   "evidence": ".github/bible/bible_queue.py:346",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.unassign",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:348",
+   "evidence": ".github/bible/bible_queue.py:349",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.assign",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:351",
+   "evidence": ".github/bible/bible_queue.py:352",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.ready",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:354",
+   "evidence": ".github/bible/bible_queue.py:355",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.merge",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:364",
+   "evidence": ".github/bible/bible_queue.py:365",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.close_pr",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:370",
+   "evidence": ".github/bible/bible_queue.py:371",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_pr",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:373",
+   "evidence": ".github/bible/bible_queue.py:374",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#now",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:379",
+   "evidence": ".github/bible/bible_queue.py:380",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#age",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:384",
+   "evidence": ".github/bible/bible_queue.py:385",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#shown_files",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:397",
+   "evidence": ".github/bible/bible_queue.py:399",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#settings_of",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:405",
+   "evidence": ".github/bible/bible_queue.py:407",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#labels_of",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:428",
+   "evidence": ".github/bible/bible_queue.py:430",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#comp_label",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:432",
+   "evidence": ".github/bible/bible_queue.py:434",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#issue_text",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:436",
+   "evidence": ".github/bible/bible_queue.py:438",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#assignment",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:445",
+   "evidence": ".github/bible/bible_queue.py:447",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#json_file",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:452",
+   "evidence": ".github/bible/bible_queue.py:454",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#section",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:460",
+   "evidence": ".github/bible/bible_queue.py:462",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#report_facts",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:469",
+   "evidence": ".github/bible/bible_queue.py:478",
+   "resolution": "exact"
+  },
+  {
+   "source": "file:.github/bible/bible_queue.py",
+   "target": "symbol:.github/bible/bible_queue.py#recheck_due",
+   "type": "DEFINES",
+   "evidence": ".github/bible/bible_queue.py:516",
+   "resolution": "exact"
+  },
+  {
+   "source": "file:.github/bible/bible_queue.py",
+   "target": "symbol:.github/bible/bible_queue.py#accepted",
+   "type": "DEFINES",
+   "evidence": ".github/bible/bible_queue.py:523",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#as_int",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:485",
+   "evidence": ".github/bible/bible_queue.py:545",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#status_of",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:492",
+   "evidence": ".github/bible/bible_queue.py:552",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#Queue",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:500",
+   "evidence": ".github/bible/bible_queue.py:560",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.__init__",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:501",
+   "evidence": ".github/bible/bible_queue.py:561",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.run_issues",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:505",
+   "evidence": ".github/bible/bible_queue.py:565",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.agent_pr",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:508",
+   "evidence": ".github/bible/bible_queue.py:568",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.session",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:517",
+   "evidence": ".github/bible/bible_queue.py:577",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.held",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:535",
+   "evidence": ".github/bible/bible_queue.py:595",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.model_for",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:570",
+   "evidence": ".github/bible/bible_queue.py:630",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.hold_start_error",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:574",
+   "evidence": ".github/bible/bible_queue.py:634",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:582",
+   "evidence": ".github/bible/bible_queue.py:642",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.reconcile",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:604",
+   "evidence": ".github/bible/bible_queue.py:664",
+   "resolution": "exact"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue",
+   "target": "symbol:.github/bible/bible_queue.py#Queue.replay_closed_runs",
+   "type": "DEFINES",
+   "evidence": ".github/bible/bible_queue.py:681",
+   "resolution": "exact"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue",
+   "target": "symbol:.github/bible/bible_queue.py#Queue.replayed",
+   "type": "DEFINES",
+   "evidence": ".github/bible/bible_queue.py:699",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.run",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:617",
+   "evidence": ".github/bible/bible_queue.py:705",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.plan_phase",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:670",
+   "evidence": ".github/bible/bible_queue.py:758",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.start_chunk",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:694",
+   "evidence": ".github/bible/bible_queue.py:782",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.component",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:708",
+   "evidence": ".github/bible/bible_queue.py:796",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:821",
+   "evidence": ".github/bible/bible_queue.py:911",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.check",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:880",
+   "evidence": ".github/bible/bible_queue.py:970",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.could_not_check",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:907",
+   "evidence": ".github/bible/bible_queue.py:997",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.whole_fingerprint",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:920",
+   "evidence": ".github/bible/bible_queue.py:1010",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:937",
+   "evidence": ".github/bible/bible_queue.py:1027",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.deferred_updates",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:1052",
+   "evidence": ".github/bible/bible_queue.py:1150",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.whole_hold",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:1066",
+   "evidence": ".github/bible/bible_queue.py:1164",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:1074",
+   "evidence": ".github/bible/bible_queue.py:1172",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.continue_if_unfinished",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:1154",
+   "evidence": ".github/bible/bible_queue.py:1252",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.render",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:1209",
+   "evidence": ".github/bible/bible_queue.py:1307",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue",
    "target": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:1223",
+   "evidence": ".github/bible/bible_queue.py:1321",
    "resolution": "exact"
   },
   {
    "source": "file:.github/bible/bible_queue.py",
    "target": "symbol:.github/bible/bible_queue.py#main",
    "type": "DEFINES",
-   "evidence": ".github/bible/bible_queue.py:1286",
+   "evidence": ".github/bible/bible_queue.py:1384",
+   "resolution": "exact"
+  },
+  {
+   "source": "file:components/catalog/catalog.py",
+   "target": "symbol:components/catalog/catalog.py#NoHTTPRedirectHandler",
+   "type": "DEFINES",
+   "evidence": "components/catalog/catalog.py:18",
+   "resolution": "exact"
+  },
+  {
+   "source": "symbol:components/catalog/catalog.py#NoHTTPRedirectHandler",
+   "target": "symbol:components/catalog/catalog.py#NoHTTPRedirectHandler.redirect_request",
+   "type": "DEFINES",
+   "evidence": "components/catalog/catalog.py:19",
    "resolution": "exact"
   },
   {
    "source": "file:components/catalog/catalog.py",
    "target": "symbol:components/catalog/catalog.py#get_product",
    "type": "DEFINES",
-   "evidence": "components/catalog/catalog.py:15",
+   "evidence": "components/catalog/catalog.py:27",
    "resolution": "exact"
   },
   {
    "source": "file:components/catalog/catalog.py",
    "target": "symbol:components/catalog/catalog.py#price_of",
    "type": "DEFINES",
-   "evidence": "components/catalog/catalog.py:20",
+   "evidence": "components/catalog/catalog.py:32",
    "resolution": "exact"
   },
   {
    "source": "file:components/catalog/catalog.py",
    "target": "symbol:components/catalog/catalog.py#in_stock",
    "type": "DEFINES",
-   "evidence": "components/catalog/catalog.py:27",
+   "evidence": "components/catalog/catalog.py:39",
    "resolution": "exact"
   },
   {
    "source": "file:components/catalog/catalog.py",
    "target": "symbol:components/catalog/catalog.py#image_url",
    "type": "DEFINES",
-   "evidence": "components/catalog/catalog.py:32",
+   "evidence": "components/catalog/catalog.py:44",
    "resolution": "exact"
   },
   {
    "source": "file:components/catalog/catalog.py",
    "target": "symbol:components/catalog/catalog.py#fetch_supplier_feed",
    "type": "DEFINES",
-   "evidence": "components/catalog/catalog.py:36",
+   "evidence": "components/catalog/catalog.py:48",
    "resolution": "exact"
   },
   {
    "source": "file:components/catalog/catalog.py",
    "target": "symbol:components/catalog/catalog.py#apply_feed",
    "type": "DEFINES",
-   "evidence": "components/catalog/catalog.py:42",
+   "evidence": "components/catalog/catalog.py:58",
    "resolution": "exact"
   },
   {
@@ -2489,14 +2665,28 @@
    "source": "file:components/catalog/test_catalog.py",
    "target": "symbol:components/catalog/test_catalog.py#CatalogTest",
    "type": "DEFINES",
-   "evidence": "components/catalog/test_catalog.py:6",
+   "evidence": "components/catalog/test_catalog.py:10",
    "resolution": "exact"
   },
   {
    "source": "symbol:components/catalog/test_catalog.py#CatalogTest",
    "target": "symbol:components/catalog/test_catalog.py#CatalogTest.test_price_of_known_sku",
    "type": "DEFINES",
-   "evidence": "components/catalog/test_catalog.py:7",
+   "evidence": "components/catalog/test_catalog.py:11",
+   "resolution": "exact"
+  },
+  {
+   "source": "symbol:components/catalog/test_catalog.py#CatalogTest",
+   "target": "symbol:components/catalog/test_catalog.py#CatalogTest.test_supplier_feed_uses_verified_https",
+   "type": "DEFINES",
+   "evidence": "components/catalog/test_catalog.py:14",
+   "resolution": "exact"
+  },
+  {
+   "source": "symbol:components/catalog/test_catalog.py#CatalogTest",
+   "target": "symbol:components/catalog/test_catalog.py#CatalogTest.test_supplier_feed_rejects_redirect_to_http",
+   "type": "DEFINES",
+   "evidence": "components/catalog/test_catalog.py:32",
    "resolution": "exact"
   },
   {
@@ -2692,1484 +2882,1596 @@
    "source": "file:.github/bible/bible_queue.py",
    "target": "file:components/__init__.py",
    "type": "IMPORTS",
-   "evidence": ".github/bible/bible_queue.py:1248",
+   "evidence": ".github/bible/bible_queue.py:1346",
    "resolution": "exact"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.request",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:130",
+   "evidence": ".github/bible/bible_queue.py:131",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.paged",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:145",
+   "evidence": ".github/bible/bible_queue.py:146",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.issues",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.paged",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:153",
+   "evidence": ".github/bible/bible_queue.py:154",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.ensure_label",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.paged",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:157",
+   "evidence": ".github/bible/bible_queue.py:158",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.ensure_label",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:159",
+   "evidence": ".github/bible/bible_queue.py:160",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.ensure_labels",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.ensure_label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:164",
+   "evidence": ".github/bible/bible_queue.py:165",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.ensure_label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:168",
+   "evidence": ".github/bible/bible_queue.py:169",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:173",
+   "evidence": ".github/bible/bible_queue.py:174",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.me",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:178",
+   "evidence": ".github/bible/bible_queue.py:179",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.default_branch",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:182",
+   "evidence": ".github/bible/bible_queue.py:183",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.branch_sha",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:185",
+   "evidence": ".github/bible/bible_queue.py:186",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.create_branch",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:189",
+   "evidence": ".github/bible/bible_queue.py:190",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.reset_branch",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:192",
+   "evidence": ".github/bible/bible_queue.py:193",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.file",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:195",
+   "evidence": ".github/bible/bible_queue.py:196",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.prs",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.paged",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:202",
+   "evidence": ".github/bible/bible_queue.py:203",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.timeline",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.paged",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:205",
+   "evidence": ".github/bible/bible_queue.py:206",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.linked_prs",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.timeline",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:210",
+   "evidence": ".github/bible/bible_queue.py:211",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.linked_prs",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:215",
+   "evidence": ".github/bible/bible_queue.py:216",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.branch_prs",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.paged",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:221",
+   "evidence": ".github/bible/bible_queue.py:222",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.agent_events",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.timeline",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:225",
+   "evidence": ".github/bible/bible_queue.py:226",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.is_agent_pr",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.agent_events",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:234",
+   "evidence": ".github/bible/bible_queue.py:235",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.start_error",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.assigned_at",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:238",
+   "evidence": ".github/bible/bible_queue.py:239",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.start_error",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.timeline",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:239",
+   "evidence": ".github/bible/bible_queue.py:240",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.assigned_at",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.timeline",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:249",
+   "evidence": ".github/bible/bible_queue.py:250",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.pr_files",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:255",
+   "evidence": ".github/bible/bible_queue.py:256",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.pr_files",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.branch_sha",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:258",
+   "evidence": ".github/bible/bible_queue.py:259",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.pr_files",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.paged",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:276",
+   "evidence": ".github/bible/bible_queue.py:277",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.pr_files",
    "target": "symbol:.github/bible/bible_queue.py#as_int",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:277",
+   "evidence": ".github/bible/bible_queue.py:278",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.commit_time",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:289",
+   "evidence": ".github/bible/bible_queue.py:290",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.tarball",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.request",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:297",
+   "evidence": ".github/bible/bible_queue.py:298",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.label",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.ensure_label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:333",
+   "evidence": ".github/bible/bible_queue.py:334",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.label",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:334",
+   "evidence": ".github/bible/bible_queue.py:335",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.unlabel",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:337",
+   "evidence": ".github/bible/bible_queue.py:338",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.comment",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:340",
+   "evidence": ".github/bible/bible_queue.py:341",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.close",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:343",
+   "evidence": ".github/bible/bible_queue.py:344",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.set_body",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:346",
+   "evidence": ".github/bible/bible_queue.py:347",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.unassign",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:349",
+   "evidence": ".github/bible/bible_queue.py:350",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.assign",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:352",
+   "evidence": ".github/bible/bible_queue.py:353",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.ready",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.request",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:359",
+   "evidence": ".github/bible/bible_queue.py:360",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.merge",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.ready",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:366",
+   "evidence": ".github/bible/bible_queue.py:367",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.merge",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:368",
+   "evidence": ".github/bible/bible_queue.py:369",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.close_pr",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:371",
+   "evidence": ".github/bible/bible_queue.py:372",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#GitHub.create_pr",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.call",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:374",
+   "evidence": ".github/bible/bible_queue.py:375",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#age",
    "target": "symbol:.github/bible/bible_queue.py#now",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:385",
+   "evidence": ".github/bible/bible_queue.py:386",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#issue_text",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.file",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:438",
+   "evidence": ".github/bible/bible_queue.py:440",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#json_file",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.file",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:453",
+   "evidence": ".github/bible/bible_queue.py:455",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#report_facts",
    "target": "symbol:.github/bible/bible_queue.py#section",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:479",
+   "evidence": ".github/bible/bible_queue.py:488",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#status_of",
    "target": "symbol:.github/bible/bible_queue.py#json_file",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:494",
+   "evidence": ".github/bible/bible_queue.py:554",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.run_issues",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.issues",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:506",
+   "evidence": ".github/bible/bible_queue.py:566",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.agent_pr",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.linked_prs",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:510",
+   "evidence": ".github/bible/bible_queue.py:570",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.agent_pr",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.is_agent_pr",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:512",
+   "evidence": ".github/bible/bible_queue.py:572",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.session",
    "target": "symbol:.github/bible/bible_queue.py#Queue.agent_pr",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:519",
+   "evidence": ".github/bible/bible_queue.py:579",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.session",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.start_error",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:521",
+   "evidence": ".github/bible/bible_queue.py:581",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.session",
    "target": "symbol:.github/bible/bible_queue.py#age",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:523",
+   "evidence": ".github/bible/bible_queue.py:583",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.session",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.assigned_at",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:523",
+   "evidence": ".github/bible/bible_queue.py:583",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.session",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.agent_events",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:524",
+   "evidence": ".github/bible/bible_queue.py:584",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.session",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.commit_time",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:527",
+   "evidence": ".github/bible/bible_queue.py:587",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.session",
    "target": "symbol:.github/bible/bible_queue.py#status_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:530",
+   "evidence": ".github/bible/bible_queue.py:590",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.session",
    "target": "symbol:.github/bible/bible_queue.py#labels_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:529",
+   "evidence": ".github/bible/bible_queue.py:589",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.held",
    "target": "symbol:.github/bible/bible_queue.py#labels_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:543",
+   "evidence": ".github/bible/bible_queue.py:603",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.held",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.timeline",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:547",
+   "evidence": ".github/bible/bible_queue.py:607",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.held",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:554",
+   "evidence": ".github/bible/bible_queue.py:614",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.held",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.comment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:555",
+   "evidence": ".github/bible/bible_queue.py:615",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.held",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.set_body",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:564",
+   "evidence": ".github/bible/bible_queue.py:624",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.held",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.assign",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:566",
+   "evidence": ".github/bible/bible_queue.py:626",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.held",
    "target": "symbol:.github/bible/bible_queue.py#assignment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:566",
+   "evidence": ".github/bible/bible_queue.py:626",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.held",
    "target": "symbol:.github/bible/bible_queue.py#Queue.model_for",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:566",
+   "evidence": ".github/bible/bible_queue.py:626",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.model_for",
    "target": "symbol:.github/bible/bible_queue.py#labels_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:571",
+   "evidence": ".github/bible/bible_queue.py:631",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.hold_start_error",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.start_error",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:576",
+   "evidence": ".github/bible/bible_queue.py:636",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.hold_start_error",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:577",
+   "evidence": ".github/bible/bible_queue.py:637",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.hold_start_error",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.unassign",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:578",
+   "evidence": ".github/bible/bible_queue.py:638",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.hold_start_error",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.comment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:579",
+   "evidence": ".github/bible/bible_queue.py:639",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.comment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:586",
+   "evidence": ".github/bible/bible_queue.py:646",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.close_pr",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:587",
+   "evidence": ".github/bible/bible_queue.py:647",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:589",
+   "evidence": ".github/bible/bible_queue.py:649",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.unassign",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:590",
+   "evidence": ".github/bible/bible_queue.py:650",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:599",
+   "evidence": ".github/bible/bible_queue.py:659",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "target": "symbol:.github/bible/bible_queue.py#assignment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:600",
+   "evidence": ".github/bible/bible_queue.py:660",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "target": "symbol:.github/bible/bible_queue.py#Queue.model_for",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:600",
+   "evidence": ".github/bible/bible_queue.py:660",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "target": "symbol:.github/bible/bible_queue.py#labels_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:599",
+   "evidence": ".github/bible/bible_queue.py:659",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.reconcile",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.default_branch",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:606",
+   "evidence": ".github/bible/bible_queue.py:666",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.reconcile",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.issues",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:607",
+   "evidence": ".github/bible/bible_queue.py:667",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.reconcile",
    "target": "symbol:.github/bible/bible_queue.py#settings_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:608",
+   "evidence": ".github/bible/bible_queue.py:668",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.reconcile",
    "target": "symbol:.github/bible/bible_queue.py#Queue.run",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:613",
+   "evidence": ".github/bible/bible_queue.py:673",
    "resolution": "self"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.reconcile",
+   "target": "symbol:.github/bible/bible_queue.py#Queue.replay_closed_runs",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:677",
+   "resolution": "self"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.replay_closed_runs",
+   "target": "symbol:.github/bible/bible_queue.py#GitHub.issues",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:685",
+   "resolution": "name-unique"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.replay_closed_runs",
+   "target": "symbol:.github/bible/bible_queue.py#labels_of",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:686",
+   "resolution": "same-file"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.replay_closed_runs",
+   "target": "symbol:.github/bible/bible_queue.py#GitHub.label",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:695",
+   "resolution": "name-unique"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.replay_closed_runs",
+   "target": "symbol:.github/bible/bible_queue.py#Queue.replayed",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:689",
+   "resolution": "self"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.replay_closed_runs",
+   "target": "symbol:.github/bible/bible_queue.py#Queue.deferred_updates",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:690",
+   "resolution": "self"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.replay_closed_runs",
+   "target": "symbol:.github/bible/bible_queue.py#GitHub.comment",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:693",
+   "resolution": "name-unique"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.replay_closed_runs",
+   "target": "symbol:.github/bible/bible_queue.py#Queue.delta",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:692",
+   "resolution": "self"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.replay_closed_runs",
+   "target": "symbol:.github/bible/bible_queue.py#settings_of",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:692",
+   "resolution": "same-file"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.replayed",
+   "target": "symbol:.github/bible/bible_queue.py#GitHub.me",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:701",
+   "resolution": "name-unique"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.replayed",
+   "target": "symbol:.github/bible/bible_queue.py#GitHub.timeline",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:703",
+   "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.run",
    "target": "symbol:.github/bible/bible_queue.py#json_file",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:628",
+   "evidence": ".github/bible/bible_queue.py:716",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.run",
    "target": "symbol:.github/bible/bible_queue.py#Queue.plan_phase",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:630",
+   "evidence": ".github/bible/bible_queue.py:718",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.run",
    "target": "symbol:.github/bible/bible_queue.py#Queue.render",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:637",
+   "evidence": ".github/bible/bible_queue.py:725",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.run",
    "target": "symbol:.github/bible/bible_queue.py#Queue.run_issues",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:648",
+   "evidence": ".github/bible/bible_queue.py:736",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.run",
    "target": "symbol:.github/bible/bible_queue.py#Queue.component",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:654",
+   "evidence": ".github/bible/bible_queue.py:742",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.run",
    "target": "symbol:.github/bible/bible_queue.py#as_int",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:658",
+   "evidence": ".github/bible/bible_queue.py:746",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.run",
    "target": "symbol:.github/bible/bible_queue.py#Queue.start_chunk",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:662",
+   "evidence": ".github/bible/bible_queue.py:750",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.run",
    "target": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:667",
+   "evidence": ".github/bible/bible_queue.py:755",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.plan_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.run_issues",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:672",
+   "evidence": ".github/bible/bible_queue.py:760",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.plan_phase",
    "target": "symbol:.github/bible/bible_queue.py#issue_text",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:674",
+   "evidence": ".github/bible/bible_queue.py:762",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.plan_phase",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:679",
+   "evidence": ".github/bible/bible_queue.py:767",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.plan_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.render",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:681",
+   "evidence": ".github/bible/bible_queue.py:769",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.plan_phase",
    "target": "symbol:.github/bible/bible_queue.py#assignment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:680",
+   "evidence": ".github/bible/bible_queue.py:768",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.plan_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.held",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:683",
+   "evidence": ".github/bible/bible_queue.py:771",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.plan_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.session",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:685",
+   "evidence": ".github/bible/bible_queue.py:773",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.plan_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.hold_start_error",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:687",
+   "evidence": ".github/bible/bible_queue.py:775",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.plan_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:690",
+   "evidence": ".github/bible/bible_queue.py:778",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.start_chunk",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.branch_sha",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:697",
+   "evidence": ".github/bible/bible_queue.py:785",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.start_chunk",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_branch",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:699",
+   "evidence": ".github/bible/bible_queue.py:787",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.start_chunk",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.reset_branch",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:701",
+   "evidence": ".github/bible/bible_queue.py:789",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.start_chunk",
    "target": "symbol:.github/bible/bible_queue.py#Queue.run_issues",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:700",
+   "evidence": ".github/bible/bible_queue.py:788",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.start_chunk",
    "target": "symbol:.github/bible/bible_queue.py#comp_label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:700",
+   "evidence": ".github/bible/bible_queue.py:788",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.start_chunk",
    "target": "symbol:.github/bible/bible_queue.py#issue_text",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:702",
+   "evidence": ".github/bible/bible_queue.py:790",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.start_chunk",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:705",
+   "evidence": ".github/bible/bible_queue.py:793",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.start_chunk",
    "target": "symbol:.github/bible/bible_queue.py#assignment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:706",
+   "evidence": ".github/bible/bible_queue.py:794",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.branch_prs",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:711",
+   "evidence": ".github/bible/bible_queue.py:799",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#Queue.run_issues",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:720",
+   "evidence": ".github/bible/bible_queue.py:808",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#comp_label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:720",
+   "evidence": ".github/bible/bible_queue.py:808",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#Queue.held",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:723",
+   "evidence": ".github/bible/bible_queue.py:811",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:731",
+   "evidence": ".github/bible/bible_queue.py:819",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#labels_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:737",
+   "evidence": ".github/bible/bible_queue.py:825",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#status_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:742",
+   "evidence": ".github/bible/bible_queue.py:830",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#Queue.check",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:747",
+   "evidence": ".github/bible/bible_queue.py:835",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#Queue.could_not_check",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:749",
+   "evidence": ".github/bible/bible_queue.py:837",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#Queue.start_chunk",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:772",
+   "evidence": ".github/bible/bible_queue.py:860",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:764",
+   "evidence": ".github/bible/bible_queue.py:852",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#as_int",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:759",
+   "evidence": ".github/bible/bible_queue.py:847",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#report_facts",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:777",
+   "evidence": ".github/bible/bible_queue.py:865",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.file",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:777",
+   "evidence": ".github/bible/bible_queue.py:865",
    "resolution": "name-unique"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.component",
+   "target": "symbol:.github/bible/bible_queue.py#accepted",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:867",
+   "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_pr",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:779",
+   "evidence": ".github/bible/bible_queue.py:868",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.component",
    "target": "symbol:.github/bible/bible_queue.py#assignment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:818",
+   "evidence": ".github/bible/bible_queue.py:908",
+   "resolution": "same-file"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.component",
+   "target": "symbol:.github/bible/bible_queue.py#recheck_due",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:907",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#labels_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:823",
+   "evidence": ".github/bible/bible_queue.py:913",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#Queue.session",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:824",
+   "evidence": ".github/bible/bible_queue.py:914",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#Queue.hold_start_error",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:828",
+   "evidence": ".github/bible/bible_queue.py:918",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:831",
+   "evidence": ".github/bible/bible_queue.py:921",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.pr_files",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:837",
+   "evidence": ".github/bible/bible_queue.py:927",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#shown_files",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:849",
+   "evidence": ".github/bible/bible_queue.py:939",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#status_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:851",
+   "evidence": ".github/bible/bible_queue.py:941",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#as_int",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:858",
+   "evidence": ".github/bible/bible_queue.py:948",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.file",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:872",
+   "evidence": ".github/bible/bible_queue.py:962",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:855",
+   "evidence": ".github/bible/bible_queue.py:945",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.merge",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:875",
+   "evidence": ".github/bible/bible_queue.py:965",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.follow",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.unlabel",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:876",
+   "evidence": ".github/bible/bible_queue.py:966",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.check",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.tarball",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:889",
+   "evidence": ".github/bible/bible_queue.py:979",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.could_not_check",
    "target": "symbol:.github/bible/bible_queue.py#as_int",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:910",
+   "evidence": ".github/bible/bible_queue.py:1000",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.could_not_check",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:914",
+   "evidence": ".github/bible/bible_queue.py:1004",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.whole_fingerprint",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.tarball",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:927",
+   "evidence": ".github/bible/bible_queue.py:1017",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.run_issues",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:992",
+   "evidence": ".github/bible/bible_queue.py:1083",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1033",
+   "evidence": ".github/bible/bible_queue.py:1128",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.whole_hold",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:944",
+   "evidence": ".github/bible/bible_queue.py:1034",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#report_facts",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:950",
+   "evidence": ".github/bible/bible_queue.py:1040",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.file",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:956",
+   "evidence": ".github/bible/bible_queue.py:1047",
    "resolution": "name-unique"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
+   "target": "symbol:.github/bible/bible_queue.py#accepted",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:1053",
+   "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:989",
+   "evidence": ".github/bible/bible_queue.py:1080",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.held",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1012",
+   "evidence": ".github/bible/bible_queue.py:1104",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.session",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1014",
+   "evidence": ".github/bible/bible_queue.py:1106",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#issue_text",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1028",
+   "evidence": ".github/bible/bible_queue.py:1120",
+   "resolution": "same-file"
+  },
+  {
+   "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
+   "target": "symbol:.github/bible/bible_queue.py#recheck_due",
+   "type": "CALLS",
+   "evidence": ".github/bible/bible_queue.py:1125",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#assignment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1034",
+   "evidence": ".github/bible/bible_queue.py:1129",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.whole_fingerprint",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:966",
+   "evidence": ".github/bible/bible_queue.py:1057",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:977",
+   "evidence": ".github/bible/bible_queue.py:1068",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.comment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:978",
+   "evidence": ".github/bible/bible_queue.py:1069",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.hold_start_error",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1016",
+   "evidence": ".github/bible/bible_queue.py:1108",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1019",
+   "evidence": ".github/bible/bible_queue.py:1111",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.continue_if_unfinished",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1023",
+   "evidence": ".github/bible/bible_queue.py:1115",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.could_not_check",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:968",
+   "evidence": ".github/bible/bible_queue.py:1059",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#labels_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:981",
+   "evidence": ".github/bible/bible_queue.py:1072",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.linked_prs",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:995",
+   "evidence": ".github/bible/bible_queue.py:1086",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.is_agent_pr",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:957",
+   "evidence": ".github/bible/bible_queue.py:1048",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.pr_files",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:959",
+   "evidence": ".github/bible/bible_queue.py:1050",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.deferred_updates",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1038",
+   "evidence": ".github/bible/bible_queue.py:1133",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1040",
+   "evidence": ".github/bible/bible_queue.py:1135",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.assemble_phase",
    "target": "symbol:.github/bible/bible_queue.py#shown_files",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1049",
+   "evidence": ".github/bible/bible_queue.py:1144",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.deferred_updates",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.me",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1054",
+   "evidence": ".github/bible/bible_queue.py:1152",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.deferred_updates",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.timeline",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1055",
+   "evidence": ".github/bible/bible_queue.py:1153",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.whole_hold",
    "target": "symbol:.github/bible/bible_queue.py#Queue.run_issues",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1068",
+   "evidence": ".github/bible/bible_queue.py:1166",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.whole_hold",
    "target": "symbol:.github/bible/bible_queue.py#labels_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1069",
+   "evidence": ".github/bible/bible_queue.py:1167",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#Queue.run_issues",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1079",
+   "evidence": ".github/bible/bible_queue.py:1177",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#labels_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1082",
+   "evidence": ".github/bible/bible_queue.py:1180",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#Queue.held",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1106",
+   "evidence": ".github/bible/bible_queue.py:1204",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#Queue.session",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1108",
+   "evidence": ".github/bible/bible_queue.py:1206",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#Queue.hold_start_error",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1110",
+   "evidence": ".github/bible/bible_queue.py:1208",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#Queue.fail_or_retry",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1113",
+   "evidence": ".github/bible/bible_queue.py:1211",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#Queue.continue_if_unfinished",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1118",
+   "evidence": ".github/bible/bible_queue.py:1216",
    "resolution": "self"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.linked_prs",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1101",
+   "evidence": ".github/bible/bible_queue.py:1199",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.is_agent_pr",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1102",
+   "evidence": ".github/bible/bible_queue.py:1200",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.pr_files",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1121",
+   "evidence": ".github/bible/bible_queue.py:1219",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#shown_files",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1125",
+   "evidence": ".github/bible/bible_queue.py:1223",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1137",
+   "evidence": ".github/bible/bible_queue.py:1235",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.revise_all_step",
    "target": "symbol:.github/bible/bible_queue.py#assignment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1151",
+   "evidence": ".github/bible/bible_queue.py:1249",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.continue_if_unfinished",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.pr_files",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1163",
+   "evidence": ".github/bible/bible_queue.py:1261",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.continue_if_unfinished",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.me",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1165",
+   "evidence": ".github/bible/bible_queue.py:1263",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.continue_if_unfinished",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.timeline",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1166",
+   "evidence": ".github/bible/bible_queue.py:1264",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.continue_if_unfinished",
    "target": "symbol:.github/bible/bible_queue.py#labels_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1181",
+   "evidence": ".github/bible/bible_queue.py:1279",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.continue_if_unfinished",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1182",
+   "evidence": ".github/bible/bible_queue.py:1280",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.continue_if_unfinished",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.comment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1183",
+   "evidence": ".github/bible/bible_queue.py:1281",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.continue_if_unfinished",
    "target": "symbol:.github/bible/bible_queue.py#age",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1189",
+   "evidence": ".github/bible/bible_queue.py:1287",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.render",
    "target": "symbol:.github/bible/bible_queue.py#now",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1214",
+   "evidence": ".github/bible/bible_queue.py:1312",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.render",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.set_body",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1218",
+   "evidence": ".github/bible/bible_queue.py:1316",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.default_branch",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1225",
+   "evidence": ".github/bible/bible_queue.py:1323",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.issues",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1229",
+   "evidence": ".github/bible/bible_queue.py:1327",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "target": "symbol:.github/bible/bible_queue.py#age",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1229",
+   "evidence": ".github/bible/bible_queue.py:1327",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.comment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1236",
+   "evidence": ".github/bible/bible_queue.py:1334",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "target": "symbol:.github/bible/bible_queue.py#json_file",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1243",
+   "evidence": ".github/bible/bible_queue.py:1341",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.file",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1244",
+   "evidence": ".github/bible/bible_queue.py:1342",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1258",
+   "evidence": ".github/bible/bible_queue.py:1356",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "target": "symbol:.github/bible/bible_queue.py#assignment",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1282",
+   "evidence": ".github/bible/bible_queue.py:1380",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "target": "symbol:.github/bible/bible_queue.py#comp_label",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1270",
+   "evidence": ".github/bible/bible_queue.py:1368",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.assign",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1267",
+   "evidence": ".github/bible/bible_queue.py:1365",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#main",
    "target": "symbol:.github/bible/bible_queue.py#GitHub",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1305",
+   "evidence": ".github/bible/bible_queue.py:1403",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#main",
    "target": "symbol:.github/bible/bible_queue.py#Queue",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1306",
+   "evidence": ".github/bible/bible_queue.py:1404",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#main",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.ensure_labels",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1314",
+   "evidence": ".github/bible/bible_queue.py:1412",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#main",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.issues",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1315",
+   "evidence": ".github/bible/bible_queue.py:1413",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#main",
    "target": "symbol:.github/bible/bible_queue.py#GitHub.create_issue",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1322",
+   "evidence": ".github/bible/bible_queue.py:1420",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#main",
    "target": "symbol:.github/bible/bible_queue.py#settings_of",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1319",
+   "evidence": ".github/bible/bible_queue.py:1417",
    "resolution": "same-file"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#main",
    "target": "symbol:.github/bible/bible_queue.py#Queue.reconcile",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1326",
+   "evidence": ".github/bible/bible_queue.py:1424",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:.github/bible/bible_queue.py#main",
    "target": "symbol:.github/bible/bible_queue.py#Queue.delta",
    "type": "CALLS",
-   "evidence": ".github/bible/bible_queue.py:1330",
+   "evidence": ".github/bible/bible_queue.py:1428",
    "resolution": "name-unique"
   },
   {
    "source": "symbol:components/catalog/catalog.py#price_of",
    "target": "symbol:components/catalog/catalog.py#get_product",
    "type": "CALLS",
-   "evidence": "components/catalog/catalog.py:21",
+   "evidence": "components/catalog/catalog.py:33",
    "resolution": "same-file"
   },
   {
    "source": "symbol:components/catalog/catalog.py#in_stock",
    "target": "symbol:components/catalog/catalog.py#get_product",
    "type": "CALLS",
-   "evidence": "components/catalog/catalog.py:28",
+   "evidence": "components/catalog/catalog.py:40",
+   "resolution": "same-file"
+  },
+  {
+   "source": "symbol:components/catalog/catalog.py#fetch_supplier_feed",
+   "target": "symbol:components/catalog/catalog.py#NoHTTPRedirectHandler",
+   "type": "CALLS",
+   "evidence": "components/catalog/catalog.py:52",
    "resolution": "same-file"
   },
   {
@@ -4197,15 +4499,36 @@
    "source": "file:components/catalog/test_catalog.py",
    "target": "file:components/catalog/__init__.py",
    "type": "IMPORTS",
-   "evidence": "components/catalog/test_catalog.py:3",
+   "evidence": "components/catalog/test_catalog.py:7",
    "resolution": "exact"
   },
   {
    "source": "symbol:components/catalog/test_catalog.py#CatalogTest.test_price_of_known_sku",
    "target": "symbol:components/catalog/catalog.py#price_of",
    "type": "CALLS",
-   "evidence": "components/catalog/test_catalog.py:8",
+   "evidence": "components/catalog/test_catalog.py:12",
    "resolution": "import"
+  },
+  {
+   "source": "symbol:components/catalog/test_catalog.py#CatalogTest.test_supplier_feed_uses_verified_https",
+   "target": "symbol:components/catalog/catalog.py#fetch_supplier_feed",
+   "type": "CALLS",
+   "evidence": "components/catalog/test_catalog.py:19",
+   "resolution": "import"
+  },
+  {
+   "source": "symbol:components/catalog/test_catalog.py#CatalogTest.test_supplier_feed_rejects_redirect_to_http",
+   "target": "symbol:components/catalog/catalog.py#NoHTTPRedirectHandler",
+   "type": "CALLS",
+   "evidence": "components/catalog/test_catalog.py:33",
+   "resolution": "import"
+  },
+  {
+   "source": "symbol:components/catalog/test_catalog.py#CatalogTest.test_supplier_feed_rejects_redirect_to_http",
+   "target": "symbol:components/catalog/catalog.py#NoHTTPRedirectHandler.redirect_request",
+   "type": "CALLS",
+   "evidence": "components/catalog/test_catalog.py:37",
+   "resolution": "name-unique"
   },
   {
    "source": "symbol:components/orders/catalog_client.py#remote_price",
@@ -5027,6 +5350,13 @@
    "resolution": "analysis"
   },
   {
+   "source": "file:components/catalog/catalog.py",
+   "target": "symbol:components/catalog/catalog.py#NoHTTPRedirectHandler",
+   "type": "USES",
+   "evidence": "lld/catalog/catalog.md",
+   "resolution": "analysis"
+  },
+  {
    "source": "component:catalog",
    "target": "page:lld/catalog/service.md",
    "type": "HAS_PAGE",
@@ -5092,6 +5422,20 @@
   {
    "source": "file:components/catalog/test_catalog.py",
    "target": "symbol:components/catalog/catalog.py#price_of",
+   "type": "USES",
+   "evidence": "lld/catalog/test_catalog.md",
+   "resolution": "analysis"
+  },
+  {
+   "source": "file:components/catalog/test_catalog.py",
+   "target": "symbol:components/catalog/catalog.py#fetch_supplier_feed",
+   "type": "USES",
+   "evidence": "lld/catalog/test_catalog.md",
+   "resolution": "analysis"
+  },
+  {
+   "source": "file:components/catalog/test_catalog.py",
+   "target": "symbol:components/catalog/catalog.py#NoHTTPRedirectHandler",
    "type": "USES",
    "evidence": "lld/catalog/test_catalog.md",
    "resolution": "analysis"

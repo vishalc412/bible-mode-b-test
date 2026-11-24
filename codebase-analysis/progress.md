@@ -7,9 +7,9 @@ Version: not provided
 
 ## Pass 1 — Inventory
 
-- Current inventory (24 Nov 2026): 24 in-scope files, 14 source files (11 hold code), 1,812 source lines, 116 symbols, 0 statically detected routes.
+- Current inventory (24 Nov 2026, after the update for the code changes): 30 in-scope files, 14 source files (11 hold code), 1,962 source lines, 124 symbols, 0 statically detected routes.
 - The generated file list and symbol checklist are in `ledger/inventory.json` and `ledger/symbol-checklist.md`.
-- The coverage ledger is `ledger/coverage-ledger.md`; all 24 in-scope files have a reading page.
+- The coverage ledger is `ledger/coverage-ledger.md`; all 30 in-scope files have a reading page.
 - Excluded: `.git`, `codebase-analysis`, and the repository's `.github/skills/*` toolkits, as listed in the inventory checklist.
 
 ## Work plan
@@ -32,7 +32,7 @@ Version: not provided
 | --- | --- | --- | --- | --- | ---: |
 | `catalog` | `components/catalog/` | Python 3; standard-library HTTP server (`components/catalog/service.py:7-12`) | `python3 -m components.catalog.service` (`components/catalog/service.py:40-48`) | `CatalogHandler.do_GET`, `make_server` (`components/catalog/service.py:24-43`) | 3 |
 | `orders` | `components/orders/` | Python 3; standard library (`components/orders/orders.py:1-5`) | Imported and called by Python code (`components/orders/test_orders.py:1-8`) | `line_total`, `order_total`, `validate`, `settle` (`components/orders/orders.py:19-51`) | 4 |
-| `bible-mode-b` | `.github/bible/`, `.github/workflows/` | Python 3 and GitHub Actions YAML (`.github/bible/bible_queue.py:1-10`) | Manual dispatch, 15-minute schedule, and default-branch push workflows (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10`, `.github/workflows/bible-delta.yml:19`, `.github/workflows/poc-assign-copilot.yml:11-13`) | `bible_queue.py start`, `reconcile`, `delta` (`.github/bible/bible_queue.py:9-11`, `.github/bible/bible_queue.py:1286-1332`) | 4 |
+| `bible-mode-b` | `.github/bible/`, `.github/workflows/` | Python 3 and GitHub Actions YAML (`.github/bible/bible_queue.py:1-10`) | Manual dispatch, 15-minute schedule, and default-branch push workflows (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-delta.yml:6-10`, `.github/workflows/bible-delta.yml:19`, `.github/workflows/poc-assign-copilot.yml:11-13`) | `bible_queue.py start`, `reconcile`, `delta` (`.github/bible/bible_queue.py:9-11`, `.github/bible/bible_queue.py:1384-1430`) | 4 |
 | `tools` | `tools/` | Python 3 and Bash (`tools/plan.py:8-15`, `tools/fanout.sh:1-6`) | CLI and shell invocation (`tools/plan.py:41-61`, `tools/gate.py:81-116`, `tools/fanout.sh:1-6`) | `plan.py`, `gate.py`, `fanout.sh` (`tools/plan.py:41-61`, `tools/gate.py:81-116`, `tools/fanout.sh:1-6`) | 3 |
 
 Discovery succeeded and wrote `components.json`, `components.md`, and issue texts under `ledger/issues/`. The component analyses were completed in separate pull requests. The whole-system pass is now being assembled.
@@ -65,7 +65,7 @@ At this session's start, `next.py` reported 11 of 13 packets done. Packet 2 refr
 - Refreshed the generated inventory from the current source (figures of 24 Nov 2026, after the later revisions): 24 files, 14 source files, 1,812 source lines, 116 symbols, and 0 statically detected routes. The catalog GET paths are documented separately because its handler uses imperative path matching rather than route decorators.
 - Updated the coverage ledger to map all 24 in-scope files to analysis pages.
 - Completed HLD pages, mind maps, front page, reference pages, and the knowledge base. The first knowledge graph build identified unmatched front-matter names and two spellings for Supplier One; these were corrected before regenerating the graph.
-- The knowledge graph contains 210 nodes, 566 edges, and 354 chunks (after the round-6 revision of 24 Nov 2026); all LLD front-matter names resolve. The primer is 2,288 words by `wc -w` and documents 20 rules.
+- The knowledge graph contains 224 nodes, 596 edges, and 365 chunks (after the update of 24 Nov 2026 for the code changes); all LLD front-matter names resolve. The primer is 2,351 words by `wc -w` and documents 20 rules.
 - The two component questions have answers and are recorded as resolved; no unanswered questions are open.
 
 ## Quality gate
@@ -84,7 +84,7 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 2. The catalog is a Python module with an optional HTTP server, orders is a Python library, and the queue/tooling run as Python and GitHub Actions/Bash. See `hld/02-architecture.md`, “Component architecture,” and the component READMEs.
 3. Catalog can start with `python3 -m components.catalog.service` on its configurable bind/port; queue and planning jobs run on hosted Ubuntu Actions runners, while deployment topology for catalog/orders is unspecified. See `hld/02-architecture.md`, “Deployment architecture.”
 4. Catalog accepts GET paths `/health` and `/price/<sku>`; the handler contains no authentication or authorization check. Queue entry points are workflow dispatches and scheduled/push events. See `lld/api/catalog/catalog.md`, both endpoint cards, and `hld/02-architecture.md`.
-5. Outbound calls include supplier and payment HTTP, optional catalog-client HTTP, and GitHub REST/GraphQL/CLI calls; endpoints and schemes are listed by caller. See `hld/03-integrations.md`, “Outbound calls,” and `reference/configuration.md`.
+5. Outbound calls include the supplier feed over HTTPS, payment HTTP, optional catalog-client HTTP, and GitHub REST/GraphQL/CLI calls; endpoints and schemes are listed by caller. See `hld/03-integrations.md`, “Outbound calls,” and `reference/configuration.md`.
 6. Product records are in process-local `_PRODUCTS`; queue state is held in GitHub issues/labels/PRs; gate work uses a temporary filesystem workspace. See `lld/data-dictionary.md`, “Stores,” “GitHub-backed workflow records,” and “Files read and written.”
 7. Twenty rules are enumerated with enforcement locations across catalog, orders, queue, and component-tool passes. See the “Business rules” sections of the four component READMEs and `knowledge/AGENT-CONTEXT.md`, “Rules the code enforces.”
 8. Environment variables, workflow inputs, and source constants configure the components; the `BIBLE_ASSIGN_TOKEN` repository secret is mapped to `GH_TOKEN`, with no value documented. See `reference/configuration.md` and `hld/06-cross-cutting.md`, “Secrets.”
@@ -93,7 +93,7 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 11. There is no application build or production deployment declared; existing tests use `unittest`, and the tool gate runs discovery during pass 3. Several order methods are not covered by tests. See `hld/02-architecture.md`, “Build and deployment,” and `hld/06-cross-cutting.md`, “Testing.”
 12. `CatalogHandler.do_GET` returns 200 for `/health`, returns a looked-up price for a known `/price/` path followed by an SKU, and returns 404 for an unknown SKU or unmatched path. See `lld/api/catalog/catalog.md`, “GET /health” and the price endpoint card.
 13. `_PRODUCTS` is initialized from three records; `apply_feed` changes only each known SKU's `price` and `stock`, while lookup helpers read those values. See `lld/data-dictionary.md`, “`_PRODUCTS`: the catalog products,” and `lld/catalog/catalog.md`, “Data.”
-14. `fetch_supplier_feed` is the supplier HTTP caller; its network errors propagate and no automatic invocation is shown. See `hld/03-integrations.md`, “Outbound calls,” and `lld/catalog/catalog.md`, `fetch_supplier_feed`.
+14. `fetch_supplier_feed` is the supplier HTTPS caller (verifying context, a redirect to `http://` refused); its network errors propagate and no automatic invocation is shown. See `hld/03-integrations.md`, “Outbound calls,” and `lld/catalog/catalog.md`, `fetch_supplier_feed`.
 15. The direct catalog import is the current orders path, while the HTTP client is for separate-service mode and has tests as its only callers; the feed's “nightly” docstring has no matching scheduler. See `lld/orders/README.md`, “Outbound calls,” and `reference/risks-and-surprises.md`.
 
 ### Diagrams, evidence, and knowledge base
@@ -101,10 +101,21 @@ The final `next.py` run printed `DONE`; its first line was exactly `DONE`.
 - The 46 Mermaid blocks (45 without the generated `components.md`) were checked against their evidence and required diagram types; no renderer was available, so they were not rendered. This limitation is recorded in `README.md`.
 - After the round-5 revision a script read all 46 blocks against the syntax rules of `references/mermaid-syntax.md` (flowchart ids, labelled edges, shapes, sequence aliases, quoted ER labels) and found no departure; the two blocks added in `hld/04-data-architecture.md` were read against their evidence rows. Nothing was rendered.
 - All sweep searches and assistant-directed repository text locations are recorded in this file and `run-notes.md`. No secret values were copied into the analysis.
-- `knowledge.py` reports 210 nodes, 566 edges, 354 chunks, and no unmatched front-matter names. The 97 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
+- `knowledge.py` reports 224 nodes, 596 edges, 365 chunks, and no unmatched front-matter names. The 102 calls it cannot resolve are retained as a graph limitation; code and component cards remain the source of truth.
 - The three knowledge-base reader questions are summarized after final graph generation.
 
-<!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
+## Delta update of 24 Nov 2026 (claude/update-125-126)
+
+Brought in line with the commits after the analysis's baseline (`CHANGELOG.md`, `ledger/delta.md`): the supplier-feed HTTPS change in `components/catalog/` (a verifying SSL context and a redirect handler that refuses `http://`, with two new tests), the six records under `https-migration/`, and the queue's re-check, acceptance and closed-run replay changes in `.github/bible/bible_queue.py`.
+
+- Cards written or rewritten (11): `NoHTTPRedirectHandler` and `NoHTTPRedirectHandler.redirect_request`, `fetch_supplier_feed`, `report_facts`, `recheck_due`, `accepted`, `Queue.reconcile`, `Queue.replay_closed_runs`, `Queue.replayed`, `Queue.component`, `Queue.assemble_phase`; the two new tests have rows on `lld/catalog/test_catalog.md`.
+- Searches re-run for the sentences that rest on them (hits outside `codebase-analysis/` and `.github/skills/`): `fetch_supplier_feed` 2 hits (the definition and one test call), `apply_feed` 1 hit, `image_url` and `IMAGE_CDN` 3 hits (all in `catalog.py`), `cron` and `schedul` 3 hits (the docstring and the queue workflow's schedule), `open(` in `components` 4 hits (one `opener.open`, three `urlopen`), `retry|retries|backoff|tenacity` 0 hits in `components`, `tools` and `.github/workflows` and 17 in `bible_queue.py`, `3000` and `3,000` in `bible_queue.py` 1 hit, `close(tracker` 1 hit, `deferred_updates(` 4 hits in `bible_queue.py`, `customer` and `shopper` 0 hits, `write_text|.write(|open(` in `bible_queue.py` 5 hits.
+- Mark sweep (quality gate, section 5, item 4) on every sentence added or changed in this update, over the words `none`, `never`, `nothing`, `nowhere`, `no other`, `not called`, `not used`, `only`, `per the docstring`, `the comment says`, `GitHub`, `by default`: each sentence either rests on the cited lines, or carries `(inferred: searched ..., n hits)`, `(inferred: per file:line)` or `(assumed: ...)`. The claims that the live supplier certificate was not checked, and that the tests make no network request, are marked as read from `https-migration/` and from the test file.
+- Plain line numbers in the text (not in backticks) were re-read against the 1,434-line queue file: the module docstring at line 28 (`merge` is called at line 965), the `close(tracker` hit at line 1137, the `deferred_updates(` calls at lines 690, 1133 and 1138, and the comments in `GitHub.pr_files`.
+- The index of `lld/bible-mode-b/bible_queue.md` was regenerated from `ledger/inventory.json`, with the four new functions; the call graph has the new nodes and edges.
+- Not re-verified: `verifying-a-codebase-analysis`, scope component `catalog` and component `bible-mode-b`, then the whole analysis.
+
+<!-- cites .github/bible/bible_queue.py@a625b4c3353b1744b965b8bbee13e6b3ed5f72a6 -->
 
 <!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
 

@@ -7,24 +7,24 @@ depends_on: [page:00-mind-map.md, page:hld/01-system-context.md, page:hld/02-arc
 ---
 # bible-mode-b test: system reference
 
-Status: CORRECTED AFTER VERIFICATION (report of 2026-11-24, round 6; about 250 statements, rows, citations and diagram elements added or changed since (an estimate from the edits listed in `revision-log.md`), not re-verified, each accounted for in `revision-log.md`).
+Status: UPDATED FOR CODE CHANGES (claude/update-125-126, 2026-11-24; 11 cards written or rewritten in the catalog and queue modules and the pages that cite them changed, not re-verified; `ledger/delta.md` and `CHANGELOG.md` name every file and function). Before this update the status was: CORRECTED AFTER VERIFICATION (report of 2026-11-24, round 6; about 250 statements, rows, citations and diagram elements added or changed since (an estimate from the edits listed in `revision-log.md`), not re-verified, each accounted for in `revision-log.md`).
 
 | | |
 | --- | --- |
 | Depth | Deep for all four components |
 | Version given by the user | Not provided |
-| Snapshot | 24 in-scope files, 1,812 source lines, the code of 2026-11-24 (the queue file has 1,336 lines) |
-| Coverage | `coverage.py` of 2026-11-24, after the corrections: result PASS at deep, 116/116 symbols, 98/98 functions with a full card, 320/320 branch lines, 232/232 call-graph edges, 3,345/3,345 citations (one per range), 17/17 front-matter pages, 2/2 calls into other components |
+| Snapshot | 30 in-scope files, 1,962 source lines, the code of 2026-11-24 after the supplier-feed HTTPS change and the queue's re-check and replay changes (the queue file has 1,434 lines) |
+| Coverage | `coverage.py` of 2026-11-24, after the update for the code changes: result PASS at deep, 124/124 symbols, 103/103 functions with a full card, 344/344 branch lines, 247/247 call-graph edges, 3,588/3,588 citations (one per range), 17/17 front-matter pages, 2/2 calls into other components |
 | Produced with | Copilot coding agent (model not recorded) for planning, the components, assembly and the first revisions; Claude Sonnet 5.5 standing in for Copilot for the revisions of 24 Nov 2026 (the afternoon, #96 finish and #101, when the account's Copilot AI credits were used up, and the round-4 and round-5 revisions after the reports of that date) |
 | Diagrams | Checked by reading only; no Mermaid renderer was available |
 
 ## In two minutes
 
-The repository combines a sample catalog/orders application with a separate GitHub Actions workflow system for producing and maintaining codebase analyses; the modules share a repository but are not one deployed service (`README.md:1-7`; [`system context`](hld/01-system-context.md)). The catalog keeps product records in process memory, provides price and stock lookups, and includes an optional HTTP server (`components/catalog/catalog.py:8-29`; `components/catalog/service.py:15-49`). The current order helpers import the catalog directly, while the HTTP price client is intended for a separately deployed orders service (its docstring says so) and is called only by tests in this repository (inferred: its docstring, `components/orders/catalog_client.py:1-4`, names the separate-service use, and a search of the repository finds `catalog_client` imported only by `components/orders/test_catalog_client.py`) (`components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`; `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:19-23`; `components/orders/test_catalog_client.py:37-62`). Orders computes totals, validates stock, and sends settlement requests to a partner or local development endpoint (`components/orders/orders.py:19-51`). The `bible-mode-b` queue uses GitHub issues, branches, and pull requests to assign Copilot work, inspect artifacts, and coordinate human review (`.github/bible/bible_queue.py:127-153`, `.github/bible/bible_queue.py:166-173`, `.github/bible/bible_queue.py:880-905`, `.github/bible/bible_queue.py:778-782`, `.github/bible/bible_queue.py:617-668`). The `tools` commands generate a component plan, validate component artifacts, and create component issues (`tools/plan.py:21-58`; `tools/gate.py:42-78`; `tools/fanout.sh:7-30`). GitHub Actions runs the queue and related automation on `ubuntu-latest` runners (assumed: GitHub-hosted runners) (`.github/workflows/bible-queue.yml:19-37`); no production deployment topology for catalog or orders is declared (inferred: a listing of the 24 files outside the analysis folder and the skills shows no Dockerfile, compose file, Procfile, deployment manifest, service unit or build file, and a search of them for `dockerfile`, `docker-compose`, `procfile`, `kubernetes`, `helm`, `terraform` and `systemd` finds 0 hits; [`architecture`](hld/02-architecture.md)). The main operational cautions are plain-HTTP supplier and payment calls, unauthenticated catalog routes (inferred: a search of `components` for `auth`, `authorization`, `login`, `password`, `token` and `jwt` finds 0 hits), process-local product data, and no source evidence for the supplier feed's claimed nightly schedule (inferred: a search of the repository outside the analysis folder and the skills for `cron` and `schedul` finds 3 hits, the docstring at `components/catalog/catalog.py:37` and the queue's own schedule at `.github/workflows/bible-queue.yml:8-9`, and a search for `fetch_supplier_feed` finds only its definition) (`components/catalog/catalog.py:5`, `components/catalog/catalog.py:36-47`; `components/catalog/service.py:24-43`; `components/orders/orders.py:7-12`, `components/orders/orders.py:45-50`).
+The repository combines a sample catalog/orders application with a separate GitHub Actions workflow system for producing and maintaining codebase analyses; the modules share a repository but are not one deployed service (`README.md:1-7`; [`system context`](hld/01-system-context.md)). The catalog keeps product records in process memory, provides price and stock lookups, and includes an optional HTTP server (`components/catalog/catalog.py:11-41`; `components/catalog/service.py:15-49`). The current order helpers import the catalog directly, while the HTTP price client is intended for a separately deployed orders service (its docstring says so) and is called only by tests in this repository (inferred: its docstring, `components/orders/catalog_client.py:1-4`, names the separate-service use, and a search of the repository finds `catalog_client` imported only by `components/orders/test_catalog_client.py`) (`components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`; `components/orders/catalog_client.py:1-4`, `components/orders/catalog_client.py:19-23`; `components/orders/test_catalog_client.py:37-62`). Orders computes totals, validates stock, and sends settlement requests to a partner or local development endpoint (`components/orders/orders.py:19-51`). The `bible-mode-b` queue uses GitHub issues, branches, and pull requests to assign Copilot work, inspect artifacts, and coordinate human review (`.github/bible/bible_queue.py:128-154`, `.github/bible/bible_queue.py:167-174`, `.github/bible/bible_queue.py:970-995`, `.github/bible/bible_queue.py:867-871`, `.github/bible/bible_queue.py:705-756`). The `tools` commands generate a component plan, validate component artifacts, and create component issues (`tools/plan.py:21-58`; `tools/gate.py:42-78`; `tools/fanout.sh:7-30`). GitHub Actions runs the queue and related automation on `ubuntu-latest` runners (assumed: GitHub-hosted runners) (`.github/workflows/bible-queue.yml:19-37`); no production deployment topology for catalog or orders is declared (inferred: a listing of the 30 files outside the analysis folder and the skills shows no Dockerfile, compose file, Procfile, deployment manifest, service unit or build file, and a search of them for `dockerfile`, `docker-compose`, `procfile`, `kubernetes`, `helm`, `terraform` and `systemd` finds 0 hits; [`architecture`](hld/02-architecture.md)). The main operational cautions are the plain-HTTP payment call (the supplier feed now uses HTTPS with a verifying context, but the live supplier certificate was not checked (inferred: per `https-migration/https-migration-summary.md:29`)), unauthenticated catalog routes (inferred: a search of `components` for `auth`, `authorization`, `login`, `password`, `token` and `jwt` finds 0 hits), process-local product data, and no source evidence for the supplier feed's claimed nightly schedule (inferred: a search of the repository outside the analysis folder and the skills for `cron` and `schedul` finds 3 hits, the docstring at `components/catalog/catalog.py:49` and the queue's own schedule at `.github/workflows/bible-queue.yml:8-9`, and a search for `fetch_supplier_feed` finds its definition and one test call) (`components/catalog/catalog.py:8`, `components/catalog/catalog.py:48-63`; `components/catalog/service.py:24-43`; `components/orders/orders.py:7-12`, `components/orders/orders.py:45-50`).
 
 ## At a glance
 
-The context diagram shows the application's direct calls and the workflow system's GitHub-mediated work; the CDN is a URL target only (inferred: a search of the repository outside the analysis folder and the skills for `image_url` and `IMAGE_CDN` finds 3 hits, all in `components/catalog/catalog.py:6-33`).
+The context diagram shows the application's direct calls and the workflow system's GitHub-mediated work; the CDN is a URL target only (inferred: a search of the repository outside the analysis folder and the skills for `image_url` and `IMAGE_CDN` finds 3 hits, all in `components/catalog/catalog.py:9-45`).
 
 ```mermaid
 flowchart LR
@@ -50,7 +50,7 @@ flowchart LR
   github -->|"issue assignment"| copilot
   copilot -->|"session PRs and commits"| github
   orders -->|"in-process catalog calls"| catalog
-  catalog -->|"product JSON, HTTP"| supplier
+  catalog -->|"product JSON, HTTPS"| supplier
   orders -->|"settlement JSON, HTTP"| partner
   orders -->|"settlement JSON, HTTP, only when dev is set"| devsettle
   catalog -->|"returns constructed image URL, no request"| cdn
@@ -58,13 +58,13 @@ flowchart LR
 
 | Element | Evidence |
 | --- | --- |
-| Operator and reviewer actions | `.github/workflows/bible-plan.yml:7-8`; `.github/bible/bible_queue.py:691-692`, `.github/bible/bible_queue.py:711-719`, `.github/bible/bible_queue.py:853-857` |
-| GitHub workflow, issue and repository interactions | `.github/workflows/bible-queue.yml:7-37`; `.github/bible/bible_queue.py:92-105`, `.github/bible/bible_queue.py:127-153`, `.github/bible/bible_queue.py:113`, `.github/bible/bible_queue.py:354-362` |
-| Copilot assignment and session PRs | `.github/bible/bible_queue.py:166-173`, `.github/bible/bible_queue.py:445-449`, `.github/bible/bible_queue.py:508-533` |
+| Operator and reviewer actions | `.github/workflows/bible-plan.yml:7-8`; `.github/bible/bible_queue.py:779-780`, `.github/bible/bible_queue.py:799-807`, `.github/bible/bible_queue.py:943-947` |
+| GitHub workflow, issue and repository interactions | `.github/workflows/bible-queue.yml:7-37`; `.github/bible/bible_queue.py:92-106`, `.github/bible/bible_queue.py:128-154`, `.github/bible/bible_queue.py:114`, `.github/bible/bible_queue.py:355-363` |
+| Copilot assignment and session PRs | `.github/bible/bible_queue.py:167-174`, `.github/bible/bible_queue.py:447-451`, `.github/bible/bible_queue.py:568-593` |
 | Orders to catalog | `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-42` |
-| Catalog to supplier feed | `components/catalog/catalog.py:5`, `components/catalog/catalog.py:36-39` |
+| Catalog to supplier feed | `components/catalog/catalog.py:8`, `components/catalog/catalog.py:18-24`, `components/catalog/catalog.py:48-55` |
 | Orders to payment partner | `components/orders/orders.py:7-9`, `components/orders/orders.py:45-51` |
-| Image URL construction without a request | `components/catalog/catalog.py:6`, `components/catalog/catalog.py:32-33` |
+| Image URL construction without a request | `components/catalog/catalog.py:9`, `components/catalog/catalog.py:44-45` |
 | Orders to the local settlement fake (development only (inferred: the comment at `components/orders/orders.py:11` says "never deployed"), used only when `dev` is set) | `components/orders/orders.py:11-12`, `components/orders/orders.py:47` |
 | Tools to GitHub through the `gh` CLI | `tools/fanout.sh:10-12`, `tools/fanout.sh:24-29` |
 
@@ -74,9 +74,9 @@ Shapes: rounded = people, rectangle = repository units, hexagon = external syste
 
 | Component | Kind | Technology | Responsibility | Pages | Size (files, lines, functions, routes) |
 | --- | --- | --- | --- | --- | --- |
-| `catalog` | Service and library | Python 3 standard library | Product data, price/stock lookups, optional HTTP API | [`catalog`](lld/catalog/README.md), [`endpoints`](lld/api/catalog/catalog.md) | 3 source files, 108 lines, 10 runtime functions, 2 routes |
+| `catalog` | Service and library | Python 3 standard library | Product data, price/stock lookups, optional HTTP API | [`catalog`](lld/catalog/README.md), [`endpoints`](lld/api/catalog/catalog.md) | 3 source files, 160 lines, 11 runtime functions and methods, 2 routes |
 | `orders` | Library | Python 3 standard library | Totals, stock validation, settlement, optional remote catalog client | [`orders`](lld/orders/README.md) | 4 source files, 158 lines, 18 functions/methods (7 in `orders.py` and `catalog_client.py`, 11 test methods), 0 routes |
-| `bible-mode-b` | CLI and workflow component | Python 3 and GitHub Actions | Starts and reconciles analysis runs, assigns sessions, gates work, tracks deltas | [`bible-mode-b`](lld/bible-mode-b/README.md) | 1 Python file of 1,336 lines (74 functions/methods, 2 classes, one more function nested in `Queue.delta`) and 4 workflow files of 201 lines, 0 HTTP routes |
+| `bible-mode-b` | CLI and workflow component | Python 3 and GitHub Actions | Starts and reconciles analysis runs, assigns sessions, gates work, tracks deltas | [`bible-mode-b`](lld/bible-mode-b/README.md) | 1 Python file of 1,434 lines (78 functions/methods, 2 classes, one more function nested in `Queue.delta`) and 4 workflow files of 201 lines, 0 HTTP routes |
 | `tools` | CLI and shell tools | Python 3 and Bash | Component planning, artifact gate, issue fanout | [`tools`](lld/tools/README.md) | 3 files, 210 lines, 7 Python functions, 0 routes |
 
 ## Reading paths
@@ -175,17 +175,17 @@ One line per analysis file, in reading order. Generated inventory, coverage, and
 
 | Measure | Count |
 | --- | --- |
-| Components / source files / current source lines | 4 / 14 (11 hold code, 3 are empty `__init__.py` files) / 1,812 |
-| Symbols documented / functions with full cards | 116 / 98 |
+| Components / source files / current source lines | 4 / 14 (11 hold code, 3 are empty `__init__.py` files) / 1,962 |
+| Symbols documented / functions with full cards | 124 / 103 |
 | Routes documented | 2 catalog GET endpoints (the static scanner finds 0) |
 | External nodes / named graph stores | 5 / 1; the data dictionary describes 4 stores and no relational tables |
 | Flows / Mermaid diagrams | 10 end-to-end flows / 46 diagrams (45 without the generated `components.md`) |
-| Business rules | 31 |
-| Statements marked inferred / assumed | 195 / 74 |
-| Risks and surprises / unanswered questions | 13 / 0 |
-| Knowledge graph nodes / edges / chunks | 210 / 566 / 354 |
+| Business rules | 35 |
+| Statements marked inferred / assumed | 201 / 77 (counted in the pages and `knowledge/AGENT-CONTEXT.md`) |
+| Risks and surprises / unanswered questions | 14 / 0 |
+| Knowledge graph nodes / edges / chunks | 224 / 596 / 365 |
 
-<!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
+<!-- cites .github/bible/bible_queue.py@a625b4c3353b1744b965b8bbee13e6b3ed5f72a6 -->
 
 <!-- cites .github/workflows/bible-plan.yml@65016c0e6616ef12f74a26e6d6a4a5f566b584c1 -->
 
@@ -193,7 +193,7 @@ One line per analysis file, in reading order. Generated inventory, coverage, and
 
 <!-- cites README.md@62b6ccb3c5858e5b699500d9253942283b61da60 -->
 
-<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+<!-- cites components/catalog/catalog.py@75bb1dc767dc16cad9a5ed5555a7293bc004275b -->
 
 <!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
 
@@ -202,6 +202,8 @@ One line per analysis file, in reading order. Generated inventory, coverage, and
 <!-- cites components/orders/orders.py@33203a1b4d48a6d335cf411f56a54a7035a66ae0 -->
 
 <!-- cites components/orders/test_catalog_client.py@1d32463e1cdc21bd3eee3bc1b6f31feb8ef40a2d -->
+
+<!-- cites https-migration/https-migration-summary.md@8af6a247647debc371a600624b95b7c94326da9c -->
 
 <!-- cites tools/fanout.sh@9ad43aa70e042837954fea1faf483f6c08e07470 -->
 

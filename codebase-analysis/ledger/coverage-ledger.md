@@ -1,6 +1,6 @@
 # Coverage ledger
 
-Depth: deep. Snapshot: 24 files in scope, 2026-11-24 (the `.git` worktree pointer file is not part of the repository's content and is not in the inventory). Inventory: `ledger/inventory.json` of 2026-11-24.
+Depth: deep. Snapshot: 30 files in scope, 2026-11-24 (updated after the supplier-feed HTTPS change: six files under `https-migration/` were added) (the `.git` worktree pointer file is not part of the repository's content and is not in the inventory). Inventory: `ledger/inventory.json` of 2026-11-24.
 
 | Path | Status | Pages |
 | --- | --- | --- |
@@ -28,6 +28,12 @@ Depth: deep. Snapshot: 24 files in scope, 2026-11-24 (the `.git` worktree pointe
 | `tls-migration/02-certificate-plan.md` | read in full | `hld/02-architecture.md` |
 | `tls-migration/tls-services.yaml` | read in full | `hld/02-architecture.md` |
 | `tls-migration/evidence/inventory.json` | read in full | `hld/02-architecture.md` |
+| `https-migration/changed-files.txt` | read in full | `hld/02-architecture.md` |
+| `https-migration/https-allowlist.txt` | read in full | `hld/02-architecture.md` |
+| `https-migration/https-inventory.md` | read in full | `hld/02-architecture.md`, `lld/catalog/README.md` |
+| `https-migration/https-migration-summary.md` | read in full | `hld/02-architecture.md`, `lld/catalog/catalog.md`, `lld/catalog/test_catalog.md`, `lld/catalog/README.md`, `reference/risks-and-surprises.md` |
+| `https-migration/tests-before.txt` | read in full | `hld/02-architecture.md` |
+| `https-migration/tests-after.txt` | read in full | `hld/02-architecture.md` |
 
 ## Totals
 
@@ -35,11 +41,11 @@ Depth: deep. Snapshot: 24 files in scope, 2026-11-24 (the `.git` worktree pointe
 | --- | ---: | ---: |
 | not read | 0 | 0 |
 | sampled | 0 | 0 |
-| read in full | 9 | 24 |
+| read in full | 10 | 30 |
 | excluded | 0 | 0 |
 
 ## Coverage from coverage.py
 
-The whole-analysis gate (`coverage.py --depth deep`, run on 24 Nov 2026 after this revision) counts 24 files in scope and 11 source files with a page: the inventory lists 14 source-language files, and the 3 empty `__init__.py` files hold no code. The figures are in `ledger/coverage-report.md`: result `PASS` at deep with 116/116 symbols, 98/98 functions with a full card, 320/320 branch lines, 232/232 call-graph edges, 3,345/3,345 citations, 17/17 front-matter pages, 2/2 calls into other components. `.github/bible/bible_queue.py` is 1,336 lines (`.github/bible/bible_queue.py:1-1336`). The separate catalog endpoint cards cover both manually matched GET paths; the static route counter detects none. The `.git` worktree pointer file that an earlier inventory listed as a 25th file is not part of the repository's content and is not in this inventory.
+The whole-analysis gate (`coverage.py --depth deep`, run on 24 Nov 2026 after the update for the supplier-feed HTTPS change and the queue's re-check and replay changes) counts 30 files in scope and 11 source files with a page: the inventory lists 14 source-language files, and the 3 empty `__init__.py` files hold no code. The figures are in `ledger/coverage-report.md`. `.github/bible/bible_queue.py` is 1,434 lines (`.github/bible/bible_queue.py:1-1434`). The separate catalog endpoint cards cover both manually matched GET paths; the static route counter detects none. The `.git` worktree pointer file that an earlier inventory listed as a 25th file is not part of the repository's content and is not in this inventory.
 
-<!-- cites .github/bible/bible_queue.py@5886e8a4b1928e02dee435ffad7e6f9a1e5ec075 -->
+<!-- cites .github/bible/bible_queue.py@a625b4c3353b1744b965b8bbee13e6b3ed5f72a6 -->

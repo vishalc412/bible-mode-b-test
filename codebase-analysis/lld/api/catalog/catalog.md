@@ -74,7 +74,7 @@ Handler: [`CatalogHandler.do_GET`](../../catalog/service.md#cataloghandlerdo_get
 
 **Processing**: see [`CatalogHandler.do_GET`](../../catalog/service.md#cataloghandlerdo_get), steps 1-4.
 
-**Data**: reads the product record and its `price` from `_PRODUCTS` through `catalog.price_of`; no data is written (`components/catalog/service.py:31-33`; `components/catalog/catalog.py:20-24`).
+**Data**: reads the product record and its `price` from `_PRODUCTS` through `catalog.price_of`; no data is written (`components/catalog/service.py:31-33`; `components/catalog/catalog.py:32-36`).
 
 **Outbound**: none.
 
@@ -109,9 +109,9 @@ sequenceDiagram
 | 1 | `remote_price` builds the `/price/<sku>` URL and opens it over HTTP. | `components/orders/catalog_client.py:19-23` |
 | 2 | The handler extracts and URL-decodes the SKU, then calls `catalog.price_of`. | `components/catalog/service.py:24-31` |
 | 3 | For a known SKU, the handler sends status 200 with the decoded SKU and price. | `components/catalog/service.py:30-31` |
-| 4 | For an unknown SKU, `price_of` raises `KeyError` and the handler sends status 404 with an error body. | `components/catalog/catalog.py:20-24`; `components/catalog/service.py:32-33` |
+| 4 | For an unknown SKU, `price_of` raises `KeyError` and the handler sends status 404 with an error body. | `components/catalog/catalog.py:32-36`; `components/catalog/service.py:32-33` |
 
-<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+<!-- cites components/catalog/catalog.py@75bb1dc767dc16cad9a5ed5555a7293bc004275b -->
 
 <!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
 

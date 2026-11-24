@@ -44,7 +44,7 @@ flowchart TB
 | Element | Evidence |
 | --- | --- |
 | `test_orders.py` -> `orders.py` | `components/orders/test_orders.py:3`, `components/orders/test_orders.py:6-8` |
-| `orders.py` -> `components.catalog.catalog` | `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-41`; `components/catalog/catalog.py:20-29` |
+| `orders.py` -> `components.catalog.catalog` | `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-41`; `components/catalog/catalog.py:32-41` |
 | `test_catalog_client.py` -> `catalog_client.py` | `components/orders/test_catalog_client.py:9`, `components/orders/test_catalog_client.py:37-62` |
 | `test_catalog_client.py` -> `components.catalog.service` | `components/orders/test_catalog_client.py:8`, `components/orders/test_catalog_client.py:13-19` |
 | `catalog_client.py` -> `components.catalog.service` | `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:19-23`; `components/catalog/service.py:24-34` |
@@ -77,7 +77,7 @@ No application classes are defined (inferred: a search of `components/orders` fo
 | # | Rule, in plain words | Enforced in | Triggered by | Evidence |
 | --- | --- | --- | --- | --- |
 | R-01 | A line quantity must be positive; `validate` records an error for zero or negative quantities. | `validate` | Each line passed to validation | `components/orders/orders.py:37-42` |
-| R-02 | A positive quantity must be available in catalog stock; otherwise `validate` records a stock error. | `validate`, `catalog.in_stock` | Each positive-quantity line | `components/orders/orders.py:38-41`; `components/catalog/catalog.py:27-29` |
+| R-02 | A positive quantity must be available in catalog stock; otherwise `validate` records a stock error. | `validate`, `catalog.in_stock` | Each positive-quantity line | `components/orders/orders.py:38-41`; `components/catalog/catalog.py:39-41` |
 | R-03 | A loyal order receives a 5% discount; a total quantity of at least 10 receives a 10% discount, and only the larger discount is used. | `order_total` | `loyal` truthy or summed quantity at least 10 | `components/orders/orders.py:14-16`, `components/orders/orders.py:23-32` |
 | R-04 | The HTTP catalog client's line-total helper rejects zero or negative quantities. | `remote_line_total` | `qty <= 0` | `components/orders/catalog_client.py:26-29` |
 | R-05 | A settlement is reported as successful only when the response status equals 200. | `settle` | Settlement response received | `components/orders/orders.py:45-51` |
@@ -86,14 +86,14 @@ No application classes are defined (inferred: a search of `components/orders` fo
 
 | Store or file | Reads | Writes | Data dictionary entry |
 | --- | --- | --- | --- |
-| Catalog product data, owned by `catalog` | `price_of(sku)` for line totals and `in_stock(sku, qty)` for validation (`components/orders/orders.py:19-20`, `components/orders/orders.py:35-41`; `components/catalog/catalog.py:20-29`) | None by orders (`components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`) | Not owned by orders; in-memory `_PRODUCTS` is defined by catalog (`components/catalog/catalog.py:8-12`). |
+| Catalog product data, owned by `catalog` | `price_of(sku)` for line totals and `in_stock(sku, qty)` for validation (`components/orders/orders.py:19-20`, `components/orders/orders.py:35-41`; `components/catalog/catalog.py:32-41`) | None by orders (`components/orders/orders.py:19-20`, `components/orders/orders.py:35-42`) | Not owned by orders; in-memory `_PRODUCTS` is defined by catalog (`components/catalog/catalog.py:11-15`). |
 | Settlement request body | `order_id`, `amount` as values for JSON fields `order`, `amount` (`components/orders/orders.py:45-49`) | Sent to the selected URL; no local persistence shown (`components/orders/orders.py:47-51`) | No local store (inferred: a search of `components/orders` for `write`, `sqlite`, `pickle` and `shelve` finds 0 hits, and one for `open(` finds 3 hits, all `urlopen(`). |
 
 ## Outbound calls
 
 | Target | Purpose | Protocol and scheme | Address from | Timeout, retry, fallback | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| `catalog` Python module | Reads a SKU price and stock quantity in the main order helpers. | In-process Python calls | Imported as `components.catalog.catalog` | No network timeout or retry; no fallback shown. | `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-41`; `components/catalog/catalog.py:20-29` |
+| `catalog` Python module | Reads a SKU price and stock quantity in the main order helpers. | In-process Python calls | Imported as `components.catalog.catalog` | No network timeout or retry; no fallback shown. | `components/orders/orders.py:5`, `components/orders/orders.py:19-20`, `components/orders/orders.py:35-41`; `components/catalog/catalog.py:32-41` |
 | `catalog` HTTP API | Reads a SKU price through the separate HTTP client. | HTTP | `CATALOG_URL`; default `http://127.0.0.1:8001` | `remote_price` default timeout is 5 seconds; no retry or fallback shown (inferred: none in `components/orders/catalog_client.py:19-23`). | `components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`; `components/catalog/service.py:24-34`, `components/catalog/service.py:40-43` |
 | Payment partner | Sends JSON settlement request. | HTTP | `http://partner-legacy.internal/settle`, unless `dev` selects `http://localhost:8099/settle` | `settle` default timeout is 15 seconds; no retry or fallback shown (inferred: none in `components/orders/orders.py:45-51`). | `components/orders/orders.py:7-12`, `components/orders/orders.py:45-51` |
 
@@ -134,7 +134,7 @@ The listed tests do not exercise `order_total`, `validate`, or `settle` (inferre
 - **Deployment detail:** The direct-import path serves today's in-process deployment, and the HTTP client is intended for orders running separately (answer to Q1). Only tests call the HTTP path today (inferred: its docstring, `components/orders/catalog_client.py:1-4`, names the separate-service use, and a search of the repository finds `catalog_client` used only in `components/orders/test_catalog_client.py`, 6 hits), which uses plain HTTP to `CATALOG_URL` with default `http://127.0.0.1:8001` (`components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-23`; `components/orders/test_catalog_client.py:37-62`).
 - **Glossary:** `loyalty discount` is `LOYALTY_DISCOUNT` (`components/orders/orders.py:14`, `components/orders/orders.py:28-29`); `bulk discount` is `BULK_DISCOUNT` at `BULK_THRESHOLD` (`components/orders/orders.py:15-16`, `components/orders/orders.py:30-31`); `CATALOG_URL` selects the catalog HTTP API base URL (`components/orders/catalog_client.py:11`, `components/orders/catalog_client.py:14-16`).
 
-<!-- cites components/catalog/catalog.py@1e15fdaab1fa3c720d99a864abb4cac9c8259421 -->
+<!-- cites components/catalog/catalog.py@75bb1dc767dc16cad9a5ed5555a7293bc004275b -->
 
 <!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
 
