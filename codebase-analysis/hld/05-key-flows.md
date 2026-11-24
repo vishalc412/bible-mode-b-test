@@ -58,7 +58,7 @@ sequenceDiagram
 | ---: | --- | --- |
 | 1 | Operator dispatches the workflow and supplies the inputs. | `.github/workflows/bible-plan.yml:7-23` |
 | 2 | Workflow checks the default branch, verifies `BIBLE_ASSIGN_TOKEN`, and invokes `start`. | `.github/workflows/bible-plan.yml:37-54` |
-| 3 | `main` validates the model and component arguments. | `.github/bible/bible_queue.py:1267-1271,1277-1279` |
+| 3 | `main` validates the model and component arguments. | `.github/bible/bible_queue.py:1283-1287` |
 | 4 | Queue ensures labels, refuses an existing tracker, and creates a tracker issue with settings in a hidden JSON comment. | `.github/bible/bible_queue.py:1288-1296` |
 | 5 | GitHub returns the tracker issue number. | `.github/bible/bible_queue.py:1296-1297` |
 | 6 | CLI prints the issue number and queue-start guidance. | `.github/bible/bible_queue.py:1297-1298` |
@@ -92,17 +92,17 @@ sequenceDiagram
 | Step | What happens | Evidence |
 | ---: | --- | --- |
 | 1 | The queue workflow starts on schedule or manual dispatch and checks out the default branch. | `.github/workflows/bible-queue.yml:7-10,23-37` |
-| 2 | `reconcile` lists open tracker issues. | `.github/bible/bible_queue.py:129-131,486-488` |
-| 3 | GitHub returns the tracker and its hidden settings. | `.github/bible/bible_queue.py:129-131,316-321` |
-| 4 | Queue loads `components.json` and selects planning when the catalog is missing, proposed, or invalid. | `.github/bible/bible_queue.py:530-539` |
-| 5 | Queue reads the planning issue text from `ledger/issues/plan.md`. | `.github/bible/bible_queue.py:649-656` |
-| 6 | GitHub returns the issue template. | `.github/bible/bible_queue.py:649-656` |
-| 7 | Queue creates the planning issue. | `.github/bible/bible_queue.py:144-151,538-546` |
-| 8 | Queue assigns the configured analysis model. | `.github/bible/bible_queue.py:144-151,341-345` |
-| 9 | GitHub delivers the issue assignment to Copilot. | `.github/bible/bible_queue.py:164-171` |
-| 10 | Agent work and PR status return through GitHub issue timelines and pull requests. | `.github/bible/bible_queue.py:195-220,404-429` |
+| 2 | `reconcile` lists open tracker issues. | `.github/bible/bible_queue.py:149-151,584` |
+| 3 | GitHub returns the tracker and its hidden settings. | `.github/bible/bible_queue.py:139-151,382-402` |
+| 4 | Queue loads `components.json` and selects planning when the catalog is missing, proposed, or invalid. | `.github/bible/bible_queue.py:605-607` |
+| 5 | Queue reads the planning issue text from `ledger/issues/plan.md`. | `.github/bible/bible_queue.py:651-655` |
+| 6 | GitHub returns the issue template. | `.github/bible/bible_queue.py:192-196,413-419` |
+| 7 | Queue creates the planning issue. | `.github/bible/bible_queue.py:164-171,656-657` |
+| 8 | Queue assigns the configured analysis model. | `.github/bible/bible_queue.py:422-426,657` |
+| 9 | GitHub delivers the issue assignment to Copilot. | `.github/bible/bible_queue.py:168-171` |
+| 10 | Agent work and PR status return through GitHub issue timelines and pull requests. | `.github/bible/bible_queue.py:202-232,494-510` |
 
-**Failure paths:** An unreadable tracker settings block is logged and skipped; a per-tracker exception does not stop reconciliation of other trackers. A detected start error creates a human hold; a no-PR timeout retries once, then requires a person (`.github/bible/bible_queue.py:481-487,455-474`).
+**Failure paths:** An unreadable tracker settings block is logged and skipped; a per-tracker exception does not stop reconciliation of other trackers. A detected start error creates a human hold; a no-PR timeout retries once, then requires a person (`.github/bible/bible_queue.py:586-592,663-667,551-578`).
 
 ## 3. Component session passes the gate and reaches human review
 
@@ -132,20 +132,20 @@ sequenceDiagram
 
 | Step | What happens | Evidence |
 | ---: | --- | --- |
-| 1 | Queue finds the agent's open chunk PR and checks the PR's changed files. | `.github/bible/bible_queue.py:481-486,794-812` |
-| 2 | Queue validates changed paths and reads status JSON at the PR head. | `.github/bible/bible_queue.py:812-828` |
-| 3 | A valid session PR is marked ready if draft, merged into the component branch, and its issue is closed. | `.github/bible/bible_queue.py:284-302,713-718` |
-| 4 | Queue reads the merged component status; on `COMPONENT_DONE`, it starts the gate. | `.github/bible/bible_queue.py:637-640` |
-| 5 | Queue unpacks the branch tarball in a temporary directory. | `.github/bible/bible_queue.py:237-260,723-728` |
-| 6 | Queue runs coverage and fingerprint checks using scripts from the configured toolkit path. | `.github/bible/bible_queue.py:768-780` |
-| 7 | Gate returns its pass/fail result and page fingerprint. | `.github/bible/bible_queue.py:771-780` |
-| 8 | Queue starts a verification issue using the distinct verification model. | `.github/bible/bible_queue.py:784-795` |
-| 9 | Verification agent opens a PR containing the verification report. | `.github/bible/bible_queue.py:659-660,709-718` |
-| 10 | Queue merges the eligible verification PR and reads its verdict/fingerprint. | `.github/bible/bible_queue.py:709-718,365-379` |
-| 11 | A clean `PASS` whose fingerprint matches the checked pages creates a PR for a person to review. | `.github/bible/bible_queue.py:711-715` |
-| 12 | Human reviewer merges the component PR to the default branch. | `.github/bible/bible_queue.py:28,608-612` |
+| 1 | Queue finds the agent's open chunk PR and checks the PR's changed files. | `.github/bible/bible_queue.py:485-491,801,812-827` |
+| 2 | Queue validates changed paths and reads status JSON at the PR head. | `.github/bible/bible_queue.py:818-828` |
+| 3 | A valid session PR is marked ready if draft, merged into the component branch, and its issue is closed. | `.github/bible/bible_queue.py:331-345,852-855` |
+| 4 | Queue reads the merged component status; on `COMPONENT_DONE`, it starts the gate. | `.github/bible/bible_queue.py:719-724` |
+| 5 | Queue unpacks the branch tarball in a temporary directory. | `.github/bible/bible_queue.py:268-307,863-866` |
+| 6 | Queue runs coverage and fingerprint checks using scripts from the configured toolkit path. | `.github/bible/bible_queue.py:859-877` |
+| 7 | Gate returns its pass/fail result and page fingerprint. | `.github/bible/bible_queue.py:874-877` |
+| 8 | Queue starts a verification issue using the distinct verification model. | `.github/bible/bible_queue.py:787-796` |
+| 9 | Verification agent opens a PR containing the verification report. | `.github/bible/bible_queue.py:798-801,849-851` |
+| 10 | Queue merges the eligible verification PR and reads its verdict/fingerprint. | `.github/bible/bible_queue.py:852-855,446-459,754` |
+| 11 | A clean `PASS` whose fingerprint matches the checked pages creates a PR for a person to review. | `.github/bible/bible_queue.py:755-759` |
+| 12 | Human reviewer merges the component PR to the default branch. | `.github/bible/bible_queue.py:28,692-693` |
 
-**Failure paths:** Disallowed PR files, `STOP`, no progress, missing verification report, or a revision that does not reach `COMPONENT_DONE` triggers the one-retry/hold logic. `WAITING_ANSWER` labels the issue and PR. A failed gate starts more component work; a report with corrections, an unreadable or stale fingerprint, or repeated non-clean verification leads to revision, re-verification, or a human hold (`.github/bible/bible_queue.py:455-483,659-713,608-627`).
+**Failure paths:** Disallowed PR files, `STOP`, no progress, missing verification report, or a revision that does not reach `COMPONENT_DONE` triggers the one-retry/hold logic. `WAITING_ANSWER` labels the issue and PR. A failed gate starts more component work; a report with corrections, an unreadable or stale fingerprint, or repeated non-clean verification leads to revision, re-verification, or a human hold (`.github/bible/bible_queue.py:559-578,818-851,730-786`).
 
 ## 4. Whole-analysis assembly and verification
 
@@ -176,21 +176,21 @@ sequenceDiagram
 
 | Step | What happens | Evidence |
 | ---: | --- | --- |
-| 1 | Component PRs are merged by a person; scripts do not merge work to the default branch. | `.github/bible/bible_queue.py:28,608-612` |
+| 1 | Component PRs are merged by a person; scripts do not merge work to the default branch. | `.github/bible/bible_queue.py:28,692-693` |
 | 2 | Queue workflow invokes reconciliation. | `.github/workflows/bible-queue.yml:7-10,23-37` |
-| 3 | Queue selects the whole-system assembly phase. | `.github/bible/bible_queue.py:783-787` |
-| 4 | Queue reads the assembly issue template. | `.github/bible/bible_queue.py:332-338,765-766` |
+| 3 | Queue selects the whole-system assembly phase. | `.github/bible/bible_queue.py:643-644` |
+| 4 | Queue reads the assembly issue template. | `.github/bible/bible_queue.py:1004-1005` |
 | 5 | GitHub returns the assembly template. | `.github/bible/bible_queue.py:413-419` |
 | 6 | Queue creates and assigns the assembly issue. | `.github/bible/bible_queue.py:1010-1012` |
-| 7 | Assembly agent opens a PR with whole-system pages. | `.github/bible/bible_queue.py:404-409,765-772`; `ledger/issues/assemble.md` |
-| 8 | A person reviews and merges the assembly PR to the default branch. | `.github/bible/bible_queue.py:791-799` |
-| 9 | Queue closes the assembly issue and creates a verification issue using `verify_model`. | `.github/bible/bible_queue.py:746-754,768-773` |
-| 10 | Verification agent opens a PR with the whole-analysis report. | `.github/bible/bible_queue.py:404-409,768-772` |
-| 11 | A person reviews and merges the verification PR. | `.github/bible/bible_queue.py:791-799` |
-| 12 | Queue reads the report and requires `PASS` with no major corrections. | `.github/bible/bible_queue.py:794-798` |
+| 7 | Assembly agent opens a PR with whole-system pages. | `.github/bible/bible_queue.py:485-491,991-1003`; `ledger/issues/assemble.md` |
+| 8 | A person reviews and merges the assembly PR to the default branch. | `.github/bible/bible_queue.py:972-988` |
+| 9 | Queue closes the assembly issue and creates a verification issue using `verify_model`. | `.github/bible/bible_queue.py:918,985,1007-1012` |
+| 10 | Verification agent opens a PR with the whole-analysis report. | `.github/bible/bible_queue.py:485-491,991-1003` |
+| 11 | A person reviews and merges the verification PR. | `.github/bible/bible_queue.py:972-988` |
+| 12 | Queue reads the report and requires `PASS` with no major corrections. | `.github/bible/bible_queue.py:927,939-940,976-984` |
 | 13 | Queue closes the tracker and posts `Done`. | `.github/bible/bible_queue.py:1018-1019` |
 
-**Failure paths:** If whole verification is missing, unreadable, not `PASS`, or has major corrections, the queue returns a human-needed message rather than closing the tracker. If the assembly or verification session is held or fails to start, it reports that state and follows the retry/hold rules (`.github/bible/bible_queue.py:455-483,749-770`).
+**Failure paths:** If whole verification is missing, unreadable, not `PASS`, or has major corrections, the queue returns a human-needed message rather than closing the tracker. If the assembly or verification session is held or fails to start, it reports that state and follows the retry/hold rules (`.github/bible/bible_queue.py:976-1003`).
 
 ## 5. Changed code produces component delta issues
 
@@ -217,13 +217,13 @@ sequenceDiagram
 | ---: | --- | --- |
 | 1 | Push workflow runs only for default-branch changes and ignores `.github/**` and `codebase-analysis/**`. | `.github/workflows/bible-delta.yml:6-10,18-20` |
 | 2 | Workflow checks out full history and writes changed paths to `$RUNNER_TEMP/changed.txt`. | `.github/workflows/bible-delta.yml:21-23,29-36` |
-| 3 | CLI reads nonempty path lines and passes them to `Queue.delta`. | `.github/bible/bible_queue.py:1301-1306` |
-| 4 | Queue requires `components.json` and `ledger/baseline.json`. | `.github/bible/bible_queue.py:1217-1221` |
-| 5 | Queue maps changed source paths to component names. | `.github/bible/bible_queue.py:843-850` |
-| 6 | Queue skips a duplicate open delta issue or creates a new issue. | `.github/bible/bible_queue.py:850-862` |
-| 7 | GitHub assigns each newly created issue to Copilot. | `.github/bible/bible_queue.py:853-861` |
+| 3 | CLI reads nonempty path lines and passes them to `Queue.delta`. | `.github/bible/bible_queue.py:1302-1304` |
+| 4 | Queue requires `components.json` and `ledger/baseline.json`. | `.github/bible/bible_queue.py:1217-1220` |
+| 5 | Queue maps changed source paths to component names. | `.github/bible/bible_queue.py:1221-1228,1239-1243` |
+| 6 | Queue skips a duplicate open delta issue or creates a new issue. | `.github/bible/bible_queue.py:1244-1257` |
+| 7 | GitHub assigns each newly created issue to Copilot. | `.github/bible/bible_queue.py:1247-1256` |
 
-**Failure paths:** The first push with no prior SHA exits without a delta run. Missing catalog or baseline makes the queue log that there is nothing to update. Empty paths or paths outside component ownership produce no issue; an already-open delta issue is not duplicated (`.github/workflows/bible-delta.yml:31-38`; `.github/bible/bible_queue.py:839-862`).
+**Failure paths:** The first push with no prior SHA exits without a delta run. Missing catalog or baseline makes the queue log that there is nothing to update. Empty paths or paths outside component ownership produce no issue; an already-open delta issue is not duplicated (`.github/workflows/bible-delta.yml:31-38`; `.github/bible/bible_queue.py:1217-1220,1244-1257`).
 
 ## 6. Order total and stock validation use the in-process catalog
 

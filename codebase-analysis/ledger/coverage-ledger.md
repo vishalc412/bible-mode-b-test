@@ -40,4 +40,6 @@ Depth: deep. Snapshot: 24 files, 2026-11-24. Inventory: `ledger/inventory.json` 
 
 ## Coverage from coverage.py
 
-The whole-analysis gate is being rerun after revision. The current source inventory includes 24 files and 14 source files; exact symbol, branch, call-graph and citation coverage is recorded below after the gate completes. `.github/bible/bible_queue.py` is 1,294 lines (`.github/bible/bible_queue.py:1-1294` <!-- recheck: was .github/bible/bible_queue.py:1-1294 -->). The separate catalog endpoint cards cover both manually matched GET paths; the static route counter detects none (`ledger/coverage-report.md`).
+The whole-analysis gate is being rerun after revision. The current source inventory includes 24 files and 14 source files; exact symbol, branch, call-graph and citation coverage is recorded below after the gate completes. `.github/bible/bible_queue.py` is 1,310 lines (`.github/bible/bible_queue.py:1-1310`). The separate catalog endpoint cards cover both manually matched GET paths; the static route counter detects none (`ledger/coverage-report.md`).
+
+<!-- cites .github/bible/bible_queue.py@161344dc7ddde551f4020972e6d61c782a86d480 -->

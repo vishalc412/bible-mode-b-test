@@ -6,7 +6,7 @@ Limits: Calls through dynamic dispatch, callbacks, reflection, string-built name
 
 ## What the system is
 
-The sample catalog/orders application sits beside GitHub Actions tooling that helps repository maintainers create and verify component analyses (`README.md:1-7`; `.github/workflows/bible-plan.yml:7-8`). Repository operators dispatch runs and reviewers inspect pull requests or answer issues; no customer audience for the sample app is declared (`.github/workflows/bible-plan.yml:7-8`; `.github/bible/bible_queue.py:608-627,688-713`). The four components are catalog, orders, `bible-mode-b`, and tools: they provide product lookups/orders, analysis queueing, and planning/gate/fanout functions (`components/catalog/catalog.py:15-47`; `components/orders/orders.py:19-51`; `.github/bible/bible_queue.py:820-867` <!-- recheck: was .github/bible/bible_queue.py:820-867 -->; `tools/plan.py:21-62`; `tools/gate.py:42-117`; `tools/fanout.sh:1-31`). The catalog has an optional loopback HTTP server; queue jobs run in GitHub Actions on hosted Ubuntu runners, and tools expose local CLI/shell entry points (`components/catalog/service.py:40-49`; `.github/workflows/bible-queue.yml:19-37`; `tools/plan.py:41-62`; `tools/gate.py:81-117`; `tools/fanout.sh:1-31`). Product data is process-local, orders has no durable order store, and queue state lives in GitHub issues, labels, branches, and pull requests (`components/catalog/catalog.py:8-12`; `components/orders/orders.py:45-51`; `.github/bible/bible_queue.py:129-151,396-429,600-624`).
+The sample catalog/orders application sits beside GitHub Actions tooling that helps repository maintainers create and verify component analyses (`README.md:1-7`; `.github/workflows/bible-plan.yml:7-8`). Repository operators dispatch runs and reviewers inspect pull requests or answer issues; no customer audience for the sample app is declared (`.github/workflows/bible-plan.yml:7-8`; `.github/bible/bible_queue.py:625-645,688-696`). The four components are catalog, orders, `bible-mode-b`, and tools: they provide product lookups/orders, analysis queueing, and planning/gate/fanout functions (`components/catalog/catalog.py:15-47`; `components/orders/orders.py:19-51`; `.github/bible/bible_queue.py:9-11`, `.github/bible/bible_queue.py:477-1257`; `tools/plan.py:21-62`; `tools/gate.py:42-117`; `tools/fanout.sh:1-31`). The catalog has an optional loopback HTTP server; queue jobs run in GitHub Actions on hosted Ubuntu runners, and tools expose local CLI/shell entry points (`components/catalog/service.py:40-49`; `.github/workflows/bible-queue.yml:19-37`; `tools/plan.py:41-62`; `tools/gate.py:81-117`; `tools/fanout.sh:1-31`). Product data is process-local, orders has no durable order store, and queue state lives in GitHub issues, labels, branches, and pull requests (`components/catalog/catalog.py:8-12`; `components/orders/orders.py:45-51`; `.github/bible/bible_queue.py:125-151,382-402,594-645`).
 
 ## Components
 
@@ -14,7 +14,7 @@ The sample catalog/orders application sits beside GitHub Actions tooling that he
 | --- | --- | --- | --- | --- |
 | `catalog` | Owns process-local product data, price and stock lookups, supplier-feed helpers, and an optional HTTP API. | `python3 -m components.catalog.service`; `CatalogHandler.do_GET` (`components/catalog/service.py:24-49`) | `components/catalog/catalog.py`, `components/catalog/service.py` | `lld/catalog/README.md` |
 | `orders` | Calculates line/order totals, validates stock, sends settlement requests, and has an optional remote catalog client. | Imported functions `line_total`, `order_total`, `validate`, `settle` (`components/orders/orders.py:19-51`) | `components/orders/orders.py`, `components/orders/catalog_client.py` | `lld/orders/README.md` |
-| `bible-mode-b` | Starts and reconciles analysis runs, assigns agent issues, validates session results, opens human review PRs, and handles delta updates. | `start`, `reconcile`, `delta` commands (`.github/bible/bible_queue.py:820-867` <!-- recheck: was .github/bible/bible_queue.py:820-867 -->) | `.github/bible/bible_queue.py`; workflow adapters in `.github/workflows/` | `lld/bible-mode-b/README.md` |
+| `bible-mode-b` | Starts and reconciles analysis runs, assigns agent issues, validates session results, opens human review PRs, and handles delta updates. | `start`, `reconcile`, `delta` commands (`.github/bible/bible_queue.py:9-11`, `.github/bible/bible_queue.py:1260-1306`) | `.github/bible/bible_queue.py`; workflow adapters in `.github/workflows/` | `lld/bible-mode-b/README.md` |
 | `tools` | Generates a component plan, checks component artifacts/tests, and fans out component issues. | `python tools/plan.py`, `python tools/gate.py`, `tools/fanout.sh` (`tools/plan.py:41-62`; `tools/gate.py:81-117`; `tools/fanout.sh:1-31`) | `tools/plan.py`, `tools/gate.py`, `tools/fanout.sh` | `lld/tools/README.md` |
 
 ## Where to look
@@ -38,16 +38,16 @@ The sample catalog/orders application sits beside GitHub Actions tooling that he
 - **Remote catalog client:** Optional HTTP price lookup for a separately deployed orders service (`components/orders/catalog_client.py:1-4,19-23`).
 - **Loyalty discount:** Five-percent discount selected for a loyal order (`components/orders/orders.py:14,27-29`).
 - **Bulk discount:** Ten-percent discount applied at total quantity 10 or more, not stacked with loyalty discount (`components/orders/orders.py:15-16,26-32`).
-- **Analysis tracker:** GitHub issue storing the settings and state for one analysis run (`.github/bible/bible_queue.py:316-321,851-855`).
-- **Agent session issue:** GitHub issue assigned to Copilot for one analysis or verification session (`.github/bible/bible_queue.py:144-151,538-546,771-773`).
-- **Component branch:** Branch named `bible/<component>` holding component analysis work (`.github/bible/bible_queue.py:664-669`).
-- **Session PR:** Agent-created pull request whose files and status are checked before the queue merges it into a component branch (`.github/bible/bible_queue.py:404-429,659-715`).
-- **Component review PR:** Pull request from a completed component branch to the default branch for a person to review (`.github/bible/bible_queue.py:645-661`).
-- **Pages fingerprint:** Value used to ensure a verification report refers to the current component pages (`.github/bible/bible_queue.py:609-623,707-709`).
+- **Analysis tracker:** GitHub issue storing the settings and state for one analysis run (`.github/bible/bible_queue.py:382-402,1183-1194`).
+- **Agent session issue:** GitHub issue assigned to Copilot for one analysis or verification session (`.github/bible/bible_queue.py:164-171,422-426,512-545`).
+- **Component branch:** Branch named `bible/<component>` holding component analysis work (`.github/bible/bible_queue.py:671-683`).
+- **Session PR:** Agent-created pull request whose files and status are checked before the queue merges it into a component branch (`.github/bible/bible_queue.py:485-491,798-855`).
+- **Component review PR:** Pull request from a completed component branch to the default branch for a person to review (`.github/bible/bible_queue.py:755-759`).
+- **Pages fingerprint:** Value used to ensure a verification report refers to the current component pages (`.github/bible/bible_queue.py:874-877,755`).
 - **Component plan:** `plan.json`, a versioned inventory of the files, tests, functions, and HTTP sites found for each component (`tools/plan.py:21-58`).
 - **Component gate:** `gate.py` validation of analysis artifacts and pass-3 test results (`tools/gate.py:42-78,81-117`).
 - **Issue fanout:** `fanout.sh` labels and creates one analysis issue per component in the plan (`tools/fanout.sh:7-30`).
-- **Delta issue:** Follow-up issue for a component changed since the saved code-analysis baseline (`.github/bible/bible_queue.py:835-862`).
+- **Delta issue:** Follow-up issue for a component changed since the saved code-analysis baseline (`.github/bible/bible_queue.py:1247-1257`).
 
 ## Rules the code enforces
 
@@ -73,9 +73,9 @@ The sample catalog/orders application sits beside GitHub Actions tooling that he
 12. Component selection must be `all` or valid comma-separated component names (`.github/bible/bible_queue.py:1285-1287`).
 13. A new tracker cannot start while another tracker is open (`.github/bible/bible_queue.py:1288-1290`).
 14. A failed agent session gets one retry; a second failure is labelled for human attention and unassigned (`.github/bible/bible_queue.py:559-578`).
-15. Chunk and verification PRs may modify only their allowed analysis paths; disallowed files fail the session (`.github/bible/bible_queue.py:659-687` <!-- recheck: was .github/bible/bible_queue.py:659-687 -->).
-16. A component review PR requires a clean `PASS` and a matching nonempty page fingerprint (`.github/bible/bible_queue.py:645-661`).
-17. Repeated verification without a clean matching pass leads to a human hold (`.github/bible/bible_queue.py:652-667`).
+15. Chunk and verification PRs may modify only their allowed analysis paths; disallowed files fail the session (`.github/bible/bible_queue.py:818-827`).
+16. A component review PR requires a clean `PASS` and a matching nonempty page fingerprint (`.github/bible/bible_queue.py:755-759`).
+17. Repeated verification without a clean matching pass leads to a human hold (`.github/bible/bible_queue.py:774-782`).
 
 ### Component tools
 
@@ -89,13 +89,13 @@ The sample application and queue are Python modules using the standard library; 
 
 Catalog products are mutable module memory; there is no durable application-side order record. Do not assume process restart persistence or a scheduled feed refresh (`components/catalog/catalog.py:8-12,36-47`; `components/orders/orders.py:45-51`; `hld/04-data-architecture.md`). Orders uses direct catalog calls in the current in-process mode; use `catalog_client.py` only for the documented separate-service path, not as an assumed current caller (`components/orders/orders.py:5,19-20,35-42`; `components/orders/catalog_client.py:1-4,19-23`).
 
-The queue's durable run state is in GitHub issues, labels, branches, and PRs. Workflow jobs check out the default branch, and queue validations inspect component-branch files as data; do not make a PR's code the queue's gate implementation (`.github/workflows/bible-queue.yml:26-30`; `.github/bible/bible_queue.py:768-780`). `tools.plan.py` generates the component plan, `tools.gate.py` reads component artifacts, and `tools.fanout.sh` creates issues; the queue's delta command instead reads `components.json` and a changed-path file (`tools/plan.py:41-58`; `tools/gate.py:42-108`; `tools/fanout.sh:7-30`; `.github/bible/bible_queue.py:790-817,859-861`).
+The queue's durable run state is in GitHub issues, labels, branches, and PRs. Workflow jobs check out the default branch, and queue validations inspect component-branch files as data; do not make a PR's code the queue's gate implementation (`.github/workflows/bible-queue.yml:26-30`; `.github/bible/bible_queue.py:859-877`). `tools.plan.py` generates the component plan, `tools.gate.py` reads component artifacts, and `tools.fanout.sh` creates issues; the queue's delta command instead reads `components.json` and a changed-path file (`tools/plan.py:41-58`; `tools/gate.py:42-108`; `tools/fanout.sh:7-30`; `.github/bible/bible_queue.py:1217-1218,1302-1304`).
 
-Configuration is mostly environment variables, workflow inputs, and source constants; keep secret values out of files and issue payloads. Workflows map the repository secret `BIBLE_ASSIGN_TOKEN` to `GH_TOKEN`, and the queue sends that value as a bearer token (`.github/workflows/bible-plan.yml:43-53`; `.github/bible/bible_queue.py:109-123`). Use `reference/configuration.md` for all names/defaults; use `hld/03-integrations.md` for protocols, endpoints, authentication, and timeouts.
+Configuration is mostly environment variables, workflow inputs, and source constants; keep secret values out of files and issue payloads. Workflows map the repository secret `BIBLE_ASSIGN_TOKEN` to `GH_TOKEN`, and the queue sends that value as a bearer token (`.github/workflows/bible-plan.yml:43-53`; `.github/bible/bible_queue.py:114-123`). Use `reference/configuration.md` for all names/defaults; use `hld/03-integrations.md` for protocols, endpoints, authentication, and timeouts.
 
-Errors are not handled uniformly. The catalog HTTP handler maps unknown price SKUs to 404, while direct price lookup raises `KeyError`; the order client and settlement functions generally let network exceptions reach callers (`components/catalog/catalog.py:20-24`; `components/catalog/service.py:28-34`; `components/orders/catalog_client.py:19-23`; `components/orders/orders.py:45-51`). The queue converts GitHub request errors to `RuntimeError`, catches exceptions per tracker, and retries agent sessions once (`.github/bible/bible_queue.py:105-117,485-496,464-483`). Keep these caller-visible behaviors in mind when changing error handling.
+Errors are not handled uniformly. The catalog HTTP handler maps unknown price SKUs to 404, while direct price lookup raises `KeyError`; the order client and settlement functions generally let network exceptions reach callers (`components/catalog/catalog.py:20-24`; `components/catalog/service.py:28-34`; `components/orders/catalog_client.py:19-23`; `components/orders/orders.py:45-51`). The queue converts GitHub request errors to `RuntimeError`, catches exceptions per tracker, and retries agent sessions once (`.github/bible/bible_queue.py:130-136,589-592,559-578`). Keep these caller-visible behaviors in mind when changing error handling.
 
-Logging is basic: the queue defaults to `print`, the gate prints pass/failure messages, and the catalog HTTP handler suppresses request logs; no metrics or tracing are implemented (`.github/bible/bible_queue.py:478-480`; `tools/gate.py:109-113`; `components/catalog/service.py:36-37`; `hld/06-cross-cutting.md`). Network operations use explicit timeouts but have no general network retry policy (`.github/bible/bible_queue.py:94-117,237-243`; `components/catalog/catalog.py:36-39`; `components/orders/catalog_client.py:19-23`; `components/orders/orders.py:45-50`).
+Logging is basic: the queue defaults to `print`, the gate prints pass/failure messages, and the catalog HTTP handler suppresses request logs; no metrics or tracing are implemented (`.github/bible/bible_queue.py:478-480`; `tools/gate.py:109-113`; `components/catalog/service.py:36-37`; `hld/06-cross-cutting.md`). Network operations use explicit timeouts but have no general network retry policy (`.github/bible/bible_queue.py:114,274`; `components/catalog/catalog.py:36-39`; `components/orders/catalog_client.py:19-23`; `components/orders/orders.py:45-50`).
 
 ## Hazards
 
@@ -103,11 +103,11 @@ Logging is basic: the queue defaults to `print`, the gate prints pass/failure me
 - Product records live only in memory. Feed entries for unknown SKUs are ignored; missing fields or failed numeric conversions can raise during `apply_feed` (`components/catalog/catalog.py:8-12,42-47`).
 - A docstring says the supplier fetch runs nightly from cron, but no scheduler or caller is present in the repository. Do not add assumptions about refresh cadence (`components/catalog/catalog.py:36-39`; `progress.md`, Sweep: Scheduled/background work).
 - The order tests do not exercise `order_total`, `validate`, or `settle`; existing test success does not establish those functions' behavior (`components/orders/test_orders.py:6-8`; `components/orders/test_catalog_client.py:37-62`).
-- The queue API has no general retry; temporary GitHub failures can stop the current operation. Its agent retry is a distinct workflow rule (`.github/bible/bible_queue.py:94-117,464-483`).
-- The queue source extends through line 867, so component-size estimates should be regenerated from the current source rather than assumed current (`.github/bible/bible_queue.py:1-1130` <!-- recheck: was .github/bible/bible_queue.py:1-1130 -->; `tools/plan.py:21-58`).
+- The queue API has no general retry; temporary GitHub failures can stop the current operation. Its agent retry is a distinct workflow rule (`.github/bible/bible_queue.py:114,274,559-578`).
+- The queue source extends through line 1310, so component-size estimates should be regenerated from the current source rather than assumed current (`.github/bible/bible_queue.py:1-1310`; `tools/plan.py:21-58`).
 - The catalog handler uses imperative path matching for `GET /health` and `GET /price/<sku>`; do not assume that a static route scan captures these endpoints (`components/catalog/service.py:24-34`).
 - The generated fanout instructions reference a `component-analysis` skill path that is not present in the repository; verify it before relying on fanout instructions (`tools/fanout.sh:13-15`).
-- The queue `session` docstring omits `start-error`, and the module docstring describes fewer default agent logins than the code configures (`.github/bible/bible_queue.py:36,60,413-429`).
+- The queue `session` docstring omits `start-error`, and the module docstring describes fewer default agent logins than the code configures (`.github/bible/bible_queue.py:36,61,495,498-499`).
 - Mermaid diagrams were checked by reading their syntax, not rendered; diagram and graph readers should validate presentation in their own renderer (`README.md`; `hld/01-system-context.md`).
 
 ## Open questions
