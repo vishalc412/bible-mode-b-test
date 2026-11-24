@@ -14,7 +14,7 @@ Status: CORRECTED AFTER VERIFICATION (report of 2026-11-24; about 470 statements
 | Depth | Deep for all four components |
 | Version given by the user | Not provided |
 | Snapshot | 24 in-scope files, 1,812 source lines, the code of 2026-11-24 (the queue file has 1,336 lines) |
-| Coverage | `coverage.py` of 2026-11-24, after the corrections: result PASS at deep, 116/116 symbols, 98/98 functions with a full card, 320/320 branch lines, 232/232 call-graph edges, 2,969/2,969 citations (one per range since the multi-range citations were split), 17/17 front-matter pages, 2/2 calls into other components |
+| Coverage | `coverage.py` of 2026-11-24, after the corrections: result PASS at deep, 116/116 symbols, 98/98 functions with a full card, 320/320 branch lines, 232/232 call-graph edges, 2,970/2,970 citations (one per range since the multi-range citations were split), 17/17 front-matter pages, 2/2 calls into other components |
 | Produced with | Copilot coding agent (model not recorded) for planning, the components, assembly and the first revisions; Claude Sonnet 5.5 standing in for Copilot for the revisions of 24 Nov 2026 afternoon (#96 finish, #101), when the account's Copilot AI credits were used up |
 | Diagrams | Checked by reading only; no Mermaid renderer was available |
 
