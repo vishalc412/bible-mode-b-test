@@ -42,12 +42,12 @@ Source file: `components/catalog/service.py`
 
 ```mermaid
 flowchart LR
-  make_server["make_server"]
+  makeserver["make_server"]
   handler["CatalogHandler"]
   doget["CatalogHandler.do_GET"]
   priceof["catalog.price_of"]
   send["CatalogHandler._send"]
-  make_server -->|"passes handler class"| handler
+  makeserver -->|"passes handler class"| handler
   doget -->|"sends each response"| send
   doget -->|"looks up price"| priceof
 ```
@@ -171,7 +171,7 @@ Source: `components/catalog/service.py:40-43` <!-- code: a060da66ba9d -->
 | | |
 | --- | --- |
 | Kind | function |
-| Called by | The module entry point when executed directly (`components/catalog/service.py:46-47`). |
+| Called by | The module entry point when executed directly (`components/catalog/service.py:46-47`) and `CatalogClientTest.setUpClass` in the orders tests, which passes `"127.0.0.1"` and port `0` (`components/orders/test_catalog_client.py:15`). |
 | Calls | `os.environ.get`, `int`, `ThreadingHTTPServer` |
 | Purpose | Builds the threaded HTTP server using explicit arguments or environment defaults. |
 
@@ -202,7 +202,7 @@ return ThreadingHTTPServer((host, port), CatalogHandler)
 | --- | --- | --- | --- |
 | `service.py:41` | `or` expression | `host` is falsey | Reads `CATALOG_HOST` with default `"127.0.0.1"` (`components/catalog/service.py:41`). |
 | `service.py:42` | conditional expression | `port is not None` | Uses the explicit port; otherwise reads `CATALOG_PORT` with default `"8001"` (`components/catalog/service.py:42`). |
-| `service.py:42` | call | The port or `CATALOG_PORT` is not a number | `int` raises `ValueError`; nothing in `make_server` catches it (`components/catalog/service.py:42`). |
+| `service.py:42` | call | The port or `CATALOG_PORT` is not a number | `int` raises `ValueError` (assumed: builtin behaviour for a non-numeric string); nothing in `make_server` catches it (`components/catalog/service.py:42`). |
 
 **Output and side effects**: returns a `ThreadingHTTPServer` bound to `(host, port)` with `CatalogHandler` as its request handler (`components/catalog/service.py:40-43`).
 
@@ -212,6 +212,8 @@ The file imports `json`, `os`, `urllib.parse`, HTTP server classes, and the sibl
 
 ## Surprises
 
-The path for routing comes from `urlsplit(self.path).path`, so the query portion does not participate in the route match (`components/catalog/service.py:25-28`).
+The path for routing comes from `urlsplit(self.path).path`, so the query portion does not participate in the route match (`components/catalog/service.py:25-28`; the test at `components/orders/test_catalog_client.py:56-58` shows it).
 
 <!-- cites components/catalog/service.py@64e5abbab5e101fac6e56c67450ac4c6346198f1 -->
+
+<!-- cites components/orders/test_catalog_client.py@1d32463e1cdc21bd3eee3bc1b6f31feb8ef40a2d -->

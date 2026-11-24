@@ -46,9 +46,9 @@ mindmap
   root((catalog))
     Modules
       catalog.py, lld/catalog/catalog.md
-        Product lookups and feed update
+        Product lookups and feed update, lld/catalog/catalog.md
       service.py, lld/catalog/service.md
-        GET health and price handlers
+        GET health and price handlers, lld/catalog/service.md
       test_catalog.py, lld/catalog/test_catalog.md
     Data
       Product map, hld/04-data-architecture.md
@@ -67,11 +67,11 @@ mindmap
   root((orders))
     Modules
       orders.py, lld/orders/orders.md
-        Line and order totals
-        Stock validation
-        Settlement request
+        Line and order totals, lld/orders/orders.md
+        Stock validation, lld/orders/orders.md
+        Settlement request, lld/orders/orders.md
       catalog_client.py, lld/orders/catalog_client.md
-        Remote price lookup
+        Remote price lookup, lld/orders/catalog_client.md
       test_orders.py, lld/orders/test_orders.md
       test_catalog_client.py, lld/orders/test_catalog_client.md
     Catalog access
@@ -90,8 +90,8 @@ mindmap
   root((bible-mode-b))
     Modules
       bible_queue.py, lld/bible-mode-b/bible_queue.md
-        Start reconcile and delta commands
-        GitHub REST and GraphQL client
+        Start reconcile and delta commands, lld/bible-mode-b/bible_queue.md
+        GitHub REST and GraphQL client, lld/bible-mode-b/bible_queue.md
     Workflow adapters
       bible-plan.yml, hld/03-integrations.md
       bible-queue.yml, hld/03-integrations.md
@@ -110,11 +110,11 @@ mindmap
   root((tools))
     Modules
       plan.py, lld/tools/plan.md
-        Component inventory
+        Component inventory, lld/tools/plan.md
       gate.py, lld/tools/gate.md
-        Artifact and test checks
+        Artifact and test checks, lld/tools/gate.md
       fanout.sh, lld/tools/fanout.md
-        Labels and component issues
+        Labels and component issues, lld/tools/fanout.md
     Data
       plan.json, hld/04-data-architecture.md
       Component pass artifacts, lld/data-dictionary.md
@@ -132,6 +132,7 @@ mindmap
     - Copilot coding agent ([hld/01-system-context.md](hld/01-system-context.md))
     - Supplier One feed ([hld/03-integrations.md](hld/03-integrations.md))
     - Payment partner ([hld/03-integrations.md](hld/03-integrations.md))
+    - Local settle fake development only ([hld/01-system-context.md](hld/01-system-context.md))
     - Image CDN URL only ([hld/01-system-context.md](hld/01-system-context.md))
   - Components
     - catalog ([lld/catalog/README.md](lld/catalog/README.md))

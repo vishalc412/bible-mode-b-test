@@ -392,7 +392,7 @@ component:bible-mode-b,config:BIBLE_AGENT_LOGINS,READS,analysis,lld/bible-mode-b
 component:bible-mode-b,config:BIBLE_AGENT_APP,READS,analysis,lld/bible-mode-b/README.md
 component:bible-mode-b,config:BIBLE_NOW,READS,analysis,lld/bible-mode-b/README.md
 component:bible-mode-b,config:BIBLE_SKILLS,READS,analysis,lld/bible-mode-b/README.md
-component:bible-mode-b,file:temporary-gate-worktree,WRITES,analysis,lld/bible-mode-b/README.md
+component:bible-mode-b,file:temporary-gate-workspace,WRITES,analysis,lld/bible-mode-b/README.md
 component:bible-mode-b,external:GitHub API,CALLS,analysis,lld/bible-mode-b/README.md
 component:bible-mode-b,external:Analysis toolkit,CALLS,analysis,lld/bible-mode-b/README.md
 component:bible-mode-b,symbol:.github/bible/bible_queue.py#GitHub,USES,analysis,lld/bible-mode-b/README.md
@@ -414,7 +414,7 @@ file:.github/bible/bible_queue.py,config:BIBLE_AGENT_LOGINS,READS,analysis,lld/b
 file:.github/bible/bible_queue.py,config:BIBLE_AGENT_APP,READS,analysis,lld/bible-mode-b/bible_queue.md
 file:.github/bible/bible_queue.py,config:BIBLE_NOW,READS,analysis,lld/bible-mode-b/bible_queue.md
 file:.github/bible/bible_queue.py,config:BIBLE_SKILLS,READS,analysis,lld/bible-mode-b/bible_queue.md
-file:.github/bible/bible_queue.py,file:temporary-gate-worktree,WRITES,analysis,lld/bible-mode-b/bible_queue.md
+file:.github/bible/bible_queue.py,file:temporary-gate-workspace,WRITES,analysis,lld/bible-mode-b/bible_queue.md
 file:.github/bible/bible_queue.py,external:GitHub API,CALLS,analysis,lld/bible-mode-b/bible_queue.md
 file:.github/bible/bible_queue.py,external:Analysis toolkit,CALLS,analysis,lld/bible-mode-b/bible_queue.md
 file:.github/bible/bible_queue.py,symbol:.github/bible/bible_queue.py#GitHub,USES,analysis,lld/bible-mode-b/bible_queue.md

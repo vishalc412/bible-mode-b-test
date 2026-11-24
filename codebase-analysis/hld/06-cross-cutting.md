@@ -59,7 +59,7 @@ Consistency: varies (4 variants)
 
 ## Error handling and resilience
 
-The sample modules generally expose network and data errors to callers; the queue translates GitHub request failures and isolates reconciliation errors per tracker. Session failures get one retry before a human hold (a start Copilot refuses is held at once, with no retry), but network requests have no general retry policy. An assembly or whole-analysis session that ends without its end marker is continued up to three times, and is held for a person at once when GitHub records that Copilot's work failed before it started (`.github/bible/bible_queue.py:1179-1188`, `.github/bible/bible_queue.py:1191-1197`).
+The sample modules generally expose network and data errors to callers; the queue translates GitHub request failures and isolates reconciliation errors per tracker. Session failures get one retry before a human hold (a start Copilot refuses is held at once, with no retry), but network requests have no general retry policy (inferred: `GitHub.call` makes one request and raises on failure, and no other request code loops or retries). An assembly or whole-analysis session that ends without its end marker is continued up to three times, and is held for a person at once when GitHub records that Copilot's work failed before it started (`.github/bible/bible_queue.py:84`, `.github/bible/bible_queue.py:1179-1188`, `.github/bible/bible_queue.py:1191-1197`, `.github/bible/bible_queue.py:127-139`).
 
 | Component | How | Evidence |
 | --- | --- | --- |
@@ -68,13 +68,13 @@ The sample modules generally expose network and data errors to callers; the queu
 | `bible-mode-b` | GitHub HTTP and transport errors become `RuntimeError`; reconciliation catches an exception per tracker. Failed agent work is retried once, then labelled for human attention; a start Copilot refuses is held at once. | `.github/bible/bible_queue.py:132-138`, `.github/bible/bible_queue.py:612-615`, `.github/bible/bible_queue.py:582-601`, `.github/bible/bible_queue.py:574-581` |
 | `tools` | Gate reports missing or invalid artifacts and failing tests as failures; shell fanout stops on command errors. | `tools/gate.py:42-78`, `tools/gate.py:94-117`; `tools/fanout.sh:6`, `tools/fanout.sh:24-30` |
 
-Request timeouts are explicit for GitHub API calls (60 seconds by default, with a 300-second tarball timeout), catalog price lookup (5 seconds), settlement (15 seconds), and supplier feed (10 seconds). There are no retries around these request calls; the queue's one retry is for failed agent sessions, not network requests (`.github/bible/bible_queue.py:116`, `.github/bible/bible_queue.py:297`, `.github/bible/bible_queue.py:582-601`; `components/orders/catalog_client.py:19-23`; `components/orders/orders.py:45-50`; `components/catalog/catalog.py:36-39`).
+Request timeouts are explicit for GitHub API calls (60 seconds by default, with a 300-second tarball timeout), catalog price lookup (5 seconds), settlement (15 seconds), and supplier feed (10 seconds). There are no retries around these request calls (inferred: no request code loops or retries; the catalog, orders and supplier calls are single `urlopen` calls, and `GitHub.call` raises on failure); a component whose call raises is tried again at the next scheduled queue run; the queue's one retry is for failed agent sessions, not network requests (`.github/bible/bible_queue.py:653-656`, `.github/bible/bible_queue.py:116`, `.github/bible/bible_queue.py:297`, `.github/bible/bible_queue.py:582-601`; `components/orders/catalog_client.py:19-23`; `components/orders/orders.py:45-50`; `components/catalog/catalog.py:36-39`).
 
 Consistency: varies (4 variants)
 
 ## Logging, metrics, and tracing
 
-The queue writes progress and error messages to standard output; the catalog HTTP server suppresses its request log messages. No metrics or distributed tracing mechanism is present in the inspected source and workflow configuration.
+The queue writes progress and error messages to standard output; the catalog HTTP server suppresses its request log messages. No metrics or distributed tracing mechanism is present in the inspected source and workflow configuration (inferred: a search of `components/`, `tools/`, `.github/bible/` and `.github/workflows/` for `metric`, `statsd`, `prometheus`, `trace` and `opentelemetry` finds nothing).
 
 | Component | How | Evidence |
 | --- | --- | --- |
@@ -104,7 +104,7 @@ The sample components use Python's `unittest`; the tool gate runs discovery for 
 | --- | --- | --- |
 | `catalog` and `orders` | Tests are `unittest.TestCase` modules; orders' catalog-client tests start a local HTTP server. | `components/catalog/test_catalog.py:1-12`; `components/orders/test_orders.py:1-12`; `components/orders/test_catalog_client.py:1-66` |
 | `tools` | Pass 3 of the gate invokes `python -m unittest discover`. | `tools/gate.py:63-78` |
-| `bible-mode-b` | Workflows run the queue, plan or delta command; none invokes the application test suite. | `.github/workflows/bible-plan.yml:50-54`; `.github/workflows/bible-queue.yml:31-37`; `.github/workflows/bible-delta.yml:26-38` |
+| `bible-mode-b` | Workflows run the queue's `start`, `reconcile` or `delta` command; none invokes the application test suite. | `.github/workflows/bible-plan.yml:50-54`; `.github/workflows/bible-queue.yml:31-37`; `.github/workflows/bible-delta.yml:26-38` |
 
 Consistency: varies (3 variants)
 

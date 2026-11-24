@@ -28,17 +28,17 @@ The diagram shows the two catalog access paths and the two test modules; it leav
 
 ```mermaid
 flowchart TB
-  test_orders["test_orders.py<br/>line-total test"]
-  orders_py["orders.py<br/>totals, validation, settlement"]
-  catalog_data["components.catalog.catalog<br/>in-memory prices and stock"]
-  test_client["test_catalog_client.py<br/>catalog client tests"]
-  catalog_client["catalog_client.py<br/>catalog HTTP client"]
-  catalog_service["components.catalog.service<br/>catalog price API"]
-  test_orders -->|"imports and calls line_total"| orders_py
-  orders_py -->|"price_of, in_stock (direct import)"| catalog_data
-  test_client -->|"calls remote_price and remote_line_total"| catalog_client
-  test_client -->|"starts local server in fixture"| catalog_service
-  catalog_client -->|"GET /price/{quoted SKU}, HTTP"| catalog_service
+  testorders["test_orders.py<br/>line-total test"]
+  orderspy["orders.py<br/>totals, validation, settlement"]
+  catalogdata["components.catalog.catalog<br/>in-memory prices and stock"]
+  testclient["test_catalog_client.py<br/>catalog client tests"]
+  catalogclient["catalog_client.py<br/>catalog HTTP client"]
+  catalogservice["components.catalog.service<br/>catalog price API"]
+  testorders -->|"imports and calls line_total"| orderspy
+  orderspy -->|"price_of, in_stock (direct import)"| catalogdata
+  testclient -->|"calls remote_price and remote_line_total"| catalogclient
+  testclient -->|"starts local server in fixture"| catalogservice
+  catalogclient -->|"GET /price/{quoted SKU}, HTTP"| catalogservice
 ```
 
 | Element | Evidence |

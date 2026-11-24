@@ -43,9 +43,9 @@ Source file: `tools/plan.py`
 flowchart LR
   main["main"]
   scan["scan"]
-  gate_count_tests["gate.count_tests"]
+  gatecounttests["gate.count_tests"]
   main -->|"inventory each component"| scan
-  scan -->|"count test functions"| gate_count_tests
+  scan -->|"count test functions"| gatecounttests
 ```
 
 ## Classes
@@ -151,9 +151,11 @@ print relative output path and component count
 
 **Output and side effects**: Writes `codebase-analysis/plan.json` as formatted JSON with a trailing newline and prints its relative path and component count (`tools/plan.py:55-58`).
 
+**Errors**: `main` has no handler. A missing `components/` directory makes `iterdir` raise at line 43, and a file that cannot be read or has a syntax error makes `scan` raise at line 45 (`scan` catches nothing; assumed: library behaviour of `Path.iterdir`, `Path.read_text` and `ast.parse`); in both cases the exception ends the run before the write at lines 55-57, so `plan.json` is not written again (`tools/plan.py:43-45`, `tools/plan.py:55-57`).
+
 ## Module-level code
 
-The module appends the resolved `tools` directory to `sys.path` before importing `count_tests` from `gate`; it computes `ROOT` from the parent of that directory and compiles the HTTP-literal regular expression at import time (`tools/plan.py:14-18`). When run directly, it calls `main()` (`tools/plan.py:61-62`).
+The module inserts the resolved `tools` directory at the front of `sys.path` (`sys.path.insert(0, ...)`) before importing `count_tests` from `gate`; it computes `ROOT` from the parent of that directory and compiles the HTTP-literal regular expression at import time (`tools/plan.py:14-18`). When run directly, it calls `main()` (`tools/plan.py:61-62`).
 
 ## Surprises
 

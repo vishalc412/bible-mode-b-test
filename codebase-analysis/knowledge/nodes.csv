@@ -45,7 +45,7 @@ file:components/orders/catalog_client.py,File,catalog_client.py,components/order
 file:components/orders/orders.py,File,orders.py,components/orders/orders.py,source,python,51,,,,,
 file:components/orders/test_catalog_client.py,File,test_catalog_client.py,components/orders/test_catalog_client.py,source,python,66,,,,,
 file:components/orders/test_orders.py,File,test_orders.py,components/orders/test_orders.py,source,python,12,,,,,
-file:temporary-gate-worktree,File,temporary-gate-worktree,,,,,,,,,
+file:temporary-gate-workspace,File,temporary-gate-workspace,,,,,,,,,
 file:tls-migration/01-inventory.md,File,01-inventory.md,tls-migration/01-inventory.md,doc,,36,,,,,
 file:tls-migration/02-certificate-plan.md,File,02-certificate-plan.md,tls-migration/02-certificate-plan.md,doc,,53,,,,,
 file:tls-migration/evidence/inventory.json,File,inventory.json,tls-migration/evidence/inventory.json,config,,292,,,,,

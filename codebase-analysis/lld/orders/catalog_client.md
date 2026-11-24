@@ -35,13 +35,13 @@ The module resolves `CATALOG_URL` at call time, requests `/price/<quoted SKU>` f
 
 ```mermaid
 flowchart LR
-  catalogUrl["catalog_url"]
-  remotePrice["remote_price"]
-  remoteLineTotal["remote_line_total"]
-  catalog_service["catalog service"]
-  remotePrice -->|"catalog_url"| catalogUrl
-  remotePrice -->|"GET /price/{quoted SKU}"| catalog_service
-  remoteLineTotal -->|"remote_price"| remotePrice
+  catalogurl["catalog_url"]
+  remoteprice["remote_price"]
+  remotelinetotal["remote_line_total"]
+  catalogservice["catalog service"]
+  remoteprice -->|"catalog_url"| catalogurl
+  remoteprice -->|"HTTP GET /price/{quoted SKU}"| catalogservice
+  remotelinetotal -->|"remote_price"| remoteprice
 ```
 
 ## Functions and methods

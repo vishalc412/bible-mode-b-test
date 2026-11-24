@@ -5,7 +5,7 @@ component: bible-mode-b
 source: [.github/bible/bible_queue.py, .github/workflows/bible-plan.yml, .github/workflows/bible-queue.yml, .github/workflows/bible-delta.yml, .github/workflows/poc-assign-copilot.yml]
 summary: Coordinates Mode B codebase-analysis runs and their GitHub issue and pull-request lifecycle
 reads: [file:changed-path-list, config:GITHUB_REPOSITORY, config:GH_TOKEN, config:GITHUB_API_URL, config:BIBLE_AGENT_LOGINS, config:BIBLE_AGENT_APP, config:BIBLE_NOW, config:BIBLE_SKILLS]
-writes: [file:temporary-gate-worktree]
+writes: [file:temporary-gate-workspace]
 calls: [external:GitHub API, external:Analysis toolkit]
 uses: [symbol:GitHub, symbol:Queue]
 config: [config:GITHUB_REPOSITORY, config:GH_TOKEN, config:GITHUB_API_URL, config:BIBLE_AGENT_LOGINS, config:BIBLE_AGENT_APP, config:BIBLE_NOW, config:BIBLE_SKILLS]
@@ -25,23 +25,24 @@ exposes: []
 
 ## Responsibility
 
-This component coordinates the Mode B analysis workflow through a `start`, `reconcile`, or `delta` CLI command. `Queue` reads tracker and session state from GitHub, assigns work, handles retries and human holds, checks component completion, and opens review pull requests; `GitHub` wraps the REST and GraphQL operations. (`.github/bible/bible_queue.py:9-11`, `.github/bible/bible_queue.py:500-1283`, `.github/bible/bible_queue.py:110-374`)
+This component coordinates the Mode B analysis workflow through a `start`, `reconcile`, or `delta` CLI command. `Queue` reads tracker and session state from GitHub, assigns work, handles retries and human holds, checks component completion, and opens review pull requests; `GitHub` wraps the REST and GraphQL operations. (`.github/bible/bible_queue.py:1288-1299`, `.github/bible/bible_queue.py:500-1283`, `.github/bible/bible_queue.py:110-374`)
 
 The `bible-plan.yml` workflow starts a run from a manual dispatch, `bible-queue.yml` invokes reconciliation on demand or every 15 minutes, and `bible-delta.yml` writes changed paths to a file and starts delta processing after a default-branch push. (`.github/workflows/bible-plan.yml:7-8`, `.github/workflows/bible-plan.yml:50-54`, `.github/workflows/bible-queue.yml:7-10`, `.github/workflows/bible-queue.yml:34-37`, `.github/workflows/bible-delta.yml:6-10`, `.github/workflows/bible-delta.yml:31-38`)
 
-`poc-assign-copilot.yml` independently creates an issue and assigns Copilot through its inline `gh api` command; it does not invoke the queue or check out repository code. Its required `task` input defaults to an instruction to create `docs/poc-hello.md` with one line, and the input becomes the issue body passed to Copilot. (`.github/workflows/poc-assign-copilot.yml:18-21`, `.github/workflows/poc-assign-copilot.yml:31-37`, `.github/workflows/poc-assign-copilot.yml:55-69`)
+`poc-assign-copilot.yml` independently creates an issue and assigns Copilot through its inline `gh api` command; it does not invoke the queue or check out repository code. Its required `task` input defaults to an instruction to create `docs/poc-hello.md` with one line, and the input becomes the issue body passed to Copilot. (`.github/workflows/poc-assign-copilot.yml:18-21`, `.github/workflows/poc-assign-copilot.yml:38-72`, `.github/workflows/poc-assign-copilot.yml:55-69`)
 
 No other analysis component calls into this component or is called by it (inferred: repository search for `bible_queue|\.github/bible/` in `*.py` and `*.yml` returned seven references, including the toolkit's mirrored revision rule). The queue's `delta` method does call the analysis toolkit's `components` helpers, which are outside the component catalog. (`.github/bible/bible_queue.py:1247-1249`, `.github/bible/bible_queue.py:1252-1253`, `.github/bible/bible_queue.py:1267`)
 
 ## Structure
 
-The diagram shows the three workflow entry paths and their shared queue/client path to GitHub; component internals and unrelated workflow jobs are omitted.
+The diagram shows the three workflow entry paths and their shared queue/client path to GitHub, and the POC workflow's own `gh api` call; component internals are omitted.
 
 ```mermaid
 flowchart TB
   planworkflow["bible-plan.yml"]
   queueworkflow["bible-queue.yml"]
   deltaworkflow["bible-delta.yml"]
+  pocworkflow["poc-assign-copilot.yml"]
   changedfile[("changed-path file")]
   main["main<br/>CLI dispatcher"]
   queue["Queue<br/>run lifecycle"]
@@ -60,6 +61,7 @@ flowchart TB
   queue -->|"python -I subprocess in check and whole_fingerprint"| scripts
   queue -->|"import in delta"| helpers
   client -->|"REST or GraphQL at configured API URL"| api
+  pocworkflow -->|"gh api creates and assigns an issue"| api
 ```
 
 | Element | Evidence |
@@ -73,6 +75,7 @@ flowchart TB
 | `Queue.whole_fingerprint` -> `status.py --fingerprint` | `.github/bible/bible_queue.py:922-929` |
 | `Queue.delta` -> toolkit `components` helpers | `.github/bible/bible_queue.py:1247-1248` |
 | `GitHub` -> GitHub API | `.github/bible/bible_queue.py:113-125`, `.github/bible/bible_queue.py:357-360` |
+| `poc-assign-copilot.yml` -> GitHub API (it starts no queue code) | `.github/workflows/poc-assign-copilot.yml:66-69` |
 
 ## Reconcile sequence
 
@@ -133,7 +136,7 @@ stateDiagram-v2
 | Element | Evidence |
 | --- | --- |
 | No PR: `waiting`, `no-start`, `start-error` | `.github/bible/bible_queue.py:519-523` |
-| PR exists: `running`, `finished` (any work event of Copilot's app decides: only `copilot_work_started` as the newest gives `running`, so `copilot_work_finished_failure` gives `finished`; without work events, the head commit age and the PR's review state decide) | `.github/bible/bible_queue.py:524-533` |
+| PR exists: `running`, `finished` (any work event of Copilot's app decides: only `copilot_work_started` as the newest gives `running`, so `copilot_work_finished_failure` gives `finished`; without work events, the head commit age and the PR's review state decide; for a chunk session, a `status.json` at the PR head whose state is in `FINAL_STATES` with review asked or the head idle for `IDLE_AFTER` gives `finished`, as does a head idle for three times `IDLE_AFTER`, and anything else gives `running`) | `.github/bible/bible_queue.py:524-533`, `.github/bible/bible_queue.py:73`, `.github/bible/bible_queue.py:75` |
 
 The state IDs `no_start` and `start_error` represent the returned strings `no-start` and `start-error`. The diagrams were checked by reading, not rendered.
 
@@ -147,13 +150,17 @@ flowchart TB
   assemble["assembly issue<br/>Copilot writes the whole-system pages"]
   cont["@copilot continue comment<br/>at most 3 times"]
   verify["verify-all issue<br/>second model writes verification-report.md"]
-  verdict{"report read after merge"}
+  verdict["report read after merge"]
   revise["revise-all issue<br/>apply every correction, then verify again"]
   hold["hold issue for a person<br/>after 2 whole verifications without a clean PASS"]
-  done(["replay deferred updates, post Done, close tracker"])
-  start --> assemble
+  done(["update issues for recorded paths, post Done, close tracker, late paths"])
+  start -->|"queue creates the assembly issue"| assemble
   assemble -->|"status.json not yet written"| cont
-  cont --> assemble
+  cont -->|"Copilot continues on the same pull request"| assemble
+  verify -->|"verification-report.md not yet written"| cont
+  cont -->|"Copilot continues on the same pull request"| verify
+  revise -->|"status.json not yet written"| cont
+  cont -->|"Copilot continues on the same pull request"| revise
   assemble -->|"merged by a person"| verify
   verify -->|"merged by a person"| verdict
   verdict -->|"PASS, no major corrections, this run's PR, fingerprint equals the pages now"| done
@@ -165,14 +172,14 @@ flowchart TB
 
 | Step | What happens | Evidence |
 | --- | --- | --- |
-| Assembly session | The assembly issue is created from `ledger/issues/assemble.md`. When its session has finished but the pull request does not contain `status.json`, `continue_if_unfinished` comments `@copilot continue ...` (marked with `CONTINUE_MARK`), at most 3 times since a person last released the issue; a session that failed before starting any work is held for a person at once. | `.github/bible/bible_queue.py:1027-1035`, `.github/bible/bible_queue.py:1022-1026`, `.github/bible/bible_queue.py:1154-1207` |
-| Whole verification | The verify-all issue is created on `verify_model`. A person merges the pull request; the queue then reads `verification-report.md` on the default branch. | `.github/bible/bible_queue.py:1029-1035`, `.github/bible/bible_queue.py:995-1011` |
-| Corrections asked | A missing, unreadable, not-`PASS` or major-corrections report labels the issue `bible-needs-revision`; an issue the queue sees still open is also closed as not planned, while one GitHub already closed as completed is only labelled and commented. At the next check `revise_all_step` creates a `bible-revise-all` issue (apply every correction without editing the report, finish with `status.py --write`). Its pull request may change only files under the analysis folder and never `verification-*` files. After a person merges it the next whole verification is created. | `.github/bible/bible_queue.py:999-1007`, `.github/bible/bible_queue.py:1074-1152`, `.github/bible/bible_queue.py:1121-1126` |
+| Assembly session | The assembly issue is created from `ledger/issues/assemble.md`. When its session has finished but the pull request does not contain `status.json`, `continue_if_unfinished` comments `@copilot continue ...` (marked with `CONTINUE_MARK`), at most 3 times since a person last released the issue; a session that failed before starting any work is held for a person at once. The same continuation applies to the verify-all session (end marker `verification-report.md`) and to the revise-all session (end marker `status.json`). | `.github/bible/bible_queue.py:1027-1035`, `.github/bible/bible_queue.py:1022-1026`, `.github/bible/bible_queue.py:1154-1207`, `.github/bible/bible_queue.py:1117-1120`, `.github/bible/bible_queue.py:1162-1164` |
+| Whole verification | The verify-all issue is created on `verify_model`. A person merges the pull request; the queue then reads `verification-report.md` on the default branch. | `.github/bible/bible_queue.py:939-941`, `.github/bible/bible_queue.py:1033-1034`, `.github/bible/bible_queue.py:995-1011` |
+| Corrections asked | A missing, unreadable, not-`PASS` or major-corrections report labels the issue `bible-needs-revision`; an issue the queue sees still open is also closed as not planned, while one GitHub already closed as completed is only labelled and commented. At the next check `revise_all_step` creates a `bible-revise-all` issue (apply every correction without editing the report, finish with `status.py --write`). Its pull request may change only files under the analysis folder and never `verification-*` files. After a person merges it the next whole verification is created. | `.github/bible/bible_queue.py:999-1007`, `.github/bible/bible_queue.py:981-985`, `.github/bible/bible_queue.py:1074-1152`, `.github/bible/bible_queue.py:1121-1126` |
 | Stale or foreign `PASS` | A clean `PASS` whose fingerprint does not equal the pages now, or whose report was not written by this run's own merged pull request, is labelled `bible-stale-verdict` and verified again. If too little of the run's time is left the check just waits for the next run; if the fingerprint cannot be computed (no `status.py`, a failed or oversized download, a timeout or no output) it is counted, and after 3 such checks in a row a person is asked. | `.github/bible/bible_queue.py:947-980`, `.github/bible/bible_queue.py:964-971`, `.github/bible/bible_queue.py:920-933`, `.github/bible/bible_queue.py:907-918` |
 | Round limit | `rounds` counts the whole verifications that asked for corrections or were stale since a person last released the run; at 2 the queue creates the hold issue of the whole analysis. Removing `bible-needs-human` from it starts new rounds. | `.github/bible/bible_queue.py:1089-1097`, `.github/bible/bible_queue.py:1136-1142`, `.github/bible/bible_queue.py:1066-1072`, `.github/bible/bible_queue.py:76` |
-| End of the run | Only at this Done step does the queue read the paths recorded while the run was open and create their update issues; then it comments that every component, the assembly and the whole verification are merged, closes the tracker, and reads the recorded paths once more for any that arrived after the first read. If a person closes the tracker, or the run never reaches Done, the recorded paths are never replayed and get no update issues; they must be updated by hand. | `.github/bible/bible_queue.py:607`, `.github/bible/bible_queue.py:1036-1042`, `.github/bible/bible_queue.py:1043-1050` |
+| End of the run | Only at this Done step does the queue read the paths recorded while the run was open and create their update issues; then it comments that every component, the assembly and the whole verification are merged, closes the tracker, and reads the recorded paths once more for any that arrived after the first read. If a person closes the tracker, or the run never reaches Done, the recorded paths are never replayed (inferred: `deferred_updates` is called only at lines 1038 and 1043, and `reconcile` lists open trackers only). Those paths get no update issue of their own; a later update issue for the same component asks its session for every change since the analysis's baseline, not only that push's files. The replay goes through `delta`: with no `components.json` or no `ledger/baseline.json` on the default branch the recorded paths are dropped with only a log line, more than 10 touched components give one hold issue, and a component that already has an open `bible-delta` issue is skipped. | `.github/bible/bible_queue.py:607`, `.github/bible/bible_queue.py:1036-1042`, `.github/bible/bible_queue.py:1043-1050`, `.github/bible/bible_queue.py:1273-1277`, `.github/bible/bible_queue.py:1243-1246`, `.github/bible/bible_queue.py:1255-1264`, `.github/bible/bible_queue.py:1270-1272` |
 
-`Queue.delta` (the `delta` command after a push to the default branch) behaves differently while a run is open: it records the changed plain paths in comments of at most 200 paths on the first tracker whose own `Updated` line (its creation time when it has none) is no older than 14 days, each with a hidden `bible-deferred-update` marker, and creates no issue. `Queue.deferred_updates` reads those comments (only the queue's own, only plain paths), and its only callers are in `assemble_phase` at the Done step; `reconcile` visits open trackers only, so paths recorded on a tracker that a person closes, or on a run that never finishes, are never read. With no open run, `delta` maps the changed paths (not the analysis folder, not the skills folder) to components; more than 10 components give one hold issue. (`.github/bible/bible_queue.py:1226-1264`, `.github/bible/bible_queue.py:1052-1064`)
+`Queue.delta` (the `delta` command after a push to the default branch) behaves differently while a run is open: it records the changed plain paths in comments of at most 200 paths on the first tracker whose own `Updated` line (its creation time when it has none) is no older than 14 days, each with a hidden `bible-deferred-update` marker, and creates no issue. `Queue.deferred_updates` reads those comments (only the queue's own, only plain paths), and it is called only at lines 1038 and 1043, in `assemble_phase` at the Done step (inferred: a search of the file for `deferred_updates`); `reconcile` visits open trackers only, so paths recorded on a tracker that a person closes, or on a run that never finishes, are never read. A later update issue for the same component asks its session for every change since the analysis's baseline, not only that push's files (`.github/bible/bible_queue.py:1273-1277`). With no open run, `delta` maps the changed paths (not the analysis folder, not the skills folder) to components; more than 10 components give one hold issue. (`.github/bible/bible_queue.py:1226-1264`, `.github/bible/bible_queue.py:1052-1064`)
 
 ## Modules
 
@@ -215,7 +222,7 @@ classDiagram
 
 | Element | Evidence |
 | --- | --- |
-| `GitHub` fields and methods | `.github/bible/bible_queue.py:111-125`, `.github/bible/bible_queue.py:155-160`, `.github/bible/bible_queue.py:194-198`, `.github/bible/bible_queue.py:291-330`, `.github/bible/bible_queue.py:364-368` |
+| `GitHub` fields and methods | `.github/bible/bible_queue.py:111-125`, `.github/bible/bible_queue.py:127-139`, `.github/bible/bible_queue.py:141-149`, `.github/bible/bible_queue.py:155-160`, `.github/bible/bible_queue.py:194-198`, `.github/bible/bible_queue.py:291-330`, `.github/bible/bible_queue.py:364-368` |
 | `Queue` fields and methods | `.github/bible/bible_queue.py:501-503`, `.github/bible/bible_queue.py:604-615`, `.github/bible/bible_queue.py:617-668`, `.github/bible/bible_queue.py:708-819`, `.github/bible/bible_queue.py:821-878`, `.github/bible/bible_queue.py:880-905`, `.github/bible/bible_queue.py:1223-1283` |
 | `Queue` -> `GitHub` | `.github/bible/bible_queue.py:501-503`, `.github/bible/bible_queue.py:606-607` |
 
@@ -225,7 +232,7 @@ The field types shown in the diagram are inferred from constructor assignments a
 
 | Interface | Kind | Card or page | Evidence |
 | --- | --- | --- | --- |
-| `start --components ... --verify-model ... [--model ...] [--concurrency ...] [--analysis ...] [--depth ...]` | CLI command | [main](bible_queue.md#main) | `.github/bible/bible_queue.py:1317-1322`, `.github/bible/bible_queue.py:1289-1302` |
+| `start [--components ...] --verify-model ... [--model ...] [--concurrency ...] [--analysis ...] [--depth ...]` | CLI command | [main](bible_queue.md#main) | `.github/bible/bible_queue.py:1317-1322`, `.github/bible/bible_queue.py:1289-1302` |
 | `reconcile` | CLI command | [main](bible_queue.md#main) | `.github/bible/bible_queue.py:1296`, `.github/bible/bible_queue.py:1325-1326` |
 | `delta --changed-file FILE [--analysis ...]` | CLI command | [main](bible_queue.md#main) | `.github/bible/bible_queue.py:1297-1299`, `.github/bible/bible_queue.py:1327-1330` |
 | Other analysis components | Cross-component call | None found | (inferred: repository search described under Responsibility) |
@@ -247,10 +254,10 @@ The field types shown in the diagram are inferred from constructor assignments a
 | R-09 | A whole verification that is missing, unreadable, not `PASS` or has major corrections does not end the run and does not wait for a person: the issue gets `bible-needs-revision`, and a revision of the whole analysis (`bible-revise-all` issue, on the analysis model) is assigned, then verified again. | `Queue.assemble_phase`, `Queue.revise_all_step` | Merged whole-verification pull request with such a report | `.github/bible/bible_queue.py:999-1007`, `.github/bible/bible_queue.py:981-985`, `.github/bible/bible_queue.py:1074-1152` |
 | R-10 | After `MAX_VERIFY_ROUNDS` (2) whole verifications without a clean, current `PASS` since a person last released the run, the queue creates a hold issue (`bible-hold`, `bible-whole`, `bible-needs-human`) for a person. | `Queue.revise_all_step`, `Queue.whole_hold` | Second whole verification that is not a clean current `PASS` | `.github/bible/bible_queue.py:1089-1097`, `.github/bible/bible_queue.py:1136-1142`, `.github/bible/bible_queue.py:1066-1072` |
 | R-11 | The run ends only on a clean `PASS` whose printed fingerprint equals the whole analysis's fingerprint on the default branch now and whose report was written by a merged pull request of this run's own verification issue; any other `PASS` is labelled `bible-stale-verdict` and verified again. | `Queue.assemble_phase` | Closed whole-verification issue | `.github/bible/bible_queue.py:947-980` |
-| R-12 | While a tracker is open (its own `Updated` line, or its creation time when it has none, no older than 14 days), a push to the default branch creates no update issue: the changed paths that match `SAFE_FILE` (other names are counted in the comment, not recorded) are recorded in `bible-deferred-update` comments on the tracker. They are turned into update issues only when the run ends through its Done step, before the tracker is closed and once more for paths recorded after the first read; if a person closes the tracker, or the run never finishes, they get no update issues and must be updated by hand. | `Queue.delta`, `Queue.deferred_updates`, `Queue.assemble_phase` | Default-branch push while a run is open | `.github/bible/bible_queue.py:389`, `.github/bible/bible_queue.py:1226-1228`, `.github/bible/bible_queue.py:1229-1242`, `.github/bible/bible_queue.py:1052-1064`, `.github/bible/bible_queue.py:1038-1050`, `.github/bible/bible_queue.py:607` |
+| R-12 | While a tracker is open (its own `Updated` line, or its creation time when it has none, no older than 14 days), a push to the default branch creates no update issue: the changed paths that match `SAFE_FILE` (other names are counted in the comment, not recorded) are recorded in `bible-deferred-update` comments on the tracker. They are turned into update issues only when the run ends through its Done step, before the tracker is closed and once more for paths recorded after the first read; if a person closes the tracker, or the run never finishes, they get no update issue of their own (inferred: `deferred_updates` is called only at lines 1038 and 1043, and `reconcile` lists open trackers only), and a later update issue for the same component asks its session for every change since the analysis's baseline. | `Queue.delta`, `Queue.deferred_updates`, `Queue.assemble_phase` | Default-branch push while a run is open | `.github/bible/bible_queue.py:389`, `.github/bible/bible_queue.py:1226-1228`, `.github/bible/bible_queue.py:1229-1242`, `.github/bible/bible_queue.py:1052-1064`, `.github/bible/bible_queue.py:1038-1050`, `.github/bible/bible_queue.py:607`, `.github/bible/bible_queue.py:1273-1277` |
 | R-13 | A push that touches more than `MAX_DELTA_ISSUES` (10) components starts no update session; one hold issue is opened for a person instead. | `Queue.delta` | Default-branch push with no open run | `.github/bible/bible_queue.py:1255-1264` |
 | R-14 | The file list a session pull request is checked on is never read as complete unless it is: for an open pull request whose base branch moved, the queue lists the comparison with the base branch's tip and refuses a missing list or one of `COMPARE_MAX` (300) files or more; otherwise the list must match the pull request's own `changed_files` count when that count is nonzero (a pull request that reports none, or a value that is not a number, is not count-checked). | `GitHub.pr_files` | Every file-scope check of a pull request | `.github/bible/bible_queue.py:252-286` |
-| R-15 | A component with no passing check yet (its `status.json` state is not `COMPONENT_DONE`, or its check fails) gets at most a bounded number of chunk sessions closed since the last hold release or merge into the default branch: the estimate (`est_sessions` from `components.json`, 2 when missing or zero, clamped to 1-10) gives a cap of 2 x estimate + 2, at least 4 (`MIN_SESSION_CAP`) and at most 22 (`MAX_SESSION_CAP`). At the cap the queue creates a hold issue (`bible-hold`, `bible-needs-human`) for a person instead of another chunk. | `Queue.component` | A component without a passing check, at each reconcile | `.github/bible/bible_queue.py:82-83`, `.github/bible/bible_queue.py:754-770` |
+| R-15 | A component with no passing check yet (its `status.json` state is not `COMPONENT_DONE`, or its check fails) gets chunk sessions until the closed chunk issues of this run that were created at or after the later of the last hold release and the latest merge of the component branch into the default branch reach a cap: the estimate (`est_sessions` from `components.json`, 2 when missing or zero, clamped to 1-10) gives a cap of 2 x estimate + 2, at least 4 (`MIN_SESSION_CAP`) and at most 22 (`MAX_SESSION_CAP`). At the cap the queue creates a hold issue (`bible-hold`, `bible-needs-human`) for a person instead of another chunk. | `Queue.component` | A component without a passing check, at each reconcile | `.github/bible/bible_queue.py:82-83`, `.github/bible/bible_queue.py:754-770` |
 | R-16 | A check that could not run is counted, not failed: for a component's check a branch tarball whose download fails or that is over the size limits, or a timeout; for the fingerprint of the whole analysis the same, and also a missing `status.py` or no output. After `MAX_NOCHECK` (3) in a row the queue creates a hold issue for a person; a check that runs resets the count. When too little of the run's time is left the check just waits for the next run and is not counted. | `Queue.could_not_check` | Check of a component, or fingerprint of the whole analysis, that cannot run | `.github/bible/bible_queue.py:89`, `.github/bible/bible_queue.py:745-752`, `.github/bible/bible_queue.py:890-892`, `.github/bible/bible_queue.py:901-903`, `.github/bible/bible_queue.py:907-918`, `.github/bible/bible_queue.py:923-933`, `.github/bible/bible_queue.py:964-972` |
 | R-17 | A chunk session's pull request is merged only if it made progress: its `status.json` must show more `packets_done` than the component branch has, or `COMPONENT_DONE`, and must not be `STOP`; a revision chunk must also change a page of the component and end at `COMPONENT_DONE`. Otherwise the session fails and is retried or held. | `Queue.follow` | Finished chunk session | `.github/bible/bible_queue.py:858-871` |
 | R-18 | A session pull request is merged by a squash merge that names the head commit that was checked, and the comment says GitHub then refuses the merge if anything was pushed since. | `GitHub.merge` | Accepted session pull request | `.github/bible/bible_queue.py:364-368` |
@@ -259,7 +266,7 @@ The field types shown in the diagram are inferred from constructor assignments a
 
 | Store or file | Reads | Writes | Data dictionary entry |
 | --- | --- | --- | --- |
-| GitHub issues and labels | Tracker settings, issue state, labels, assignments, comments, and timelines | Tracker, plan/chunk/verify/hold/delta issues, labels, comments, and assignment changes | Not applicable; GitHub-managed objects (`.github/bible/bible_queue.py:151-173`, `.github/bible/bible_queue.py:204-205`, `.github/bible/bible_queue.py:223-227`, `.github/bible/bible_queue.py:236-250`, `.github/bible/bible_queue.py:332-352`) |
+| GitHub issues and labels | Tracker settings, issue state, labels, assignments, comments, and timelines | Tracker, plan/chunk/verify/assemble/verify-all/revise-all/hold/delta issues, issue body rewrites and closes, labels, comments, and assignment changes | Not applicable; GitHub-managed objects (`.github/bible/bible_queue.py:342-346`, `.github/bible/bible_queue.py:1033`, `.github/bible/bible_queue.py:1150`, `.github/bible/bible_queue.py:151-173`, `.github/bible/bible_queue.py:204-205`, `.github/bible/bible_queue.py:223-227`, `.github/bible/bible_queue.py:236-250`, `.github/bible/bible_queue.py:332-352`) |
 | GitHub branches and pull requests | Branch refs, PR metadata/files, commit time, linked PRs | Component branch refs and PR lifecycle changes | Not applicable; GitHub-managed objects (`.github/bible/bible_queue.py:181-202`, `.github/bible/bible_queue.py:207-221`, `.github/bible/bible_queue.py:252-289`, `.github/bible/bible_queue.py:354-374`) |
 | GitHub contents and archive | JSON/status/report files and branch tarball | Tarball extraction under the temporary gate directory | Not applicable (`.github/bible/bible_queue.py:194-198`, `.github/bible/bible_queue.py:291-330`, `.github/bible/bible_queue.py:886-896`) |
 | `--changed-file` input | One changed path per line; blank lines are discarded | None | Input contract documented by the delta workflow (`.github/workflows/bible-delta.yml:37-38`, `.github/bible/bible_queue.py:1328-1330`) |
@@ -269,6 +276,7 @@ The field types shown in the diagram are inferred from constructor assignments a
 | Target | Purpose | Protocol and scheme | Address from | Timeout, retry, fallback | Evidence |
 | --- | --- | --- | --- | --- | --- |
 | GitHub API | Issues, labels, branches, contents, pull requests, timelines, commits, archives, and ready-for-review mutation | REST and GraphQL; configured API URL defaults to HTTPS | `GITHUB_API_URL`, default `https://api.github.com` | Request timeout defaults to 60 seconds; tarball request uses 300 seconds. HTTP and URL/timeout/OS errors become `RuntimeError`, except `ready` wraps only HTTP errors; API helper supports optional 404 fallback. | `.github/bible/bible_queue.py:113-125`, `.github/bible/bible_queue.py:127-139`, `.github/bible/bible_queue.py:297`, `.github/bible/bible_queue.py:354-362` |
+| GitHub Issues API, from the POC workflow | Creates an issue and assigns Copilot | REST through `gh api`; the scheme and port are `gh`'s own (assumed: library behaviour) | `REPO` and `gh`'s API base | The job is limited to 5 minutes; no retry (inferred: a search of the workflow for `retry` finds nothing); no timeout option on the `gh api` call (inferred: lines 66-69 pass none) | `.github/workflows/poc-assign-copilot.yml:37`, `.github/workflows/poc-assign-copilot.yml:66-69` |
 | Analysis toolkit `components` helpers | Maps changed paths to component rows during delta processing | In-process Python import | `BIBLE_SKILLS` path, default `.github/skills` | No fallback is defined for import or helper errors in `Queue.delta`. | `.github/bible/bible_queue.py:501-503`, `.github/bible/bible_queue.py:1247-1249` |
 | Analysis toolkit `coverage.py` and `status.py` | Check component coverage and obtain page fingerprint | Local subprocess, `python -I` | `BIBLE_SKILLS` path, default `.github/skills` | Each subprocess is run with a 300-second timeout (`GATE_TIMEOUT`, `.github/bible/bible_queue.py:78`); `subprocess.TimeoutExpired` is logged and the check counts as could not run (`.github/bible/bible_queue.py:901-903`). | `.github/bible/bible_queue.py:501-503`, `.github/bible/bible_queue.py:882-900` |
 
@@ -300,7 +308,7 @@ Session failures retry once and then create a human hold (a start Copilot refuse
 
 ## Logging and monitoring
 
-The queue logs missing/invalid tracker settings, per-tracker exceptions, component gate output, tracker state rows, the deferral of a push while a run is open, delta issue creation or duplicate detection, and the decision that more than 10 changed components need a person. (`.github/bible/bible_queue.py:610`, `.github/bible/bible_queue.py:615`, `.github/bible/bible_queue.py:884`, `.github/bible/bible_queue.py:891`, `.github/bible/bible_queue.py:896`, `.github/bible/bible_queue.py:902`, `.github/bible/bible_queue.py:1219-1220`, `.github/bible/bible_queue.py:1240-1241`, `.github/bible/bible_queue.py:1245`, `.github/bible/bible_queue.py:1263`, `.github/bible/bible_queue.py:1271`, `.github/bible/bible_queue.py:1283`)
+The queue logs missing/invalid tracker settings, per-tracker exceptions, component gate output, tracker state rows, the deferral of a push while a run is open, a push that finds no assembled analysis (no `components.json` or baseline) so that nothing is updated, a whole-analysis fingerprint that could not be computed, delta issue creation or duplicate detection, and the decision that more than 10 changed components need a person. (`.github/bible/bible_queue.py:610`, `.github/bible/bible_queue.py:615`, `.github/bible/bible_queue.py:884`, `.github/bible/bible_queue.py:891`, `.github/bible/bible_queue.py:896`, `.github/bible/bible_queue.py:902`, `.github/bible/bible_queue.py:1219-1220`, `.github/bible/bible_queue.py:1240-1241`, `.github/bible/bible_queue.py:932`, `.github/bible/bible_queue.py:1245`, `.github/bible/bible_queue.py:1263`, `.github/bible/bible_queue.py:1271`, `.github/bible/bible_queue.py:1283`)
 
 ## Tests
 

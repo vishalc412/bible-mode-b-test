@@ -43,17 +43,22 @@ sequenceDiagram
   autonumber
   actor Operator as Repository operator
   participant Actions as GitHub Actions
-  participant Queue as bible_queue.py
+  participant Queue as bible-queue.py
   participant API as GitHub API
   Operator->>Actions: Dispatch bible-plan with model and component inputs
   Actions->>Queue: Run start with GH_TOKEN and workflow inputs
-  Queue->>Queue: Validate model and component arguments
-  alt start refused (arguments, missing settings, or a run already open)
-    Note over Queue,Actions: Exit with the refusal message, no tracker is created
+  Queue->>Queue: Check GITHUB_REPOSITORY and GH_TOKEN, then validate model and component arguments
+  alt a variable is missing or an argument is refused
+    Note over Queue,Actions: Exit with the refusal message, no label or tracker is created
   else accepted
-    Queue->>API: Ensure labels and create tracker issue with settings JSON
-    API-->>Queue: Tracker issue number
-    Queue-->>Actions: Print tracker number and queue-start guidance
+    Queue->>API: Ensure labels
+    alt a run is already open, or the settings are refused
+      Note over Queue,Actions: Exit with the refusal message, no tracker is created
+    else accepted
+      Queue->>API: Create tracker issue with settings JSON
+      API-->>Queue: Tracker issue number
+      Queue-->>Actions: Print tracker number and queue-start guidance
+    end
   end
   Actions-->>Operator: Report workflow result
 ```
@@ -62,8 +67,8 @@ sequenceDiagram
 | ---: | --- | --- |
 | 1 | Operator dispatches the workflow and supplies the inputs. | `.github/workflows/bible-plan.yml:7-23` |
 | 2 | Workflow checks the default branch (the job's `if:` condition), verifies `BIBLE_ASSIGN_TOKEN`, and invokes `start`. | `.github/workflows/bible-plan.yml:36`, `.github/workflows/bible-plan.yml:40-54` |
-| 3 | `main` validates the model and component arguments. | `.github/bible/bible_queue.py:1309-1313` |
-| 4 | Queue ensures labels, refuses an existing tracker, and creates a tracker issue with settings in a hidden JSON comment. | `.github/bible/bible_queue.py:1314-1322` |
+| 3 | `main` exits unless `GITHUB_REPOSITORY` and `GH_TOKEN` are set, then validates the model and component arguments. | `.github/bible/bible_queue.py:1302-1304`, `.github/bible/bible_queue.py:1309-1313` |
+| 4 | Queue ensures labels (before either refusal), refuses an open tracker and refused settings, and then creates a tracker issue with settings in a hidden JSON comment. | `.github/bible/bible_queue.py:1314-1322` |
 | 5 | GitHub returns the tracker issue number. | `.github/bible/bible_queue.py:1322-1323` |
 | 6 | CLI prints the issue number and queue-start guidance. | `.github/bible/bible_queue.py:1323-1324` |
 | 7 | Workflow reports its result to the operator. | `.github/workflows/bible-plan.yml:50-54` |
@@ -78,7 +83,7 @@ sequenceDiagram
 sequenceDiagram
   autonumber
   participant Actions as GitHub Actions
-  participant Queue as bible_queue.py
+  participant Queue as bible-queue.py
   participant API as GitHub API
   participant Agent as Copilot coding agent
   Actions->>Queue: Run reconcile from default-branch checkout
@@ -122,7 +127,7 @@ sequenceDiagram
   autonumber
   participant Agent as Copilot coding agent
   participant API as GitHub
-  participant Queue as bible_queue.py
+  participant Queue as bible-queue.py
   participant Gate as coverage.py and status.py
   actor Reviewer as Repository reviewer
   Agent->>API: Open chunk PR with component pages and status
@@ -141,7 +146,9 @@ sequenceDiagram
   Queue->>API: Create verification issue assigned on the verification model
   Agent->>API: Open verification PR with report
   Queue->>API: Read report and merge accepted verification PR
-  alt corrections asked, or fingerprint does not match the pages
+  alt a report was read, no chunk since it, and two verifications without a clean PASS
+    Queue->>API: Create a hold issue for a person
+  else corrections asked, or fingerprint does not match the pages
     Queue->>API: Create a revision chunk issue or a new verification issue
   end
   Queue->>API: Create component review PR against default branch
@@ -174,7 +181,7 @@ sequenceDiagram
   autonumber
   actor Reviewer as Repository reviewer
   participant Actions as GitHub Actions
-  participant Queue as bible_queue.py
+  participant Queue as bible-queue.py
   participant API as GitHub
   participant Agent as Copilot coding agent
   Reviewer->>API: Merge all component review PRs
@@ -193,7 +200,9 @@ sequenceDiagram
   Reviewer->>API: Review and merge verification PR
   Queue->>API: Read verdict and validate report
   alt PASS, no major corrections, this run's PR, fingerprint equals the pages now
-    Queue->>API: Replay deferred updates, close tracker and post Done
+    Queue->>API: Create update issues for the paths recorded while the run was open
+    Queue->>API: Post Done and close the tracker
+    Queue->>API: Create update issues for paths recorded after the first read
   else corrections asked
     Queue->>API: Label the verification issue bible-needs-revision
     Queue->>API: Create a revise-all issue at the next check
@@ -230,14 +239,14 @@ sequenceDiagram
 
 ## 5. Changed code produces component delta issues
 
-**Trigger:** A push on the default branch that changes any file outside `codebase-analysis/**` and `.github/skills/**`. **Outcome:** While an analysis run is open the change is only recorded on the tracker, and its update issues are created only when the run ends through its Done step (if a person closes the tracker, or the run never finishes, they are never created and the files must be updated by hand); otherwise the queue maps the changed paths to components and creates one update issue per affected component, or one hold issue when more than 10 components changed.
+**Trigger:** A push on the default branch that changes any file outside `codebase-analysis/**` and `.github/skills/**`. **Outcome:** While an analysis run is open the change is only recorded on the tracker, and its update issues are created only when the run ends through its Done step (if a person closes the tracker, or the run never finishes, they are never created for those paths (inferred: `deferred_updates` is called only at `.github/bible/bible_queue.py:1038` and `.github/bible/bible_queue.py:1043`); a later update issue for the same component asks for every change since the baseline, `.github/bible/bible_queue.py:1273-1277`); otherwise the queue maps the changed paths to components and creates one update issue per affected component, or one hold issue when more than 10 components changed.
 
 ```mermaid
 sequenceDiagram
   autonumber
   participant Git as GitHub push event
   participant Actions as GitHub Actions
-  participant Queue as bible_queue.py
+  participant Queue as bible-queue.py
   participant API as GitHub API
   participant Agent as Copilot coding agent
   Git->>Actions: Push on default branch
@@ -264,14 +273,14 @@ sequenceDiagram
 | 2 | Workflow checks out full history and writes changed paths to `$RUNNER_TEMP/changed.txt`. | `.github/workflows/bible-delta.yml:20-25`, `.github/workflows/bible-delta.yml:34-37` |
 | 3 | CLI reads nonempty path lines and passes them to `Queue.delta`. | `.github/bible/bible_queue.py:1328-1330` |
 | 4 | When a tracker issue is open and its own `Updated` line (its creation time when it has none) is no older than 14 days (`ABANDONED_AFTER`), the queue does not create update issues: it comments the plain paths on the first such tracker, in comments of at most 200 paths, each with a hidden `bible-deferred-update` marker, and returns. | `.github/bible/bible_queue.py:1226-1242`, `.github/bible/bible_queue.py:390-391` |
-| 5 | The update issues for those paths are created only when the run ends through its Done step: the assembly phase reads the marked comments the queue itself wrote, runs the update for them before it closes the tracker, and once more for paths recorded after the first read. `reconcile` visits only open trackers, and `deferred_updates` has no other caller, so paths recorded on a tracker that a person closes, or on a run that never reaches Done, are never replayed: they get no update issues and must be updated by hand. | `.github/bible/bible_queue.py:607`, `.github/bible/bible_queue.py:1038-1050`, `.github/bible/bible_queue.py:1052-1064` |
+| 5 | The update issues for those paths are created only when the run ends through its Done step: the assembly phase reads the marked comments the queue itself wrote, runs the update for them before it closes the tracker, and once more for paths recorded after the first read. `reconcile` visits only open trackers (inferred: `deferred_updates` is called only at lines 1038 and 1043), so paths recorded on a tracker that a person closes, or on a run that never reaches Done, are never replayed: they get no update issue of their own, and the next update issue for the same component, created by a later push, asks its session for every change since the analysis's baseline. The replay goes through `delta`: with no `components.json` or no `ledger/baseline.json` on the default branch the paths are dropped with only a log line, more than 10 touched components give one hold issue, and a component that already has an open update issue is skipped. | `.github/bible/bible_queue.py:607`, `.github/bible/bible_queue.py:1038-1050`, `.github/bible/bible_queue.py:1052-1064`, `.github/bible/bible_queue.py:1273-1277`, `.github/bible/bible_queue.py:1243-1246`, `.github/bible/bible_queue.py:1255-1264`, `.github/bible/bible_queue.py:1270-1272` |
 | 6 | With no open run, the queue requires `components.json` and `ledger/baseline.json` on the default branch. | `.github/bible/bible_queue.py:1243-1246` |
 | 7 | Queue maps changed source paths (not the analysis folder, not the skills folder) to component names with the toolkit's `components` helpers. | `.github/bible/bible_queue.py:1247-1254`, `.github/bible/bible_queue.py:1265-1269` |
 | 8 | When more than `MAX_DELTA_ISSUES` (10) components are touched, the queue creates one hold issue labelled `bible-delta` and `bible-needs-human` (unless one is open) and starts no update session. | `.github/bible/bible_queue.py:1255-1264`, `.github/bible/bible_queue.py:392` |
 | 9 | Otherwise it skips a component that already has an open delta issue, or creates a new issue. | `.github/bible/bible_queue.py:1270-1283` |
 | 10 | GitHub assigns each newly created issue to Copilot. | `.github/bible/bible_queue.py:1273-1282` |
 
-**Failure paths:** The first push with no prior SHA exits without a delta run. Missing catalog or baseline makes the queue log that there is nothing to update. Empty paths or paths outside component ownership produce no issue; an already-open delta issue is not duplicated; a push that touches more than 10 components gives a hold issue instead of update sessions (`.github/workflows/bible-delta.yml:34-38`; `.github/bible/bible_queue.py:1243-1246`, `.github/bible/bible_queue.py:1255-1264`, `.github/bible/bible_queue.py:1270-1283`). While a run is open the update waits for the run's Done step and is lost if the tracker is closed by a person or the run never finishes. A paths-ignored push, or one that changes only the analysis or the skills, does not start the workflow at all (`.github/workflows/bible-delta.yml:10-12`).
+**Failure paths:** The first push with no prior SHA exits without a delta run. Missing catalog or baseline makes the queue log that there is nothing to update. Empty paths or paths outside component ownership produce no issue; an already-open delta issue is not duplicated; a push that touches more than 10 components gives a hold issue instead of update sessions (`.github/workflows/bible-delta.yml:34-38`; `.github/bible/bible_queue.py:1243-1246`, `.github/bible/bible_queue.py:1255-1264`, `.github/bible/bible_queue.py:1270-1283`). While a run is open the update waits for the run's Done step; if the tracker is closed by a person or the run never finishes, those paths get no update issue of their own (inferred: `reconcile` lists open trackers only, `.github/bible/bible_queue.py:607`, and `deferred_updates` is called only at lines 1038 and 1043), and a later update issue for the same component asks for every change since the baseline (`.github/bible/bible_queue.py:1273-1277`). A paths-ignored push, or one that changes only the analysis or the skills, does not start the workflow at all (`.github/workflows/bible-delta.yml:10-12`).
 
 ## 6. Order total and stock validation use the in-process catalog
 
@@ -329,7 +338,7 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
   autonumber
-  participant Client as catalog_client.py
+  participant Client as catalog-client.py
   participant Server as CatalogHandler
   participant Catalog as catalog.py
   Client->>Client: Read CATALOG_URL and percent-encode SKU
@@ -355,7 +364,7 @@ sequenceDiagram
 | 6 | Server returns `200` with `sku` and `price`, or `404` with an error. | `components/catalog/service.py:28-34` |
 | 7 | Client loads the JSON body and converts `price` to `float`. | `components/orders/catalog_client.py:22-23` |
 
-**Failure paths:** Unknown SKUs return 404, which `urlopen` surfaces as `HTTPError`; invalid JSON, missing fields, timeouts, and connection errors are not translated by the client. The HTTP client path has test callers only in this repository (inferred: a search of the repository outside the analysis folder and the skills for `remote_price` and `remote_line_total` finds callers only in `test_catalog_client.py`, and `remote_line_total` calling `remote_price` in `catalog_client.py` itself) (`components/orders/catalog_client.py:19-23`; `components/orders/catalog_client.py:26-29`; `components/orders/test_catalog_client.py:37-62`).
+**Failure paths:** Unknown SKUs return 404, which `urlopen` surfaces as `HTTPError` (assumed: library behaviour, and the docstring at `components/orders/catalog_client.py:20` says the same); invalid JSON, missing fields, timeouts, and connection errors are not translated by the client (inferred: `remote_price` has no `except`, `components/orders/catalog_client.py:19-23`). The HTTP client path has test callers only in this repository (inferred: a search of the repository outside the analysis folder and the skills for `remote_price` and `remote_line_total` finds callers only in `test_catalog_client.py`, and `remote_line_total` calling `remote_price` in `catalog_client.py` itself) (`components/orders/catalog_client.py:19-23`; `components/orders/catalog_client.py:26-29`; `components/orders/test_catalog_client.py:37-62`).
 
 ## 8. Settlement sends an order amount
 
@@ -398,11 +407,11 @@ sequenceDiagram
 sequenceDiagram
   autonumber
   actor Operator as Local operator
-  participant Plan as tools/plan.py
+  participant Plan as plan.py
   participant Files as Repository files
-  participant Fanout as tools/fanout.sh
+  participant Fanout as fanout.sh
   participant GH as GitHub CLI
-  participant Gate as tools/gate.py
+  participant Gate as gate.py
   Operator->>Plan: Run planner
   Plan->>Files: Read component Python files and tests
   Plan->>Files: Write codebase-analysis/plan.json
@@ -465,8 +474,8 @@ sequenceDiagram
 | 2 | Workflow passes input values and `BIBLE_ASSIGN_TOKEN` into environment variables; the job performs no checkout. | `.github/workflows/poc-assign-copilot.yml:34-48` |
 | 3 | Shell exits if the token is missing. | `.github/workflows/poc-assign-copilot.yml:49-53` |
 | 4 | `jq` creates `request.json` with issue body, assignee and `agent_assignment`; the token is not included in the JSON payload. | `.github/workflows/poc-assign-copilot.yml:55-64` |
-| 5 | `gh api` creates the issue. | `.github/workflows/poc-assign-copilot.yml:65-68` |
-| 6 | GitHub returns the issue response. | `.github/workflows/poc-assign-copilot.yml:65-68` |
+| 5 | `gh api` creates the issue. | `.github/workflows/poc-assign-copilot.yml:66-69` |
+| 6 | GitHub returns the issue response. | `.github/workflows/poc-assign-copilot.yml:66-69` |
 | 7 | Shell writes `response.json` and prints issue details. | `.github/workflows/poc-assign-copilot.yml:68-72` |
 | 8 | GitHub assigns the issue to Copilot. | `.github/workflows/poc-assign-copilot.yml:65-72` |
 
