@@ -91,7 +91,7 @@ FRONT_MATTER = re.compile(r"\A---[ \t]*\n(.*?)\n---[ \t]*(?:\n|\Z)", re.S)
 MERMAID_BLOCK = re.compile(r"```mermaid[ \t]*\n(.*?)```", re.S)
 # Several ranges in one citation (`a.py:5,19-20`): no check can read it (live run, 24 Nov 2026: 307 such citations were
 # never resolved, moved by an update or sampled by a verifier), so the gate fails it and asks for one citation per range.
-CITATION_LIST = re.compile(r"`([A-Za-z0-9_@+~./\\-]+\.[A-Za-z0-9_]+):(\d+(?:\s*-\s*\d+)?(?:\s*,\s*\d+(?:\s*-\s*\d+)?)+)`")
+CITATION_LIST = re.compile(r"`([A-Za-z0-9_@+~./\\-]+\.[A-Za-z0-9_]+|[A-Za-z0-9_@+~./\\-]*(?:Dockerfile|Jenkinsfile|Makefile|Procfile)):(\d+(?:\s*-\s*\d+)?(?:\s*,\s*\d+(?:\s*-\s*\d+)?)+)`")
 CITE_IN_LINE = re.compile(r"`(?:[^`\n]*/)?([^`/\n]+):(\d+)(?:\s*-\s*(\d+))?`")
 STAMP = re.compile(r"<!--\s*code:\s*([0-9a-f]{12})\s*-->")        # the code a card was written from
 RECHECK = re.compile(r"<!--\s*recheck\b[^>]*-->")                  # set by delta.py on a citation it could not move

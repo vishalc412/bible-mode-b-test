@@ -16,7 +16,9 @@ When the report is a component's (`ledger/components/<name>/verification-report.
 
 ## Work through every item
 
-Every item counts, not only the numbered corrections: coverage, depth, diagram, readability and consistency findings, and small points made without asking for a change. Give unnumbered items your own numbers (`N-01`, `N-02`, ...).
+Every item counts, not only the numbered corrections: each sampled row the report did not confirm (`Overstated`, `Citation off`, `Wrong`), coverage, depth, diagram, readability and consistency findings, and small points made without asking for a change. Give unnumbered items your own numbers (`N-01`, `N-02`, ...).
+
+After a `PASS AFTER CORRECTIONS`, the next verification is a re-check of exactly these items and of every statement you change (verifying skill, "Re-check after a revision"). Change nothing else, and open the cited lines of every sentence you write: a new claim made in a revision is judged like any other.
 
 For each item:
 
