@@ -25,25 +25,25 @@ Secret values are not recorded here. `BIBLE_ASSIGN_TOKEN` is configured as a rep
 | `timeout` in `remote_price` | Catalog HTTP request timeout in seconds | `5` | `components/orders/catalog_client.py:19-23` | Function argument | No |
 | `timeout` in `settle` | Settlement request timeout in seconds | `15` | `components/orders/orders.py:45-50` | Function argument | No |
 | `dev` | Selects the local settlement URL when true | `False` | `components/orders/orders.py:45-50` | Function argument | No |
-| `GITHUB_API_URL` | GitHub API base URL | `https://api.github.com` | `.github/bible/bible_queue.py:96-110` | Environment; optional constructor argument overrides it | No |
+| `GITHUB_API_URL` | GitHub API base URL | `https://api.github.com` | `.github/bible/bible_queue.py:105-119` | Environment; optional constructor argument overrides it | No |
 | GitHub API `timeout` | Queue request timeout in seconds | `60`; tarball request uses `300` | `.github/bible/bible_queue.py:94-103,237-243` | Function argument | No |
-| `GITHUB_REPOSITORY` | Repository owner and name for queue operations | Required; none | `.github/bible/bible_queue.py:1096-1100` | GitHub Actions environment | No |
+| `GITHUB_REPOSITORY` | Repository owner and name for queue operations | Required; none | `.github/bible/bible_queue.py:1260-1264` | GitHub Actions environment | No |
 | `BIBLE_ASSIGN_TOKEN` | Credential used to assign Copilot and make queue API calls | Required repository secret; value not documented | Workflow job environments | Repository secret settings | Yes |
-| `GH_TOKEN` | GitHub API bearer-token environment variable used by `gh` or the queue client | Required; supplied from `BIBLE_ASSIGN_TOKEN` in workflows | `.github/bible/bible_queue.py:1096-1100`; POC workflow shell | Workflow environment | Yes |
-| `BIBLE_AGENT_LOGINS` | Agent logins recognized by the queue | `Copilot,copilot-swe-agent[bot],copilot-swe-agent` | `.github/bible/bible_queue.py:60` | Environment | No |
-| `BIBLE_AGENT_APP` | GitHub app slug used to identify agent events | `copilot-swe-agent` | `.github/bible/bible_queue.py:61-64` | Environment | No |
-| `BIBLE_NOW` | Test clock override | Current UTC time when unset | `.github/bible/bible_queue.py:337-339` | Environment | No |
-| `BIBLE_SKILLS` | Path to the analysis toolkit | `.github/skills` | `.github/bible/bible_queue.py:449-451` | Environment | No |
-| `components` | Components selected for an analysis run | `all` | `.github/bible/bible_queue.py:1083-1088` | `bible-plan` workflow input | No |
-| `model` | Model for analysis sessions | Empty, meaning agent default | `.github/bible/bible_queue.py:1083-1088`; workflow inputs | `.github/workflows/bible-plan.yml:14-17`; `.github/workflows/poc-assign-copilot.yml:26-29` | No |
-| `verify_model` | Required model for verification, different from analysis model | Required | `.github/bible/bible_queue.py:1083-1104` | `bible-plan` workflow input | No |
+| `GH_TOKEN` | GitHub API bearer-token environment variable used by `gh` or the queue client | Required; supplied from `BIBLE_ASSIGN_TOKEN` in workflows | `.github/bible/bible_queue.py:1260-1264`; POC workflow shell | Workflow environment | Yes |
+| `BIBLE_AGENT_LOGINS` | Agent logins recognized by the queue | `Copilot,copilot-swe-agent[bot],copilot-swe-agent` | `.github/bible/bible_queue.py:61` | Environment | No |
+| `BIBLE_AGENT_APP` | GitHub app slug used to identify agent events | `copilot-swe-agent` | `.github/bible/bible_queue.py:62-65` | Environment | No |
+| `BIBLE_NOW` | Test clock override | Current UTC time when unset | `.github/bible/bible_queue.py:352-354` | Environment | No |
+| `BIBLE_SKILLS` | Path to the analysis toolkit | `.github/skills` | `.github/bible/bible_queue.py:474-476` | Environment | No |
+| `components` | Components selected for an analysis run | `all` | `.github/bible/bible_queue.py:1247-1252` | `bible-plan` workflow input | No |
+| `model` | Model for analysis sessions | Empty, meaning agent default | `.github/bible/bible_queue.py:1247-1252`; workflow inputs | `.github/workflows/bible-plan.yml:14-17`; `.github/workflows/poc-assign-copilot.yml:26-29` | No |
+| `verify_model` | Required model for verification, different from analysis model | Required | `.github/bible/bible_queue.py:1247-1268` | `bible-plan` workflow input | No |
 | `concurrency` | Maximum active components; zero means no cap | `0` | `.github/bible/bible_queue.py:823-828,524-529` | `bible-plan` workflow input | No |
 | `COMPONENTS` | Component selection forwarded to the queue CLI | Value of `inputs.components` | `.github/workflows/bible-plan.yml:44-49,53-54` | `bible-plan` step environment | No |
 | `MODEL` | Analysis model forwarded to the queue CLI or POC assignment payload | Value of the model input | `.github/workflows/bible-plan.yml:44-54`; `.github/workflows/poc-assign-copilot.yml:40-63` | Workflow step environment | No |
 | `VERIFY_MODEL` | Separate verification model forwarded to the queue CLI | Value of `inputs.verify_model` | `.github/workflows/bible-plan.yml:44-54` | `bible-plan` step environment | No |
 | `CONCURRENCY` | Active-component limit forwarded to the queue CLI | Value of `inputs.concurrency` | `.github/workflows/bible-plan.yml:44-54` | `bible-plan` step environment | No |
 | `--analysis` | Analysis output directory | `codebase-analysis` | `.github/bible/bible_queue.py:828,833` | Queue CLI option | No |
-| `--depth` | Analysis depth | `deep` | `.github/bible/bible_queue.py:1089` | Queue CLI option | No |
+| `--depth` | Analysis depth | `deep` | `.github/bible/bible_queue.py:1253` | Queue CLI option | No |
 | `--changed-file` | File containing one changed repository path per line | Required | `.github/bible/bible_queue.py:831-833,859-861` | Delta CLI option | No |
 | `--pass` | Gate pass number to run | Unset means use `status.json` passes | `tools/gate.py:81-103` | Gate CLI option | No |
 | `title` | POC issue title | `POC: Copilot assigned by a workflow` | `.github/workflows/poc-assign-copilot.yml:13-17` | POC workflow input | No |
@@ -62,7 +62,7 @@ Secret values are not recorded here. `BIBLE_ASSIGN_TOKEN` is configured as a rep
 | `timeout-minutes` | Maximum job duration | `15` plan/delta, `20` queue, `5` POC | Workflow job declarations | Same workflow job declarations above | No |
 | `concurrency.group` | Prevents overlapping plan or queue workflow runs | `bible-plan`, `bible-queue`; cancellation disabled | Workflow concurrency blocks | `.github/workflows/bible-plan.yml:29-32`; `.github/workflows/bible-queue.yml:15-18` | No |
 
-<!-- cites .github/bible/bible_queue.py@68e91ae09c53c283e7402334cfe2a715785b33ed -->
+<!-- cites .github/bible/bible_queue.py@9084f4915d286441c5b3a9a29a8df059bf76dacc -->
 
 <!-- cites .github/workflows/bible-delta.yml@5317a1ada61df3db98cc21d8db6d1415fe732c58 -->
 
