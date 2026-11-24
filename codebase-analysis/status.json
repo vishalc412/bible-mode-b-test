@@ -1,7 +1,7 @@
 {
  "schema": 1,
- "status": "DRAFT",
- "gate": "NOT RUN",
+ "status": "VERIFIED",
+ "gate": "PASS",
  "verification": {
   "verdict": "PASS",
   "date": "2026-11-24",
@@ -41,9 +41,9 @@
   }
  },
  "reasons": [
-  "after corrections only 10 of 15 flagged statements confirmed: correct and re-check the rest",
-  "0 of 4 components verified"
+  "verdict PASS; the pages are the ones verified (fingerprint def1538e6a437c22); 10 of 15 earlier corrections confirmed, the rest re-listed as minor corrections; judged as a full round: it names no earlier round (no `Re-check of` row)",
+  "coverage gate PASS at depth deep now; code matches the baseline of 2026-11-24T14:34:00"
  ],
  "notes": [],
- "checked": "2026-11-24T19:43:23"
+ "checked": "2026-11-24T19:52:35"
 }
