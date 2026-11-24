@@ -3,35 +3,34 @@
 | | |
 | --- | --- |
 | Verdict | PASS AFTER CORRECTIONS |
-| Analysis fingerprint | 70ed8b41d4d54c72 |
+| Analysis fingerprint | 6d2968d3765eaeee |
 | Analysis snapshot | 24 in-scope files, 1,812 source lines, code of 2026-11-24 (baseline 2026-11-24T14:34:00), no version given (front page) |
 | Repository at verification | 24 files in scope, 14 source-language files of which 11 hold code (3 empty `__init__.py`), 1,812 lines by my count; `.github/bible/bible_queue.py` has 1,336 lines; no drift from the stored inventory; no version given |
 | Depth stated / depth found | deep / deep |
 | Verified with | Claude Code (Claude Opus 5.5), standing in for the GitHub Copilot coding agent |
-| Analysis produced with | Copilot coding agent (model not recorded) for planning, components, assembly and the first revisions; Claude Sonnet 5.5 standing in for Copilot for the revisions of 24 Nov 2026, including the round-4 revision (front page) |
-| Sampling level | standard, plus the re-check part (every statement the round-4 report flagged and every page section the round-4 revision changed) |
+| Analysis produced with | Copilot coding agent (model not recorded) for planning, components, assembly and the first revisions; Claude Sonnet 5.5 standing in for Copilot for the revisions of 24 Nov 2026, including the round-4 and round-5 revisions (front page) |
+| Sampling level | standard (a full verification: round 5's accuracy, 92.3%, is below the 95% a re-check needs) |
 | Date | 2026-11-24 |
 
-After corrections: every flagged statement re-checked: 14 of 18 confirmed.
+After corrections: every flagged statement re-checked: 14 of 16 confirmed.
 
-The 18 are V-001 to V-018 of the round-4 report (now `verification-report-2026-11-24-2.md`). V-001, V-014, V-017 and V-018 do not fully hold: part of the rewritten text is still not what the code does (V-001, V-003, V-002 and V-012 here). Round 5. No delta was applied since round 4 (`delta-log.md`'s newest row, 2026-11-24T14:34:00, was already audited then), so there is no delta part. Steps 1 to 8 of the skill were all done.
+The 16 are V-001 to V-016 of the round-5 report (now `verification-report-2026-11-24-3.md`). V-008 and V-009 do not fully hold: the listed places are fixed, but statements of the same kind remain on other pages (V-001, V-002 and V-004 here). This is round 6, a full verification, not a re-check, so there is no `Re-check of` row. No delta was applied since round 5 (`delta-log.md`'s newest row, 2026-11-24T14:34:00, was audited in round 4), so there is no delta part. Steps 1 to 8 of the skill were all done.
 
 ## Summary
 
-The analysis is complete and, for its main statements, true. The coverage gate passes at deep with every measure at 100% (116/116 symbols, 98/98 full cards, 320/320 branch lines, 232/232 call-graph edges, 3,059/3,059 citations). The round-4 revision fixed both majors: the deferred-update replay is now described as happening only through the Done step, and both whole-analysis diagrams split the stale-PASS branch from the corrections branch. No correction in this report is major, no omission is significant, and no secret value appears.
+The analysis is complete and its facts are, almost without exception, true. The coverage gate passes at deep with every measure at 100% (116/116 symbols, 98/98 full cards, 320/320 branch lines, 232/232 call-graph edges, 3,225/3,225 citations). Every one of the 16 cards audited for depth is Complete. No statement in the sample is Wrong or Unsupported, no correction is major, no omission is significant, and no secret value appears. The round-5 revision fixed what it was asked to fix: 14 of its 16 corrections hold in full, and the other two hold at every place round 5 named.
 
-It is not a PASS because accuracy is 92.3%, below the 95% a PASS needs. Of the 1,174 sampled citations, 1,072 are confirmed, 12 cite the wrong lines, 89 are overstated and 1 is wrong. Most of the overstatements are one kind of slip. A statement rests on an absence ("no retry", "no scheduler", "never replayed"), a comment or library behaviour, but carries no `(inferred` or `(assumed` mark, although the pages use those marks elsewhere. The facts behind them are almost always right.
+It is not a PASS because accuracy is 89.0%, below the 95% a PASS needs. Of the 1,285 sampled citations, 1,137 are confirmed, 6 cite the wrong lines and 142 are overstated. Almost all of the overstatements are one kind of slip, the one round 5 named. A statement rests on an absence across a file or the repository ("no build step", "only callers are tests", "a person merges it"), on a docstring or comment, or on library, `gh` or GitHub behaviour, and carries no `(inferred` or `(assumed` mark. The fact behind it is right in every case I or the judging sessions checked; the searches were repeated. Round 5 listed the places it found; the revision marked those places but did not sweep the other pages for the same kind, so the same slip is found again in places round 5's sample did not reach.
 
-This round applied the mark rule of the skill strictly to every sampled row. Round 4 confirmed several of these same unchanged statements (for example the "no retry" cells of `hld/03`). So the fall in accuracy from 97.9% is mainly a stricter reading, not new errors in the pages.
+The fall from 92.3% to 89.0% is therefore not new errors: this round's sample has more HLD rows (848 in group A, against 746) and found the same unmarked kind in them.
 
 Where the analysis is weakest:
 
-- **Text the revision wrote.** The new wording that recorded paths "must be updated by hand" goes past the code: a later update session of the same component covers every change since the baseline. The new rule R-15 counts chunk sessions created since the hold release, not sessions closed since then. The `pr_files` output section now says an error ends the tracker's run, but the per-component handler catches it. The new flow 1 `alt` puts "ensure labels" after the refusals, but the code ensures them first.
-- **`Queue.component`.** The card still misses the run scope of "not started" and one condition of the revision trigger.
-- **Two small wrong statements.** Answers go on the session pull request, not on the waiting issue. The `bible-run-<n>` label is on child issues, not on the tracker.
-- **Diagram syntax.** Several departures from the toolkit's subset: underscore ids, unquoted ER labels, a rhombus, end states without `[*]`, and 53 duplicate edges in one call graph.
+- **Unmarked absences, docstrings and library behaviour** (V-001 to V-005, 119 of the 142 overstated rows). The correction is one sweep of every page, not a list of places.
+- **Narrow wording slips** (V-007 to V-011): remote catalog traffic is plain HTTP only by default; the flow 5 outcome leaves out the 14-day condition; the delta hold issue is not opened again when one is open; two change-history phrases on `bible_queue.md`; `done` in `Queue.component` counts only this run.
+- **Diagrams** (V-013): the agent-PR lifecycle has no merge by a person; flow 3 draws the review PR after the hold branch; flow 4 and the whole-analysis flowchart draw continuation as if any session could resume another; three edges have no evidence row.
 
-Every problem has a specific correction below. After they are applied, one re-check should be enough for a PASS.
+Every problem has a specific correction below. Because the accuracy is below 95%, the next round must again be a full verification, not a re-check (`status.py` refuses a re-check below 95%). A page-wide sweep for the mark rule before then is what would lift the accuracy.
 
 ## Scores
 
@@ -42,82 +41,48 @@ Every problem has a specific correction below. After they are applied, one re-ch
 | Functions with a full card (pseudo-code, branches cited) | 98 / 98 (100.0%) |
 | Branch lines cited / call-graph edges drawn / front matter | 320 / 320 (100.0%); 232 / 232 (100.0%); 17 / 17 (100.0%) |
 | Routes with an endpoint card | 0 / 0 by the scanner; the two catalog GET routes have endpoint cards (`lld/api/catalog/catalog.md`) |
-| Citations that resolve | 3059 / 3059 (100.0%) |
+| Citations that resolve | 3225 / 3225 (100.0%) |
 | Coverage gate | PASS (depth deep); calls into other components 2 / 2 |
-| Citations in the analysis / checked | 3059 / 1174 sampled; plus 879 re-check rows judged outside the sample |
-| Confirmed / Citation off / Overstated / Wrong / Unsupported | 1072 / 12 / 89 / 1 / 0 (sample only) |
-| Omissions (significant) / Inconsistent | 22 (0) / 27 |
-| Accuracy / citation quality | 92.3% (1084/1174) / 91.3% (1072/1174) |
-| Cards audited: Complete / Partial / Shallow / Wrong | 14 / 2 / 0 / 0 |
-| Depth / depth, usable | 87.5% / 100.0% |
-
-Re-check part, outside the scores: 879 rows, of which 847 are Confirmed, 9 Citation off, 22 Overstated and 1 Wrong.
+| Citations in the analysis / checked | 3225 / 1285 sampled |
+| Confirmed / Citation off / Overstated / Wrong / Unsupported | 1137 / 6 / 142 / 0 / 0 |
+| Omissions (significant) / Inconsistent | 7 (0) / 30 |
+| Accuracy / citation quality | 89.0% (1143/1285) / 88.5% (1137/1285) |
+| Cards audited: Complete / Partial / Shallow / Wrong | 16 / 0 / 0 / 0 |
+| Depth / depth, usable | 100.0% / 100.0% |
 
 ## How the sample was selected
 
-The level is `standard`. The rows come from `ledger/citations.tsv` as `coverage.py` rewrote it in this session: 3,059 rows, unchanged byte for byte from the copy the revision left.
+The level is `standard`. The rows come from `ledger/citations.tsv` as `coverage.py` rewrote it in this session: 3,225 rows, byte-identical to the copy the revision left (SHA-1 `f798ec6a…` before and after).
 
-- **Group A (746 rows: 1-746).** Every citation on `README.md`, `hld/*` and `knowledge/AGENT-CONTEXT.md`.
-- **Group B (33 rows).** Every row labelled `inferred`: 751, 764, 940-942, 1022, 1988-1990, 2012-2014, 2086, 2407, 2412, 2419-2425, 2428-2430, 2439, 2469, 2545, 2547, 2550, 2642-2644. No row is labelled `assumed`.
-- **Group C (80 rows).** Every other row whose nearest heading or bold title line above it contains rule, outbound, calls out, integration, security, secret, auth or permission. The rows are 876-914, 929-939, 1992-1996, 2002-2003, 2388-2394, 2403-2406, 2408-2411, 2413-2414, 2614-2616 and 2627-2629. All of them fall under "Business rules" (54) or "Outbound calls" (26).
-- **Group D (315 rows).** Every remaining row from 747 to 3059 whose index is divisible by 7.
+- **Group A (848 rows: 1-848).** Every citation on `README.md`, `hld/*` and `knowledge/AGENT-CONTEXT.md` (judged like an HLD page, as checks.md Step 6 says).
+- **Group B (34 rows).** Every other row labelled `inferred` or `assumed`: 853, 866, 1062-1064, 1145, 1873, 2114-2116, 2138-2140, 2212, 2566, 2571, 2578-2584, 2587-2589, 2598, 2628, 2704, 2706, 2709, 2801-2803.
+- **Group C (83 rows).** Every other row whose nearest heading or bold title line above it contains rule, outbound, calls out, integration, security, secret, auth or permission: 992-1031, 1049-1061, 2118-2122, 2128-2129, 2547-2553, 2562-2565, 2567-2570, 2572-2573, 2773-2775, 2786-2788. All fall under "Business rules" (55) or "Outbound calls" (28) of the four component READMEs.
+- **Group D (320 rows).** Every remaining row from 849 to 3225 whose index is divisible by 7.
 
-**Re-check part (879 rows), reported separately and not in the scores.** It covers every row outside the sample that lies in a place the round-4 report flagged or the revision changed. It has two parts.
-
-- **Whole pages:**
-  - `lld/bible-mode-b/README.md`;
-  - `lld/data-dictionary.md`;
-  - `lld/catalog/service.md`;
-  - `lld/catalog/README.md`;
-  - `lld/api/catalog/catalog.md`;
-  - `lld/tools/fanout.md`;
-  - `reference/configuration.md`;
-  - `reference/risks-and-surprises.md`;
-  - `ledger/coverage-ledger.md`;
-  - `revision-log.md`;
-  - `progress.md`.
-- **Page line ranges:**
-  - on `lld/bible-mode-b/bible_queue.md`:
-    - module text, lines 1-111;
-    - the `GitHub` class card, lines 473-505;
-    - `GitHub.call`, lines 543-585;
-    - `GitHub.pr_files`, lines 1131-1191;
-    - the `Queue` class card, lines 1517-1545;
-    - `Queue.component`, lines 1971-2042;
-    - `Queue.assemble_phase`, lines 2212-2302;
-    - `Queue.revise_all_step`, lines 2369-2425;
-    - `Queue.delta`, lines 2522-2572;
-    - Surprises, lines 3048-3056;
-  - `lld/tools/gate.md` `check` (187-258);
-  - `lld/tools/plan.md` `scan` (57-112);
-  - `lld/orders/orders.md` lines 147 and 165.
-
-The HLD pages, the front page and the agent context were rewritten too, but they are all in group A already.
+**The fixed judging rule, applied the same way to every row.** A row is `Confirmed` when its cited lines support the statement as written and every part of the statement that rests on an absence found by a search across a file, several files, a component or the repository, on a comment or docstring, or on library, builtin, `gh`, runner or GitHub behaviour carries a mark in the same sentence, table cell or step. A mark is `inferred` or `assumed` with its source, inside parentheses: `(inferred: …)`, `(assumed: …)`, or the same words after a semicolon inside a parenthesis (as on `bible_queue.md:1092` and `plan.md:154`). Naming the source without one of these words ("line 71's comment", "as its docstring says") is not a mark. An absence that the cited lines show in full (the whole handler, function or job is cited) rests on code and needs no mark. Such a part without a mark makes the row `Overstated`. Rows of one statement share its verdict, except a row whose lines show none of the statement, which is `Citation off`. Every absence was searched again.
 
 ## Earlier corrections re-confirmed
 
-| Round-4 item | Holds? | Re-opened |
+| Round-5 item | Holds? | Re-opened |
 | --- | --- | --- |
-| V-001 deferred-update replay (major) | **No, not fully.** The facts now hold: the paths are read only at lines 1038 and 1043, `reconcile` lists open trackers only (607), and the replay order is right. But the wording the revision used in all six places, "never replayed … must be updated by hand" (and "lost" on hld/05:274), overstates. A later update issue for the same component asks for "every change since the analysis's baseline (not only these files)". The wording also rests on an absence without a mark (V-001 here) | `.github/bible/bible_queue.py:607,1036-1064,1265-1282` |
-| V-002 stale-PASS branch (major) | Yes. Both diagrams now have the two branches. "Corrections asked" leads to `bible-needs-revision` and then revise-all. "PASS about other pages, or not by this run" leads to `bible-stale-verdict` and then the next verify-all. The step tables agree | `.github/bible/bible_queue.py:975-985,1089-1094,1132-1142` |
-| V-003 risk 8 | Yes. It now names the `Queue.session` docstring, and the login clause is gone | `.github/bible/bible_queue.py:36,61,518,521-522` |
-| V-004 module name | Yes: `components.catalog.catalog` | `components/orders/orders.py:5` |
-| V-005 `UNREADABLE` | Yes. `None` is returned for a missing or empty report, and `UNREADABLE` for the row count | `.github/bible/bible_queue.py:470-478,797` |
-| V-006 twelve citations and the listed others | Yes. The re-pointed rows are confirmed in groups A, D and R, among them the `bible-delta.yml:19` row, the `tools/plan.py` field rows and the `bible-settings` read at 608-611. The logging paragraph now names line 1263, but it also cites 1245 without describing it (V-011 here, a new row) | as listed in revision row R4-V-006 |
-| V-007 nine absence statements | Yes. All nine carry `(inferred: …)` and I repeated the searches. The same unmarked claims survive in other places that round 4 did not name (V-008 here) | `tools/fanout.sh:7-29`; `components/orders/orders.py:11-12,45-51`; `.github/workflows/poc-assign-copilot.yml:66-69` |
-| V-008 flows 2-4 wording | Yes. The create request assigns Copilot, `verify_model` must differ at `start`, and the not-planned close, the reassignment on release and "one revision and a second verification" all match the code | `.github/bible/bible_queue.py:169-173,558-568,679-680,981-985,999-1007,1128-1142,1309-1310` |
-| V-009 bind address and component selection | Yes, in AGENT-CONTEXT, R-02, `service.md`, the catalog README and `configuration.md`. The empty `CATALOG_HOST` case is marked assumed | `components/catalog/service.py:40-43`; `.github/bible/bible_queue.py:640-647,1311-1313` |
-| V-010 narrowed statements | Yes. The gate reads the local checkout; only `SAFE_FILE` paths are recorded; the count check runs only for nonzero `changed_files`; only an uncomputable fingerprint counts; the 300-character cut; the closed, unmerged pull request; the docstring-only 3,000 limit; `tests-report.md` only checked to exist | `tools/gate.py:64-65,89`; `.github/bible/bible_queue.py:132-136,252-286,920-933,964-972,1226-1242` |
-| V-011 `Queue.assemble_phase` | Yes. The card is now Complete: eight steps in code order, the fall-through, and the uncaught first replay | `.github/bible/bible_queue.py:937-1050` |
-| V-012 `Queue.component` | Yes for every point listed: `gate_ok` starting False, the hold release, the defaults and bounds, `done`, and the Errors paragraph. The card is still Partial for two points round 4 did not name (V-004 here) | `.github/bible/bible_queue.py:708-819` |
-| V-013 `Queue.revise_all_step` | Yes. The rounds check comes first and `corrections_applied` is defined exactly; the card is Complete | `.github/bible/bible_queue.py:1074-1152` |
-| V-014 class cards, line 25, `pr_files` output | **No, not fully.** `_me`, `default`, `state` and "fewer than 300" hold. But the `pr_files` output section now says the uncaught errors of `follow`'s later calls end the tracker's run. They are caught by the per-component handler in `Queue.run` (V-003 here) | `.github/bible/bible_queue.py:177-179,271,653-656,837-865` |
-| V-015 front-page counts | Yes. My counts agree with the front page: 41 `(inferred` and 10 `(assumed` marks, 31 business rules, 44 diagrams (43 without `components.md`), and 211 nodes, 566 edges and 336 chunks, the same as `knowledge/graph.json` and the 336 lines of `chunks.jsonl`. A different count on the same page, "3 stores", is off (V-014 here) | `knowledge/graph.json` stats; a search of the pages |
-| V-016 revision log and ledger | Yes. The IDs are unique (`R4-`, `R3-`, `R2-`), and the ledger gives 9 folders and 24 files, which is my own count | `ledger/coverage-ledger.md`; `ledger/inventory.json` |
-| V-017 omissions | **No, not fully.** R-16 to R-18, the R-04 start-error hold, the hld/06 "retried once" exception, rule 10, the catalog loopback sentence, the `in_stock` citation, the `bible-state` citation and the `assemble.md` path all hold. R-15 is overstated: it counts closed chunk issues created since the later of the hold release and the merge, not sessions closed since then (V-002 here) | `.github/bible/bible_queue.py:754-761` |
-| V-018 diagram details | **No, not fully.** These hold: the plan ER `\|\|--o{`, the not-planned and `ClosedUnmerged` transitions, the flow 7 message `GET /price/SKU`, the solid settle-fake edge, the `actions` to `workflows` direction, the POC workflow node, the deployment edges, the README legend and the root mind map. Two do not. The new flow 1 `alt` draws "ensure labels" only in the accepted branch, but the code ensures labels before two of the refusals. The orders mind map has the settle fake, but the nested list on the same page does not (V-012, V-014 here) | `.github/bible/bible_queue.py:1314-1321`; `00-mind-map.md` |
+| V-001 replay wording | Yes. All the replay sites (hld/04:228, hld/05:242, :276, :283, lld/bible-mode-b/README.md:180, :182, R-12 at :257, bible_queue.md:2179, :2483, data-dictionary:139) now say "never replayed if a person closes the tracker or the run does not finish", with the inferred mark, the 14-day writer limit and the update-issue text. The two remaining "by hand" phrases match the code's comment at 1049 | `.github/bible/bible_queue.py:385-391,600-616,1036-1064,1226-1282` |
+| V-002 R-15 | Yes. R-15 counts closed chunk issues of the run created since the later of the hold release and the merge into the default branch | `.github/bible/bible_queue.py:736-770` |
+| V-003 `pr_files` output | Yes. The Output paragraph says `Queue.run` catches the error per component; it agrees with the `Queue.component` Errors paragraph | `.github/bible/bible_queue.py:612-615,645-656,836-870` |
+| V-004 `Queue.component` run scope | Yes for steps 2 and 6 and `start_chunk`. Step 4's `done` still reads "every closed chunk issue of the component" (V-011 here, a new row) | `.github/bible/bible_queue.py:500-507,695-735,786-812` |
+| V-005 answers on the session PR | Yes, on README.md, hld/01 and AGENT-CONTEXT. The `@copilot` detail on hld/01:58 rests on line 103, which is not cited (V-014 here) | `.github/bible/bible_queue.py:100-104,850-858` |
+| V-006 tracker labels | Yes | `.github/bible/bible_queue.py:618-622,1320-1324` and every `create_issue` call |
+| V-007 first failure | Yes, hld/04:130 and :140 | `.github/bible/bible_queue.py:580-602` |
+| V-008 unmarked statements on the front page, HLD and agent context | **No, not fully.** Every place listed is now marked. The same kind remains elsewhere on those pages: README:23, hld/01:58, hld/02:115-152, hld/03:32, :48, :49, :59, hld/04:145, :163, :214, :223-225, hld/05:171-236, :360, :400, :444, :482, AGENT-CONTEXT:38, :88, :90, :103 (V-001 to V-004 here) | `components/orders/catalog_client.py:1-29`; `tools/fanout.sh:1-31`; `.github/workflows/poc-assign-copilot.yml:66-69`; `.github/bible/bible_queue.py:28,875`; repository searches |
+| V-009 the same on LLD and reference pages | **No, not fully.** Every place listed is now marked. The same kind remains: lld/orders/README.md:23, :129, catalog_client.md:151, glossary.md:24, :31, risks-and-surprises.md:13, :15, :17, :22, lld/tools/README.md:23, :30, :68, plan.md:111, configuration.md:10, :17, :32, :55, lld/catalog/README.md:147, :159 (V-001, V-002, V-004, V-005 here) | `.github/bible/bible_queue.py:71,252-286`; `components/catalog/service.py:42`; `tools/gate.py:73-77`; `components/catalog/catalog.py:36-47` |
+| V-010 pull request fields | Yes, data-dictionary:112 | `.github/bible/bible_queue.py:252-286,374` |
+| V-011 citation off | Yes, every listed citation is re-pointed. data-dictionary:182 names the toolkit's `next.py` in words and says why its lines are not cited, which I accept as a stated limit | the ranges cited in revision row R5-V-011 |
+| V-012 16 diagram items | Yes, all 16: flow 1 order, flow 4 Done order, flow 3 hold, no `runner -> copilot`, the evidence rows, solid edges with legends, the plan job, `[*] --> Ready`, `/health` without the impossible `else`, the continuation for verify-all and revise-all, the class rows, and 220 distinct call-graph edges with no duplicates | `.github/bible/bible_queue.py:166-173,354-368,528,797-805,1018-1050,1114-1121,1160-1207,1305-1325`; `components/catalog/service.py:25-27` |
+| V-013 diagram syntax | Yes. All 46 blocks scanned against `mermaid-syntax.md`: nothing left | `.github/skills/analyzing-a-codebase/references/mermaid-syntax.md` |
+| V-014 10 naming and count items | Yes, all 10 | `tools/plan.py:14`; `.github/bible/bible_queue.py:981-985,1288-1300`; `.github/workflows/bible-plan.yml:53` |
+| V-015 22 omissions | Yes, all 22, including the two new hld/04 diagrams (checked against 405-425 and 619-627) and the container stores. Item 11 (the `delta` caveats) is on the V-001 sites but not on hld/04:228 or the `assemble_phase` step 8 (V-015 here) | `.github/bible/bible_queue.py:405-425,524-533,619-628,1243-1272,1288-1300`; `tools/gate.py:73-77` |
+| V-016 `plan.md` `main` errors | Yes, `plan.md:154`, marked assumed | `tools/plan.py:21-62` |
 
-The revision's own items R4-N-01 to R4-N-05 hold: the `check` test-count fallback, the `scan` errors, the `make_server` rows, the endpoint headers and 501, and the `progress.md` figures. In R4-N-01, the phrase "finds every `test_*.py` under ROOT" is unittest discovery behaviour stated without a mark (row 2741, V-009). R4-N-06 records limits only.
+The revision's own items hold. R5-N-02's counts are right: 88 `(inferred` and 19 `(assumed` marks on the pages, 46 Mermaid blocks, 211 nodes, 566 edges and 346 chunks, 346 lines in `chunks.jsonl`, 3,225/3,225 citations. R5-N-03's four depth nits were applied (bible_queue.md:2175, :2344-2346; gate.md:257, :282). R5-N-04 records points left as they are.
 
 ## Corrections
 
@@ -125,285 +90,262 @@ Every correction is minor; none is major.
 
 | # | Page and line, or citation row | Verdict | Weight | What the code shows | Evidence | Correction |
 | --- | --- | --- | --- | --- | --- | --- |
-| V-001 | Rows 312-317 (hld/04:161), 436-438 (hld/05:267), 845-847 (lld/bible-mode-b/README.md:173), 848-849 (README:175), 896-901 (README:250, R-12). Outside the rows, the same wording is at hld/05:233 and :274 ("is lost"), the data dictionary marker row and the `assemble_phase` and `delta` cards | Overstated | minor | That the paths are never replayed without the Done step is right. But the paths are not lost and need not be updated by hand: an update issue for the same component asks its session for "every change since the analysis's baseline (not only these files)". The statement also rests on an absence (no other caller of `deferred_updates`) without a mark. And the writer side leaves out the 14-day limit: a tracker whose `Updated` line is older than `ABANDONED_AFTER` does not defer | `.github/bible/bible_queue.py:391,607,1036-1064,1229,1273-1277` | Say: "never replayed if a person closes the tracker or the run does not finish (inferred: `deferred_updates` is called only at lines 1038 and 1043, and `reconcile` lists open trackers only). Those paths get no update issue of their own; a later update session of the same component, which covers every change since the baseline, or a person picks them up." Add "and its tracker was updated in the last 14 days" to the writer column. Use it everywhere the old phrase appears |
-| V-002 | Rows 904-905 (lld/bible-mode-b/README.md:253, R-15) | Overstated | minor | The cap counts closed chunk issues of this run whose `created_at` is at or after `max(hold release, merge into the default branch)`, not sessions closed since then. The estimate and cap bounds are right | `.github/bible/bible_queue.py:754-761` | "at most a bounded number of closed chunk sessions created since the last hold release or merge into the default branch …" |
-| V-003 | Row 1263 (lld/bible-mode-b/bible_queue.md:1190, `GitHub.pr_files` output) | Overstated | minor | Only the call at 837 is inside `follow`'s `try`. That part is right. But an error from the calls at 843, 846 and 865 does not end the tracker's run: `Queue.run` catches it per component, writes "error this run", and goes on with the other components. The page's own `Queue.component` Errors paragraph (line 2041) says so. This is also an Inconsistent between the two cards | `.github/bible/bible_queue.py:653-656,837-865` | "errors from the later calls are caught by the per-component handler in `Queue.run` (653-656); only errors from `assemble_phase`, `revise_all_step` and `continue_if_unfinished` reach `reconcile` (612-615)" |
-| V-004 | Rows 1538 (bible_queue.md:1985), 1554 (:2027), 1533 (:1968), 1544 (:1989); also `start_chunk` step 2 and pseudo-code (:1949, :1958), outside the rows | Overstated | minor | "Not started" and the branch reset look only at issues of this run, because `run_issues` adds `self.run_label`. The revision chunk also needs `not chunk_since_verify`. This gap is why the card is still Partial | `.github/bible/bible_queue.py:505-506,700,732,806` | Say "no issue of this run (label `bible-run-<n>`) with the component label, in any state". Add "and no chunk session completed since the latest verification" to step 6 |
-| V-005 | Row 53 (hld/01:58); the reviewer edge "reviews PRs and answers issues" in the context diagrams of README.md and hld/01 | Wrong | minor | Questions are answered on the session pull request with `@copilot`. The waiting label goes on both, but the state text and the label description point to the PR | `.github/bible/bible_queue.py:103,853-857` | "supplies answers on the session pull request (`@copilot`)". Label the edge "reviews PRs and answers on session PRs" |
-| V-006 | Row 2235 (lld/data-dictionary.md:135, "Tracker issue labels") | Wrong | minor | The tracker is created with `bible-tracker` only. `bible-run-<n>` is put on its child issues | `.github/bible/bible_queue.py:620,680,705,1034,1322` | "Tracker: `bible-tracker`. Every child issue: `bible-run-<tracker number>`" |
-| V-007 | Row 278 (hld/04:112); the `fail` edge of the issue lifecycle | Overstated | minor | Only a first failure closes the issue as not planned and opens attempt 2. A second failure leaves it open, labelled `bible-needs-human`, unassigned and commented | `.github/bible/bible_queue.py:584-596` | "A first failed attempt closes as `not_planned` and an attempt-2 issue is created; a second failure stays open, labelled `bible-needs-human` and unassigned." Label the edge "first failure" |
-| V-008 | Absence, comment or library statements without a mark, on the front page, HLD and agent context: rows 4-9 (README:23), 62-66 (hld/01:61), 76-79 (hld/01:67), 130-131 (hld/02:120), 183-185 (hld/03:33), 192-193 and 197-207 (hld/03:42-48), 464 (hld/05:351), 565-570 (hld/06:71), 615 (AGENT-CONTEXT:9), 632-633 (:38), 678-681 (:88), 686-688 (:90), 711-718 (:98), 728 (:104), 731-733 (:106), 738 (:109) | Overstated | minor | Each fact holds, but it rests on a search, a docstring or library behaviour:<ul><li>Callers only in tests.</li><li>No direct Copilot call.</li><li>An OS-chosen port.</li><li>`gh`'s own credential.</li><li>No retry (hld/03 rows, hld/06:71, AGENT-CONTEXT:98, :106).</li><li>The `gh api` call has no timeout of its own (hld/03:48 repeats the wording round 4 fixed on hld/05).</li><li>`urlopen` with no body is a GET.</li><li>No order store.</li><li>A separately deployed service (docstring).</li><li>No package or deployment manifest.</li><li>No metrics.</li><li>No scheduler.</li><li>A skill folder that is missing.</li></ul> | `components/orders/catalog_client.py:1-4,19-23`; `components/orders/test_catalog_client.py:15-17,37-54`; `tools/fanout.sh:7-29`; `components/catalog/catalog.py:36-39`; `components/orders/orders.py:45-51`; `.github/bible/bible_queue.py:116-139,166-173,297`; `.github/workflows/poc-assign-copilot.yml:66-69`; repository searches | Add `(inferred: <the search, comment or docstring>)` or `(assumed: library behaviour)` to each. As a model, hld/01:60 already has one. For hld/03:47 also say "a failed component is tried again at the next queue run" (`bible_queue.py:653-656`). For hld/03:48, use "the workflow sets no timeout option on the `gh api` call (inferred)" |
-| V-009 | The same kind of row in the LLD and reference pages: rows 1242, 1243, 1245, 1246 (bible_queue.md:1145-1148, GitHub's compare behaviour from comments at 71, 257, 261-264); 1948 (lld/catalog/README.md:28); 2023-2025 (catalog README:157, marked on :105 but not here); 2128-2129 (service.md:205, `int` raises `ValueError`); 2307-2311 (data-dictionary:165); 2741 (lld/tools/gate.md:214 and its pseudo-code, unittest discovery); 3016, 3023, 3028 (reference/risks-and-surprises.md:16, :18, :21) | Overstated | minor | Each rests on a comment, a library or builtin behaviour, or an absence across a file or component, and has no mark | `.github/bible/bible_queue.py:71,116-125,257,261-264,653-656`; `components/catalog/service.py:24-43`; `tools/gate.py:73-75`; `tools/fanout.sh:14`; `components/catalog/catalog.py:36-37` | Add the mark with its source to each. For risk 21, use: "no retry inside a GitHub request (inferred); a component that raises is tried again on the next scheduled run" |
-| V-010 | Row 2205 (lld/data-dictionary.md:112, pull request fields) | Overstated | minor | `head.ref` is never read: `create_pr` sends a plain `head`. `changed_files` is matched only on the non-compare path, and only when it is nonzero | `.github/bible/bible_queue.py:258-280,374` | Drop `head.ref`, or say `head` is written. Say "matched when the pull request's own list is used and `changed_files` is nonzero" |
-| V-011 | Citation off: rows 56 (hld/01:59), 97 (hld/02:73), 115 (hld/02:110), 119 (hld/02:111), 141 (hld/02:130), 175 (hld/03:28), 177 (hld/03:29), 503-504 (hld/05:468-469), 549 (hld/06:62), 609 (AGENT-CONTEXT:9); outside the scores: 787 (bible README:28), 797 (:32), 832 (:169), 986 (:303), 2133 (service.md:215), 2146 (data-dictionary:55), 2185 (:84), 2274 (:144), 2867 (progress.md:35); in group D: 2317 (data-dictionary:181) | Citation off | minor | Each statement is true, but its cited lines show something else, or stop just short of the line that shows it | 56: `bible_queue.py:354-362`, `bible-delta.yml:17-38`, `poc-assign-copilot.yml:34-72`; 97: `poc-assign-copilot.yml:34-72`; 115: `bible-plan.yml:7-8`; 119: `bible-delta.yml:37`; 141: `bible_queue.py:37,40-56`; 175: `bible-plan.yml:36`; 177: `bible-queue.yml:22`; 503-504: `poc-assign-copilot.yml:66-69`; 549: `bible_queue.py:84`; 609: move `service.py:40-49` to the catalog clause; 787: `bible_queue.py:1288-1299`; 797: `poc-assign-copilot.yml:38-72`; 832: `bible_queue.py:939-941`; 986: describe `:1245` and `:932` or drop them; 2133: `test_catalog_client.py:56-58`; 2146: `bible_queue.py:111-113,339-340,354-362,1302`; 2185: `:1040,1046` instead of 1299; 2274: the component `status.json` artifact; 2867: `bible-delta.yml:19`; 2317: `.github/skills/analyzing-a-codebase/scripts/next.py:20,318-320,337` | Cite the lines given in the evidence column |
-| V-012 | Diagrams and their evidence tables (Inconsistent, 16 items) | Inconsistent | minor | See the list below this table | as given per item | Fix each as described |
-| V-013 | Diagram syntax outside the toolkit's subset (`analyzing-a-codebase/references/mermaid-syntax.md`) | Inconsistent | minor | <ul><li>hld/04 plan ER: 5 relationship labels are unquoted.</li><li>hld/04 agent-PR and review-PR lifecycles: the end states have no `--> [*]`.</li><li>lld/bible-mode-b/README.md whole-analysis flowchart: a rhombus `verdict{"…"}`, which is not an allowed shape, and two unlabelled edges (`start --> assemble`, `cont --> assemble`).</li><li>Ids with `_`: `components.md` (`bible_mode_b`), `lld/orders/README.md` (6 ids), and the call graphs of `plan`, `service`, `orders`, `catalog_client` and `test_catalog_client`.</li><li>Sequence aliases with `_` or `/` (hld/05, `lld/api/catalog/catalog.md`).</li><li>The `catalog.md` fetch→feed edge and the `catalog_client.md` GET edge have no protocol.</li></ul> | the diagrams named | Quote the ER labels; end with `[*]`; use a hexagon or rectangle node; label every edge; use lowercase letters and digits for ids, and spaces, hyphens or dots for aliases; add "HTTP" to both edges |
-| V-014 | Names, counts and labels (Inconsistent, 10 items) | Inconsistent | minor | <ul><li>README.md says the data dictionary "describes 3 stores"; it lists 4.</li><li>The gate workspace is "Temporary gate workspace" in the data dictionary and mind map, "Gate workspace and tarball buffer" on hld/04 and `temporary-gate-worktree` in the graph. The plan and the artifacts are one store in the data dictionary and two rows on hld/04.</li><li>AGENT-CONTEXT:92 writes `tools.plan.py`, `tools.gate.py`, `tools.fanout.sh`.</li><li>hld/06:107 says the workflows run the queue's "plan" command, but the plan workflow runs `start` (`bible-plan.yml:53`).</li><li>lld/tools/plan.md:156 says the `tools` directory is appended to `sys.path`, but it is inserted first (`tools/plan.py:14`).</li><li>lld/bible-mode-b/README.md:228 shows `--components` as required, but it defaults to `all` (`bible_queue.py:1290`).</li><li>lld/bible-mode-b/README.md:170, the "already closed as completed" branch, has no citation (`bible_queue.py:981-985`).</li><li>lld/catalog/README.md:119-122: the "Data dictionary entry" column links to `catalog.md`.</li><li>00-mind-map.md: the nested list leaves out the local settle fake that the diagrams have.</li><li>00-mind-map.md: 11 detail leaves in the component maps name no page.</li></ul> | as given per item | Make each agree with the code and the other pages as described |
-| V-015 | Omissions (22, none significant) | Omission | minor | See the list below this table | as given per item | Add each point |
-| V-016 | lld/tools/plan.md `main` card | Omission | minor | Depth Partial. The card says nothing about errors. A read or `SyntaxError` from `scan` (line 45), or a missing `components/` directory (`iterdir`, line 43), is not caught, so `plan.json` is never written. Only the `scan` card says this | `tools/plan.py:41-58` | Add an Errors line to `main` |
+| V-001 | Absences found by a search, with no mark (65 rows): 20 (README:23, "no production deployment topology"), 21-25 (README:23, "no source evidence for the nightly schedule"), 54-56 (hld/01:58, "no application authentication layer"), 131-132 (hld/02:115), 133-134 (:116), 146-148 (:120, "no build step"), 182-200 (hld/02:149-152, four "no profiles" cells), 213 (hld/03:32, "no HTTP route" in `orders`), 366-367 (hld/04:223, "not written by `tools/gate.py`"), 368-375 (:224), 376 (:225, `baseline.json` not written), 493-496 (hld/05:236, "only here, at the Done step"), 782-785 (AGENT-CONTEXT:88, "not as a general workflow step"), 1055-1056 (lld/bible-mode-b/README.md:280, "no fallback"), 1372 (bible_queue.md:1097, "no constant holds it"), 2142 (lld/catalog/README.md:147), 2737 (lld/tools/README.md:23), 2751 (:30), 2765 (:68), 3052 (configuration.md:17), 3164 (glossary.md:31, the image is "not fetched"), 3199 (risks-and-surprises.md:22). Outside the sample, the same kind: hld/02:25, hld/06:83, lld/catalog/README.md:159, risks-and-surprises.md:13 | Overstated | minor | Each fact holds; the searches were repeated. But each rests on an absence across a file, a component or the repository, which the cited lines cannot show. For 1055-1056, the late replay after Done does catch the error and comments on the tracker (1045-1049) | `.github/bible/bible_queue.py:875,1038,1043,1045-1049,1223-1283,1244-1245`; `tools/gate.py:42-117`; `components/catalog/catalog.py:6,32-39`; repository searches for build, profile, route, `write`, `open(`, `baseline.json`, `deferred_updates(`, `image_url`, `unittest` and `fetch_supplier_feed` | Add `(inferred: <the search and what it found>)` to each, in the same sentence or cell. For 1055-1056 also say that the late replay catches it (1045-1049). Then search every page for "no ", "not ", "only ", "never" and "none" and mark each absence the cited lines do not show in full |
+| V-002 | The catalog client's purpose and callers, from its docstring or a search, with no mark (17 rows): 248-252 (hld/03:59), 727-728 (AGENT-CONTEXT:38), 789-793 (:90), 2527 (lld/orders/README.md:23), 2597 (:129), 2646 (lld/orders/catalog_client.md:151), 3150 (glossary.md:24), 3185 (risks-and-surprises.md:17) | Overstated | minor | The docstring (lines 1-4) names the separate-service use; a search finds `catalog_client` imported only by the test file. README.md:23 already marks this correctly | `components/orders/catalog_client.py:1-4,29`; `components/orders/test_catalog_client.py:37-62` | Use the README.md:23 wording: "(inferred: its docstring, `catalog_client.py:1-4`, names the separate-service use, and a search finds `catalog_client` imported only by `test_catalog_client.py`)" |
+| V-003 | "A person merges" and "the queue never merges into the default branch", with no mark (17 rows): 333-337 (hld/04:163), 356-357 (hld/04:214), 459-460 (hld/05:171), 464-465 (:222), 476 (:229), 483 (:232), 487-490 (:234). Outside the sample: hld/04:145 | Overstated | minor | The code only reads `merged_at` (715-716, 995-1011). That a person merges rests on the module docstring (line 28) and on `gh.merge` being called only at line 875, for session PRs into the component branch | `.github/bible/bible_queue.py:28,715-716,875,995-1011` | Add "(inferred: the module docstring at line 28, and `merge` is called only at line 875, for session pull requests into the component branch)" |
+| V-004 | Library, builtin, `gh`, runner or GitHub behaviour with no mark (21 rows): 176-178 (hld/02:142, managed runner image), 239-240 (hld/03:48, HTTPS 443), 484-486 (hld/05:233, GitHub closes the issue), 553 (hld/05:360, `urlopen` sends GET), 572 (:400, `urlopen` raises `HTTPError`), 585-589 (:444, file, AST and JSON errors), 828-829 (AGENT-CONTEXT:103, `apply_feed` raises), 3003 (plan.md:111), 3073 (configuration.md:32, `gh` reads `GH_TOKEN`), 3108 (:55, `RUNNER_TEMP`), 3178 (risks-and-surprises.md:15). Outside the sample: hld/03:49 (`gh` configuration), hld/05:482 (`set -euo pipefail`) | Overstated | minor | Each behaviour is right but belongs to a library or service, not to the repository's code. For 585-589 it also says more: an invalid `status.json` is caught by the gate and printed as FAIL | `.github/workflows/poc-assign-copilot.yml:66-69`; `components/orders/catalog_client.py:22`; `components/orders/orders.py:50-51`; `components/catalog/catalog.py:42-47`; `tools/plan.py:28-45`; `tools/gate.py:95-98`; `.github/bible/bible_queue.py:942,948-949` | Add `(assumed: <library or service> behaviour)`, and for 484-486 "(assumed: GitHub closes it when the PR saying 'Fixes #N' is merged, as the comment at lines 948-949 says)". For 585-589 add "an invalid `status.json` makes the gate print FAIL (95-98)" |
+| V-005 | Statements from a comment, with no mark (4 rows): 47-48 (README:68, the settle fake is "development only"), 1134 (bible_queue.md:25, `COMPARE_MAX` is GitHub's limit "(line 71's comment)"), 3045 (configuration.md:10, a repository secret) | Overstated | minor | Each rests on a comment: `orders.py:11`, `bible_queue.py:71`, `poc-assign-copilot.yml:4-6`. hld/01:64 marks the first correctly | `components/orders/orders.py:11`; `.github/bible/bible_queue.py:71,271`; `.github/workflows/poc-assign-copilot.yml:4-6` | Add "(inferred: the comment at …)" to each |
+| V-006 | hld/04:26 (outside the sample; the sentence has no citation row) | Inconsistent | minor | The sentence says a search of `components/` for `open(` "finds none". Repeating it finds four `urlopen(` calls. The conclusion, no file store, still holds | `components/catalog/catalog.py:38`; `components/orders/orders.py:50`; `components/orders/catalog_client.py:22`; `components/orders/test_catalog_client.py:32` | "a search of `components/` for `open(` finds only `urlopen` calls (inferred)" |
+| V-007 | Rows 609-611 (hld/06:31), 821-827 (AGENT-CONTEXT:102) | Overstated | minor | Settlement is plain HTTP. Remote catalog requests are plain HTTP only by default: `DEFAULT_CATALOG_URL` is `http://127.0.0.1:8001`, and `CATALOG_URL` can name any URL. Line 11 is not cited | `components/orders/catalog_client.py:11,14-23` | "remote catalog requests use plain HTTP by default (`DEFAULT_CATALOG_URL`, line 11; `CATALOG_URL` may override it)"; cite line 11 |
+| V-008 | Rows 509-511 (hld/05:242, flow 5 outcome) | Overstated | minor | A tracker whose `Updated` line is older than 14 days does not hold the change back; update issues are created at once. Step 4 and the diagram say so; the outcome sentence does not | `.github/bible/bible_queue.py:391,1226-1229` | "While an analysis run is open (its tracker updated in the last 14 days) …" |
+| V-009 | Rows 959 (lld/bible-mode-b/README.md:180), 1019 (:258, R-13) | Overstated | minor | The hold issue for more than 10 touched components is created only when no open issue labelled `bible-delta` and `bible-needs-human` exists | `.github/bible/bible_queue.py:1255-1264` (the check at 1257) | Add "unless such a hold issue (`bible-delta`, `bible-needs-human`) is already open" |
+| V-010 | Rows 1323 (bible_queue.md:961), 1337 (:996). Outside the sample: :424 ("Since 24 Nov 2026 …") | Overstated | minor | The members of `WORK_EVENTS` and the `AGENT_APP` test are right, but "the new member", "this is the change that lets" and "since 24 Nov 2026" are change history no code line shows | `.github/bible/bible_queue.py:70,226-227,234` | Describe what the code does now: "a session that ended in failure also shows up"; "so a pull request on which Copilot only failed, or only finished, is still recognised as Copilot's". Drop the date |
+| V-011 | Row 1666 (bible_queue.md:1934, `Queue.component` step 4) | Overstated | minor | `done` counts the closed chunk issues of this run only, because `run_issues` adds `bible-run-<n>` | `.github/bible/bible_queue.py:505-506,756,771` | "where `done` counts every closed chunk issue of this run (label `bible-run-<n>`) for the component" |
+| V-012 | Citation off (6 rows): 209 (hld/03:30), 237 (hld/03:47), 384 (hld/04:227), 406 (hld/04:232), 896 (lld/bible-mode-b/README.md:30), 1568 (bible_queue.md:1643) | Citation off | minor | Each statement is true, but its cited lines show something else or stop short | 209: `bible-delta.yml:11-12` (`paths-ignore`); 237: `bible_queue.py:1302` (`GH_TOKEN`); 384: `bible_queue.py:89` (`MAX_NOCHECK`); 406: `poc-assign-copilot.yml:34-47`; 896: `bible-delta.yml:19`; 1568: `bible_queue.py:557` | Cite the lines given; for 1568 also re-cite the next row (:1644) as 558 |
+| V-013 | Diagrams and their evidence tables (Inconsistent, 11 items) | Inconsistent | minor | See the list below this table | as given per item | Fix each as described |
+| V-014 | Names, uncited text and other inconsistencies (Inconsistent, 18 items) | Inconsistent | minor | See the list below this table | as given per item | Fix each as described |
+| V-015 | Omissions (7, none significant) | Omission | minor | See the list below this table | as given per item | Add each point |
 
-**V-012, diagram and evidence inconsistencies:**
+**V-013, diagram and evidence inconsistencies:**
 
-1. **hld/05 flow 1.** "Ensure labels" appears only in the accepted branch. The code calls `ensure_labels` (1314) before two refusals: an open tracker (1315-1316) and bad settings (1319-1321). Move it before the `alt`, and say "refused settings".
-2. **hld/05 flow 4, Done branch.** The diagram has "close tracker and post Done" and no late replay. The code comments Done (1041), closes (1042), then replays the late paths (1043-1049). Step 15 is correct.
-3. **hld/05 flow 3.** The `alt` leaves out the hold after `MAX_VERIFY_ROUNDS` (797-805), which the failure-paths text does state.
-4. **hld/02 deployment.** The edge `runner -> copilot` "assigns work" contradicts hld/01:61 and the container diagram: Copilot is reached only through issue assignment on GitHub (166-173).
-5. **hld/02 deployment.** The edges `runner -> issues`, `runner -> copilot` and `operator -> github` have no evidence rows.
-6. **Dashed edges.** The CDN edge (README, hld/01) and `client -.-> catalog` (hld/02) match no inferred or assumed statement, which checks.md requires. Their legends give dashed another meaning. Draw them solid, or align the legend with the toolkit rule.
-7. **hld/02 deployment.** The runner node lists queue, delta and POC jobs, but not the plan job that hld/02:110 lists.
-8. **README context.** The `queue -> github` edge "REST and GraphQL over HTTPS" rests on rows that show neither. Add `bible_queue.py:113,354-362`.
-9. **hld/01 context.** The `orders -> catalog` edge has no evidence row. Add `orders.py:5,19-20,35-42`.
-10. **hld/02 containers.** The `operator -> actions` edge has no evidence row. Add `bible-plan.yml:7-8` and `bible-queue.yml:10`.
-11. **README and hld/01 context.** The reviewer edge has the wrong answer location (V-005).
-12. **hld/04:117 and the agent-PR lifecycle.** The page says agent PRs are merged into a component branch. That holds only for chunk and verify sessions (875). Plan, assemble, verify-all, revise-all and delta PRs target the default branch, and a person merges them (28, 995-1011, 1101-1104). The lifecycle also has no `[*] --> Ready` for a PR opened as non-draft (528).
-13. **lld/api/catalog/catalog.md, `/health` sequence.** The `else` branch "path is not a catalog route" cannot happen for the message `GET /health` (`service.py:25-27`). Drop it, or draw a generic request.
-14. **lld/bible-mode-b/README.md, whole-analysis flowchart.** The continuation loop is drawn only from the assembly node. Verify-all and revise-all sessions are continued too (1022-1025, 1117-1120).
-15. **lld/bible-mode-b/README.md, class diagram.** The `GitHub.call` and `GitHub.paged` members have no citing row. Add `:127-139,141-149`.
-16. **lld/bible-mode-b/bible_queue.md, call graph.** The graph has 273 edge lines but only 220 different edges: 53 are drawn twice, for example `ensureall --> ensurelabel` on lines 198 and 374. Remove the duplicates.
+1. **hld/02 containers.** The edge `github -->|assigns issues| copilot` has no row in the evidence table. Add `bible_queue.py:166-173`, as the deployment table has.
+2. **hld/02 deployment.** The edge `repo --> runner` has no row in the edge table. Add `bible-plan.yml:40-42`, `bible-queue.yml:28-30` and `bible-delta.yml:23-25`.
+3. **hld/04, agent-session PR lifecycle.** The paragraph above it says plan, assemble, verify-all, revise-all and update PRs target the default branch and a person merges them. The diagram's only merge state is `MergedToComponentBranch`. Add `Ready --> MergedByPerson` and `MergedByPerson --> [*]` (`bible_queue.py:28,680,1034,1151,1282`).
+4. **hld/04, component-row lifecycle.** `SESSION_MERGED --> SESSION_STARTING` also covers "assigns a verification", but a verification is shown at once as `verify running` (`bible_queue.py:811-819`).
+5. **hld/04, component-row lifecycle.** `WAITING_ANSWERS --> RUNNING` has no evidence row (`bible_queue.py:850-865`).
+6. **hld/05 flow 3.** The review PR is drawn after the hold and revision `alt` with no condition. The code checks a clean PASS whose fingerprints match first (778-782), then the hold (797), then the revision (806), then verifies (811). Make the clean PASS the first branch.
+7. **hld/05 flow 4.** The continuation `alt` is drawn only for the assembly PR. Step 10 and the code continue verify-all and revise-all PRs too (1022-1025, 1117-1120).
+8. **hld/05 flow 5.** No branch for "no `components.json` or `baseline.json`: log only" (1243-1246), which step 6 and the failure paths state (a D5 nit).
+9. **lld/bible-mode-b/README.md, whole-analysis flowchart.** One shared `cont` node has edges back to `assemble`, `verify` and `revise`, so the drawing allows verify → continue → assemble. A continuation returns to the same session's PR (1022-1025, 1117-1120, 1158-1206). Draw one continuation per session kind.
+10. **lld/api/catalog/catalog.md:40, :57, :87.** Both route cards list the handler's catch-all 404 "not found". Neither route can return it: a `/health` or `/price/…` path never reaches `service.py:34`. Move it to the endpoint index or the handler card.
+11. **Sequence aliases** (lld/api/catalog/catalog.md:48, :95-96; hld/05 flows 7 and 9). `do-GET`, `catalog-client.py`, `remote-price` and `price-of` differ from the real names because the alias rule bans underscores. Use a readable alias such as "price lookup" (a D7 nit).
+
+**V-014, names, uncited text and other inconsistencies:**
+
+1. **hld/06:62.** The opening clause and "one retry before a human hold" have no citation on that line. Cite `bible_queue.py:574-601` and the rows at :66-67.
+2. **hld/02:117.** Only the queue's concurrency group is cited; add `bible-plan.yml:29-31` (a nit).
+3. **lld/tools/README.md:91-92.** The "Data dictionary entry" column says there is none for `plan.json` and the artifacts, but `lld/data-dictionary.md` has both. Link them, as round 5 did for the catalog README.
+4. **Knowledge graph and front matter.** One outside system has several names: `external:GitHub API`, `external:GitHub CLI` and `external:GitHub`; "Payment partner" and `external:partner-legacy.internal/settle`; "Local settle fake" and `external:localhost:8099/settle`. Use one name each.
+5. **hld/04 and lld/data-dictionary.md Files tables.** The store named "Temporary gate workspace" elsewhere is "Gate tarball and extracted worktree" there. Use one name.
+6. **Unescaped `|` in table code spans** split the cells on GitHub: lld/catalog/README.md:59, lld/tools/README.md:24, :76, :99. Escape as `\|`.
+7. **hld/01:21.** "Not one deployed service" has no citation; cite `README.md:1-7` as README.md:23 does.
+8. **hld/01:58.** The `@copilot` detail rests on `bible_queue.py:103`, which is not cited.
+9. **lld/data-dictionary.md:89.** "`delta` also reads each component's `paths` through `components.rows_of`" rests on toolkit code outside the inventory, uncited and unmarked; line 1250 only calls `rows_of(catalog)`. Add "(inferred: the toolkit's `rows_of`, outside the inventory)".
+10. **bible_queue.md:1644.** The second `Queue.held` branch row cites 559 for the test at 558 (with V-012's row 1568).
+11-18. **Unmarked statements outside the sample** (the V-001, V-003, V-004 and V-010 kinds): hld/02:25, hld/06:83, lld/catalog/README.md:159, risks-and-surprises.md:13, hld/04:145, hld/03:49, hld/05:482 and bible_queue.md:424. Fix them with the sweep in V-001.
 
 **V-015, omissions (none significant):**
 
-1. **AGENT-CONTEXT rule 14 and line 96.** They leave out the continuation regime. Assembly and whole-analysis sessions that end unfinished get up to `MAX_CONTINUE` (3) continuations, then a hold (`bible_queue.py:84,1023,1118,1179-1197`).
-2. **AGENT-CONTEXT rule 16.** It does not say that the component's own check must pass (`gate_ok`) before the review PR opens (743-753).
-3. **hld/03 outbound.** It does not list the gate's `python -m unittest discover` subprocess (`tools/gate.py:73-77`).
-4. **hld/04, lines 23, 157 and 158.** The gate reads `codebase-analysis/components/<c>/status.json` (`gate.py:89`). The queue reads `<analysis>/ledger/components/<c>/status.json` (742, 851). Name both.
-5. **hld/04:20.** `_PRODUCTS` is also read over HTTP, through `service.py:31`.
-6. **hld/04, state table.** It leaves out the tracker's `bible-settings` block (405-425, 1322) and the `bible-whole-` temporary workspace (920-935).
-7. **hld/04:95.** It leaves out that GitHub closes an issue when a PR saying "Fixes #N" is merged (948-949).
-8. **lld/bible-mode-b/README.md:136.** It leaves out the chunk-session finish rule: `status.json` in `FINAL_STATES` with review asked or idle, or 3×`IDLE_AFTER` (529-532).
-9. **lld/bible-mode-b/README.md:262.** The writes list leaves out the assemble, verify-all and revise-all issues, `set_body` and closes (342-346, 1033, 1150).
-10. **lld/bible-mode-b/README.md, structure diagram and outbound table.** They leave out the POC workflow's `gh api` call (`poc-assign-copilot.yml:66-69`).
-11. **The Done-step replay.** It goes through `delta`. With no `components.json` or baseline, the paths are dropped with only a log line (1243-1246). More than 10 components give a hold. A component with an open `bible-delta` issue is skipped (1270-1272). Say so where V-001's sentence is used.
-12. **lld/data-dictionary.md:56.** It leaves out the `bible-whole-` workspace (920-935).
-13. **lld/data-dictionary.md:76 and :85.** Unsafe settings values are also refused: `analysis` and `SAFE_PATH`, `depth` one of `deep`, `standard`, `survey`, and `SAFE_MODEL` (394, 416-424).
-14. **lld/data-dictionary.md:89.** It leaves out `paths`, which `delta` reads through `components.rows_of` (1243-1253).
-15. **lld/data-dictionary.md:113.** It leaves out the timeline fields `label.name` and `actor.type`/`user.type` (241, 548-551, 1166-1167) and their use for deferred-update comments (1055-1061).
-16. **lld/data-dictionary.md:144.** It leaves out the ledger `status.json` field `component`.
-17. **lld/data-dictionary.md:186.** It leaves out these display states: "error this run (retried next run)", "waiting for the next check", "check could not run this time", "stopped: …" and the plan rows (637, 644, 656, 665, 691-692, 746, 751).
-18. **lld/data-dictionary.md.** It does not list `request.json` and `response.json` (`poc-assign-copilot.yml:53-71`); hld/04 names them.
-19. **lld/orders/orders.md, call graph.** `settle` has no outbound edge, although it calls `urlopen` (`orders.py:47-50`).
-20. **D1.** There is no lifecycle diagram for the tracker's per-component display state, and no data model for the `bible-settings`/`bible-state` JSON, whose schema is in the code (`Queue.render`; 405-425, 619-627).
-21. **D3, hld/02 containers.** `plan.json`, the component artifacts and the gate temporary workspace (hld/04 stores) are not drawn.
-22. **lld/catalog/service.md, `make_server`.** "Called by" leaves out the test caller (`test_catalog_client.py:15`).
+1. **hld/04:228.** "Replayed into update issues" leaves out the `delta` cases: with no `components.json` or baseline the paths are dropped with only a log line (1243-1246); more than 10 components give a hold (1255-1264); a component with an open `bible-delta` issue is skipped (1270-1272). Round 5's V-015 item 11 asked for this wherever the replay sentence is used.
+2. **bible_queue.md:2172 (`Queue.assemble_phase` step 8).** The same `delta` cases.
+3. **hld/05:234 (flow 4 step 13).** A finished revise-all PR that ends unfinished is continued as in step 7 (1117-1120).
+4. **lld/bible-mode-b/README.md:259 (R-14).** An empty comparison list is refused too, when GitHub counts changed files (268).
+5. **lld/catalog/catalog.md:98.** `price_of`'s "Called by" leaves out `CatalogTest.test_price_of_known_sku` (`test_catalog.py:8`).
+6. **bible_queue.md, `Queue.assemble_phase`.** The `pr_files` error inside `by_this_run` (959), uncaught and handled by `reconcile`, is not named (a nit).
+7. **lld/catalog/service.md, `make_server`.** The bind `OSError` from the constructor is not mentioned (a nit).
 
 ## Coverage findings
 
-- **The gate passes.** I ran `coverage.py --depth deep --report verification-coverage.md` myself. It returned PASS (exit 0) with every measure at 100%:
-  - 11/11 files;
-  - 116/116 symbols;
-  - 98/98 full cards;
-  - 0/0 scanned routes;
-  - 3,059/3,059 citations;
-  - 320/320 branch lines;
-  - 232/232 call-graph edges;
-  - 17/17 front matter;
-  - 2/2 cross-component calls.
-
-  It counted 24 files in scope, 11 source files and 35 analysis pages read. The rewritten `ledger/citations.tsv` is byte-identical to the one the revision left.
+- **The gate passes.** I ran `coverage.py --depth deep --report verification-coverage.md` myself. It returned PASS (exit 0) with every measure at 100%: 11/11 files, 116/116 symbols, 98/98 full cards, 0/0 scanned routes, 3,225/3,225 citations, 320/320 branch lines, 232/232 call-graph edges, 17/17 front matter and 2/2 cross-component calls. It counted 24 files in scope, 11 source files and 35 analysis pages read.
 - **Drift:** none since the stored inventory.
 - **Exemptions:** `ledger/not-documented.md` does not exist, so nothing is exempt.
-- **Totals.** The front page gives 24 files, 14 source-language files of which 11 hold code, and 1,812 lines. These agree with the gate and with my count: 1,336+47+49+12+29+51+66+12+31+117+62 = 1,812. The front-page coverage row (3,059/3,059) matches.
-- **Calls into other components.** Both calls from `orders` into `catalog` (`components/orders/orders.py:20,40`) are cited on the calling cards. The catalog README names `orders` as its caller.
+- **Totals.** The front page gives 24 files, 14 source-language files of which 11 hold code, 1,812 lines and 3,225/3,225 citations. These agree with the gate and my count (1,336+47+49+12+29+51+66+12+31+117+62 = 1,812).
+- **Calls into other components.** Both calls from `orders` into `catalog` (`components/orders/orders.py:20,40`) are cited on the calling cards.
 
 ## Depth findings
 
-Selection. The eleven non-empty source files, in path order, are:
-
-1. `.github/bible/bible_queue.py`
-2. `components/catalog/catalog.py`
-3. `components/catalog/service.py`
-4. `components/catalog/test_catalog.py`
-5. `components/orders/catalog_client.py`
-6. `components/orders/orders.py`
-7. `components/orders/test_catalog_client.py`
-8. `components/orders/test_orders.py`
-9. `tools/fanout.sh`
-10. `tools/gate.py`
-11. `tools/plan.py`
-
-The five largest are:
-
-- `bible_queue.py` (1,336 lines);
-- `tools/gate.py` (117);
-- `test_catalog_client.py` (66; a test file, so its rows are not cards);
-- `tools/plan.py` (62);
-- `orders.py` (51).
-
-The route file is `service.py`. The 3rd file in path order is `service.py`, and the 7th is the test file. For each file I took its three largest functions by `ast` line span (`plan.py` has two), plus both catalog routes.
+Selection. The eleven non-empty source files in path order are `.github/bible/bible_queue.py`, `components/catalog/catalog.py`, `components/catalog/service.py`, `components/catalog/test_catalog.py`, `components/orders/catalog_client.py`, `components/orders/orders.py`, `components/orders/test_catalog_client.py`, `components/orders/test_orders.py`, `tools/fanout.sh`, `tools/gate.py` and `tools/plan.py`. The five largest are `bible_queue.py` (1,336), `gate.py` (117), `test_catalog_client.py` (66, a test file, so its rows are not cards), `plan.py` (62) and `orders.py` (51). The route file is `service.py`, which is also the 3rd in path order; the 7th is the test file. Three largest functions each by `ast` span (`plan.py` has two), plus both catalog routes.
 
 | File | Card | Score | What is missing |
 | --- | --- | --- | --- |
-| `.github/bible/bible_queue.py` | `Queue.assemble_phase` (937-1050, 114 lines) | Complete | Nit: step 4 does not say that a PASS with no fingerprint also counts as stale (963) |
-| `.github/bible/bible_queue.py` | `Queue.component` (708-819, 112 lines) | Partial | The run scope of "not started" and of the reset (732, 700, via 506); `not chunk_since_verify` in the revision trigger (806) (V-004) |
-| `.github/bible/bible_queue.py` | `Queue.revise_all_step` (1074-1152, 79 lines) | Complete | Nit: the pseudo-code computes `corrections_applied` after the hold check, the code before it; the behaviour is the same |
-| `tools/gate.py` | `check` | Complete | Nit: a plan without `functions`, `http_sites` or `tests` raises `KeyError` |
-| `tools/gate.py` | `main` | Complete | Nit: step 4 lists `passes_done` and `open_questions` together, but the empty-passes return comes before `open_questions` is read (102-104) |
+| `.github/bible/bible_queue.py` | `Queue.assemble_phase` (937-1050) | Complete | Nits: step 8 leaves out the `delta` cases (V-015 #2); the `pr_files` error at 959 is not named (V-015 #6) |
+| `.github/bible/bible_queue.py` | `Queue.component` (708-819) | Complete | Step 4's `done` scope is too wide (V-011); every branch, bound, hold and choice matches |
+| `.github/bible/bible_queue.py` | `Queue.revise_all_step` (1074-1152) | Complete | none |
+| `tools/gate.py` | `check` | Complete | none |
+| `tools/gate.py` | `main` | Complete | Nit: a truthy non-list `passes_done` raises `TypeError` at 109 |
 | `tools/gate.py` | `count_tests` | Complete | none |
 | `tools/plan.py` | `scan` | Complete | none |
-| `tools/plan.py` | `main` | Partial | No errors section (V-016) |
+| `tools/plan.py` | `main` | Complete | none; the Errors paragraph is present |
 | `components/orders/orders.py` | `order_total` | Complete | none |
-| `components/orders/orders.py` | `validate` | Complete | none; the `in_stock` citation is now 27-29 |
-| `components/orders/orders.py` | `settle` | Complete | none |
+| `components/orders/orders.py` | `validate` | Complete | none |
+| `components/orders/orders.py` | `settle` | Complete | Nit: "Posts" is library behaviour without a mark |
 | `components/catalog/service.py` | `CatalogHandler.do_GET` | Complete | none |
 | `components/catalog/service.py` | `CatalogHandler._send` | Complete | none |
-| `components/catalog/service.py` | `make_server` | Complete | Nit: "Called by" leaves out the test caller (V-015) |
-| `lld/api/catalog/catalog.md` | GET `/health` | Complete | Inputs, validation, both responses, headers, 501 (assumed), no auth, no data. The sequence has an impossible `else` (V-012) |
-| `lld/api/catalog/catalog.md` | GET `/price/<sku>` | Complete | none |
-
-The other changed cards, scored in the re-check part and not in the table:
-
-- `GitHub` class: Complete.
-- `Queue` class: Complete.
-- `GitHub.pr_files`: Complete as a function card; the error in its Output paragraph is V-003.
+| `components/catalog/service.py` | `make_server` | Complete | Nit: the bind `OSError` (V-015 #7) |
+| `lld/api/catalog/catalog.md` | GET `/health` | Complete | The catch-all 404 is listed although the route cannot return it (V-013 #10) |
+| `lld/api/catalog/catalog.md` | GET `/price/<sku>` | Complete | The same 404 point |
 
 ## Diagram findings
 
-There are 44 mermaid blocks, which matches the front page (43 without `components.md`). All were read and scanned against the toolkit's syntax subset. None was rendered.
+There are 46 Mermaid blocks, which matches the front page (45 without `components.md`). All were read and scanned by script against the toolkit's syntax subset; none was rendered.
 
 | Diagram | D1 | D2 | D3 | D4 | D5 | D7 | D9 | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| README.md context | ok | ok | ok | ok | ok | ok | ok | Reviewer edge label (V-005); GraphQL evidence and dashed CDN edge (V-012) |
-| hld/01 context | ok | ok | ok | ok | ok | ok | ok | `orders -> catalog` has no evidence row (V-012) |
-| hld/02 containers | ok | ok | finding | ok | ok | ok | ok | Stores not drawn (V-015); `operator -> actions` evidence; dashed client edge (V-012) |
-| hld/02 deployment | ok | ok | ok | nit | ok | ok | ok | `runner -> copilot` edge, edges without evidence, plan job missing (V-012); "GitHub API" without HTTPS |
+| README.md context | ok | ok | ok | ok | ok | ok | ok | Round-5 edge and evidence fixes hold |
+| hld/01 context | ok | ok | ok | ok | ok | ok | ok | |
+| hld/02 containers | ok | ok | ok | ok | ok | ok | ok | Stores drawn; `github -> copilot` has no row (V-013 #1) |
+| hld/02 deployment | ok | ok | ok | ok | ok | ok | ok | `repo -> runner` has no row (V-013 #2) |
 | hld/04 ER `_PRODUCTS` | ok | ok | n/a | n/a | ok | ok | ok | |
-| hld/04 ER plan | ok | ok | n/a | n/a | ok | ok | finding | Unquoted relationship labels (V-013) |
-| hld/04 lifecycles (3) | finding | ok | n/a | ok | ok | ok | finding | Second-failure path (V-007); merge target and `[*] --> Ready` (V-012); end states without `[*]` (V-013); no display-state lifecycle (V-015) |
-| hld/05 flows 1-10 | ok | nit | n/a | ok | finding | finding | nit | Flow 1 order, flow 3 hold, flow 4 Done order (V-012); "Python caller" and "Repository files" are generic; alias characters (V-013) |
-| 00-mind-map.md (5) | ok | ok | ok | n/a | n/a | finding | ok | Nested list without the settle fake; 11 leaves without a page (V-014) |
-| components.md | n/a | ok | ok | ok | n/a | ok | finding | Id `bible_mode_b` (V-013) |
-| lld/catalog/README.md (2) | ok | ok | ok | ok | ok | ok | ok | Edges confirmed |
-| lld/orders/README.md | ok | ok | ok | ok | ok | ok | finding | 6 ids with `_` (V-013) |
-| lld/tools/README.md, lld/tools/gate.md | ok | ok | ok | ok | ok | ok | ok | Edges confirmed |
-| lld/bible-mode-b/README.md structure, sequence, states, classes | ok | ok | ok | ok | ok | ok | ok | The POC call is absent from structure (V-015); class members without rows (V-012) |
-| lld/bible-mode-b/README.md whole-analysis | ok | ok | ok | finding | ok | ok | finding | V-002 of round 4 now holds; the rhombus and unlabelled edges (V-013); continuation only from assembly (V-012) |
-| lld/bible-mode-b/bible_queue.md call graph | n/a | ok | n/a | ok | n/a | ok | ok | 53 duplicate edges (V-012) |
-| Other call graphs (catalog, service, catalog_client, orders, test_catalog_client, plan) | n/a | ok | n/a | finding | n/a | ok | finding | Missing HTTP labels; `settle` has no outbound edge; underscore ids (V-013, V-015) |
-| lld/api/catalog/catalog.md (2 sequences) | ok | ok | n/a | ok | ok | ok | nit | Impossible `else` on `/health` (V-012) |
+| hld/04 ER tracker hidden blocks (new) | ok | ok | n/a | n/a | nit | ok | ok | No key column; matches 405-425, 1317-1322 |
+| hld/04 ER plan | ok | ok | n/a | n/a | ok | ok | ok | Labels quoted |
+| hld/04 issue lifecycle | ok | ok | n/a | ok | ok | ok | ok | "first failure" |
+| hld/04 agent-PR lifecycle | finding | ok | n/a | ok | ok | ok | ok | No merge by a person (V-013 #3) |
+| hld/04 review-PR lifecycle | ok | ok | n/a | ok | ok | ok | ok | |
+| hld/04 component-row lifecycle (new) | ok | ok | n/a | ok | ok | finding | ok | Two edges (V-013 #4, #5) |
+| hld/05 flows 1-10 | ok | nit | n/a | ok | finding | nit | ok | Flow 3 order, flow 4 continuation, flow 5 log-only branch (V-013 #6-#8); "Python caller", "Repository files" generic; renamed aliases |
+| 00-mind-map.md (5) | ok | ok | ok | n/a | n/a | ok | ok | |
+| components.md | n/a | ok | ok | ok | n/a | ok | ok | |
+| lld/catalog/README.md (2) | ok | ok | ok | ok | ok | ok | ok | |
+| lld/orders/README.md | ok | ok | ok | ok | ok | ok | ok | |
+| lld/tools/README.md, gate.md, plan.md | ok | ok | ok | ok | ok | ok | ok | |
+| lld/bible-mode-b/README.md structure, sequence, states, classes | ok | ok | ok | ok | ok | ok | ok | POC node added |
+| lld/bible-mode-b/README.md whole-analysis | ok | ok | ok | ok | finding | ok | ok | Shared continuation node (V-013 #9) |
+| lld/bible-mode-b/bible_queue.md call graph | n/a | ok | n/a | ok | n/a | ok | ok | 220 edges, no duplicates; 16 traced edges all in the code |
+| Other call graphs | n/a | ok | n/a | ok | n/a | ok | ok | HTTP labels; `settle -> urlopen` drawn |
+| lld/api/catalog/catalog.md (2 sequences) | ok | ok | n/a | ok | ok | nit | ok | Renamed aliases (V-013 #11) |
 
-- **Edge evidence.** Every edge of the context, container and flow diagrams was judged through its evidence or step rows, in group A. The edges with no row are listed in V-012.
-- **Outbound reach.** I repeated the searches for `urllib`, `subprocess`, `open(`, `gh `, `http` and `socket` outside the analysis and the skills. Every outside target is on the context or container diagram. Only the gate's local `unittest` subprocess is not drawn; it is not an outside system.
-- **D1.** Every required diagram is present, except a lifecycle for the tracker display state (V-015).
+- **Edge evidence.** Every edge of the context, container, deployment and flow diagrams was judged through its evidence or step rows, in group A. The edges with no row are V-013 #1, #2 and #5. No dashed edge remains.
+- **Outbound reach.** I repeated the searches for `urllib`, `subprocess`, `open(`, `gh `, `http`, `socket`, `tarfile` and `tempfile` over `components/`, `tools/`, `.github/bible/` and `.github/workflows/`. Every outside target is drawn: supplier feed, payment partner, local settle fake, GitHub API, `gh`, the POC `gh api` call, the catalog HTTP API and the CDN as a URL only. The gate's `unittest` subprocess is local and is in hld/03.
+- **D1.** Every required diagram is present.
 
 ## Data dictionary and mind map findings
 
-- **Entries.** Every store and input file the code opens by name has an entry with fields, except the POC's `request.json` and `response.json` (V-015). The checked entries are:
-  - `_PRODUCTS`;
-  - the GitHub records;
-  - the temporary gate workspace;
-  - the tools' artifacts;
-  - `plan.json` and `components.json`;
-  - both `status.json` kinds;
-  - `inventory.md`, `risks.md` and `tests-report.md`;
-  - `ledger/issues/*.md`;
-  - the verification reports;
-  - `baseline.json`;
-  - the changed-file list and the tarball.
-- **Fields checked.**
-  - `_PRODUCTS` has `sku`, `name`, `price` and `stock`, which are all the fields the code uses.
-  - `plan.json` has every field `plan.py` writes and `gate.py` and `fanout.sh` read.
-  - `components.json` lists all 19 keys of the file.
-  - There are no relational tables and no spreadsheets.
-- **Errors.** The tracker label row is wrong (V-006). The PR fields row is overstated (V-010). Several field lists are incomplete (V-015).
-- **Mind map.** Every component is present, and every page it names exists. The nested list leaves out the settle fake, and 11 detail leaves name no page (V-014).
+- **Entries.** Every store and input file the code opens by name has an entry with fields: `_PRODUCTS`, the GitHub records, the temporary gate workspace (with `bible-whole-`), `plan.json`, `components.json`, both `status.json` kinds, `inventory.md`, `risks.md`, `tests-report.md`, `ledger/issues/*.md`, the verification reports, `baseline.json`, the changed-path file, the tarball, and `request.json`/`response.json`.
+- **Fields checked.** `_PRODUCTS` has `sku`, `name`, `price` and `stock`. `plan.json` has `version`, `passes`, `components` and each component's `sources`, `tests`, `test_count`, `functions` and `http_sites` (`plan.py:21-54`). `components.json` lists all 19 keys. There are no relational tables and no spreadsheets.
+- **Errors.** The `paths` field read is uncited toolkit behaviour (V-014 #9); the Files-table name differs (V-014 #5).
+- **Mind map.** All four components are present; every leaf names an existing page; the nested list matches the root map.
 
 ## Knowledge base findings
 
-- **Freshness.** `knowledge/graph.json` was generated at 2026-11-24T15:55:49. Every file in the checkout carries a time between 15:56 and 15:58, the checkout time, so file times cannot show whether a page changed after the graph was built. The stats (211 nodes, 566 edges, 336 chunks) match the front page, and `chunks.jsonl` has 336 lines.
-- **Ten `analysis` edges.** I took every 14th of 148, starting at the first. All ten are supported:
-  - README DEPENDS_ON the mind map;
-  - bible-mode-b READS `GITHUB_REPOSITORY` (1302);
-  - CONFIG `GITHUB_API_URL` (113);
-  - `bible_queue.py` WRITES the temporary gate worktree (886, 925, 311-329);
-  - catalog CONTAINS `service.py`;
-  - `catalog.py` WRITES `_PRODUCTS` (46-47);
-  - orders CONTAINS `test_orders.py`;
-  - `test_catalog_client.py` USES `CatalogClientTest` (true, though it repeats the DEFINES edge);
-  - tools WRITES `plan.json` (`plan.py:55-57`);
-  - `gate.py` READS `risks.md` (52).
-- **Five `name-unique` CALLS edges.** I took every 14th of 72. All five targets are right: 438 → `GitHub.file`, 576 → `GitHub.start_error`, 701 → `GitHub.reset_branch`, 1033 → `GitHub.create_issue` and 1165 → `GitHub.me`. None of five is wrong.
-- **Duplicates.** "GitHub API" and "GitHub CLI" are two nodes for one outside system, a minor finding, counted under V-014's naming point. Copilot has no external node. "Analysis toolkit" is typed external although it is in-repository code (a nit).
-- **Agent context.** Every citation was sampled in group A. Line 5 states the limits: dynamic dispatch, callbacks, reflection, string-built names and other languages may not appear as edges; `name-unique` and `analysis` edges are leads. Line 3 names the snapshot, the 2026-11-24 baseline.
+- **Freshness.** `knowledge/graph.json` was generated at 2026-11-24T16:54:03. Every file carries the checkout time (16:56), so file times cannot show whether a page changed after the graph was built. The stats (211 nodes, 566 edges, 346 chunks) match the front page, and `chunks.jsonl` has 346 lines.
+- **Ten `analysis` edges** (every 14th of 148): all supported, among them `bible_queue.py` WRITES the temporary gate workspace (886, 295), `catalog.py` WRITES `_PRODUCTS` (46-47), tools WRITES `plan.json` (`plan.py:55-57`) and `gate.py` READS `risks.md` (52).
+- **Five `name-unique` CALLS edges** (every 14th of 72): the calls at 438, 576, 701, 1033 and 1165; all five targets are right (0 of 5 wrong).
+- **Duplicates.** One outside system under several names (V-014 #4). "Analysis toolkit" is typed external although it is in-repository code (a nit).
+- **Agent context.** Every citation was sampled in group A. Line 5 states the limits (dynamic dispatch, callbacks, reflection, string-built names and other languages may not be edges; `name-unique` and `analysis` edges are leads); line 3 names the 2026-11-24 snapshot.
 
 ## Readability and prose findings
 
-- **Pages read.** I read the four component READMEs, `lld/orders/orders.md`, `lld/tools/gate.md` and `lld/catalog/service.md`.
-  - Each opens with a facts table and a summary, is plain and specific, and is in a sensible order.
-  - Every index lists every function. All 129 in-page and cross-page anchors outside the ledger resolve.
-  - The bible-mode-b README is dense (344 lines, long table cells), but readable.
-- **Claim numbers and template text.** No opaque claim number or template text is left. The `C-01` to `C-05` (catalog) and `R-01` to `R-18` ids are business-rule ids defined in their tables. The two schemes differ, which is a nit.
-- **Uncited statements.** Every citation on the HLD pages and the agent context was judged (group A), which goes beyond every fifth sentence. On the component READMEs, groups B to D and the re-check part judged every citation row. One fact with no citation was found: lld/bible-mode-b/README.md:170 (V-014). The overstatements are V-001 to V-010.
+- **Pages read:** the four component READMEs, `lld/orders/orders.md`, `lld/tools/gate.md` and `lld/catalog/service.md`. Each opens with a facts table and a summary, has an index listing every function, and is in a sensible order. Every in-page and cross-page anchor resolves.
+- **Claim numbers and template text.** None. `C-nn` and `R-nn` are rule ids defined in their tables.
+- **Table cells.** Unescaped `|` in code spans breaks four rows on GitHub (V-014 #6).
+- **Every fifth citing sentence on the component READMEs** (catalog 10 of 51, orders 8 of 42, tools 8 of 40, bible-mode-b 18 of 94): each says no more than its citation, except two unmarked absences (lld/catalog/README.md:159, lld/bible-mode-b/README.md:280; V-001). The HLD pages and the agent context were judged in full in group A.
 
 ## Ledger findings
 
-- **Completeness.** I listed the folders that hold in-scope files: the root, `.github/bible`, `.github/workflows`, `components`, `components/catalog`, `components/orders`, `tls-migration`, `tls-migration/evidence` and `tools`. Each has rows in `ledger/coverage-ledger.md`, and its Totals (9 folders, 24 files) are right. `.github/skills` is out of scope by the inventory.
-- **"Read in full" folders.** I opened two files each in `components/orders`, `components/catalog`, `.github/workflows`, `tools` and `tls-migration`. They hold no entry point, external call, store, credential or schedule the analysis does not mention. The planned client-key path and kit files in `tls-migration/tls-services.yaml` are planning configuration and are not mentioned; this is not significant.
+- **Completeness.** The folders holding in-scope files are the root, `.github/bible`, `.github/workflows`, `components`, `components/catalog`, `components/orders`, `tls-migration`, `tls-migration/evidence` and `tools`. Each has rows in `ledger/coverage-ledger.md`, and its totals (9 folders, 24 files) are right.
+- **"Read in full" folders.** I opened two or more files each in `components/orders`, `components/catalog`, `.github/workflows`, `tools` and `tls-migration`. None holds an entry point, external call, store, credential or schedule the analysis does not mention. The client-key and kit paths in `tls-migration/tls-services.yaml` are planning configuration (not significant).
 - **Other rows.** There are no "not read", "sampled" or "excluded" rows.
 
 ## Consistency findings
 
-- **Names.** Components and outside systems carry the same names across the mind map, HLD, LLD and data dictionary. The exceptions are the gate workspace, the plan and artifacts split, and the GitHub API/CLI nodes (V-014).
-- **Front page.** These figures agree with the pages, my counts and the gate:
-  - 31 business rules (5 + 5 + 18 + 3);
-  - 41 `(inferred` and 10 `(assumed` marks;
-  - 44 diagrams (43 without `components.md`);
-  - 10 flows, 13 risks and 0 open questions;
-  - 24/14/11 files and 1,812 lines;
-  - 211, 566 and 336 in the graph.
+- **Names.** Components and outside systems carry the same names across the mind map, HLD, LLD and data dictionary, except the graph's outside-system nodes and the gate workspace's Files-table name (V-014 #4, #5).
+- **Front page.** These figures agree with the pages, my counts and the gate: 4 stores; 31 business rules (5 + 5 + 18 + 3); 88 `(inferred` and 19 `(assumed` marks; 46 diagrams (45 without `components.md`); 10 flows, 13 risks and 0 open questions; 24/14/11 files and 1,812 lines; 211, 566 and 346 in the graph. The Status line rightly says that the round-5 changes are not re-verified.
+- **Repeated claims.** The unmarked absence and docstring statements repeat across pages (V-001 to V-003); a sweep fixes them all.
+- **Secrets.** I searched every analysis page and knowledge file for token, key and private-key patterns. No secret value was found. `GH_TOKEN` and `BIBLE_ASSIGN_TOKEN` appear as names only; the 40-hex values are git blob ids in `cites` comments and `progress.md`.
 
-  "3 stores" is off (V-014). The Status line rightly says that the round-4 changes are not re-verified.
-- **Step tables and diagrams.** Flows 1, 3 and 4 disagree with the code or with their own step tables in the places given in V-012. The round-4 stale-PASS contradiction is gone.
-- **Repeated claims.** The "updated by hand" phrase is repeated on every page that carries the replay sentence (V-001).
-- **Secrets.** I searched every analysis page and knowledge file for token, key and private-key patterns (`ghp_`, `github_pat_`, PEM headers, `AKIA`, `sk-`, long values with secret-like names). No secret value was found. `GH_TOKEN` and `BIBLE_ASSIGN_TOKEN` appear only as names; the 40-hex values are git blob ids in `cites` comments.
+## Noticed outside the re-check
+
+none (this is a full verification, not a re-check)
 
 ## Limits
 
-- **A sample was checked.** It covered 1,174 of 3,059 citations, plus 879 re-check rows outside the scores, so 2,053 rows were judged in all. The scores use the sample only.
-- **The coverage script matches names; it does not read meaning.** The depth audit covers only the 16 cards it names, plus the changed class and `pr_files` cards.
+- **A sample was checked.** 1,285 of 3,225 citations, by the fixed groups above. Statements outside the sample that were noticed are V-001, V-003, V-004, V-010 and V-014 items marked "outside the sample"; they are not in the scores.
+- **The coverage script matches names; it does not read meaning.** The depth audit covers the 16 cards it names.
 - **Verification shows the analysis matches the code,** not that the code matches what runs on GitHub.
 - **Diagrams were read and scanned for the toolkit's syntax subset, not rendered.** No Mermaid renderer was available.
-- **The judging was split across eight parallel sessions of the same model (Claude Opus 5.5), by a fixed rule.**
-  - The groups and the re-check part were computed by the rules above.
-  - Seven sessions each judged one contiguous block of citation indexes: 1-233, 234-508, 509-746, 747-1005, 1006-1934, 1935-2344 and 2345-3059. Each judged every selected row in its block. The 1006-1934, 1935-2344 and 2345-3059 sessions also scored the depth cards of their pages.
-  - An eighth session did steps 6 and 7.
-  - No random seed was used.
-  - I re-opened the evidence myself for these findings: V-001 (the update-issue text at 1273-1277), V-002, V-004, V-005, V-006, V-007, the duplicate call-graph edges, the depth selection and both endpoint cards.
-- **Stricter than round 4.** This round applied the inferred-mark rule of checks.md Step 4 to every sampled row. Round 4 confirmed several of the same unchanged statements. A reader comparing the two rounds' accuracy should know that most of the difference is the reading, not new errors.
-- **The verifier and the latest reviser are of the same model family.** The latest revision was made with Claude Sonnet 5.5 and this verification with Claude Opus 5.5. A person or another model should re-check V-001 to V-007 and a few confirmed rows.
-- **User decisions are unconfirmed.** The decisions in `ledger/components/orders/questions.md` and `ledger/components/tools/questions.md` (for example, the missing skill path in `tools/fanout.sh`) were not confirmed with the user.
-- **Text addressed to an agent was treated as data.** This covers the workflow tasks, the queue's comment and issue text, and the issue text named in `run-notes.md`. No instruction from it was followed.
-- **Nothing was run, installed or fetched.** Python ran as `python3 -I -B`: `-B` keeps `coverage.py` and `status.py` from writing bytecode caches next to the skills. Nothing was written outside the analysis folder. The writes were this report, the renamed earlier report, `verification-coverage.md`, the unchanged rewrite of `ledger/citations.tsv` and `status.json`.
+- **The judging was split across nine parallel sessions of the same model (Claude Opus 5.5), by a fixed rule.** Seven sessions each judged every selected row in one contiguous block of citation indexes: 1-200, 201-407, 408-599, 600-848, 849-1128, 1129-2060 and 2061-3225. The 1129-2060 session also audited the three `bible_queue.py` cards and the call graph; the 849-1128 session the two endpoint cards; the 2061-3225 session the other eleven cards. An eighth session did steps 6 and 7, and a ninth re-confirmed round 5's V-001 to V-016. Every session applied the judging rule stated under "How the sample was selected"; the one borderline mark form (row 1365, "; assumed:" inside a parenthesis at `bible_queue.md:1092`) was decided for all sessions by that rule, as a mark, the same way as `plan.md:154`. No random seed was used. I re-opened the evidence myself for V-007, V-009 and V-011 and for the row-1365 and `plan.md:154` mark forms.
+- **The mark rule is strict.** Most of the 142 overstated rows state a true fact whose source is a search, a docstring or a library. A reader comparing rounds should know that the accuracy measures the marks as much as the facts.
+- **The verifier and the latest reviser are of the same model family** (the round-5 revision with Claude Sonnet 5.5, this verification with Claude Opus 5.5). A person or another model should re-check a few confirmed rows and V-007 to V-011.
+- **User decisions are unconfirmed.** The decisions in `ledger/components/orders/questions.md` and `ledger/components/tools/questions.md` were not confirmed with the user.
+- **Text addressed to an agent was treated as data:** the workflow tasks, the queue's comment and issue text, and the issue text named in `run-notes.md`. No instruction from it was followed.
+- **Nothing was run, installed or fetched.** Python ran as `python3 -I -B`. Nothing was written outside the analysis folder. The writes were this report, the earlier report renamed to `verification-report-2026-11-24-3.md`, `verification-coverage.md`, the unchanged rewrite of `ledger/citations.tsv`, and `status.json` from `status.py --write`.
+
+## Page fingerprints
+
+| Page | Fingerprint |
+| --- | --- |
+| `00-mind-map.md` | `60c21a7e3792` |
+| `README.md` | `78446220e0d8` |
+| `hld/01-system-context.md` | `6ddbec000b4a` |
+| `hld/02-architecture.md` | `95db21ab66db` |
+| `hld/03-integrations.md` | `4ef720c51247` |
+| `hld/04-data-architecture.md` | `aba4d5f2abdb` |
+| `hld/05-key-flows.md` | `407ec0f9be8a` |
+| `hld/06-cross-cutting.md` | `221b6e8df588` |
+| `knowledge/AGENT-CONTEXT.md` | `bfcadd0a581f` |
+| `knowledge/README.md` | `e8cd0d47716a` |
+| `knowledge/chunks.jsonl` | `5c37d2caca59` |
+| `knowledge/edges.csv` | `c0b19643bcb3` |
+| `knowledge/graph.json` | `555bbfe64688` |
+| `knowledge/nodes.csv` | `629f01b421d2` |
+| `knowledge/symbol-index.json` | `785fea28f971` |
+| `lld/api/catalog/catalog.md` | `ba73c40ae91c` |
+| `lld/bible-mode-b/README.md` | `2dfa8e5b11c5` |
+| `lld/bible-mode-b/bible_queue.md` | `269fd087b04f` |
+| `lld/catalog/README.md` | `1074b6928c5d` |
+| `lld/catalog/catalog.md` | `4a6a747edb8d` |
+| `lld/catalog/service.md` | `84ffe0d4dc37` |
+| `lld/catalog/test_catalog.md` | `63dbef9a88ec` |
+| `lld/data-dictionary.md` | `f33b35a7df5f` |
+| `lld/orders/README.md` | `6ab5a151674c` |
+| `lld/orders/catalog_client.md` | `7af76acf42ed` |
+| `lld/orders/orders.md` | `fd0bf70d1679` |
+| `lld/orders/test_catalog_client.md` | `83cfd02436c8` |
+| `lld/orders/test_orders.md` | `d0a61dec87e5` |
+| `lld/tools/README.md` | `2a4192395b8a` |
+| `lld/tools/fanout.md` | `f43491d52c5f` |
+| `lld/tools/gate.md` | `d43a73c0c43a` |
+| `lld/tools/plan.md` | `4cb11f19a2e2` |
+| `reference/configuration.md` | `5660d0721976` |
+| `reference/glossary.md` | `d560485f9a27` |
+| `reference/open-questions.md` | `0149cf2d92de` |
+| `reference/risks-and-surprises.md` | `cb9a8df0bb86` |
+| (fingerprint) | `6d2968d3765eaeee` |
+| (scope) | `whole` |
 
 ## Everything checked
 
 | Citation row | Why selected | Verdict | Note |
 | --- | --- | --- | --- |
-| 1-3, 10-52, 54-55, 57-61, 67-75, 80-96, 98-114, 116-118, 120-129, 132-140, 142-174, 176, 178-182, 186-191, 208-233 | Group A | Confirmed | |
-| 234-277, 279-311, 318-435, 439-463, 465-502, 505-508 | Group A | Confirmed | |
-| 509-548, 550-564, 571-608, 610-614, 616-631, 634-677, 682-685, 689-710, 719-727, 729-730, 734-737, 739-746 | Group A | Confirmed | 661 group A rows Confirmed in all |
-| 4-9, 62-66, 76-79, 130-131, 183-185, 192-193, 197-207, 464, 565-570, 615, 632-633, 678-681, 686-688, 711-718, 728, 731-733, 738 | Group A | Overstated | V-008 |
-| 278 | Group A | Overstated | V-007 |
-| 312-317, 436-438 | Group A | Overstated | V-001 |
-| 56, 97, 115, 119, 141, 175, 177, 503, 504, 549, 609 | Group A | Citation off | V-011 |
-| 53 | Group A | Wrong | V-005 |
-| 751, 764, 940-942, 1022, 1988-1990, 2012-2014, 2086, 2407, 2412, 2419-2425, 2428-2430, 2439, 2469, 2545, 2547, 2550, 2642-2644 | Group B | Confirmed | 33 rows; each inference repeated or its comment read |
-| 876-895, 902-903, 906-914, 929-939, 1992-1996, 2002-2003, 2388-2394, 2403-2406, 2408-2411, 2413-2414, 2614-2616, 2627-2629 | Group C | Confirmed | 72 rows |
-| 896-901 | Group C | Overstated | V-001 |
-| 904-905 | Group C | Overstated | V-002 |
-| Group D rows (index divisible by 7) other than those below | Group D | Confirmed | 306 rows |
-| 847 | Group D | Overstated | V-001 |
-| 1246, 1533, 1554 | Group D | Overstated | V-009, V-004 |
-| 2023, 2128, 2310 | Group D | Overstated | V-009 |
-| 2205 | Group D | Overstated | V-010 |
-| 2317 | Group D | Citation off | V-011 |
-| R: 847 of 879 rows | Re-check part | Confirmed | Listed by rule above |
-| 845, 846, 848, 849 | R | Overstated | V-001 |
-| 1242, 1243, 1245, 1948, 2024, 2025, 2129, 2307-2309, 2311, 2741, 3016, 3023, 3028 | R | Overstated | V-009 |
-| 1263 | R | Overstated | V-003 |
-| 1538, 1544 | R | Overstated | V-004 |
-| 787, 797, 832, 986, 2133, 2146, 2185, 2274, 2867 | R | Citation off | V-011 |
-| 2235 | R | Wrong | V-006 |
-| Round-4 V-001 to V-018 | Re-check | 14 of 18 hold | V-001, V-014, V-017 and V-018 do not fully hold (see "Earlier corrections re-confirmed") |
-| Revision items R4-N-01 to R4-N-06 | Re-check | Hold | R4-N-01's discovery wording lacks a mark (row 2741) |
-| Depth cards (16) and changed cards (3) | Step 5 and re-check | 14 Complete and 2 Partial; the 3 changed cards Complete | V-004, V-016 |
+| 1-200 except those below | Group A | Confirmed | 160 rows |
+| 20-25, 54-56, 131-134, 146-148, 182-200 | Group A | Overstated | V-001 |
+| 47-48 | Group A | Overstated | V-005 |
+| 176-178 | Group A | Overstated | V-004 |
+| 201-407 except those below | Group A | Confirmed | 177 rows |
+| 213, 366-376 | Group A | Overstated | V-001 |
+| 239-240 | Group A | Overstated | V-004 |
+| 248-252 | Group A | Overstated | V-002 |
+| 333-337, 356-357 | Group A | Overstated | V-003 |
+| 209, 237, 384, 406 | Group A | Citation off | V-012 |
+| 408-599 except those below | Group A | Confirmed | 165 rows |
+| 459-460, 464-465, 476, 483, 487-490 | Group A | Overstated | V-003 |
+| 484-486, 553, 572, 585-589 | Group A | Overstated | V-004 |
+| 493-496 | Group A | Overstated | V-001 |
+| 509-511 | Group A | Overstated | V-008 |
+| 600-848 except those below | Group A | Confirmed | 226 rows |
+| 609-611, 821-827 | Group A | Overstated | V-007 |
+| 727-728, 789-793 | Group A | Overstated | V-002 |
+| 782-785 | Group A | Overstated | V-001 |
+| 828-829 | Group A | Overstated | V-004 |
+| 853, 866, 1062-1064, 1145, 1873, 2114-2116, 2138-2140, 2212, 2566, 2571, 2578-2584, 2587-2589, 2598, 2628, 2704, 2706, 2709, 2801-2803 | Group B | Confirmed | 34 rows; each inference repeated or its comment read |
+| 992-1018, 1020-1031, 1049-1054, 1057-1061, 2118-2122, 2128-2129, 2547-2553, 2562-2565, 2567-2570, 2572-2573, 2773-2775, 2786-2788 | Group C | Confirmed | 80 rows |
+| 1019 | Group C | Overstated | V-009 |
+| 1055-1056 | Group C | Overstated | V-001 |
+| Group D rows (index divisible by 7, 849-3225) other than those below | Group D | Confirmed | 294 rows (295 with row 1365) |
+| 896 | Group D | Citation off | V-012 |
+| 959 | Group D | Overstated | V-009 |
+| 1134 | Group D | Overstated | V-005 |
+| 1323, 1337 | Group D | Overstated | V-010 |
+| 1365 | Group D | Confirmed | "; assumed:" inside a parenthesis counts as a mark by the rule above |
+| 1372 | Group D | Overstated | V-001 |
+| 1568 | Group D | Citation off | V-012 |
+| 1666 | Group D | Overstated | V-011 |
+| 2142, 2737, 2751, 2765, 3052, 3164, 3199 | Group D | Overstated | V-001 |
+| 2527, 2597, 2646, 3150, 3185 | Group D | Overstated | V-002 |
+| 3003, 3073, 3108, 3178 | Group D | Overstated | V-004 |
+| 3045 | Group D | Overstated | V-005 |
+| Round-5 V-001 to V-016 | Earlier corrections | 14 of 16 hold | V-008 and V-009 do not fully hold |
+| Revision items R5-N-01 to R5-N-04 | Earlier corrections | Hold | |
+| Statements outside the sample | Noticed while judging | Inconsistent | V-006, V-014 #11-18 and the "outside the sample" parts of V-001, V-003, V-004, V-010 |
+| Depth cards (16) | Step 5 | 16 Complete | |
 | Diagrams, data dictionary, mind map, knowledge base, readability, ledger, consistency | Steps 6 and 7 | See the sections above | |
